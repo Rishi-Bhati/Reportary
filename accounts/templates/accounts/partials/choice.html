@@ -1,0 +1,21 @@
+<div class="card-body items-center text-center animate-fade-in">
+    <h2 class="card-title text-3xl mb-8 font-serif text-gray-900">Are You registering for / as Organisation?</h2>
+    
+    <div class="flex gap-6 w-full justify-center">
+        <button 
+            class="btn btn-primary btn-outline btn-lg w-32 text-xl"
+            hx-get="{% url 'onboarding_org_form' %}"
+            hx-target="#onboarding-card"
+            hx-swap="innerHTML">
+            Yes
+        </button>
+
+        <button 
+            class="btn btn-neutral btn-outline btn-lg w-32 text-xl"
+            hx-get="{% url 'onboarding_user_form' %}"
+            hx-target="#onboarding-card"
+            hx-swap="innerHTML">
+            No
+        </button>
+    </div>
+</div>

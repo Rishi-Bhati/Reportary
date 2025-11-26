@@ -19,12 +19,14 @@ from django.urls import path
 from django.urls import include
 from django.conf import settings
 from django.conf.urls.static import static
-from dashboard.views import home
+from django.contrib.auth.urls import views as auth_views
+# from dashboard.views import home
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', home, name='home'),  # Root path
+    path('', include('home.urls')), # New Home App at root
     path("dashboard/", include("dashboard.urls")),  # dashboard app urls
+    path('accounts/', include('accounts.urls')),
 ]
 
 # Serve static files in development

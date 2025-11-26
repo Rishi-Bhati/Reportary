@@ -1,0 +1,38 @@
+<div class="card-body animate-fade-in text-gray-900">
+    <div class="text-center mb-6">
+        <h2 class="text-2xl font-bold">Before We begin...</h2>
+        <p class="text-gray-500">We need Some more Info</p>
+    </div>
+
+    <form method="POST" action="{% url 'onboarding_user_form' %}"> {% csrf_token %}
+    
+        <div class="form-control w-full mb-4">
+            <label class="label"><span class="label-text font-semibold text-gray-700">What Should we Call You?</span></label>
+            <input type="text" name="call_name" placeholder="e.g. Rishi Bhati" class="input input-bordered w-full bg-white text-gray-900" required />
+        </div>
+    
+        <div class="form-control w-full mb-4">
+            <label class="label"><span class="label-text font-semibold text-gray-700">What's Your Tag?</span></label>
+            <input type="text" name="tag" placeholder="@rishi_dev" class="input input-bordered w-full bg-white text-gray-900" required />
+        </div>
+    
+        <div class="form-control w-full mb-4">
+            <label class="label"><span class="label-text font-semibold text-gray-700">Country?</span></label>
+            <select name="country" class="select select-bordered w-full bg-white text-gray-900">
+                <option disabled selected>Pick your country</option>
+                <option value="IN">India</option>
+                <option value="US">USA</option>
+                <option value="DE">Germany</option>
+            </select>
+        </div>
+    
+        <div class="form-control w-full mb-8">
+            <label class="label"><span class="label-text font-semibold text-gray-700">Bio (Optional)</span></label>
+            <textarea name="bio" class="textarea textarea-bordered h-24 bg-white text-gray-900"></textarea>
+        </div>
+    
+        <div class="card-actions justify-center">
+            <button type="submit" class="btn btn-neutral btn-wide text-lg font-bold text-white">LETS GOOO!!!</button>
+        </div>
+    </form>
+</div>
