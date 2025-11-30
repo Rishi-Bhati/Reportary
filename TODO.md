@@ -14,7 +14,7 @@ If you skip and jump around, you’ll confuse yourself and burn out. The correct
 
 ## Phase 1: Core Features
 ### ~~☐ 1. Build "Register New Project" Page (DEV ROLE ONLY)~~
-> This is the beating heart of your entire platform. Everything else depends on this. You already have the dashboard → "+ New Project" button. Make it functional.
+> This is the beating heart of your entire platform. Everything else depends on this. You already have the dashboard → "+ New Project" button. Make it functional. 
 
 **A dev must be able to:**
 - [x] Create a project
