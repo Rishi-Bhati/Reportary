@@ -4,7 +4,6 @@
 
         <form action="{% url 'handle_signup' %}" method="post">
             {% csrf_token %}
-            
             <div class="form-control w-full mb-4">
                 <input type="email" name="email" placeholder="Email" class="input input-lg border-4 border-gray-900 rounded-none focus:outline-none focus:border-gray-600 bg-white font-bold placeholder-gray-500" />
             </div>
@@ -16,6 +15,14 @@
             <div class="form-control w-full mb-6">
                 <input type="password" name="confirm_password" placeholder="Confirm Password" class="input input-lg border-4 border-gray-900 rounded-none focus:outline-none focus:border-gray-600 bg-white font-bold placeholder-gray-500" />
             </div>
+
+            <!-- Social Buttons Row -->
+            <div class="flex gap-4 mb-6 justify-center">
+                <button type="button" class="btn btn-outline border-4 border-gray-900 rounded-none font-bold text-lg hover:bg-gray-900 hover:text-white px-4">Git</button>
+                <button type="button" class="btn btn-outline border-4 border-gray-900 rounded-none font-bold text-lg hover:bg-gray-900 hover:text-white px-4">G</button>
+                <button type="button" class="btn btn-outline border-4 border-gray-900 rounded-none font-bold text-lg hover:bg-gray-900 hover:text-white px-4">M</button>
+                <button type="button" class="btn btn-outline border-4 border-gray-900 rounded-none font-bold text-lg hover:bg-gray-900 hover:text-white px-4">A</button>
+            </div>  
 
             <!-- Lets Go Button -->
             <button type="submit" class="btn btn-block bg-white text-gray-900 border-4 border-gray-900 rounded-none hover:bg-gray-900 hover:text-white text-xl font-bold h-14 mb-4">

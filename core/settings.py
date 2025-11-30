@@ -136,6 +136,10 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 
 TEMPLATES[0]["DIRS"] = [BASE_DIR / "core" / "templates"]
 
+LOGIN_URL = "/"
+LOGIN_REDIRECT_URL = "/dashboard/"
+LOGOUT_REDIRECT_URL = "/"
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
