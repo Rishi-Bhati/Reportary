@@ -1,4 +1,5 @@
 from django.db import models
+from components.models import Component
 
 
 # Create your models here.
@@ -14,3 +15,8 @@ class Project(models.Model):
 
     def __str__(self):
         return self.title
+    
+    @property
+    def components(self):
+        """Get all components related to this project"""
+        return self.component_set.all()

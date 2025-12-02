@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Register Project{% endblock %}
+{% block title %}Edit Project{% endblock %}
 
 {% block content %}
 
-<h2 class="text-2xl font-bold mb-4">Register New Project</h2>
+<h2 class="text-2xl font-bold mb-4">Edit Project: {{ project.name }}</h2>
 <div class="max-w-lg mx-auto bg-white p-8 rounded-lg shadow-md">
-    <form method="post" action="" id="projectForm">
+    <form method="post" action="{% url 'edit_project' pk=project.pk %}" id="projectForm">
         {% csrf_token %}
         
         <!-- Project Fields -->
@@ -41,13 +41,14 @@
 
         <!-- Components Section -->
         <div class="mt-8 pt-8 border-t-2">
-            <h3 class="text-lg font-bold mb-4">Add Components (Optional)</h3>
+            <h3 class="text-lg font-bold mb-4">Components</h3>
             
             {{ component_formset.management_form }}
             
             <div id="componentsContainer">
                 {% for component_form in component_formset %}
                     <div class="component-form mb-6 p-4 bg-gray-50 rounded-lg component-item">
+                        {% if component_form.instance.pk %}{{ component_form.id }}{% endif %}
                         {% if component_form.non_form_errors %}
                             <div class="text-red-500 text-sm mb-2">
                                 {% for error in component_form.non_form_errors %}
@@ -58,12 +59,14 @@
                         
                         {% for field in component_form %}
                             {% if field.name == 'DELETE' %}
+                                {% if component_form.instance.pk %}
                                 <div class="flex items-center mt-4">
                                     <label class="flex items-center text-gray-700 text-sm">
                                         {{ field }}
                                         <span class="ml-2">Remove this component</span>
                                     </label>
                                 </div>
+                                {% endif %}
                             {% else %}
                                 <div class="mb-4">
                                     <label for="{{ field.id_for_label }}" class="block text-gray-700 text-sm font-bold mb-2">{{ field.label }}</label>
@@ -86,7 +89,7 @@
         <!-- Submit Button -->
         <div class="mt-8">
             <button type="submit" class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-                Register Project
+                Save Changes
             </button>
         </div>
     </form>
@@ -96,52 +99,28 @@
 document.addEventListener('DOMContentLoaded', function() {
     const addComponentBtn = document.getElementById('addComponentBtn');
     const componentsContainer = document.getElementById('componentsContainer');
-    const managementForm = document.querySelector('[name="components-TOTAL_FORMS"]');
-    
-    function updateFormIndices() {
-        const forms = componentsContainer.querySelectorAll('.component-item');
-        forms.forEach((form, index) => {
-            form.querySelectorAll('input, textarea, select').forEach(field => {
-                const name = field.name.replace(/components-\d+/g, `components-${index}`);
-                field.name = name;
-                
-                const id = field.id.replace(/id_components_\d+/g, `id_components_${index}`);
-                field.id = id;
-            });
-            
-            const labels = form.querySelectorAll('label');
-            labels.forEach(label => {
-                if (label.htmlFor) {
-                    label.htmlFor = label.htmlFor.replace(/id_components_\d+/g, `id_components_${index}`);
-                }
-            });
-        });
-        managementForm.value = forms.length;
-    }
-    
+    const totalFormsInput = document.querySelector('input[name="components-TOTAL_FORMS"]');
+    const emptyFormTemplate = document.createElement('template');
+
+    // Create a template for a new form from the empty_form
+    const emptyForm = `{{ component_formset.empty_form }}`;
+    emptyFormTemplate.innerHTML = `
+        <div class="component-form mb-6 p-4 bg-gray-50 rounded-lg component-item">
+            ${emptyForm.replace(/<label/g, '<label class="block text-gray-700 text-sm font-bold mb-2"')}
+        </div>
+    `;
+
     addComponentBtn.addEventListener('click', function() {
         const currentFormCount = componentsContainer.querySelectorAll('.component-item').length;
-        const newFormHTML = `
-            <div class="component-form mb-6 p-4 bg-gray-50 rounded-lg component-item">
-                <div class="mb-4">
-                    <label for="id_components_${currentFormCount}_name" class="block text-gray-700 text-sm font-bold mb-2">Name</label>
-                    <input type="text" name="components-${currentFormCount}-name" placeholder="Component name" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="id_components_${currentFormCount}_name">
-                </div>
-                <div class="mb-4">
-                    <label for="id_components_${currentFormCount}_description" class="block text-gray-700 text-sm font-bold mb-2">Description</label>
-                    <textarea name="components-${currentFormCount}-description" rows="2" placeholder="Component description" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="id_components_${currentFormCount}_description"></textarea>
-                </div>
-                <div class="flex items-center mt-4">
-                    <label class="flex items-center text-gray-700 text-sm">
-                        <input type="checkbox" name="components-${currentFormCount}-DELETE">
-                        <span class="ml-2">Remove this component</span>
-                    </label>
-                </div>
-            </div>
-        `;
-        
-        componentsContainer.insertAdjacentHTML('beforeend', newFormHTML);
-        updateFormIndices();
+        const newForm = emptyFormTemplate.content.cloneNode(true);
+
+        // Update indices for the new form
+        const newFormHtml = newForm.firstElementChild.innerHTML.replace(/__prefix__/g, currentFormCount);
+        newForm.firstElementChild.innerHTML = newFormHtml;
+        componentsContainer.appendChild(newForm);
+
+        // Update the management form's total forms count
+        totalFormsInput.value = currentFormCount + 1;
     });
 });
 </script>

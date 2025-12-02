@@ -19,27 +19,15 @@ If you skip and jump around, you’ll confuse yourself and burn out. The correct
 **A dev must be able to:**
 - [x] Create a project
 - [x] Set project visibility (public/private)
-- [x] Add components
-- [x] Add description, logo, and tags
-- [x] Auto-generate a slug
-- [x] Save the project to the database
-- [x] Redirect to the project dashboard upon creation
+- [X] Add components
+- [X] Add description, logo, and tags
+- [X] Auto-generate a slug
+- [X] Save the project to the database
+- [X] Redirect to the project dashboard upon creation
 
 ***Why this first?***
 *Because reports cannot exist without a project. Comments cannot exist without reports. Org flows connect to projects. Anonymous links map to projects. Everything downstream depends on this model.*
 > This is the beating heart of your entire platform. Everything else depends on this. You already have the dashboard → “+ New Project” button. Make it functional.
-
-**A dev must be able to:**
-- [ ] Create a project
-- [ ] Set project visibility (public/private)
-- [ ] Add components
-- [ ] Add description, logo, and tags
-- [ ] Auto-generate a slug
-- [ ] Save the project to the database
-- [ ] Redirect to the project dashboard upon creation
-
-***Why this first?***
-*Because reports cannot exist without a project. Comments cannot exist without reports. Org flows connect to projects. Anonymous links map to projects. Everything downstream depends on this model.*
 
 ---
 
