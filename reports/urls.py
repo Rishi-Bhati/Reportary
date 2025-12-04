@@ -8,6 +8,6 @@ app_name = 'reports'
 
 urlpatterns = [
     path('', report_list, name='report_list'),
-    path('<int:pk>/', report_detail, name='report_detail'),
+    path('<int:report_pk>/', report_detail, name='report_detail'),
     path('new/', create_report, name='new'),
 ]

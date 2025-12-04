@@ -4,6 +4,17 @@
 
 {% block content %}
 
-<h1> REPORTS LIST WORKS </h1>
+<h1> Reports for {{ project.title }} </h1>
+
+{% comment %} Display all the reports of the project{% endcomment %}
+<ul>
+    {% for report in reports %}
+        <li>
+            <a href="{% url 'projects:reports:report_detail' pk=project.pk report_pk=report.pk %}" class="text-blue-600 hover:underline">{{ report.title }}</a> - Reported by {{ report.reported_by.username }}
+        </li>
+    {% empty %}
+        <li>No reports found for this project.</li>
+    {% endfor %}
+</ul>
 
 {% endblock %}

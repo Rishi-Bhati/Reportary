@@ -28,7 +28,7 @@ class Report(models.Model):
 
     title = models.CharField(max_length=200)
     project = models.ForeignKey('projects.Project', on_delete=models.CASCADE)
-    repoted_by = models.ForeignKey('accounts.User', on_delete=models.CASCADE)
+    reported_by = models.ForeignKey('accounts.User', on_delete=models.CASCADE)
     description = models.TextField()
     steps = models.TextField()
     

@@ -5,5 +5,13 @@
 {% block content %}
 
 <h1> REPORTS DETAILS WORKS </h1>
+<p> Project: {{ project.title }} </p>
+<p> Report Title: {{ report.title }} </p>
+<p> Reported by: {{ report.reported_by.username }} </p>
+<p> Description: {{ report.description }} </p>
+<p> Status: {{ report.status }} </p>
+<p> Created at: {{ report.created_at }} </p>
+<p> Updated at: {{ report.updated_at }} </p>
+<a href="{% url 'projects:reports:report_list' project.id %}" class="text-blue-600 hover:underline">Back to Reports List</a>
 
 {% endblock %}

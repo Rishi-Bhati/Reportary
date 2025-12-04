@@ -31,22 +31,22 @@ If you skip and jump around, you’ll confuse yourself and burn out. The correct
 
 ---
 
-### ☐ 2. Build “Report New Issue” Form (MVP Version)
+### ~~☐ 2. Build “Report New Issue” Form (MVP Version)~~
 > Not the massive full form you planned earlier. Just a trimmed version to get actual content in the system. Now dashboards will make sense.
 
 **Bare minimum fields to start:**
-- [ ] Title
-- [ ] Project
-- [ ] Steps to Reproduce
-- [ ] Description / What Happened
-- [ ] Frequency
-- [ ] Impact
-- [ ] Attachments (optional, basic file upload)
-- [ ] Public/Private toggle
+- [X] Title
+- [X] Project
+- [X] Steps to Reproduce
+- [X] Description / What Happened
+- [X] Frequency
+- [X] Impact
+- [X] Attachments (optional, basic file upload)
+- [X] Public/Private toggle
 
 **Actions:**
-- [ ] Save the new report to the database.
-- [ ] Redirect to the report detail page.
+- [X] Save the new report to the database.
+- [X] Redirect to the report detail page.
 
 ---
 
@@ -54,12 +54,12 @@ If you skip and jump around, you’ll confuse yourself and burn out. The correct
 > This is where the magic happens. Make it clean and readable, as you’ll use this page a LOT while building everything else.
 
 **Should show:**
-- [ ] Title
-- [ ] Status
-- [ ] Severity
-- [ ] Impact
-- [ ] Description
-- [ ] Steps to Reproduce
+- [X] Title
+- [X] Status
+- [X] Severity
+- [X] Impact
+- [X] Description
+- [X] Steps to Reproduce
 - [ ] Comments Section
 - [ ] History Log
 

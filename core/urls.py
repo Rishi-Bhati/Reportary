@@ -28,7 +28,7 @@ urlpatterns = [
     path("dashboard/", include("dashboard.urls")),  # dashboard app urls
     path('accounts/', include('accounts.urls')),
     path('projects/', include('projects.urls')),
-    # path('reports/', include('reports.urls')),
+    path('reports/', include('reports.urls')),
 ]
 
 # Serve static files in development
