@@ -24,11 +24,10 @@
     {% else %}
         <p class="mt-4 text-gray-500 italic">No components added.</p>
     {% endif %}
+    <a href="{% url 'projects:reports:new' pk=project.pk %}" class="mt-4 inline-block text-blue-600 hover:underline">Report an Issue</a>
     
     {% if user == project.owner %}  
-        <a href="{% url 'edit_project' project.pk %}" class="mt-4 inline-block text-blue-600 hover:underline">Edit Project</a>
+        <a href="{% url 'projects:edit_project' pk=project.pk %}" class="mt-4 inline-block text-blue-600 hover:underline">Edit Project</a>
     {% endif %}
 </div>
 {% endblock %}
-
-

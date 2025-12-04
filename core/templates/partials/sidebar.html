@@ -2,13 +2,13 @@
 <aside class="w-64 h-[calc(100vh-4rem)] fixed top-16 left-0 bg-gray-50 border-r border-gray-200 overflow-y-auto z-40">
     
     <div class="p-4 flex flex-col gap-3 border-b border-gray-200">
-        <a> 
+        <a href= "{% url 'projects:projects_view' %}" >  
             <button class="btn btn-outline btn-neutral border-2 border-gray-300 text-gray-900 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-600 normal-case text-lg justify-start font-bold">
                 <span class="mr-2 text-xl">+</span> New Report
             </button>
         </a>
         
-        <a href="{% url 'register_project' %}">
+        <a href="{% url 'projects:new' %}">
             <button class="btn btn-outline btn-neutral border-2 border-gray-300 text-gray-900 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-600 normal-case text-lg justify-start font-bold">
                 <span class="mr-2 text-xl">+</span> New Project
             </button>
@@ -16,7 +16,7 @@
     </div>
 
     <ul class="menu text-gray-700 text-lg font-medium w-full p-2 space-y-1">
-        <li><a class="hover:bg-gray-200 hover:text-gray-900 active:bg-blue-100 active:text-blue-600">Home</a></li>
+        <li><a href="{% url 'dashboard' %}" class="hover:bg-gray-200 hover:text-gray-900 active:bg-blue-100 active:text-blue-600">Home</a></li>
         <li><a class="hover:bg-gray-200 hover:text-gray-900 active:bg-blue-100 active:text-blue-600">Starred</a></li>
         <li><a class="hover:bg-gray-200 hover:text-gray-900 active:bg-blue-100 active:text-blue-600">Assigned to me</a></li>
         <li><a class="hover:bg-gray-200 hover:text-gray-900 active:bg-blue-100 active:text-blue-600">Collaborating</a></li>

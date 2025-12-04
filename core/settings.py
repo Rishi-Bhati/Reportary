@@ -47,7 +47,8 @@ INSTALLED_APPS = [
     "dashboard",
     "home",
     "projects",
-    "components"
+    "components",
+    "reports"
 ]
 
 TAILWIND_APP_NAME = "theme"

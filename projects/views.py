@@ -20,7 +20,7 @@ def register_project(request):
             component_formset = ComponentFormSet(request.POST, instance=project, prefix='components')
             if component_formset.is_valid():
                 component_formset.save()
-                return redirect("home")
+                return redirect("projects_view")
     else:
         project_form = ProjectForm()
         component_formset = ComponentFormSet(instance=Project(), prefix='components')
