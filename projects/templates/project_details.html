@@ -24,9 +24,9 @@
     {% else %}
         <p class="mt-4 text-gray-500 italic">No components added.</p>
     {% endif %}
-    <a href="{% url 'projects:reports:new' pk=project.pk %}" class="mt-4 inline-block text-blue-600 hover:underline">Report an Issue</a>
+    <a href="{% url 'projects:reports:new' project_pk=project.pk %}" class="mt-4 inline-block text-blue-600 hover:underline">Report an Issue</a>
     
-    <a href="{% url 'projects:reports:report_list' pk=project.pk %}" class="mt-4 inline-block text-blue-600 hover:underline">see all reports</a>
+    <a href="{% url 'projects:reports:report_list' project_pk=project.pk %}" class="mt-4 inline-block text-blue-600 hover:underline">see all reports</a>
     
     {% if user == project.owner %}  
         <a href="{% url 'projects:edit_project' pk=project.pk %}" class="mt-4 inline-block text-blue-600 hover:underline">Edit Project</a>

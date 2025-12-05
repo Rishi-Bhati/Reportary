@@ -9,6 +9,5 @@ urlpatterns = [
     path('', projects_view, name='projects_view'),
     path('<int:pk>/',  project_detail, name='project_detail'),
     path('edit_project/<int:pk>/',  edit_project, name='edit_project'),
-    # path('<int:pk>/reports/', include('reports.urls')),
-    path('<int:pk>/reports/', include('reports.urls')),
+    path('<int:project_pk>/reports/', include('reports.urls')),
 ]

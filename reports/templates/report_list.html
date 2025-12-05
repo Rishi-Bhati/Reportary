@@ -10,7 +10,7 @@
 <ul>
     {% for report in reports %}
         <li>
-            <a href="{% url 'projects:reports:report_detail' pk=project.pk report_pk=report.pk %}" class="text-blue-600 hover:underline">{{ report.title }}</a> - Reported by {{ report.reported_by.username }}
+            <a href="{% url 'projects:reports:report_detail' project_pk=project.pk report_pk=report.pk %}" class="text-blue-600 hover:underline">{{ report.title }}</a> - Reported by {{ report.reported_by.username }}
         </li>
     {% empty %}
         <li>No reports found for this project.</li>

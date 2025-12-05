@@ -27,7 +27,7 @@ urlpatterns = [
     path('', include('home.urls')), # New Home App at root
     path("dashboard/", include("dashboard.urls")),  # dashboard app urls
     path('accounts/', include('accounts.urls')),
-    path('projects/', include('projects.urls')),
+    path('projects/', include('projects.urls')), # projects.urls will now include reports.urls
     path('reports/', include('reports.urls')),
 ]
 

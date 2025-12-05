@@ -1,32 +1,135 @@
 {% extends "base.html" %}
 {% load static %}
 
-
 {% block content %}
+<div class="container mx-auto mt-8">
+    <h1 class="text-2xl font-bold mb-4">
+        {% if project %}
+            Report New Issue for {{ project.title }}
+        {% else %}
+            Report New Issue
+        {% endif %}
+    </h1>
 
-<div class="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-md">
-    <h1 class="text-2xl font-bold mb-6">Create a New Report</h1>
-    
-    <form method="post">
+    <form method="post" enctype="multipart/form-data" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
         {% csrf_token %}
         
-        {% for field in form %}
-            <div class="mb-6">
-                <label for="{{ field.id_for_label }}" class="block text-gray-700 text-sm font-bold mb-2">{{ field.label }}</label>
-                {{ field }}
-                {% if field.help_text %}
-                    <p class="text-gray-600 text-xs italic mt-1">{{ field.help_text }}</p>
-                {% endif %}
+        <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-bold mb-2" for="{{ form.title.id_for_label }}">
+                {{ form.title.label }}
+            </label>
+            {{ form.title }}
+        </div>
 
-                {% for error in field.errors %}
-                    <p class="text-red-500 text-xs italic mt-1">{{ error }}</p>
-                {% endfor %}
+        {% if project %}
+            {# Project field is not rendered when coming from project URL - set in backend #}
+        {% else %}
+        <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-bold mb-2" for="{{ form.project.id_for_label }}">
+                {{ form.project.label }}
+            </label>
+            {{ form.project }}
+        </div>
+        {% endif %}
+
+        <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-bold mb-2" for="{{ form.component.id_for_label }}">
+                {{ form.component.label }}
+            </label>
+            {{ form.component }}
+        </div>
+
+        <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-bold mb-2" for="{{ form.description.id_for_label }}">
+                {{ form.description.label }}
+            </label>
+            {{ form.description }}
+        </div>
+
+        <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-bold mb-2" for="{{ form.steps.id_for_label }}">
+                {{ form.steps.label }}
+            </label>
+            {{ form.steps }}
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 mb-4">
+            <div>
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="{{ form.frequency.id_for_label }}">
+                    {{ form.frequency.label }}
+                </label>
+                {{ form.frequency }}
             </div>
-        {% endfor %}
-        
-        <button type="submit" class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-            Submit Report
-        </button>
+            <div>
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="{{ form.impact.id_for_label }}">
+                    {{ form.impact.label }}
+                </label>
+                {{ form.impact }}
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-bold mb-2" for="{{ form.attatchment.id_for_label }}">
+                {{ form.attatchment.label }}
+            </label>
+            {{ form.attatchment }}
+        </div>
+
+        <div class="mb-6">
+            <label class="block text-gray-700 text-sm font-bold mb-2">
+                {{ form.visibility.label }}
+            </label>
+            <label class="inline-flex items-center">
+                {{ form.visibility }}
+                <span class="ml-2 text-gray-700">Public</span>
+            </label>
+        </div>
+
+        <div class="flex items-center justify-between">
+            <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
+                Submit Report
+            </button>
+        </div>
     </form>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const projectSelect = document.getElementById('id_project');
+    const componentSelect = document.getElementById('{{ form.component.id_for_label }}');
+    const componentsUrl = "{% url 'reports:ajax_get_components' %}";
+
+    if (projectSelect) {
+        projectSelect.addEventListener('change', function() {
+            const projectId = this.value;
+            
+            // Clear component options
+            componentSelect.innerHTML = '<option value="">---------</option>';
+
+            if (projectId) {
+                fetch(`${componentsUrl}?project_id=${projectId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.length > 0) {
+                            data.forEach(function(component) {
+                                const option = new Option(component.name, component.id);
+                                componentSelect.add(option);
+                            });
+                            componentSelect.disabled = false;
+                        } else {
+                            componentSelect.disabled = true;
+                        }
+                    });
+            } else {
+                componentSelect.disabled = true;
+            }
+        });
+
+        // Trigger change on load if a project is already selected
+        if (projectSelect.value) {
+            projectSelect.dispatchEvent(new Event('change'));
+        }
+    }
+});
+</script>
 {% endblock %}
