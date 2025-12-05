@@ -8,6 +8,9 @@ User = get_user_model()
 def landing_page(request):
     # if request.user.is_authenticated:
     #     return redirect('home')
+    # if request.user.is_authenticated:
+    #     return redirect('dashboard/')
+    
     return render(request, "home/landing_page.html")
 
 def login_card(request):

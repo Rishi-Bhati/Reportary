@@ -1,8 +1,11 @@
-from django.urls import path
+from django.urls import path, include
 from . import views
+
+# app_name = 'home'
 
 urlpatterns = [
     path('', views.landing_page, name='landing_page'),
+    path('dashboard/', include('dashboard.urls')),
     
     # HTMX Partials
     path('auth/card/login/', views.login_card, name='login_card'),

@@ -22,8 +22,32 @@
         </div>
 
         {% if project %}
-            {# Project field is not rendered when coming from project URL - set in backend #}
+            {# 
+            PROJECT FIELD HANDLING - SECURITY & UX OPTIMIZATION
+            
+            When project is passed from URL (e.g., /projects/3/reports/new/):
+            - The form's __init__ REMOVED the project field entirely
+            - Therefore, {{ form.project }} would error because the field doesn't exist
+            - So we don't render anything here - the field is handled entirely in the backend
+            
+            Why this is better than using a hidden field:
+            1. SECURITY: Users cannot see or inspect the project value in browser DevTools
+            2. NO TAMPERING: The project value cannot be modified by client-side manipulation
+            3. CLEAN HTML: The form HTML doesn't expose internal state
+            4. PREVENTS VULNERABILITY: Users cannot change the hidden value to report to different projects
+            
+            The project is safely set by the view and form's save() method
+            #}
         {% else %}
+        {# 
+        PROJECT FIELD - USER SELECTION
+        
+        When no project is in URL (e.g., /reports/new/):
+        - The form's __init__ kept the project field
+        - It displays as a dropdown with all available projects
+        - User must select a project before submitting
+        - The selected value is submitted with the form data
+        #}
         <div class="mb-4">
             <label class="block text-gray-700 text-sm font-bold mb-2" for="{{ form.project.id_for_label }}">
                 {{ form.project.label }}
