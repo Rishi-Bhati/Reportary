@@ -7,6 +7,7 @@ from components.models import Component
 from reports.models import Report
 from comments.models import Comment
 from comments.forms import CommentForm
+from django.db.models import Q
 
 
 # Create your views here.
@@ -39,7 +40,6 @@ def report_detail(request, project_pk, report_pk):
     if request.user.is_authenticated:
         # The project owner, the report's author, and the comment's author can see hidden comments.
         # We use Q objects to create a complex query for this logic.
-        from django.db.models import Q
         is_privileged_user = request.user == project.owner or request.user == report.reported_by
         if is_privileged_user:
             # If the user is the project owner or reporter, show all comments for this report.
