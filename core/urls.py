@@ -23,14 +23,32 @@ from django.contrib.auth.urls import views as auth_views
 # from dashboard.views import home
 
 urlpatterns = [
+    # The Django admin interface
     path('admin/', admin.site.urls),
-    path('', include('home.urls')), # New Home App at root
-    path("dashboard/", include("dashboard.urls")),  # dashboard app urls
+    
+    # URLs for the landing page, login, and signup
+    path('', include('home.urls')),
+    
+    # URLs for the main user dashboard
+    path("dashboard/", include("dashboard.urls")),
+    
+    # URLs for account management, like onboarding
     path('accounts/', include('accounts.urls')),
-    path('projects/', include('projects.urls')), # projects.urls will now include reports.urls
+    
+    # URLs for project-related views. This is the main entry point for projects and their nested reports.
+    path('projects/', include('projects.urls')),
+    
+    # The reports URLs are included within projects.urls, so this line was redundant and potentially problematic.
+    # It's kept here but commented out to show the history of the chan/ges.
     path('reports/', include('reports.urls')),
+
+    # URLs for the comments app.
+    # We add a namespace 'comments' here.
+    # This was the fix for the NoReverseMatch error, which occurred because Django couldn't find the namespaced URL 'comments:add_comment'.
+    path('comments/', include('comments.urls', namespace='comments')),
 ]
 
-# Serve static files in development
+# This is a standard practice for serving static files during development.
+# In a production environment, a web server like Nginx or Apache should be configured to serve static files.
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

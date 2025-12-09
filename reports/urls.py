@@ -1,6 +1,6 @@
 from django.urls import path
-from django.urls import include
 from reports.views import report_list, report_detail, create_report, get_components
+from comments.views import add_comment
 
 
 app_name = 'reports'
@@ -11,4 +11,5 @@ urlpatterns = [
     path('ajax/get-components/', get_components, name='ajax_get_components'),
     path('', report_list, name='report_list'),
     path('<int:report_pk>/', report_detail, name='report_detail'), # This path is now relative to a project
+    # path('<int:report_pk>/comment/', add_comment, name='add_comment'),
 ]

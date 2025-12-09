@@ -60,7 +60,7 @@ If you skip and jump around, you’ll confuse yourself and burn out. The correct
 - [X] Impact
 - [X] Description
 - [X] Steps to Reproduce
-- [ ] Comments Section
+- [X] Comments Section
 - [ ] History Log
 
 ---
@@ -68,9 +68,9 @@ If you skip and jump around, you’ll confuse yourself and burn out. The correct
 ### ☐ 4. Build Comments (Basic)
 > No fancy HTMX, anonymity, or internal notes yet. Just the basic flow to make the app feel alive.
 
-- [ ] A user can comment on a report.
-- [ ] The comment saves to the database.
-- [ ] The comment shows instantly on the page.
+- [X] A user can comment on a report.
+- [X] The comment saves to the database.
+- [X] The comment shows instantly on the page.
 
 ---
 

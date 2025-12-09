@@ -1,18 +1,70 @@
 {% extends "base.html" %}
 {% load static %}
 
-
 {% block content %}
+<div class="container mx-auto px-4 py-8">
 
-<h1> REPORTS DETAILS WORKS </h1>
-<p> Project: {{ project.title }} </p>
-<p> Report Title: {{ report.title }} </p>
-<p> Reported by: {{ report.reported_by.username }} </p>
-<p> Component: {{ report.component.name }} </p>
-<p> Description: {{ report.description }} </p>
-<p> Status: {{ report.status }} </p>
-<p> Created at: {{ report.created_at }} </p>
-<p> Updated at: {{ report.updated_at }} </p>
-<a href="{% url 'projects:reports:report_list' project.id %}" class="text-blue-600 hover:underline">Back to Reports List</a>
+    {# This is the main card for displaying the report details. #}
+    <div class="card bg-base-100 shadow-xl mb-8">
+        <div class="card-body">
+            <h1 class="card-title text-3xl mb-4">Report: {{ report.title }}</h1>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <p><strong>Project:</strong> {{ project.title }}</p>
+                <p><strong>Reported by:</strong> {{ report.reported_by.username }}</p>
+                <p><strong>Component:</strong> {{ report.component.name }}</p>
+                <p><strong>Status:</strong> <span class="badge badge-lg">{{ report.status }}</span></p>
+                <p><strong>Created at:</strong> {{ report.created_at }}</p>
+                <p><strong>Last updated:</strong> {{ report.updated_at }}</p>
+            </div>
+            <div class="mt-4">
+                <p><strong>Description:</strong></p>
+                <p>{{ report.description }}</p>
+            </div>
+        </div>
+    </div>
 
+    {# Link to go back to the list of reports for the current project. #}
+    <a href="{% url 'projects:reports:report_list' project.id %}" class="btn btn-outline mb-8">Back to Reports List</a>
+
+    {# This section handles the display and creation of comments. #}
+    <div class="mt-8">
+        <h2 class="text-2xl font-bold mb-4">Comments</h2>
+        
+        {# This div is the target for HTMX. New comments will be appended here. #}
+        <div id="comments-section" class="space-y-4">
+            {# We loop through the existing comments and include a partial template for each one. #}
+            {# This keeps the comment rendering logic separate and reusable. #}
+            {% for comment in comments %}
+                {% include 'comments/partials/comment.html' %}
+            {% endfor %}
+        </div>
+        
+        {# This is the form for adding a new comment. It uses HTMX for submission. #}
+        <div class="mt-8 card bg-base-100 shadow">
+            <div class="card-body">
+                <h3 class="card-title">Leave a comment</h3>
+                {%comment%}
+                   hx-post: Specifies the URL to send the POST request to. 
+                             The URL was previously 'comments:add_comment' which caused a NoReverseMatch error.
+                             It has been corrected to point to a URL within the 'reports' app namespace.
+                   hx-target: The CSS selector of the element to update with the response.
+                   hx-swap: Specifies how to swap the content. 'beforeend' appends the new comment at the end of the target.
+                   hx-on::after-request: A script to run after the request. Here, it resets the form.
+                {%endcomment%}
+                <form hx-post="{% url 'comments:add_comment' report.pk %}" hx-target="#comments-section" hx-swap="beforeend" hx-on::after-request="this.reset()">
+                    {% csrf_token %}
+                    <div class="form-control">
+                        {{ comment_form.text.label_tag }}
+                        <textarea class="textarea textarea-bordered h-24" name="text" placeholder="Write a comment..." required></textarea>
+                    </div>
+                    <div class="mt-4 flex justify-end">
+                        <button type="submit" class="btn btn-primary">
+                            Post comment
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

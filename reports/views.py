@@ -5,20 +5,38 @@ from django.http import JsonResponse
 from projects.models import Project
 from components.models import Component
 from reports.models import Report
+from comments.models import Comment
+from comments.forms import CommentForm
 
 
 # Create your views here.
 
 
 def report_list(request, project_pk):
+    """
+    Displays a list of all reports for a specific project.
+    """
+    # Fetches the project object based on the primary key from the URL.
     project = get_object_or_404(Project, pk=project_pk)
+    # Filters reports that belong to the fetched project.
     reports = Report.objects.filter(project=project)
+    # Renders the 'report_list.html' template, passing the reports and project as context.
     return render(request, 'report_list.html', {'reports': reports, 'project': project})
 
 def report_detail(request, project_pk, report_pk):
+    """
+    Displays the details of a single report, including its comments.
+    """
+    # Fetches the specific report, ensuring it belongs to the correct project.
     report = get_object_or_404(Report, project__pk=project_pk, pk=report_pk)
+    # Gets the project from the report object.
     project = report.project
-    return render(request, 'report_detail.html', {'report': report, 'project': project})
+    # Fetches all visible comments associated with this report.
+    comments = Comment.objects.filter(report=report, visibility=True)
+    # Creates an empty instance of the comment form to be rendered in the template.
+    comment_form = CommentForm()
+    # Renders the 'report_detail.html' template with all the necessary context.
+    return render(request, 'report_detail.html', {'report': report, 'project': project, 'comments': comments, 'comment_form': comment_form})
 
 @login_required
 def create_report(request, project_pk=None):    
