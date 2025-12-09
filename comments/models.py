@@ -22,8 +22,11 @@ class Comment(models.Model):
     # Based on the user request, it is not displayed on the front end.
     visibility = models.BooleanField(default=True)
     
+    is_edited = models.BooleanField(default=False)
     # This field automatically records the date and time when the comment is created.
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
 
     def __str__(self):
         # This method provides a human-readable string representation of the comment object,

@@ -31,12 +31,47 @@ def report_detail(request, project_pk, report_pk):
     report = get_object_or_404(Report, project__pk=project_pk, pk=report_pk)
     # Gets the project from the report object.
     project = report.project
-    # Fetches all visible comments associated with this report.
+
+    # By default, fetch only visible comments.
     comments = Comment.objects.filter(report=report, visibility=True)
+
+    # If the user is authenticated, they might be able to see hidden comments.
+    if request.user.is_authenticated:
+        # The project owner, the report's author, and the comment's author can see hidden comments.
+        # We use Q objects to create a complex query for this logic.
+        from django.db.models import Q
+        is_privileged_user = request.user == project.owner or request.user == report.reported_by
+        if is_privileged_user:
+            # If the user is the project owner or reporter, show all comments for this report.
+            comments = Comment.objects.filter(report=report)
+        else:
+            # Otherwise, show visible comments PLUS any hidden comments made by the current user.
+            comments = Comment.objects.filter(
+                Q(report=report) & (Q(visibility=True) | Q(commented_by=request.user))
+            ).distinct()
+
     # Creates an empty instance of the comment form to be rendered in the template.
     comment_form = CommentForm()
+    # Determines if the current user is the owner of the project.
+    is_project_owner = False
+    is_reporter = False
+    is_commenter = False
+    
+    is_report_hidden = report.visibility 
+    if request.user == project.owner:
+        is_project_owner = True
+    
+    if request.user == report.reported_by:
+        is_reporter = True
+    
+    for comment in comments:
+        if request.user == comment.commented_by:
+            is_commenter = True
+            break
+    # is_project_owner = request.user.is_authenticated and request.user == project.owner
+
     # Renders the 'report_detail.html' template with all the necessary context.
-    return render(request, 'report_detail.html', {'report': report, 'project': project, 'comments': comments, 'comment_form': comment_form})
+    return render(request, 'report_detail.html', {'report': report, 'project': project, 'comments': comments, 'comment_form': comment_form, 'is_project_owner': is_project_owner, 'is_reporter': is_reporter, 'is_commenter': is_commenter, 'is_report_hidden': is_report_hidden})
 
 @login_required
 def create_report(request, project_pk=None):    

@@ -1,0 +1,22 @@
+<div id="comment-{{ comment.pk }}" class="chat-bubble">{{ comment.text }}</div>
+
+{% comment %} If the logged-in user is the author of the comment, show the edit link. {% endcomment %}
+{% if request.user == comment.commented_by %}
+    <div class="chat-footer">
+        <a href="{% url 'comments:edit_comment' report.pk comment.pk %}"
+           hx-get="{% url 'comments:edit_comment' report.pk comment.pk %}"
+           hx-target="#comment-container-{{ comment.pk }}"
+           hx-swap="innerHTML"
+           class="text-xs text-blue-500 hover:underline cursor-pointer">Edit</a>
+    </div>
+{% endif %}
+
+{% comment %} {% if is_project_owner %}
+    
+    <a href="{% url 'comments:toggle_comment_visibility' report.pk comment.pk %}"
+       hx-delete="{% url 'comments:toggle_comment_visibility' report.pk comment.pk %}"
+       hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+       hx-target="#comment-container-{{ comment.pk }}"
+       hx-swap="outerHTML"
+       class="text-xs text-red-500 hover:underline cursor-pointer">Delete</a>
+{% endif %} {% endcomment %}

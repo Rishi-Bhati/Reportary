@@ -1,0 +1,14 @@
+<form hx-post="{% url 'comments:edit_comment' report.pk comment.pk %}" hx-target="#comment-container-{{ comment.pk }}" hx-swap="innerHTML">
+    {% csrf_token %}
+    <div class="form-control">
+        {{ form.text }}
+    </div>
+    <div class="mt-2">
+        <button type="submit" class="btn btn-sm btn-primary">Save</button>
+        <button type="button" 
+                hx-get="{% url 'comments:cancel_edit_comment' report.pk comment.pk %}" 
+                hx-target="#comment-container-{{ comment.pk }}"
+                hx-swap="innerHTML"
+                class="btn btn-sm">Cancel</button>
+    </div>
+</form>

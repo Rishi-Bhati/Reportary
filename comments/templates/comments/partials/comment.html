@@ -1,6 +1,7 @@
 {# This is a partial template for displaying a single comment. #}
 {# It uses the DaisyUI 'chat' component for styling. #}
-<div class="chat chat-start">
+
+<div class="chat chat-start {% if not comment.visibility %}opacity-50{% endif %}">
     <div class="chat-image avatar">
         <div class="w-10 rounded-full">
             {% comment %} {# This is a placeholder for the user's avatar. 
@@ -10,14 +11,25 @@
         </div>
     </div>
     <div class="chat-header">
-        {# Display the username of the person who commented. #}
-        {% comment %} {{ comment.commented_by.username }}
-        {# 
-           The 'timesince' template filter formats a datetime object to show how long ago it was.
-           e.g., "5 minutes ago", "2 hours ago".
-        #} {% endcomment %}
-        <time class="text-xs opacity-50">{{ comment.created_at|timesince }} ago</time>
+        {{ comment.commented_by.username }}
+        <time class="ml-2 text-xs opacity-50">{{ comment.created_at|timesince }} ago</time>
+        {% if request.user == comment.commented_by and comment.is_edited %}
+            <span class="text-xs opacity-50 italic">(edited)</span>
+        {% endif %}
+
+        {# Show hide/unhide button only to the project owner #}
+        {% if request.user == project.owner %}
+            <button 
+                hx-post="{% url 'comments:toggle_comment_visibility' report.pk comment.pk %}"
+                hx-target="#comment-wrapper-{{ comment.pk }}"
+                hx-swap="outerHTML"
+                class="ml-4 text-xs text-blue-500 hover:underline">
+                {% if comment.visibility %}Hide{% else %}Unhide{% endif %}
+            </button>
+        {% endif %}
     </div>
-    {# This is the main content of the comment. #}
-    <div class="chat-bubble">{{ comment.text }}</div>
+    <div id="comment-container-{{ comment.pk }}">
+        {# The content is always included because the view logic determines who can see this partial #}
+        {% include 'comments/partials/comment_content.html' %}
+    </div>
 </div>

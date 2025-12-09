@@ -11,4 +11,10 @@ urlpatterns = [
     # The view function 'add_comment' in views.py will handle the request.
     # The name 'add_comment' is used to reverse the URL in templates.
     path('<int:report_pk>/add_comment/', views.add_comment, name='add_comment'),
+    # This URL is for editing a comment. It handles both GET (to show the form) and POST (to save the changes).
+    path('<int:report_pk>/edit_comment/<int:comment_pk>/', views.edit_comment, name='edit_comment'),
+    # This URL is for canceling the edit of a comment. It returns the original comment content.
+    path('<int:report_pk>/cancel_edit_comment/<int:comment_pk>/', views.cancel_edit_comment, name='cancel_edit_comment'),
+    # This URL is for toggling the visibility of a comment. Only the project owner can do this.
+    path('<int:report_pk>/toggle_comment_visibility/<int:comment_pk>/', views.toggle_comment_visibility, name='toggle_comment_visibility'),
 ]

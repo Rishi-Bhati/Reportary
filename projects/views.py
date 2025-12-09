@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from .forms import ProjectForm, ComponentFormSet, ComponentForm, ComponentFormSet
 from django.contrib.auth.decorators import login_required
 from projects.models import Project
+from django.http import HttpResponseForbidden
 
 # Create your views here.
 
@@ -55,7 +56,6 @@ def edit_project(request, pk):
     project = Project.objects.get(pk=pk)
     
     if project.owner != request.user:
-        from django.http import HttpResponseForbidden
         return HttpResponseForbidden("You are not the owner of this project.")
 
     if request.method == "POST":
