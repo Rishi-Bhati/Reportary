@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     #my apps
+    "rules",
     "accounts",
     "django_htmx",
     "tailwind", 

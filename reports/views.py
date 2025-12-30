@@ -8,6 +8,7 @@ from reports.models import Report
 from comments.models import Comment
 from comments.forms import CommentForm
 from django.db.models import Q
+import rules.views as rules
 
 
 # Create your views here.
@@ -53,21 +54,13 @@ def report_detail(request, project_pk, report_pk):
     # Creates an empty instance of the comment form to be rendered in the template.
     comment_form = CommentForm()
     # Determines if the current user is the owner of the project.
-    is_project_owner = False
-    is_reporter = False
-    is_commenter = False
+    is_project_owner = rules.is_project_owner(request.user, project)
+    is_reporter = rules.is_reporter(request.user, report)
     
-    is_report_hidden = report.visibility 
-    if request.user == project.owner:
-        is_project_owner = True
-    
-    if request.user == report.reported_by:
-        is_reporter = True
-    
+    is_report_hidden = report.visibility == False
+
     for comment in comments:
-        if request.user == comment.commented_by:
-            is_commenter = True
-            break
+        is_commenter = rules.is_commenter(request.user, comment)
     # is_project_owner = request.user.is_authenticated and request.user == project.owner
 
     # Renders the 'report_detail.html' template with all the necessary context.
@@ -111,24 +104,7 @@ def create_report(request, project_pk=None):
             # Set the user who is reporting this issue
             report.reported_by = request.user
             
-            # SECURITY FIX: Re-set the project from the URL parameter
-            # Why this is crucial:
-            # Even though the form's save() method already sets the project (if it came from URL),
-            # this is an extra layer of security. If project came from URL (project_pk is set),
-            # we ensure it's used, not any potentially tampered form data.
-            #
-            # Scenario 1: /projects/3/reports/new/
-            #   - project = Project(pk=3) from URL
-            #   - Form had no project field (removed in form.__init__)
-            #   - Form.save() already set report.project = 3
-            #   - This line re-confirms it: report.project = 3
-            #
-            # Scenario 2: /reports/new/
-            #   - project = None (not in URL)
-            #   - Form had project field, user selected it
-            #   - Form.save() didn't override the project (self.project is None)
-            #   - This line doesn't execute (if project is None)
-            #   - So report.project keeps the value from form submission
+            # If the project was pre-selected from the URL, assign it to the report
             if project:
                 report.project = project
             
