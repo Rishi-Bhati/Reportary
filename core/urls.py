@@ -38,8 +38,6 @@ urlpatterns = [
     # URLs for project-related views. This is the main entry point for projects and their nested reports.
     path('projects/', include('projects.urls')),
     
-    # The reports URLs are included within projects.urls, so this line was redundant and potentially problematic.
-    # It's kept here but commented out to show the history of the chan/ges.
     path('reports/', include('reports.urls')),
 
     # URLs for the comments app.

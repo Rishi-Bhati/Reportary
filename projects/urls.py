@@ -1,6 +1,6 @@
 from django.urls import path
 from django.urls import include
-from projects.views import register_project, projects_view, project_detail, edit_project
+from projects.views import *
 
 app_name = 'projects'
 
@@ -10,4 +10,5 @@ urlpatterns = [
     path('<int:pk>/',  project_detail, name='project_detail'),
     path('edit_project/<int:pk>/',  edit_project, name='edit_project'),
     path('<int:project_pk>/reports/', include('reports.urls')),
+    path('my_projects/', my_projects_view, name='my_projects'),
 ]

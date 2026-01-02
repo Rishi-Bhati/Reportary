@@ -76,3 +76,9 @@ def edit_project(request, pk):
         'component_formset': component_formset,
         'project': project,
     })
+
+
+@login_required
+def my_projects_view(request):
+    projects = Project.objects.filter(owner=request.user)
+    return render(request, 'projects_view.html', {'projects': projects})

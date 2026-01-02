@@ -14,14 +14,14 @@ import rules.views as rules
 # Create your views here.
 
 
-def report_list(request, project_pk):
+def report_list(request, project_pk=None):
     """
     Displays a list of all reports for a specific project.
     """
     # Fetches the project object based on the primary key from the URL.
     project = get_object_or_404(Project, pk=project_pk)
     # Filters reports that belong to the fetched project.
-    reports = Report.objects.filter(project=project)
+    reports = Report.objects.filter(project=project).select_related('reported_by').distinct()
     # Renders the 'report_list.html' template, passing the reports and project as context.
     return render(request, 'report_list.html', {'reports': reports, 'project': project})
 
@@ -58,7 +58,7 @@ def report_detail(request, project_pk, report_pk):
     is_reporter = rules.is_reporter(request.user, report)
     
     is_report_hidden = report.visibility == False
-
+    is_commenter = False
     for comment in comments:
         is_commenter = rules.is_commenter(request.user, comment)
     # is_project_owner = request.user.is_authenticated and request.user == project.owner
@@ -132,3 +132,17 @@ def get_components(request):
         return JsonResponse([], safe=False)
     components = list(Component.objects.filter(project_id=project_id).values('id', 'name'))
     return JsonResponse(components, safe=False)
+
+
+def my_report_list(request):
+    """
+    Displays a list of reports created by the logged-in user.
+    """
+    if not request.user.is_authenticated:
+        return redirect('login')  # Redirect to login if user is not authenticated
+
+    # Fetch reports where the reported_by field matches the current user
+    reports = Report.objects.filter(reported_by=request.user).select_related('project', 'reported_by').distinct()
+
+    # Render the 'my_report_list.html' template with the user's reports
+    return render(request, 'report_list.html', {'reports': reports})

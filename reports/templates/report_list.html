@@ -4,13 +4,19 @@
 
 {% block content %}
 
+{% if project %}
 <h1> Reports for {{ project.title }} </h1>
 
+{% else %}
+
+<h1> Your Reports </h1>
+
+{% endif %}
 {% comment %} Display all the reports of the project{% endcomment %}
 <ul>
     {% for report in reports %}
         <li>
-            <a href="{% url 'projects:reports:report_detail' project_pk=project.pk report_pk=report.pk %}" class="text-blue-600 hover:underline">{{ report.title }}</a> - Reported by {{ report.reported_by.username }}
+            <a href="{% url 'projects:reports:report_detail' project_pk=report.project_id report_pk=report.pk %}" class="text-blue-600 hover:underline">{{ report.title }}</a> - Reported by {{ report.reported_by.username }}
         </li>
     {% empty %}
         <li>No reports found for this project.</li>

@@ -1,5 +1,5 @@
 from django.urls import path
-from reports.views import report_list, report_detail, create_report, get_components
+from reports.views import *
 from comments.views import add_comment
 
 
@@ -12,4 +12,5 @@ urlpatterns = [
     path('', report_list, name='report_list'),
     path('<int:report_pk>/', report_detail, name='report_detail'), # This path is now relative to a project
     # path('<int:report_pk>/comment/', add_comment, name='add_comment'),
+    path('my_reports/', my_report_list, name='my_reports'),
 ]
