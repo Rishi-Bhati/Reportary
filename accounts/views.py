@@ -2,8 +2,21 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.http import JsonResponse
 
 User = get_user_model()
+
+@login_required
+def user_search(request):
+    term = request.GET.get('term', '')
+    users = User.objects.filter(email__icontains=term)[:10]
+    results = []
+    for user in users:
+        results.append({
+            'id': user.email,
+            'text': user.email
+        })
+    return JsonResponse({'results': results})
 
 @login_required
 def onboarding_home(request):

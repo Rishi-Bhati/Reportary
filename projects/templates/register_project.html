@@ -7,7 +7,7 @@
 
 <h2 class="text-2xl font-bold mb-4">Register New Project</h2>
 <div class="max-w-lg mx-auto bg-white p-8 rounded-lg shadow-md">
-    <form method="post" action="" id="projectForm">
+    <form method="post" action="{% url 'projects:new' %}" id="projectForm">
         {% csrf_token %}
         
         <!-- Project Fields -->
@@ -38,6 +38,12 @@
                 </div>
             {% endif %}
         {% endfor %}
+
+        <div class="mb-6">
+            <label for="id_collaborators_select2" class="block text-gray-700 text-sm font-bold mb-2">Collaborators</label>
+            <select id="id_collaborators_select2" class="w-full" multiple="multiple"></select>
+            <input type="hidden" name="collaborators" id="id_collaborators">
+        </div>
 
         <!-- Components Section -->
         <div class="mt-8 pt-8 border-t-2">
@@ -92,6 +98,9 @@
     </form>
 </div>
 
+{% endblock %}
+
+{% block scripts %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const addComponentBtn = document.getElementById('addComponentBtn');
@@ -145,5 +154,44 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+<script>
+    $(document).ready(function() {
+        var $select2 = $('#id_collaborators_select2').select2({
+            tags: true,
+            tokenSeparators: [',', ' '],
+            placeholder: "Enter collaborator emails",
+            ajax: {
+                url: "{% url 'accounts:user_search' %}",
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        term: params.term, // search term
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: data.results
+                    };
+                },
+                cache: true
+            },
+            multiple: true,
+        });
 
+        $select2.on('change', function() {
+            var emails = $(this).val();
+            $('#id_collaborators').val(emails.join(','));
+        });
+
+        // Style the Select2 widget to match the form
+        $('.select2-container').css('width', '100%');
+        $('.select2-selection--multiple').css({
+            'border': '1px solid #e2e8f0',
+            'border-radius': '0.375rem',
+            'padding': '0.5rem 0.75rem',
+            'height': 'auto',
+        });
+    });
+</script>
 {% endblock %}

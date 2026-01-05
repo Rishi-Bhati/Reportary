@@ -16,6 +16,7 @@ class ProjectAdmin(admin.ModelAdmin): # Admin for Project model
     search_fields = ('title', 'description')
     readonly_fields = ('created_at', 'updated_at')
     inlines = [ComponentInline]
+    filter_horizontal = ('collaborators',)
     
     def component_count(self, obj):
         return obj.component_set.count()

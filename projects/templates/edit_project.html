@@ -7,7 +7,7 @@
 
 <h2 class="text-2xl font-bold mb-4">Edit Project: {{ project.name }}</h2>
 <div class="max-w-lg mx-auto bg-white p-8 rounded-lg shadow-md">
-    <form method="post" action="{% url 'edit_project' pk=project.pk %}" id="projectForm">
+    <form method="post" action="{% url 'projects:edit_project' pk=project.pk %}" id="projectForm">
         {% csrf_token %}
         
         <!-- Project Fields -->
@@ -38,6 +38,16 @@
                 </div>
             {% endif %}
         {% endfor %}
+
+        <div class="mb-6">
+            <label for="id_collaborators_select2" class="block text-gray-700 text-sm font-bold mb-2">Collaborators</label>
+            <select id="id_collaborators_select2" class="w-full" multiple="multiple">
+                {% for email in collaborator_emails %}
+                    <option value="{{ email }}" selected="selected">{{ email }}</option>
+                {% endfor %}
+            </select>
+            <input type="hidden" name="collaborators" id="id_collaborators" value="{{ collaborator_emails|join:", " }}">
+        </div>
 
         <!-- Components Section -->
         <div class="mt-8 pt-8 border-t-2">
@@ -124,5 +134,4 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
-
 {% endblock %}

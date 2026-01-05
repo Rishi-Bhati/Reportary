@@ -27,7 +27,7 @@ def report_list(request, project_pk=None):
 
     
     for report in Report.objects.filter(project=project):
-        if rules.is_assigned_to(request.user, report) or rules.is_reporter(request.user, report) or rules.is_project_owner(request.user, project):
+        if rules.is_assigned_to(request.user, report) or rules.is_reporter(request.user, report) or rules.is_project_member(request.user, project):
             reports = Report.objects.filter(project=project).select_related('reported_by').distinct()
 
         else:
@@ -162,7 +162,7 @@ def reassign_report(request, project_pk, report_pk):
     report = get_object_or_404(Report, pk=report_pk, project__pk=project_pk)
     project = report.project
 
-    if not rules.is_project_member(request.user, project):
+    if not rules.is_project_owner(request.user, project):
         return HttpResponseForbidden("You are not authorized to perform this action.")
 
     if request.method == 'POST':

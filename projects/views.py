@@ -3,6 +3,7 @@ from .forms import ProjectForm, ComponentFormSet, ComponentForm, ComponentFormSe
 from django.contrib.auth.decorators import login_required
 from projects.models import Project
 from django.http import HttpResponseForbidden
+from accounts.models import User
 
 # Create your views here.
 
@@ -17,11 +18,20 @@ def register_project(request):
             project = project_form.save(commit=False)
             project.owner = request.user
             project.save()
+            project.collaborators.add(request.user)
+
+            collaborators_emails = request.POST.get('collaborators', '')
+            if collaborators_emails:
+                emails = [email.strip() for email in collaborators_emails.split(',')]
+                for email in emails:
+                    user = User.objects.filter(email=email).first()
+                    if user:
+                        project.collaborators.add(user)
 
             component_formset = ComponentFormSet(request.POST, instance=project, prefix='components')
             if component_formset.is_valid():
                 component_formset.save()
-                return redirect("projects_view")
+                return redirect("projects:projects_view")
     else:
         project_form = ProjectForm()
         component_formset = ComponentFormSet(instance=Project(), prefix='components')
@@ -63,18 +73,31 @@ def edit_project(request, pk):
         component_formset = ComponentFormSet(request.POST, instance=project, prefix='components')
         
         if project_form.is_valid() and component_formset.is_valid():
-            project_form.save()
+            project = project_form.save()
             component_formset.save()
-            
-            return redirect("project_detail", pk=project.pk)
+
+            project.collaborators.clear()
+            project.collaborators.add(request.user)
+            collaborators_emails = request.POST.get('collaborators', '')
+            if collaborators_emails:
+                emails = [email.strip() for email in collaborators_emails.split(',')]
+                for email in emails:
+                    user = User.objects.filter(email=email).first()
+                    if user:
+                        project.collaborators.add(user)
+
+            return redirect("projects:project_detail", pk=project.pk)
     else:
         project_form = ProjectForm(instance=project)
         component_formset = ComponentFormSet(instance=project, prefix='components')
     
+    collaborator_email_list = [user.email for user in project.collaborators.all()]
     return render(request, 'edit_project.html', {
         'form': project_form,
         'component_formset': component_formset,
         'project': project,
+        'collaborator_email_list': collaborator_email_list,
+        'collaborator_emails': ", ".join(collaborator_email_list)
     })
 
 

@@ -102,11 +102,18 @@ If you skip and jump around, you’ll confuse yourself and burn out. The correct
 
 ---
 
-### ☐ 8. Report Status Lifecycle (Lightweight)
+### ~~☐ 8. Report Status Lifecycle (Lightweight)~~
 >This is the next real feature.
 
 - [X] Add status field (Open / In Progress / Resolved / Closed)
-- [ ] Only assignee or owner can change status
-- [ ] Show status history on report page (simple list)
+- [X] Only assignee or owner can change status
 
 ---
+
+### ☐ 9. ~~Add collaborators features~~
+> complete the collaborators feature with all permissions
+
+- [X] Add collaborator in projects models, register project and edit project.
+- [X] Collaborators on new project and edit project
+- [X] Collaborators cannot reassign reports, but change other things like status etc.
+- [X] Basic logic properly implemented

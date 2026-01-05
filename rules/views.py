@@ -9,7 +9,9 @@ def is_project_owner(user, project):
 def is_project_member(user, project):
     # For now, we'll consider the project owner as the only member.
     # This can be extended later to include other roles.
-    return is_project_owner(user, project)
+
+    return project.collaborators.filter(id=user.id).exists() or is_project_owner(user, project)
+    
     
 def is_assigned_to(user, report):
     return report.assigned_to == user

@@ -10,6 +10,7 @@ class Project(models.Model):
     link = models.URLField(max_length=200)
     description = models.TextField()
     public = models.BooleanField(default=True)
+    collaborators = models.ManyToManyField('accounts.User', related_name='collaborations')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
