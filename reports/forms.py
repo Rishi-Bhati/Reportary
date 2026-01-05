@@ -7,7 +7,7 @@ from projects.models import Project
 class ReportForm(forms.ModelForm):
     class Meta:
         model = Report
-        exclude = ['severity', 'reported_by', 'created_at', 'updated_at']
+        exclude = ['severity', 'reported_by', 'assigned_to', 'status', 'created_at', 'updated_at']
         widgets = {
             'title': forms.TextInput(attrs={
                 'class': 'shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'

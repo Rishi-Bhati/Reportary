@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from reports.forms import ReportForm
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseForbidden
 from projects.models import Project
 from components.models import Component
 from reports.models import Report
@@ -9,6 +9,9 @@ from comments.models import Comment
 from comments.forms import CommentForm
 from django.db.models import Q
 import rules.views as rules
+from accounts.models import User
+import rules.views as rules
+
 
 
 # Create your views here.
@@ -21,7 +24,14 @@ def report_list(request, project_pk=None):
     # Fetches the project object based on the primary key from the URL.
     project = get_object_or_404(Project, pk=project_pk)
     # Filters reports that belong to the fetched project.
-    reports = Report.objects.filter(project=project).select_related('reported_by').distinct()
+
+    
+    for report in Report.objects.filter(project=project):
+        if rules.is_assigned_to(request.user, report) or rules.is_reporter(request.user, report) or rules.is_project_owner(request.user, project):
+            reports = Report.objects.filter(project=project).select_related('reported_by').distinct()
+
+        else:
+            reports = Report.objects.filter(project=project, visibility=True).select_related('reported_by').distinct()
     # Renders the 'report_list.html' template, passing the reports and project as context.
     return render(request, 'report_list.html', {'reports': reports, 'project': project})
 
@@ -56,15 +66,30 @@ def report_detail(request, project_pk, report_pk):
     # Determines if the current user is the owner of the project.
     is_project_owner = rules.is_project_owner(request.user, project)
     is_reporter = rules.is_reporter(request.user, report)
+    user_can_change_status = rules.can_change_status(request.user, report)
     
     is_report_hidden = report.visibility == False
     is_commenter = False
     for comment in comments:
         is_commenter = rules.is_commenter(request.user, comment)
-    # is_project_owner = request.user.is_authenticated and request.user == project.owner
+    
+    all_users = User.objects.all()
 
     # Renders the 'report_detail.html' template with all the necessary context.
-    return render(request, 'report_detail.html', {'report': report, 'project': project, 'comments': comments, 'comment_form': comment_form, 'is_project_owner': is_project_owner, 'is_reporter': is_reporter, 'is_commenter': is_commenter, 'is_report_hidden': is_report_hidden})
+    return render(request, 'report_detail.html', {
+        'report': report, 
+        'project': project, 
+        'comments': comments, 
+        'comment_form': comment_form, 
+        'is_project_owner': is_project_owner, 
+        'is_reporter': is_reporter, 
+        'is_commenter': is_commenter, 
+        'is_report_hidden': is_report_hidden,
+        'all_users': all_users,
+        'status_choices': Report.STATUS_CHOICES,
+        'impact_choices': Report.IMPACT_CHOICES,
+        'can_change_status': user_can_change_status,
+        })
 
 @login_required
 def create_report(request, project_pk=None):    
@@ -80,47 +105,21 @@ def create_report(request, project_pk=None):
     """
     project = None
     
-    # If a project_pk is provided in the URL (e.g., /projects/3/reports/new/)
-    # fetch the project object. This represents the specific project the user wants to report on.
     if project_pk is not None:
         project = get_object_or_404(Project, pk=project_pk)
 
     if request.method == 'POST':
-        # Form submission - create the report
-        
-        # Initialize form with POST data and pass the project
-        # The form's __init__ will use the project parameter to:
-        # - Remove the project field (if project was pre-selected)
-        # - Filter components to only show those from this project
         form = ReportForm(request.POST, request.FILES, project=project)
         
         if form.is_valid():
-            # Form validation passed
-            # At this point, the form's clean() method has already verified
-            # that a project exists (either from URL or form submission)
-            
             report = form.save(commit=False)
-            
-            # Set the user who is reporting this issue
             report.reported_by = request.user
-            
-            # If the project was pre-selected from the URL, assign it to the report
             if project:
                 report.project = project
-            
-            # Save the report to the database
+            report.assigned_to = report.project.owner
             report.save()
-
-            # After successful creation, redirect to the report detail page
-            # This shows the newly created report
             return redirect('projects:reports:report_detail', project_pk=report.project.pk, report_pk=report.pk)
     else:
-        # GET request - display the form
-        
-        # Initialize an empty form and pass the project parameter
-        # The form will:
-        # - Remove the project field if project_pk is provided
-        # - Show all projects if project_pk is not provided
         form = ReportForm(project=project)
         
     return render(request, 'create_report.html', {'form': form, 'project': project})
@@ -139,10 +138,89 @@ def my_report_list(request):
     Displays a list of reports created by the logged-in user.
     """
     if not request.user.is_authenticated:
-        return redirect('login')  # Redirect to login if user is not authenticated
+        return redirect('login')
 
-    # Fetch reports where the reported_by field matches the current user
     reports = Report.objects.filter(reported_by=request.user).select_related('project', 'reported_by').distinct()
 
-    # Render the 'my_report_list.html' template with the user's reports
     return render(request, 'report_list.html', {'reports': reports})
+
+
+def assigned_to_me(request):
+    """
+    Displays a list of reports assigned to the logged-in user.
+    """
+    if not request.user.is_authenticated:
+        return redirect('login')
+
+    reports = Report.objects.filter(assigned_to=request.user).select_related('project', 'reported_by').distinct()
+
+    return render(request, 'report_list.html', {'reports': reports})
+
+
+@login_required
+def reassign_report(request, project_pk, report_pk):
+    report = get_object_or_404(Report, pk=report_pk, project__pk=project_pk)
+    project = report.project
+
+    if not rules.is_project_member(request.user, project):
+        return HttpResponseForbidden("You are not authorized to perform this action.")
+
+    if request.method == 'POST':
+        assignee_id = request.POST.get('assignee')
+        if assignee_id:
+            try:
+                assignee = User.objects.get(pk=assignee_id)
+                report.assigned_to = assignee
+                report.save()
+            except User.DoesNotExist:
+                pass
+    
+    return redirect('projects:reports:report_detail', project_pk=project.pk, report_pk=report.pk)
+
+
+@login_required
+def change_report_status(request, project_pk, report_pk):
+    report = get_object_or_404(Report, pk=report_pk, project__pk=project_pk)
+
+    if not rules.can_change_status(request.user, report):
+        return HttpResponseForbidden("You are not authorized to perform this action.")
+
+    if request.method == 'POST':
+        status = request.POST.get('status')
+        if status and status in [choice[0] for choice in Report.STATUS_CHOICES]:
+            report.status = status
+            report.save()
+            
+    return redirect('projects:reports:report_detail', project_pk=report.project.pk, report_pk=report.pk)
+
+@login_required
+def change_report_visibility(request, project_pk, report_pk):
+    report = get_object_or_404(Report, pk=report_pk, project__pk=project_pk)
+
+    if not rules.is_project_member(request.user, report.project):
+        return HttpResponseForbidden("You are not authorized to perform this action.")
+
+    if request.method == 'POST':
+        visibility = request.POST.get('visibility')
+        if visibility == 'True':
+            report.visibility = True
+        else:
+            report.visibility = False
+        report.save()
+            
+    return redirect('projects:reports:report_detail', project_pk=report.project.pk, report_pk=report.pk)
+
+@login_required
+def change_report_impact(request, project_pk, report_pk):
+    report = get_object_or_404(Report, pk=report_pk, project__pk=project_pk)
+
+    if not rules.is_project_member(request.user, report.project):
+        return HttpResponseForbidden("You are not authorized to perform this action.")
+
+    if request.method == 'POST':
+        impact = request.POST.get('impact')
+        if impact and impact in [choice[0] for choice in Report.IMPACT_CHOICES]:
+            report.impact = impact
+            report.save()
+            
+    return redirect('projects:reports:report_detail', project_pk=report.project.pk, report_pk=report.pk)

@@ -1,0 +1,50 @@
+<!-- reports/templates/partials/report_actions.html -->
+
+<div class="card bg-base-100 shadow-xl mb-8">
+    <div class="card-body">
+        <h2 class="card-title">Report Actions</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <form method="post" action="{% url 'projects:reports:reassign_report' project_pk=project.pk report_pk=report.pk %}">
+                    {% csrf_token %}
+                    <div class="form-control">
+                        <label class="label" for="id_assignee">
+                            <span class="label-text">Reassign Report</span>
+                        </label>
+                        <select name="assignee" id="id_assignee" class="select select-bordered w-full max-w-xs">
+                            <option disabled selected>Assign to...</option>
+                            {% for user in all_users %}
+                                <option value="{{ user.pk }}" {% if report.assigned_to.pk == user.pk %}selected{% endif %}>
+                                    {{ user.username }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mt-4">
+                        <button type="submit" class="btn btn-primary">Reassign</button>
+                    </div>
+                </form>
+            </div>
+            <div>
+                <form method="post" action="{% url 'projects:reports:change_report_status' project_pk=project.pk report_pk=report.pk %}">
+                    {% csrf_token %}
+                    <div class="form-control">
+                        <label class="label" for="id_status">
+                            <span class="label-text">Change Status</span>
+                        </label>
+                        <select name="status" id="id_status" class="select select-bordered w-full max-w-xs">
+                            {% for value, display in status_choices %}
+                                <option value="{{ value }}" {% if report.status == value %}selected{% endif %}>
+                                    {{ display }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mt-4">
+                        <button type="submit" class="btn btn-secondary">Change Status</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
