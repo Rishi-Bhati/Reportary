@@ -63,7 +63,7 @@ If you are a developer looking to contribute or run the code locally, you can do
 
 </details>
 
-## Plans for Phase 2
+## Future Plans
 
 *   Organization/Team Support
 *   Anonymous Reporting Workflows
