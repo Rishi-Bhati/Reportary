@@ -75,7 +75,7 @@
                         <span class="label-text font-semibold text-gray-700">Collaborators</span>
                     </label>
                     <select id="id_collaborators_select2" class="w-full" multiple="multiple"></select>
-                    <input type="hidden" name="collaborators" id="id_collaborators">
+                    <input type="hidden" name="collaborators" id="id_collaborators" value="{{ collaborator_emails|default:'' }}">
                     <label class="label">
                         <span class="label-text-alt text-gray-500">Search and add team members to this project.</span>
                     </label>
@@ -113,15 +113,15 @@
                             <div class="hidden">
                                 {{ field }}
                             </div>
+                            {% elif field.is_hidden or field.name == 'id' or field.name == 'project' %}
+                            <!-- Hidden/internal fields (id, project FK, etc) should not be shown in the UI but must be included in the form submission -->
+                            <div class="hidden">{{ field }}</div>
                             {% else %}
                             <div class="form-control">
                                 <label for="{{ field.id_for_label }}" class="label pt-0">
                                     <span class="label-text font-medium text-gray-600">{{ field.label }}</span>
                                 </label>
-                                <input type="text" name="{{ field.name }}" id="{{ field.id_for_label }}"
-                                    value="{{ field.value|default:'' }}"
-                                    class="input input-sm input-bordered w-full focus:border-[#226ce0]"
-                                    placeholder="{{ field.label }}">
+                                {{ field }}
                                 {% for error in field.errors %}
                                 <span class="text-red-500 text-xs mt-1">{{ error }}</span>
                                 {% endfor %}
@@ -256,9 +256,20 @@
         });
 
         $select2.on('change', function () {
-            var emails = $(this).val();
+            var emails = $(this).val() || [];
             $('#id_collaborators').val(emails.join(','));
         });
+
+        // Pre-populate with any initial collaborator emails
+        var initial = $('#id_collaborators').val();
+        if (initial) {
+            var initialEmails = initial.split(',').filter(Boolean);
+            initialEmails.forEach(function (email) {
+                var option = new Option(email, email, true, true);
+                $select2.append(option);
+            });
+            $select2.trigger('change');
+        }
 
         // Style the Select2 widget to match the form
         $('.select2-container').css('width', '100%');

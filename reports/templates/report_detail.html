@@ -4,8 +4,7 @@
 {% block title %}{{ report.title }} | Reports{% endblock %}
 {% block breadcrumb %}
 <a href="{% url 'projects:my_projects' %}" class="hover:text-[#226ce0] transition-colors">Projects</a> /
-<a href="{% url 'projects:project_detail' pk=project.id %}" class="hover:text-[#226ce0] transition-colors">{{
-    project.title }}</a> /
+<a href="{% url 'projects:project_detail' pk=project.id %}" class="hover:text-[#226ce0] transition-colors">{{ project.title }}</a> /
 <a href="{% url 'projects:reports:report_list' project.id %}" class="hover:text-[#226ce0] transition-colors">Reports</a>
 /
 <span class="text-[#226ce0] font-medium">#{{ report.id }}</span>
@@ -35,9 +34,7 @@
                         <span
                             class="px-3 py-1 rounded-full text-xs font-bold bg-[#a499b3] text-[#1b1725] uppercase tracking-wide">Resolved</span>
                         {% else %}
-                        <span
-                            class="px-3 py-1 rounded-full text-xs font-bold bg-gray-200 text-gray-700 uppercase tracking-wide">{{
-                            report.get_status_display }}</span>
+                        <span class="px-3 py-1 rounded-full text-xs font-bold bg-gray-200 text-gray-700 uppercase tracking-wide">{{ report.get_status_display }}</span>
                         {% endif %}
 
                         {% if report.impact == 'Critical' or report.impact == 'High' %}
@@ -57,12 +54,8 @@
 
                     <div class="flex flex-wrap items-center gap-4 text-sm text-[#534b62]">
                         <div class="flex items-center gap-2">
-                            <div
-                                class="w-7 h-7 rounded-full bg-[#226ce0] text-white flex items-center justify-center text-xs font-bold">
-                                {{ report.reported_by.username|slice:":1"|upper }}
-                            </div>
-                            <span>Reported by <span class="font-semibold text-[#1b1725]">{{ report.reported_by.username
-                                    }}</span></span>
+                            <div class="w-7 h-7 rounded-full bg-[#226ce0] text-white flex items-center justify-center text-xs font-bold">{{ report.reported_by.username|slice:":1"|upper }}</div>
+                            <span>Reported by <span class="font-semibold text-[#1b1725]">{{ report.reported_by.username }}</span></span>
                         </div>
                         <span class="text-[#a499b3]">•</span>
                         <span>{{ report.created_at|date:"F j, Y" }}</span>
@@ -119,8 +112,7 @@
                         </svg>
                         Discussion
                     </h3>
-                    <span class="px-3 py-1 rounded-full text-sm font-medium bg-[#226ce0]/10 text-[#226ce0]">{{
-                        comments.count|default:"0" }} comments</span>
+                    <span class="px-3 py-1 rounded-full text-sm font-medium bg-[#226ce0]/10 text-[#226ce0]">{{ comments.count|default:"0" }} comments</span>
                 </div>
 
                 <div id="comments-section" class="space-y-4">

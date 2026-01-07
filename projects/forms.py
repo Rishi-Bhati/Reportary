@@ -13,12 +13,13 @@ class ProjectForm(forms.ModelForm):
         fields = ['title', 'link', 'description', 'public']
 
 class ComponentForm(forms.ModelForm):
-    name = forms.CharField(widget=forms.TextInput(attrs={'class': 'shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'}))
-    description = forms.CharField(widget=forms.Textarea(attrs={'rows': 2, 'class': 'shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'}))
+    name = forms.CharField(widget=forms.TextInput(attrs={'class': 'input input-sm input-bordered w-full focus:border-[#226ce0]', 'placeholder': 'Name'}))
+    description = forms.CharField(widget=forms.Textarea(attrs={'rows': 2, 'class': 'textarea textarea-sm textarea-bordered w-full focus:border-[#226ce0]', 'placeholder': 'Description'}))
 
     class Meta:
         model = Component
         fields = ['name', 'description']
+        exclude = ['project', 'id']
 
 ComponentFormSet = inlineformset_factory(
     Project, 

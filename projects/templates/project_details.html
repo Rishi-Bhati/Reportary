@@ -41,8 +41,7 @@
                         </div>
                     </div>
 
-                    <p class="text-[#534b62] leading-relaxed max-w-2xl">{{ project.description|default:"No description
-                        provided." }}</p>
+                    <p class="text-[#534b62] leading-relaxed max-w-2xl">{{ project.description|default:"No description provided." }}</p>
                 </div>
 
                 <!-- Right: Actions -->
@@ -65,8 +64,7 @@
                         View Reports
                     </a>
                     {% if user == project.owner %}
-                    <a href="{% url 'projects:edit_project' pk=project.pk %}"
-                        class="btn bg-[#1b1725] text-white hover:bg-[#534b62] transition-all">
+                    <a href="{% url 'projects:edit_project' pk=project.pk %}" class="btn btn-secondary shadow-md">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
@@ -138,13 +136,11 @@
                             <div class="flex items-start gap-3">
                                 <div
                                     class="w-8 h-8 rounded-lg bg-[#226ce0]/10 flex items-center justify-center flex-shrink-0">
-                                    <span class="text-sm font-bold text-[#226ce0]">{{ component.name|slice:":1"|upper
-                                        }}</span>
+                                    <span class="text-sm font-bold text-[#226ce0]">{{ component.name|slice:":1"|upper }}</span>
                                 </div>
                                 <div>
                                     <h4 class="font-semibold text-[#1b1725]">{{ component.name }}</h4>
-                                    <p class="text-sm text-[#a499b3] mt-0.5">{{ component.description|default:"No
-                                        description" }}</p>
+                                    <p class="text-sm text-[#a499b3] mt-0.5">{{ component.description|default:"No description" }}</p>
                                 </div>
                             </div>
                         </div>

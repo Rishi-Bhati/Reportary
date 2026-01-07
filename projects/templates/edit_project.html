@@ -34,8 +34,7 @@ Edit
                             <span class="text-xs text-gray-500">Make this project visible to everyone?</span>
                         </div>
                     </label>
-                    {% if field.help_text %}<p class="text-gray-500 text-xs mt-1 ml-8">{{ field.help_text }}</p>{% endif
-                    %}
+                    {% if field.help_text %}<p class="text-gray-500 text-xs mt-1 ml-8">{{ field.help_text }}</p>{% endif %}
                     {% for error in field.errors %}<p class="text-red-500 text-xs mt-1 ml-8">{{ error }}</p>{% endfor %}
                 </div>
                 {% else %}
@@ -55,28 +54,24 @@ Edit
                         placeholder="{{ field.label }}" {% if field.field.required %}required{% endif %}>
                     {% endif %}
 
-                    {% if field.help_text %}<label class="label"><span class="label-text-alt text-gray-500">{{
-                            field.help_text }}</span></label>{% endif %}
-                    {% for error in field.errors %}<label class="label"><span class="label-text-alt text-red-500">{{
-                            error }}</span></label>{% endfor %}
+                    {% if field.help_text %}<label class="label"><span class="label-text-alt text-gray-500">{{ field.help_text }}</span></label>{% endif %}
+                    {% for error in field.errors %}<label class="label"><span class="label-text-alt text-red-500">{{ error }}</span></label>{% endfor %}
                 </div>
                 {% endif %}
                 {% endfor %}
 
                 <!-- Collaborators -->
+                <!-- Collaborators (Select2 like register page) -->
                 <div class="form-control w-full">
                     <label for="id_collaborators_select2" class="label">
                         <span class="label-text font-semibold text-gray-700">Collaborators</span>
                     </label>
-                    <select id="id_collaborators_select2" class="w-full" multiple="multiple">
-                        {% for email in collaborator_emails %}
-                        <option value="{{ email }}" selected="selected">{{ email }}</option>
-                        {% endfor %}
-                    </select>
-                    <input type="hidden" name="collaborators" id="id_collaborators" value="{{ collaborator_emails|join:"
-                        , " }}">
+
+                    <select id="id_collaborators_select2" class="w-full" multiple="multiple"></select>
+                    <input type="hidden" name="collaborators" id="id_collaborators" value="{{ collaborator_emails|default:'' }}">
+
                     <label class="label">
-                        <span class="label-text-alt text-gray-500">Update team members.</span>
+                        <span class="label-text-alt text-gray-500">Search and add team members to this project.</span>
                     </label>
                 </div>
             </div>
@@ -114,17 +109,14 @@ Edit
                             {% endif %}
                             {% else %}
                             <!-- Keep hidden PK fields etc hidden, only show visible fields -->
-                            {% if field.is_hidden %}
-                            {{ field }}
+                            {% if field.is_hidden or field.name == 'id' or field.name == 'project' %}
+                            <div class="hidden">{{ field }}</div>
                             {% else %}
                             <div class="form-control">
                                 <label for="{{ field.id_for_label }}" class="label pt-0">
                                     <span class="label-text font-medium text-gray-600">{{ field.label }}</span>
                                 </label>
-                                <input type="text" name="{{ field.name }}" id="{{ field.id_for_label }}"
-                                    value="{{ field.value|default:'' }}"
-                                    class="input input-sm input-bordered w-full focus:border-[#226ce0]"
-                                    placeholder="{{ field.label }}">
+                                {{ field }}
                                 {% for error in field.errors %}
                                 <span class="text-red-500 text-xs mt-1">{{ error }}</span>
                                 {% endfor %}
@@ -199,6 +191,60 @@ Edit
 
             componentsContainer.insertAdjacentHTML('beforeend', newFormHTML);
             totalFormsInput.value = currentFormCount + 1;
+        });
+    });
+</script>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function () {
+        var $select2 = $('#id_collaborators_select2').select2({
+            tags: true,
+            tokenSeparators: [',', ' '],
+            placeholder: "Enter collaborator emails",
+            ajax: {
+                url: "{% url 'accounts:user_search' %}",
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        term: params.term, // search term
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: data.results
+                    };
+                },
+                cache: true
+            },
+            multiple: true,
+        });
+
+        $select2.on('change', function () {
+            var emails = $(this).val() || [];
+            $('#id_collaborators').val(emails.join(','));
+        });
+
+        // Pre-populate with existing collaborator emails (if any)
+        var initial = $('#id_collaborators').val();
+        if (initial) {
+            var initialEmails = initial.split(',').filter(Boolean);
+            initialEmails.forEach(function (email) {
+                var option = new Option(email, email, true, true);
+                $select2.append(option);
+            });
+            $select2.trigger('change');
+        }
+
+        // Style the Select2 widget to match the form
+        $('.select2-container').css('width', '100%');
+        $('.select2-selection--multiple').css({
+            'border': '1px solid #e2e8f0',
+            'border-radius': '0.375rem',
+            'padding': '0.5rem 0.75rem',
+            'height': 'auto',
         });
     });
 </script>

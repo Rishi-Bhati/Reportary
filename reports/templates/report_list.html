@@ -61,11 +61,8 @@ My Reports
                         <td class="px-6 py-4">
                             <a href="{% url 'projects:reports:report_detail' project_pk=report.project_id report_pk=report.pk %}"
                                 class="block">
-                                <span
-                                    class="font-semibold text-gray-900 group-hover:text-[#226ce0] transition-colors block">{{
-                                    report.title }}</span>
-                                <span class="text-xs text-gray-400 mt-0.5 block">#{{ report.id }} • {{
-                                    report.component.name|default:"General" }}</span>
+                                <span class="font-semibold text-gray-900 group-hover:text-[#226ce0] transition-colors block">{{ report.title }}</span>
+                                <span class="text-xs text-gray-400 mt-0.5 block">#{{ report.id }} • {{ report.component.name|default:"General" }}</span>
                             </a>
                         </td>
                         {% if not project %}
@@ -95,9 +92,7 @@ My Reports
                             <span
                                 class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#a499b3]/20 text-[#534b62]">Resolved</span>
                             {% else %}
-                            <span
-                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">{{
-                                report.get_status_display }}</span>
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">{{ report.get_status_display }}</span>
                             {% endif %}
                         </td>
                         <td class="px-6 py-4 text-gray-500 whitespace-nowrap">
