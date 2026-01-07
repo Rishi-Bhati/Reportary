@@ -86,7 +86,7 @@ def handle_signup(request):
             # Log the user in immediately after successful signup.
             login(request, user)
             # Redirect the new user to the onboarding page to complete their profile.
-            return redirect('onboarding_home') # Go to Onboarding
+            return redirect('accounts:onboarding_home') # Go to Onboarding
         except Exception as e:
             messages.error(request, f"Error creating account: {e}")
             

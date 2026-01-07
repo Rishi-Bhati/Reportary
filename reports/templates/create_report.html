@@ -1,159 +1,184 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block title %}Report Issue | Reportary{% endblock %}
+{% block breadcrumb %}
+{% if project %}
+<a href="{% url 'projects:my_projects' %}" class="hover:text-[#226ce0]">Projects</a> /
+<a href="{% url 'projects:project_detail' pk=project.pk %}" class="hover:text-[#226ce0]">{{ project.title }}</a> /
+Report Issue
+{% else %}
+Report Issue
+{% endif %}
+{% endblock %}
+
 {% block content %}
-<div class="container mx-auto mt-8">
-    <h1 class="text-2xl font-bold mb-4">
+<div class="max-w-3xl mx-auto">
+    <!-- Header -->
+    <div class="mb-8">
+        <h1 class="text-2xl font-bold text-gray-900 tracking-tight">Report New Issue</h1>
         {% if project %}
-            Report New Issue for {{ project.title }}
+        <p class="text-gray-500 mt-1">Submit a new bug, feature request, or task for <span
+                class="font-bold text-gray-800">{{ project.title }}</span>.</p>
         {% else %}
-            Report New Issue
+        <p class="text-gray-500 mt-1">Submit a new issue to get it tracked.</p>
         {% endif %}
-    </h1>
+    </div>
 
-    <form method="post" enctype="multipart/form-data" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-        {% csrf_token %}
-        
-        <div class="mb-4">
-            <label class="block text-gray-700 text-sm font-bold mb-2" for="{{ form.title.id_for_label }}">
-                {{ form.title.label }}
-            </label>
-            {{ form.title }}
-        </div>
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <form method="post" enctype="multipart/form-data" class="divide-y divide-gray-100">
+            {% csrf_token %}
 
-        {% if project %}
-            {# 
-            PROJECT FIELD HANDLING - SECURITY & UX OPTIMIZATION
-            
-            When project is passed from URL (e.g., /projects/3/reports/new/):
-            - The form's __init__ REMOVED the project field entirely
-            - Therefore, {{ form.project }} would error because the field doesn't exist
-            - So we don't render anything here - the field is handled entirely in the backend
-            
-            Why this is better than using a hidden field:
-            1. SECURITY: Users cannot see or inspect the project value in browser DevTools
-            2. NO TAMPERING: The project value cannot be modified by client-side manipulation
-            3. CLEAN HTML: The form HTML doesn't expose internal state
-            4. PREVENTS VULNERABILITY: Users cannot change the hidden value to report to different projects
-            
-            The project is safely set by the view and form's save() method
-            #}
-        {% else %}
-        {# 
-        PROJECT FIELD - USER SELECTION
-        
-        When no project is in URL (e.g., /reports/new/):
-        - The form's __init__ kept the project field
-        - It displays as a dropdown with all available projects
-        - User must select a project before submitting
-        - The selected value is submitted with the form data
-        #}
-        <div class="mb-4">
-            <label class="block text-gray-700 text-sm font-bold mb-2" for="{{ form.project.id_for_label }}">
-                {{ form.project.label }}
-            </label>
-            {{ form.project }}
-        </div>
-        {% endif %}
+            <div class="p-8 space-y-6">
+                <!-- Title -->
+                <div class="form-control w-full">
+                    <label class="label text-sm font-semibold text-gray-700" for="{{ form.title.id_for_label }}">{{
+                        form.title.label }}</label>
+                    <input type="text" name="{{ form.title.name }}" id="{{ form.title.id_for_label }}"
+                        class="input input-bordered w-full focus:border-[#226ce0] bg-gray-50 focus:bg-white transition-colors"
+                        placeholder="Brief summary of the issue" required>
+                    {{ form.title.errors }}
+                </div>
 
-        <div class="mb-4">
-            <label class="block text-gray-700 text-sm font-bold mb-2" for="{{ form.component.id_for_label }}">
-                {{ form.component.label }}
-            </label>
-            {{ form.component }}
-        </div>
+                <!-- Project Selection (if no project context) -->
+                {% if not project %}
+                <div class="form-control w-full">
+                    <label class="label text-sm font-semibold text-gray-700" for="{{ form.project.id_for_label }}">{{
+                        form.project.label }}</label>
+                    {{ form.project }}
+                    {{ form.project.errors }}
+                </div>
+                {% endif %}
 
-        <div class="mb-4">
-            <label class="block text-gray-700 text-sm font-bold mb-2" for="{{ form.description.id_for_label }}">
-                {{ form.description.label }}
-            </label>
-            {{ form.description }}
-        </div>
+                <!-- Component & Frequency Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="form-control w-full">
+                        <label class="label text-sm font-semibold text-gray-700"
+                            for="{{ form.component.id_for_label }}">{{ form.component.label }}</label>
+                        {{ form.component }}
+                        {{ form.component.errors }}
+                    </div>
 
-        <div class="mb-4">
-            <label class="block text-gray-700 text-sm font-bold mb-2" for="{{ form.steps.id_for_label }}">
-                {{ form.steps.label }}
-            </label>
-            {{ form.steps }}
-        </div>
+                    <div class="form-control w-full">
+                        <label class="label text-sm font-semibold text-gray-700"
+                            for="{{ form.frequency.id_for_label }}">{{ form.frequency.label }}</label>
+                        {{ form.frequency }}
+                        {{ form.frequency.errors }}
+                    </div>
+                </div>
 
-        <div class="grid grid-cols-2 gap-4 mb-4">
-            <div>
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="{{ form.frequency.id_for_label }}">
-                    {{ form.frequency.label }}
-                </label>
-                {{ form.frequency }}
+                <!-- Description -->
+                <div class="form-control w-full">
+                    <label class="label text-sm font-semibold text-gray-700"
+                        for="{{ form.description.id_for_label }}">{{ form.description.label }}</label>
+                    <textarea name="{{ form.description.name }}" id="{{ form.description.id_for_label }}" rows="4"
+                        class="textarea textarea-bordered w-full focus:border-[#226ce0] bg-gray-50 focus:bg-white transition-colors text-base"
+                        placeholder="Detailed explanation..."></textarea>
+                    {{ form.description.errors }}
+                </div>
+
+                <!-- Steps to Reproduce -->
+                <div class="form-control w-full">
+                    <label class="label text-sm font-semibold text-gray-700" for="{{ form.steps.id_for_label }}">{{
+                        form.steps.label }}</label>
+                    <textarea name="{{ form.steps.name }}" id="{{ form.steps.id_for_label }}" rows="4"
+                        class="textarea textarea-bordered w-full focus:border-[#226ce0] bg-gray-50 focus:bg-white transition-colors text-base font-mono text-sm"
+                        placeholder="1. Go to...&#10;2. Click on..."></textarea>
+                    {{ form.steps.errors }}
+                </div>
+
+                <!-- Impact & Attachments -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="form-control w-full">
+                        <label class="label text-sm font-semibold text-gray-700" for="{{ form.impact.id_for_label }}">{{
+                            form.impact.label }}</label>
+                        {{ form.impact }}
+                        {{ form.impact.errors }}
+                    </div>
+
+                    <div class="form-control w-full">
+                        <label class="label text-sm font-semibold text-gray-700"
+                            for="{{ form.attatchment.id_for_label }}">{{ form.attatchment.label }}</label>
+                        <input type="file" name="{{ form.attatchment.name }}" id="{{ form.attatchment.id_for_label }}"
+                            class="file-input file-input-bordered file-input-primary w-full bg-gray-50">
+                        {{ form.attatchment.errors }}
+                    </div>
+                </div>
+
+                <!-- Visibility -->
+                <div class="form-control">
+                    <label class="label cursor-pointer justify-start gap-4">
+                        {{ form.visibility }}
+                        <div>
+                            <span class="label-text font-semibold text-gray-900 block">{{ form.visibility.label
+                                }}</span>
+                            <span class="text-xs text-gray-500">Visible to all project members?</span>
+                        </div>
+                    </label>
+                    {{ form.visibility.errors }}
+                </div>
             </div>
-            <div>
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="{{ form.impact.id_for_label }}">
-                    {{ form.impact.label }}
-                </label>
-                {{ form.impact }}
+
+            <!-- Submit Button -->
+            <div class="p-8 bg-gray-50 border-t border-gray-100 flex justify-end">
+                <button type="submit"
+                    class="btn btn-primary text-white px-8 font-semibold shadow-md hover:shadow-lg transition-all">
+                    Submit Issue
+                </button>
             </div>
-        </div>
-
-        <div class="mb-4">
-            <label class="block text-gray-700 text-sm font-bold mb-2" for="{{ form.attatchment.id_for_label }}">
-                {{ form.attatchment.label }}
-            </label>
-            {{ form.attatchment }}
-        </div>
-
-        <div class="mb-6">
-            <label class="block text-gray-700 text-sm font-bold mb-2">
-                {{ form.visibility.label }}
-            </label>
-            <label class="inline-flex items-center">
-                {{ form.visibility }}
-                <span class="ml-2 text-gray-700">Public</span>
-            </label>
-        </div>
-
-        <div class="flex items-center justify-between">
-            <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
-                Submit Report
-            </button>
-        </div>
-    </form>
+        </form>
+    </div>
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const projectSelect = document.getElementById('id_project');
-    const componentSelect = document.getElementById('{{ form.component.id_for_label }}');
-    const componentsUrl = "{% url 'reports:ajax_get_components' %}";
+    document.addEventListener('DOMContentLoaded', function () {
+        const projectSelect = document.getElementById('id_project');
+        const componentSelectId = '{{ form.component.id_for_label }}';
+        const componentSelect = document.getElementById(componentSelectId);
+        const componentsUrl = "{% url 'reports:ajax_get_components' %}";
 
-    if (projectSelect) {
-        projectSelect.addEventListener('change', function() {
-            const projectId = this.value;
-            
-            // Clear component options
-            componentSelect.innerHTML = '<option value="">---------</option>';
+        // Helper to style selects that are rendered by Django widgets if they don't have classes
+        // But ideally we should add classes in forms.py or widget tweaks. 
+        // Since we are frontend editing, we can try to add classes via JS or assume backend has them.
+        // I added layout structure, but the {{ form.field }} output needs to be checked.
+        // If they are raw selects, we might want to add 'select select-bordered w-full' classes.
 
-            if (projectId) {
-                fetch(`${componentsUrl}?project_id=${projectId}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.length > 0) {
-                            data.forEach(function(component) {
-                                const option = new Option(component.name, component.id);
-                                componentSelect.add(option);
-                            });
-                            componentSelect.disabled = false;
-                        } else {
-                            componentSelect.disabled = true;
-                        }
-                    });
-            } else {
-                componentSelect.disabled = true;
-            }
+        const inputs = document.querySelectorAll('select:not(.select)');
+        inputs.forEach(input => {
+            input.classList.add('select', 'select-bordered', 'w-full', 'focus:border-[#226ce0]', 'bg-gray-50', 'focus:bg-white', 'transition-colors');
         });
 
-        // Trigger change on load if a project is already selected
-        if (projectSelect.value) {
-            projectSelect.dispatchEvent(new Event('change'));
+        if (projectSelect) {
+            projectSelect.addEventListener('change', function () {
+                const projectId = this.value;
+
+                // Clear component options
+                componentSelect.innerHTML = '<option value="">---------</option>';
+
+                if (projectId) {
+                    fetch(`${componentsUrl}?project_id=${projectId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.length > 0) {
+                                data.forEach(function (component) {
+                                    const option = new Option(component.name, component.id);
+                                    componentSelect.add(option);
+                                });
+                                componentSelect.disabled = false;
+                            } else {
+                                componentSelect.disabled = true;
+                            }
+                        });
+                } else {
+                    componentSelect.disabled = true;
+                }
+            });
+
+            // Trigger change on load if a project is already selected
+            if (projectSelect.value) {
+                projectSelect.dispatchEvent(new Event('change'));
+            }
         }
-    }
-});
+    });
 </script>
 {% endblock %}

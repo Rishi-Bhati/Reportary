@@ -55,7 +55,7 @@ def onboarding_user_form(request):
         user.save()
 
         # 3. Redirect to Dashboard
-        return redirect('home')
+        return redirect('dashboard')
 
     return render(request, "accounts/partials/user_form.html")
 
@@ -88,6 +88,6 @@ def onboarding_org_form(request):
         # Ideally, you would create the Organisation object here 
         # and link it to user.organisation
         
-        return redirect('home')
+        return redirect('dashboard')
 
     return render(request, "accounts/partials/org_form.html")

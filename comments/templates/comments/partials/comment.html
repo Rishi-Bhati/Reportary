@@ -4,9 +4,9 @@
 <div class="chat chat-start {% if not comment.visibility %}opacity-50{% endif %}">
     <div class="chat-image avatar">
         <div class="w-10 rounded-full">
-            {% comment %} {# This is a placeholder for the user's avatar. 
-               In a real application, you would replace this with an <img> tag 
-               pointing to the user's profile picture URL. #} {% endcomment %}
+            {% comment %} {# This is a placeholder for the user's avatar.
+            In a real application, you would replace this with an <img> tag
+            pointing to the user's profile picture URL. #} {% endcomment %}
             <span class="text-3xl">🧑</span>
         </div>
     </div>
@@ -14,18 +14,16 @@
         {{ comment.commented_by.username }}
         <time class="ml-2 text-xs opacity-50">{{ comment.created_at|timesince }} ago</time>
         {% if request.user == comment.commented_by and comment.is_edited %}
-            <span class="text-xs opacity-50 italic">(edited)</span>
+        <span class="text-xs opacity-50 italic">(edited)</span>
         {% endif %}
 
         {# Show hide/unhide button only to the project owner #}
         {% if request.user == project.owner %}
-            <button 
-                hx-post="{% url 'comments:toggle_comment_visibility' report.pk comment.pk %}"
-                hx-target="#comment-wrapper-{{ comment.pk }}"
-                hx-swap="outerHTML"
-                class="ml-4 text-xs text-blue-500 hover:underline">
-                {% if comment.visibility %}Hide{% else %}Unhide{% endif %}
-            </button>
+        <button hx-post="{% url 'comments:toggle_comment_visibility' report.pk comment.pk %}"
+            hx-target="#comment-wrapper-{{ comment.pk }}" hx-swap="outerHTML"
+            class="ml-4 text-xs text-[#226ce0] hover:underline">
+            {% if comment.visibility %}Hide{% else %}Unhide{% endif %}
+        </button>
         {% endif %}
     </div>
     <div id="comment-container-{{ comment.pk }}">

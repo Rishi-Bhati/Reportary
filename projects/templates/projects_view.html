@@ -1,36 +1,91 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Project Dashboard{% endblock %}
+{% block title %}Projects | Reportary{% endblock %}
+
+{% block breadcrumb %}Projects{% endblock %}
 
 {% block content %}
-<h2 class="text-2xl font-bold mb-4">Project Dashboard</h2>
-
-
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-    {% for project in projects %}
-        <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
-            <h3 class="text-xl font-bold mb-2">{{ project.title }}</h3>
-            <p class="text-gray-700 mb-4">{{ project.description|truncatewords:20 }}</p>
-            <p class="text-gray-700 mb-4">{{ project.owner.username|truncatewords:20 }}</p>
-            <a href="{{ project.link }}" class="text-blue-600 hover:underline">View Project Repo</a>
-            
-            {% if project.components.exists %}
-                <div class="mt-4">
-                    <h4 class="font-semibold mb-2">Components:</h4>
-                    <ul class="list-disc list-inside">
-                        {% for component in project.components.all %}
-                            <li>{{ component.name }}</li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            {% else %}
-                <p class="mt-4 text-gray-500 italic">No components added.</p>
-            {% endif %}
-            <a href="{% url 'projects:project_detail' project.pk %}" class="mt-4 inline-block text-blue-600 hover:underline">View Details</a>
+<div class="space-y-6">
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900 tracking-tight">Projects</h1>
+            <p class="text-gray-500 mt-1">Manage all your projects and their components.</p>
         </div>
-    {% empty %}
-        <p>No projects available.</p>
-    {% endfor %}
+        <a href="{% url 'projects:new' %}"
+            class="btn btn-primary text-white capitalize font-medium shadow-sm hover:shadow-md transition-all">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+            </svg>
+            Create Project
+        </a>
+    </div>
+
+    <!-- Project Grid -->
+    {% if projects %}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for project in projects %}
+        <a href="{% url 'projects:project_detail' project.pk %}"
+            class="group bg-white rounded-xl p-6 border border-gray-100 shadow-sm hover:shadow-md hover:border-[#a499b3] transition-all flex flex-col h-full relative overflow-hidden">
+            <!-- Hover highlight bar -->
+            <div
+                class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#226ce0] to-[#1b56b3] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left">
+            </div>
+
+            <div class="flex justify-between items-start mb-4">
+                <div
+                    class="w-12 h-12 rounded-xl bg-[#226ce0]/10 text-[#226ce0] flex items-center justify-center font-bold text-xl group-hover:bg-[#226ce0] group-hover:text-white transition-all duration-300 shadow-sm">
+                    {{ project.title|slice:":1"|upper }}
+                </div>
+                <div class="flex flex-col items-end gap-1">
+                    {% if project.public %}
+                    <span
+                        class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-[#226ce0]/10 text-[#226ce0] border border-[#226ce0]/20">Public</span>
+                    {% else %}
+                    <span
+                        class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-50 text-gray-600 border border-gray-100">Private</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <h3 class="text-lg font-bold text-gray-900 mb-2 group-hover:text-[#226ce0] transition-colors">{{
+                project.title }}</h3>
+            <p class="text-sm text-gray-500 mb-6 flex-1 line-clamp-3 leading-relaxed">{{ project.description|default:"No
+                description provided." }}</p>
+
+            <div class="pt-4 border-t border-gray-50">
+                <div class="flex items-center justify-between text-xs text-gray-400">
+                    <span class="flex items-center gap-1.5">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10">
+                            </path>
+                        </svg>
+                        {{ project.components.count }} Components
+                    </span>
+                    <span>Updated {{ project.updated_at|timesince }} ago</span>
+                </div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+    {% else %}
+    <!-- Empty State -->
+    <div class="text-center py-16 bg-white rounded-xl border-2 border-dashed border-gray-200">
+        <div class="w-16 h-16 bg-gray-50 text-gray-400 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10">
+                </path>
+            </svg>
+        </div>
+        <h3 class="text-lg font-medium text-gray-900">No projects found</h3>
+        <p class="mt-2 text-sm text-gray-500 max-w-sm mx-auto">Get started by looking for a new project to contribute
+            to, or create your own.</p>
+        <a href="{% url 'projects:new' %}" class="btn btn-primary mt-6 text-white capitalize font-medium">Register New
+            Project</a>
+    </div>
+    {% endif %}
 </div>
 {% endblock %}

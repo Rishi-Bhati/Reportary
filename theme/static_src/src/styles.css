@@ -1,11 +1,599 @@
+/* Import Inter Font */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
 @import "tailwindcss";
 @plugin "daisyui";
 
-/**
-  * A catch-all path to Django template files, JavaScript, and Python files
-  * that contain Tailwind CSS classes and will be scanned by Tailwind to generate the final CSS file.
-  *
-  * If your final CSS file is not being updated after code changes, you may want to broaden or narrow
-  * the scope of this path.
-  */
+/* ============================================
+   VINTAGE GRAPE / SAPPHIRE SKY PALETTE
+   ============================================
+   Shadow Grey:    #1b1725 (Dark/Neutral)
+   Vintage Grape:  #534b62 (Secondary Purple)
+   Lilac Ash:      #a499b3 (Accent Light)
+   Thistle:        #d0bcd5 (Base Light)
+   Sapphire Sky:   #226ce0 (Primary Blue)
+   ============================================ */
+
+@layer base {
+  :root {
+    /* Primary: Sapphire Sky - Vibrant Blue for CTAs */
+    --color-primary: #226ce0;
+    --color-primary-dark: #1b56b3;
+    --color-primary-light: #5a8ee8;
+    --color-primary-content: #ffffff;
+
+    /* Secondary: Vintage Grape - Deep Muted Purple */
+    --color-secondary: #534b62;
+    --color-secondary-content: #ffffff;
+
+    /* Accent: Lilac Ash - Soft Purple */
+    --color-accent: #a499b3;
+    --color-accent-content: #1b1725;
+
+    /* Neutral: Shadow Grey - Dark Background/Text */
+    --color-neutral: #1b1725;
+    --color-neutral-content: #ffffff;
+
+    /* Base Colors */
+    --color-base-100: #ffffff;
+    --color-base-200: #f8f6fa;
+    /* Very light thistle */
+    --color-base-300: #d0bcd5;
+    /* Thistle */
+    --color-base-content: #1b1725;
+    /* Shadow Grey */
+  }
+
+  /* Smooth Scrolling & Selection */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  ::selection {
+    background-color: #226ce0;
+    color: #ffffff;
+  }
+}
+
+@theme {
+  --font-sans: "Inter", system-ui, sans-serif;
+
+  /* Primary: Sapphire Sky */
+  --color-primary: #226ce0;
+  --color-primary-content: #ffffff;
+
+  /* Secondary: Vintage Grape */
+  --color-secondary: #534b62;
+  --color-secondary-content: #ffffff;
+
+  /* Accent: Lilac Ash */
+  --color-accent: #a499b3;
+  --color-accent-content: #1b1725;
+
+  /* Neutral: Shadow Grey */
+  --color-neutral: #1b1725;
+  --color-neutral-content: #ffffff;
+
+  /* Base Colors */
+  --color-base-100: #ffffff;
+  --color-base-200: #f8f6fa;
+  --color-base-300: #d0bcd5;
+  --color-base-content: #1b1725;
+
+  /* Feedback Colors */
+  --color-info: #226ce0;
+  --color-success: #22c55e;
+  --color-warning: #eab308;
+  --color-error: #ef4444;
+}
+
+/* ============================================
+   BASE STYLES
+   ============================================ */
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-base-200);
+  color: var(--color-base-content);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f8f6fa;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #a499b3;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #534b62;
+}
+
+/* ============================================
+   BUTTON OVERRIDES
+   ============================================ */
+.btn-primary {
+  background-color: #226ce0 !important;
+  border-color: #226ce0 !important;
+  color: #ffffff !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.btn-primary:hover {
+  background-color: #1b56b3 !important;
+  border-color: #1b56b3 !important;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px -5px rgba(34, 108, 224, 0.4);
+}
+
+.btn-primary:active,
+.btn-primary:focus {
+  transform: translateY(0) scale(0.98);
+  background-color: #1b56b3 !important;
+  border-color: #1b56b3 !important;
+  outline: none !important;
+  box-shadow: 0 0 0 3px rgba(34, 108, 224, 0.3) !important;
+}
+
+.btn-secondary {
+  background-color: #534b62 !important;
+  border-color: #534b62 !important;
+  color: #ffffff !important;
+}
+
+.btn-secondary:hover {
+  background-color: #1b1725 !important;
+  border-color: #1b1725 !important;
+}
+
+/* ============================================
+   LINK & ANCHOR OVERRIDES (Remove Purple)
+   ============================================ */
+a {
+  color: inherit;
+}
+
+a:hover {
+  color: #226ce0;
+}
+
+.link,
+.link-primary,
+.link-hover {
+  color: #226ce0 !important;
+}
+
+.link:hover,
+.link-primary:hover {
+  color: #1b56b3 !important;
+}
+
+/* ============================================
+   BADGE OVERRIDES
+   ============================================ */
+.badge-info {
+  background-color: #226ce0 !important;
+  border-color: #226ce0 !important;
+  color: #ffffff !important;
+}
+
+.badge-success {
+  background-color: #a499b3 !important;
+  border-color: #a499b3 !important;
+  color: #1b1725 !important;
+}
+
+.badge-primary {
+  background-color: #226ce0 !important;
+  border-color: #226ce0 !important;
+  color: #ffffff !important;
+}
+
+/* ============================================
+   FILE INPUT OVERRIDES
+   ============================================ */
+.file-input-primary,
+.file-input:focus {
+  border-color: #226ce0 !important;
+}
+
+.file-input::file-selector-button {
+  background-color: #226ce0 !important;
+  border-color: #226ce0 !important;
+  color: #ffffff !important;
+}
+
+.file-input:hover::file-selector-button {
+  background-color: #1b56b3 !important;
+}
+
+/* ============================================
+   MENU & SIDEBAR ACTIVE STATES (Remove Green)
+   ============================================ */
+.menu li>a:active,
+.menu li>a.active,
+.menu li>*:not(ul, .menu-title, details, .btn):active {
+  background-color: rgba(34, 108, 224, 0.15) !important;
+  color: #226ce0 !important;
+}
+
+.menu li>a:focus,
+.menu li>a:focus-visible {
+  background-color: rgba(34, 108, 224, 0.1) !important;
+  color: #226ce0 !important;
+  outline: none !important;
+}
+
+/* Override any DaisyUI default focus rings */
+*:focus {
+  outline-color: #226ce0 !important;
+}
+
+/* ============================================
+   SELECT & CHECKBOX OVERRIDES
+   ============================================ */
+.select-primary,
+.select:focus {
+  border-color: #226ce0 !important;
+}
+
+.checkbox-primary:checked,
+.checkbox:checked {
+  background-color: #226ce0 !important;
+  border-color: #226ce0 !important;
+}
+
+.toggle-primary:checked {
+  background-color: #226ce0 !important;
+  border-color: #226ce0 !important;
+}
+
+/* ============================================
+   TEXTAREA OVERRIDES
+   ============================================ */
+.textarea-primary,
+.textarea:focus {
+  border-color: #226ce0 !important;
+}
+
+/* ============================================
+   INPUT OVERRIDES
+   ============================================ */
+.input-primary,
+.input:focus {
+  border-color: #226ce0 !important;
+}
+
+/* ============================================
+   ANIMATION KEYFRAMES
+   ============================================ */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 30px, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes pulse-soft {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.6;
+  }
+}
+
+@keyframes blob {
+
+  0%,
+  100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+
+  33% {
+    transform: translate(30px, -50px) scale(1.1);
+  }
+
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* ============================================
+   ANIMATION UTILITY CLASSES
+   ============================================ */
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.5s ease-out forwards;
+}
+
+.animate-slide-in-left {
+  animation: slideInLeft 0.5s ease-out forwards;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.4s ease-out forwards;
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-pulse-soft {
+  animation: pulse-soft 3s ease-in-out infinite;
+}
+
+.animate-blob {
+  animation: blob 7s infinite;
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+/* Animation Delays */
+.delay-100 {
+  animation-delay: 100ms;
+}
+
+.delay-200 {
+  animation-delay: 200ms;
+}
+
+.delay-300 {
+  animation-delay: 300ms;
+}
+
+.delay-400 {
+  animation-delay: 400ms;
+}
+
+.delay-500 {
+  animation-delay: 500ms;
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+  animation-delay: 4s;
+}
+
+/* ============================================
+   PALETTE UTILITY CLASSES
+   (Using 'teal-*' names for template compatibility)
+   ============================================ */
+
+/* Backgrounds - Sapphire Sky */
+.bg-teal-50 {
+  background-color: rgba(34, 108, 224, 0.08) !important;
+}
+
+.bg-teal-100 {
+  background-color: rgba(34, 108, 224, 0.15) !important;
+}
+
+.bg-teal-200 {
+  background-color: rgba(34, 108, 224, 0.25) !important;
+}
+
+.bg-teal-500 {
+  background-color: #226ce0 !important;
+}
+
+.bg-teal-600 {
+  background-color: #1b56b3 !important;
+}
+
+.bg-teal-700 {
+  background-color: #534b62 !important;
+}
+
+/* Text - Sapphire Sky & Vintage Grape */
+.text-teal-500 {
+  color: #226ce0 !important;
+}
+
+.text-teal-600 {
+  color: #1b56b3 !important;
+}
+
+.text-teal-700 {
+  color: #534b62 !important;
+}
+
+.text-teal-800 {
+  color: #1b1725 !important;
+}
+
+.text-teal-100 {
+  color: rgba(255, 255, 255, 0.85) !important;
+}
+
+/* Borders - Lilac Ash & Thistle */
+.border-teal-100 {
+  border-color: rgba(34, 108, 224, 0.2) !important;
+}
+
+.border-teal-200 {
+  border-color: #d0bcd5 !important;
+}
+
+.border-teal-500 {
+  border-color: #226ce0 !important;
+}
+
+.border-teal-600 {
+  border-color: #1b56b3 !important;
+}
+
+/* ============================================
+   HOVER & TRANSITION UTILITIES
+   ============================================ */
+.hover-lift {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px -12px rgba(34, 108, 224, 0.25);
+}
+
+.hover-glow {
+  transition: box-shadow 0.3s ease;
+}
+
+.hover-glow:hover {
+  box-shadow: 0 0 20px rgba(34, 108, 224, 0.3);
+}
+
+.hover-scale {
+  transition: transform 0.2s ease;
+}
+
+.hover-scale:hover {
+  transform: scale(1.02);
+}
+
+.hover-scale:active {
+  transform: scale(0.98);
+}
+
+/* ============================================
+   GLASS PANEL & SPECIAL EFFECTS
+   ============================================ */
+@utility glass-panel {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 8px 32px rgba(27, 23, 37, 0.08);
+}
+
+/* Gradient Text Utility */
+.gradient-text {
+  background: linear-gradient(135deg, #226ce0 0%, #a499b3 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Card Hover Effect */
+.card-interactive {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-interactive:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px -12px rgba(34, 108, 224, 0.15);
+  border-color: #a499b3;
+}
+
+/* ============================================
+   FOCUS STATES
+   ============================================ */
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: #226ce0 !important;
+  box-shadow: 0 0 0 3px rgba(34, 108, 224, 0.15);
+}
+
+/* ============================================
+   TAILWIND SOURCE PATH
+   ============================================ */
 @source "../../../**/*.{html,py,js}";

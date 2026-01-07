@@ -1,67 +1,274 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block content %}
-<div class="container mx-auto px-4 py-8">
+{% block title %}{{ report.title }} | Reports{% endblock %}
+{% block breadcrumb %}
+<a href="{% url 'projects:my_projects' %}" class="hover:text-[#226ce0] transition-colors">Projects</a> /
+<a href="{% url 'projects:project_detail' pk=project.id %}" class="hover:text-[#226ce0] transition-colors">{{
+    project.title }}</a> /
+<a href="{% url 'projects:reports:report_list' project.id %}" class="hover:text-[#226ce0] transition-colors">Reports</a>
+/
+<span class="text-[#226ce0] font-medium">#{{ report.id }}</span>
+{% endblock %}
 
-    {# This is the main card for displaying the report details. #}
-    <div class="card bg-base-100 shadow-xl mb-8">
-        <div class="card-body">
-            <h1 class="card-title text-3xl mb-4">Report: {{ report.title }}</h1>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <p><strong>Project:</strong> {{ project.title }}</p>
-                <p><strong>Reported by:</strong> {{ report.reported_by.username }}</p>
-                <p><strong>Component:</strong> {{ report.component.name }}</p>
-                <p><strong>Status:</strong> <span class="badge badge-lg">{{ report.status }}</span></p>
-                <p><strong>Assigned to:</strong> <span class="badge badge-lg">{{ report.assigned_to.username|default:"Unassigned" }}</span></p>
-                <p><strong>Impact:</strong> <span class="badge badge-lg">{{ report.impact }}</span></p>
-                <p><strong>Visibility:</strong> <span class="badge badge-lg">{% if report.visibility %}Visible{% else %}Hidden{% endif %}</span></p>
-                <p><strong>Created at:</strong> {{ report.created_at }}</p>
-                <p><strong>Last updated:</strong> {{ report.updated_at }}</p>
-            </div>
-            <div class="mt-4">
-                <p><strong>Description:</strong></p>
-                <p>{{ report.description }}</p>
+{% block content %}
+<div class="max-w-6xl mx-auto space-y-8">
+
+    <!-- Header Section -->
+    <div class="bg-white rounded-2xl border border-[#d0bcd5]/30 shadow-lg overflow-hidden">
+        <!-- Gradient Header Bar -->
+        <div class="h-2 bg-gradient-to-r from-[#226ce0] to-[#1b56b3]"></div>
+
+        <div class="p-8">
+            <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+                <div class="flex-1">
+                    <div class="flex flex-wrap items-center gap-3 mb-3">
+                        <span class="text-[#a499b3] text-lg font-mono">#{{ report.id }}</span>
+                        {% if report.status == 'open' %}
+                        <span
+                            class="px-3 py-1 rounded-full text-xs font-bold bg-[#226ce0] text-white uppercase tracking-wide">Open</span>
+                        {% elif report.status == 'in_progress' %}
+                        <span
+                            class="px-3 py-1 rounded-full text-xs font-bold bg-[#eab308] text-white uppercase tracking-wide">In
+                            Progress</span>
+                        {% elif report.status == 'resolved' %}
+                        <span
+                            class="px-3 py-1 rounded-full text-xs font-bold bg-[#a499b3] text-[#1b1725] uppercase tracking-wide">Resolved</span>
+                        {% else %}
+                        <span
+                            class="px-3 py-1 rounded-full text-xs font-bold bg-gray-200 text-gray-700 uppercase tracking-wide">{{
+                            report.get_status_display }}</span>
+                        {% endif %}
+
+                        {% if report.impact == 'Critical' or report.impact == 'High' %}
+                        <span
+                            class="px-3 py-1 rounded-full text-xs font-bold bg-[#ef4444]/10 text-[#ef4444] border border-[#ef4444]/30 uppercase tracking-wide flex items-center gap-1">
+                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd"
+                                    d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                            {{ report.impact }}
+                        </span>
+                        {% endif %}
+                    </div>
+
+                    <h1 class="text-3xl font-bold text-[#1b1725] tracking-tight mb-4">{{ report.title }}</h1>
+
+                    <div class="flex flex-wrap items-center gap-4 text-sm text-[#534b62]">
+                        <div class="flex items-center gap-2">
+                            <div
+                                class="w-7 h-7 rounded-full bg-[#226ce0] text-white flex items-center justify-center text-xs font-bold">
+                                {{ report.reported_by.username|slice:":1"|upper }}
+                            </div>
+                            <span>Reported by <span class="font-semibold text-[#1b1725]">{{ report.reported_by.username
+                                    }}</span></span>
+                        </div>
+                        <span class="text-[#a499b3]">•</span>
+                        <span>{{ report.created_at|date:"F j, Y" }}</span>
+                        <span class="text-[#a499b3]">•</span>
+                        <span>{{ report.created_at|timesince }} ago</span>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <a href="{% url 'projects:reports:report_list' project.id %}"
+                        class="btn bg-white border-2 border-[#d0bcd5] text-[#534b62] hover:bg-[#f8f6fa] hover:border-[#a499b3] hover:text-[#1b1725] transition-all duration-200">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                        </svg>
+                        Back to List
+                    </a>
+                </div>
             </div>
         </div>
     </div>
 
-    {% if can_change_status %}
-        {% include "reports/partials/report_actions.html" %}
-    {% endif %}
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Main Content -->
+        <div class="lg:col-span-2 space-y-8">
 
-    {# Link to go back to the list of reports for the current project. #}
-    <a href="{% url 'projects:reports:report_list' project.id %}" class="btn btn-outline mb-8">Back to Reports List</a>
+            <!-- Description Card -->
+            <div class="bg-white rounded-2xl border border-[#d0bcd5]/30 shadow-sm overflow-hidden">
+                <div class="px-8 py-5 border-b border-[#d0bcd5]/30 bg-[#f8f6fa]/50">
+                    <h3 class="text-lg font-bold text-[#1b1725] flex items-center gap-2">
+                        <svg class="w-5 h-5 text-[#226ce0]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                            </path>
+                        </svg>
+                        Description
+                    </h3>
+                </div>
+                <div class="p-8">
+                    <div class="prose max-w-none text-[#534b62] leading-relaxed">
+                        {{ report.description|linebreaks }}
+                    </div>
+                </div>
+            </div>
 
-    {# This section handles the display and creation of comments. #}
-    <div class="mt-8">
-        <h2 class="text-2xl font-bold mb-4">Comments</h2>
-        
-        {# This div is the target for HTMX. New comments will be appended here. #}
-        <div id="comments-section" class="space-y-4">
-            {# We loop through the existing comments and include a partial template for each one. #}
-            {# This keeps the comment rendering logic separate and reusable. #}
-            {% for comment in comments %}
-                {% include 'comments/partials/comment.html' %}
-            {% endfor %}
+            <!-- Comments Section -->
+            <div class="space-y-6">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-xl font-bold text-[#1b1725] flex items-center gap-3">
+                        <svg class="w-6 h-6 text-[#226ce0]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z">
+                            </path>
+                        </svg>
+                        Discussion
+                    </h3>
+                    <span class="px-3 py-1 rounded-full text-sm font-medium bg-[#226ce0]/10 text-[#226ce0]">{{
+                        comments.count|default:"0" }} comments</span>
+                </div>
+
+                <div id="comments-section" class="space-y-4">
+                    {% for comment in comments %}
+                    {% include 'comments/partials/comment.html' %}
+                    {% empty %}
+                    <div class="bg-[#f8f6fa] rounded-xl p-8 text-center" id="no-comments-msg">
+                        <svg class="w-12 h-12 text-[#a499b3] mx-auto mb-4" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z">
+                            </path>
+                        </svg>
+                        <p class="text-[#534b62] font-medium">No comments yet</p>
+                        <p class="text-[#a499b3] text-sm mt-1">Be the first to start the discussion!</p>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Comment Form -->
+                <div class="bg-white rounded-2xl border border-[#d0bcd5]/30 shadow-sm p-6">
+                    <h4 class="text-sm font-bold text-[#1b1725] uppercase tracking-wider mb-4 flex items-center gap-2">
+                        <svg class="w-4 h-4 text-[#226ce0]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
+                            </path>
+                        </svg>
+                        Leave a Comment
+                    </h4>
+                    <form hx-post="{% url 'comments:add_comment' report.pk %}" hx-target="#comments-section"
+                        hx-swap="beforeend"
+                        hx-on::after-request="this.reset(); document.getElementById('no-comments-msg')?.remove()">
+                        {% csrf_token %}
+                        <div class="form-control mb-4">
+                            <textarea
+                                class="textarea w-full h-28 bg-[#f8f6fa] border-[#d0bcd5] focus:border-[#226ce0] focus:bg-white text-base py-3 rounded-xl transition-all duration-200"
+                                name="text" placeholder="Share your thoughts..." required></textarea>
+                        </div>
+                        <div class="flex justify-end">
+                            <button type="submit"
+                                class="btn btn-primary text-white px-6 shadow-md hover:shadow-lg transition-all duration-200">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                                </svg>
+                                Post Comment
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
-        
-        {# This is the form for adding a new comment. It uses HTMX for submission. #}
-        <div class="mt-8 card bg-base-100 shadow">
-            <div class="card-body">
-                <h3 class="card-title">Leave a comment</h3>
-                <form hx-post="{% url 'comments:add_comment' report.pk %}" hx-target="#comments-section" hx-swap="beforeend" hx-on::after-request="this.reset()">
-                    {% csrf_token %}
-                    <div class="form-control">
-                        {{ comment_form.text.label_tag }}
-                        <textarea class="textarea textarea-bordered h-24" name="text" placeholder="Write a comment..." required></textarea>
+
+        <!-- Sidebar Meta -->
+        <div class="space-y-6">
+            <!-- Details Card -->
+            <div class="bg-white rounded-2xl border border-[#d0bcd5]/30 shadow-sm overflow-hidden">
+                <div class="px-6 py-4 border-b border-[#d0bcd5]/30 bg-[#f8f6fa]/50">
+                    <h4 class="text-sm font-bold text-[#1b1725] uppercase tracking-wider">Details</h4>
+                </div>
+
+                <div class="p-6 space-y-5">
+                    <!-- Assignee -->
+                    <div>
+                        <h5 class="text-xs font-bold text-[#a499b3] uppercase tracking-wider mb-2">Assignee</h5>
+                        <div class="flex items-center gap-3">
+                            {% if report.assigned_to %}
+                            <div
+                                class="w-9 h-9 rounded-full bg-gradient-to-br from-[#226ce0] to-[#1b56b3] flex items-center justify-center text-sm font-bold text-white shadow-md">
+                                {{ report.assigned_to.username|slice:":1"|upper }}
+                            </div>
+                            <div>
+                                <p class="font-semibold text-[#1b1725]">{{ report.assigned_to.username }}</p>
+                                <p class="text-xs text-[#a499b3]">Assignee</p>
+                            </div>
+                            {% else %}
+                            <div class="w-9 h-9 rounded-full bg-[#d0bcd5] flex items-center justify-center">
+                                <svg class="w-4 h-4 text-[#534b62]" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                </svg>
+                            </div>
+                            <span class="text-sm text-[#a499b3] italic">Unassigned</span>
+                            {% endif %}
+                        </div>
                     </div>
-                    <div class="mt-4 flex justify-end">
-                        <button type="submit" class="btn btn-primary">
-                            Post comment
-                        </button>
+
+                    <!-- Severity -->
+                    <div>
+                        <h5 class="text-xs font-bold text-[#a499b3] uppercase tracking-wider mb-2">Severity</h5>
+                        <span class="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium
+                            {% if report.impact == 'Critical' %}bg-[#ef4444]/10 text-[#ef4444] border border-[#ef4444]/20
+                            {% elif report.impact == 'High' %}bg-[#eab308]/10 text-[#eab308] border border-[#eab308]/20
+                            {% else %}bg-[#d0bcd5]/30 text-[#534b62] border border-[#d0bcd5]{% endif %}">
+                            {{ report.impact|default:"Normal" }}
+                        </span>
                     </div>
-                </form>
+
+                    <!-- Component -->
+                    <div>
+                        <h5 class="text-xs font-bold text-[#a499b3] uppercase tracking-wider mb-2">Component</h5>
+                        <span
+                            class="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium bg-[#226ce0]/10 text-[#226ce0]">
+                            <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10">
+                                </path>
+                            </svg>
+                            {{ report.component.name|default:"General" }}
+                        </span>
+                    </div>
+
+                    <!-- Project -->
+                    <div>
+                        <h5 class="text-xs font-bold text-[#a499b3] uppercase tracking-wider mb-2">Project</h5>
+                        <a href="{% url 'projects:project_detail' pk=project.id %}"
+                            class="inline-flex items-center gap-2 text-sm font-medium text-[#226ce0] hover:text-[#1b56b3] transition-colors">
+                            <div
+                                class="w-6 h-6 rounded bg-[#226ce0]/10 flex items-center justify-center text-xs font-bold text-[#226ce0]">
+                                {{ project.title|slice:":1"|upper }}
+                            </div>
+                            {{ project.title }}
+                        </a>
+                    </div>
+                </div>
+
+                {% if can_change_status %}
+                <div class="px-6 py-4 border-t border-[#d0bcd5]/30 bg-[#f8f6fa]/50">
+                    <h5 class="text-xs font-bold text-[#a499b3] uppercase tracking-wider mb-3">Actions</h5>
+                    {% include "reports/partials/report_actions.html" %}
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="bg-gradient-to-br from-[#226ce0] to-[#1b56b3] rounded-2xl p-6 text-white shadow-lg">
+                <h4 class="text-sm font-bold uppercase tracking-wider mb-4 text-white/80">Activity</h4>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-white/10 rounded-xl p-4 text-center backdrop-blur-sm">
+                        <p class="text-2xl font-bold">{{ comments.count|default:"0" }}</p>
+                        <p class="text-xs text-white/70 mt-1">Comments</p>
+                    </div>
+                    <div class="bg-white/10 rounded-xl p-4 text-center backdrop-blur-sm">
+                        <p class="text-2xl font-bold">{{ report.created_at|timesince }}</p>
+                        <p class="text-xs text-white/70 mt-1">Age</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

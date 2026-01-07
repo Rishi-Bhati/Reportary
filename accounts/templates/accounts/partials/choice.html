@@ -1,21 +1,24 @@
-<div class="card-body items-center text-center animate-fade-in">
-    <h2 class="card-title text-3xl mb-8 font-serif text-gray-900">Are You registering for / as Organisation?</h2>
-    
-    <div class="flex gap-6 w-full justify-center">
-        <button 
-            class="btn btn-primary btn-outline btn-lg w-32 text-xl"
-            hx-get="{% url 'onboarding_org_form' %}"
-            hx-target="#onboarding-card"
-            hx-swap="innerHTML">
-            Yes
+<div class="card-body p-10 items-center text-center animate-fade-in">
+    <div class="w-16 h-16 bg-[#226ce0]/10 text-[#226ce0] rounded-full flex items-center justify-center mb-6">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
+            </path>
+        </svg>
+    </div>
+
+    <h2 class="text-2xl font-bold text-gray-900 mb-2">Setup Organization</h2>
+    <p class="text-gray-500 mb-8 max-w-sm">Are you creating this account to manage an organization or team?</p>
+
+    <div class="flex flex-col sm:flex-row gap-4 w-full justify-center">
+        <button class="btn btn-primary text-white font-semibold px-8 shadow-md hover:shadow-lg transition-all"
+            hx-get="{% url 'accounts:onboarding_org_form' %}" hx-target="#onboarding-card" hx-swap="innerHTML">
+            Yes, Create Organization
         </button>
 
-        <button 
-            class="btn btn-neutral btn-outline btn-lg w-32 text-xl"
-            hx-get="{% url 'onboarding_user_form' %}"
-            hx-target="#onboarding-card"
-            hx-swap="innerHTML">
-            No
+        <button class="btn btn-ghost hover:bg-gray-50 text-gray-600 font-medium px-8"
+            hx-get="{% url 'accounts:onboarding_user_form' %}" hx-target="#onboarding-card" hx-swap="innerHTML">
+            No, I'm a User
         </button>
     </div>
 </div>

@@ -1,21 +1,23 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Reportary{% endblock %}</title>
-    
+
     <link rel="stylesheet" href="{% static 'css/dist/styles.css' %}">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    
+
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
     <script>
-        document.addEventListener('htmx:load', function() {
+        document.addEventListener('htmx:load', function () {
             document.documentElement.style.colorScheme = 'light';
         });
     </script>
 </head>
+
 <body class="bg-white text-gray-900 font-sans antialiased min-h-screen">
     {% include "partials/topbar.html" %}
     <div class="flex pt-16">
@@ -23,18 +25,23 @@
 
         <main class="flex-1 ml-64 p-8 w-full min-h-[calc(100vh-4rem)]">
             <div class="flex items-center gap-4 mb-8 max-w-6xl">
-                <button class="btn btn-circle btn-ghost text-gray-600 hover:text-gray-900 hover:bg-gray-200 transition" 
-                        hx-get="." 
-                        hx-target="body" 
-                        title="Refresh">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-6 h-6">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+                <button class="btn btn-circle btn-ghost text-gray-600 hover:text-gray-900 hover:bg-gray-200 transition"
+                    hx-get="." hx-target="body" title="Refresh">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5"
+                        stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
                     </svg>
                 </button>
-                <label class="input input-bordered flex items-center gap-2 w-full bg-white text-gray-900 border-gray-300 focus-within:border-blue-500 focus-within:outline focus-within:outline-offset-0">
-                    <input type="text" class="grow bg-white placeholder-gray-500 font-medium text-base" placeholder="Global Search" />
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-5 h-5 opacity-50">
-                        <path fill-rule="evenodd" d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z" clip-rule="evenodd" />
+                <label
+                    class="input input-bordered flex items-center gap-2 w-full bg-white text-gray-900 border-gray-300 focus-within:border-[#226ce0] focus-within:outline focus-within:outline-offset-0">
+                    <input type="text" class="grow bg-white placeholder-gray-500 font-medium text-base"
+                        placeholder="Global Search" />
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"
+                        class="w-5 h-5 opacity-50">
+                        <path fill-rule="evenodd"
+                            d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z"
+                            clip-rule="evenodd" />
                     </svg>
                 </label>
             </div>
@@ -48,4 +55,5 @@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     {% block scripts %}{% endblock %}
 </body>
+
 </html>

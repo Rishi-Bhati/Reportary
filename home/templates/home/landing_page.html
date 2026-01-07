@@ -1,61 +1,163 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome to Reportary</title>
+    <title>Streamline Your Reporting | Reportary</title>
     <link rel="stylesheet" href="{% static 'css/dist/styles.css' %}">
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
+
 <body class="bg-white text-gray-900 font-sans min-h-screen flex flex-col">
 
-    <!-- Navbar (Wireframe Style) -->
-    <nav class="navbar bg-white border-b-2 border-gray-900 px-6 py-4">
-        <div class="flex-1">
-            <!-- Sketchy Font for Logo -->
-            <a class="text-4xl font-bold font-serif tracking-tight">Reportary</a>
-        </div>
-        <div class="flex-none gap-8 text-xl font-bold text-gray-800">
-            <a href="{% url 'dashboard'%}" class="hover:underline decoration-2">Home</a>
-            <a href="#" class="hover:underline decoration-2">My Reports</a>
-            <a href="#" class="hover:underline decoration-2">Explore</a>
-            {% comment %} <a href="#" class="hover:underline decoration-2">Login</a> {% endcomment %}
+    <!-- Navbar -->
+    <nav class="bg-white/90 backdrop-blur-sm border-b border-gray-100 sticky top-0 z-50 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo -->
+                <div class="flex-shrink-0 flex items-center gap-3 group cursor-pointer">
+                    <div
+                        class="w-10 h-10 rounded-xl bg-[#226ce0] text-white flex items-center justify-center font-bold text-xl shadow-lg shadow-[#226ce0]/25 group-hover:scale-110 group-hover:shadow-[#226ce0]/40 transition-all duration-300">
+                        R</div>
+                    <span
+                        class="font-bold text-2xl tracking-tight text-gray-900 group-hover:text-[#226ce0] transition-colors duration-300">Reportary</span>
+                </div>
+
+                <!-- Links -->
+                <div class="hidden md:flex space-x-10">
+                    <a href="{% url 'dashboard'%}"
+                        class="text-gray-600 hover:text-[#226ce0] font-medium transition-colors duration-200 text-sm relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#226ce0] hover:after:w-full after:transition-all after:duration-300">Product</a>
+                    <a href="#"
+                        class="text-gray-600 hover:text-[#226ce0] font-medium transition-colors duration-200 text-sm relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#226ce0] hover:after:w-full after:transition-all after:duration-300">Solutions</a>
+                    <a href="#"
+                        class="text-gray-600 hover:text-[#226ce0] font-medium transition-colors duration-200 text-sm relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#226ce0] hover:after:w-full after:transition-all after:duration-300">Pricing</a>
+                </div>
+
+                <!-- CTA -->
+                <div class="flex items-center space-x-4">
+                    <a href="{% url 'dashboard' %}"
+                        class="hidden md:block text-sm font-semibold text-gray-700 hover:text-[#226ce0] transition-colors duration-200">Sign
+                        in</a>
+                    <a href="#"
+                        class="btn btn-primary h-10 min-h-[2.5rem] px-6 text-white rounded-lg font-semibold border-none shadow-lg shadow-[#226ce0]/25 hover:shadow-xl hover:shadow-[#226ce0]/35 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 text-sm uppercase tracking-wide">Get
+                        Started</a>
+                </div>
+            </div>
         </div>
     </nav>
 
-    <!-- Main Content -->
-    <main class="flex-1 flex flex-col items-center justify-center p-8 w-full max-w-7xl mx-auto">
-        
-        <!-- Big Heading -->
-        <h1 class="text-5xl font-bold font-serif mb-16 text-center">Welcome to Reportary!</h1>
+    <!-- Hero Section -->
+    <main
+        class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-24 lg:py-32 flex flex-col justify-center">
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-16 w-full items-center">
-            
-            <!-- Left Side: Auth Card (Swappable) -->
-            <div id="auth-card-container" class="w-full max-w-md mx-auto">
-                {% include "home/partials/login_card.html" %}
-            </div>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
 
-            <!-- Right Side: The "Lines" (Text Paragraphs) -->
-            <div class="space-y-8 max-w-lg">
-                <div class="bg-gray-50 p-6 rounded-lg border-l-4 border-gray-900 shadow-sm">
-                    <h3 class="text-2xl font-bold mb-2 font-serif">Streamlined Reporting</h3>
-                    <p class="text-lg text-gray-600 leading-relaxed">
-                        Forget the chaos of scattered spreadsheets. Reportary unifies your data into a single, cohesive narrative that's easy to track, easy to verify, and impossible to ignore.
-                    </p>
+            <!-- Left: Content -->
+            <div class="max-w-2xl">
+                <!-- Badge -->
+                <div
+                    class="inline-flex items-center rounded-full px-4 py-1.5 text-xs font-bold text-[#226ce0] bg-[#226ce0]/10 mb-8 border border-[#226ce0]/20 animate-fade-in-up">
+                    <span class="flex h-2 w-2 rounded-full bg-[#226ce0] mr-2 animate-pulse"></span>
+                    REPORTARY 2.0 IS LIVE
                 </div>
 
-                <div class="bg-gray-50 p-6 rounded-lg border-l-4 border-gray-900 shadow-sm">
-                    <h3 class="text-2xl font-bold mb-2 font-serif">Seamless Collaboration</h3>
-                    <p class="text-lg text-gray-600 leading-relaxed">
-                        Work together in real-time. Assign tasks, track progress, and approve reports with a workflow designed for transparency and speed.
-                    </p>
+                <!-- Headline -->
+                <h1
+                    class="text-5xl md:text-6xl lg:text-7xl font-bold text-[#1b1725] tracking-tight leading-[1.1] mb-8 animate-fade-in-up delay-100">
+                    Issue tracking, <br>
+                    <span
+                        class="text-transparent bg-clip-text bg-gradient-to-r from-[#226ce0] to-[#1b56b3]">simplified.</span>
+                </h1>
+
+                <!-- Subtext -->
+                <p
+                    class="text-lg md:text-xl text-[#534b62] leading-relaxed mb-10 max-w-lg font-light animate-fade-in-up delay-200">
+                    The modern standard for engineering teams. Unified data, real-time collaboration, and workflows that
+                    actually make sense.
+                </p>
+
+                <!-- CTA Buttons -->
+                <div class="flex flex-col sm:flex-row gap-4 mb-14 animate-fade-in-up delay-300">
+                    <a href="#"
+                        class="btn btn-primary h-12 px-8 text-white rounded-xl font-bold border-none shadow-xl shadow-[#226ce0]/25 hover:shadow-2xl hover:shadow-[#226ce0]/35 hover:-translate-y-1 active:translate-y-0 active:scale-[0.98] transition-all duration-300 text-base">
+                        Start Building Free
+                    </a>
+                    <a href="#"
+                        class="btn h-12 px-8 bg-white text-[#534b62] hover:bg-[#f8f6fa] hover:text-[#1b1725] rounded-xl font-semibold text-base border-2 border-[#d0bcd5] hover:border-[#a499b3] transition-all duration-300">
+                        View Live Demo
+                    </a>
+                </div>
+
+                <!-- Feature List -->
+                <div
+                    class="flex flex-wrap items-center gap-x-8 gap-y-4 text-sm text-[#534b62] font-medium animate-fade-in-up delay-400">
+                    <div class="flex items-center gap-2">
+                        <svg class="w-5 h-5 text-[#226ce0]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        Free for small teams
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <svg class="w-5 h-5 text-[#226ce0]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        No credit card required
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <svg class="w-5 h-5 text-[#226ce0]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        Open Source
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Auth Card Wrapper -->
+            <div class="relative lg:ml-auto w-full max-w-md mx-auto animate-fade-in-up delay-300">
+                <!-- Decorative Elements behind card -->
+                <div
+                    class="absolute -top-20 -right-20 w-80 h-80 bg-[#a499b3] rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-blob">
+                </div>
+                <div
+                    class="absolute -bottom-20 -left-20 w-80 h-80 bg-[#d0bcd5] rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-blob animation-delay-2000">
+                </div>
+                <div
+                    class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-[#226ce0] rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000">
+                </div>
+                <!-- Card Container -->
+                <div id="auth-card-container" class="relative">
+                    {% include "home/partials/login_card.html" %}
                 </div>
             </div>
 
         </div>
+
     </main>
 
+    <!-- Simple Footer -->
+    <footer class="bg-[#f8f6fa] border-t border-[#d0bcd5] py-12 mt-auto">
+        <div
+            class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
+            <p class="text-sm text-[#534b62]">© 2024 Reportary Inc. All rights reserved.</p>
+            <div class="flex space-x-6">
+                <a href="#" class="text-[#a499b3] hover:text-[#226ce0] transition-colors duration-200">
+                    <span class="sr-only">GitHub</span>
+                    <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path fill-rule="evenodd"
+                            d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
+                            clip-rule="evenodd" />
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </footer>
+
 </body>
+
 </html>

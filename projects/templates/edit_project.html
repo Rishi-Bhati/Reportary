@@ -1,137 +1,205 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Edit Project{% endblock %}
+{% block title %}Edit {{ project.title }} | Projects{% endblock %}
+{% block breadcrumb %}
+<a href="{% url 'projects:my_projects' %}" class="hover:text-[#226ce0]">Projects</a> /
+<a href="{% url 'projects:project_detail' pk=project.pk %}" class="hover:text-[#226ce0]">{{ project.title }}</a> /
+Edit
+{% endblock %}
 
 {% block content %}
 
-<h2 class="text-2xl font-bold mb-4">Edit Project: {{ project.name }}</h2>
-<div class="max-w-lg mx-auto bg-white p-8 rounded-lg shadow-md">
-    <form method="post" action="{% url 'projects:edit_project' pk=project.pk %}" id="projectForm">
-        {% csrf_token %}
-        
-        <!-- Project Fields -->
-        {% for field in form %}
-            {% if field.name == 'public' %}
-                <div class="mb-6">
-                    <label class="flex items-center text-gray-700 text-sm font-bold">
+<div class="max-w-3xl mx-auto">
+    <!-- Header -->
+    <div class="mb-8">
+        <h1 class="text-2xl font-bold text-gray-900 tracking-tight">Edit Project</h1>
+        <p class="text-gray-500 mt-1">Update settings for <strong>{{ project.title }}</strong>.</p>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <form method="post" action="{% url 'projects:edit_project' pk=project.pk %}" id="projectForm"
+            class="divide-y divide-gray-100">
+            {% csrf_token %}
+
+            <div class="p-8 space-y-6">
+                <!-- Project Fields -->
+                {% for field in form %}
+                {% if field.name == 'public' %}
+                <div class="form-control">
+                    <label class="label cursor-pointer justify-start gap-4">
                         {{ field }}
-                        <span class="ml-2">{{ field.label }}</span>
+                        <div>
+                            <span class="label-text font-semibold text-gray-900 block">{{ field.label }}</span>
+                            <span class="text-xs text-gray-500">Make this project visible to everyone?</span>
+                        </div>
                     </label>
-                    {% if field.help_text %}
-                        <p class="text-gray-600 text-xs italic mt-1">{{ field.help_text }}</p>
-                    {% endif %}
-                    {% for error in field.errors %}
-                        <p class="text-red-500 text-xs italic mt-1">{{ error }}</p>
-                    {% endfor %}
+                    {% if field.help_text %}<p class="text-gray-500 text-xs mt-1 ml-8">{{ field.help_text }}</p>{% endif
+                    %}
+                    {% for error in field.errors %}<p class="text-red-500 text-xs mt-1 ml-8">{{ error }}</p>{% endfor %}
                 </div>
-            {% else %}
-                <div class="mb-6">
-                    <label for="{{ field.id_for_label }}" class="block text-gray-700 text-sm font-bold mb-2">{{ field.label }}</label>
-                    {{ field }}
-                    {% if field.help_text %}
-                        <p class="text-gray-600 text-xs italic mt-1">{{ field.help_text }}</p>
-                    {% endif %}
-                    {% for error in field.errors %}
-                        <p class="text-red-500 text-xs italic mt-1">{{ error }}</p>
-                    {% endfor %}
-                </div>
-            {% endif %}
-        {% endfor %}
+                {% else %}
+                <div class="form-control w-full">
+                    <label for="{{ field.id_for_label }}" class="label">
+                        <span class="label-text font-semibold text-gray-700">{{ field.label }}</span>
+                    </label>
 
-        <div class="mb-6">
-            <label for="id_collaborators_select2" class="block text-gray-700 text-sm font-bold mb-2">Collaborators</label>
-            <select id="id_collaborators_select2" class="w-full" multiple="multiple">
-                {% for email in collaborator_emails %}
-                    <option value="{{ email }}" selected="selected">{{ email }}</option>
+                    {% if field.name == 'description' %}
+                    <textarea name="{{ field.name }}" id="{{ field.id_for_label }}" rows="4"
+                        class="textarea textarea-bordered w-full focus:border-[#226ce0] bg-gray-50 focus:bg-white transition-colors text-base"
+                        placeholder="{{ field.label }}...">{{ field.value|default:'' }}</textarea>
+                    {% else %}
+                    <input type="{{ field.field.widget.input_type|default:'text' }}" name="{{ field.name }}"
+                        id="{{ field.id_for_label }}" value="{{ field.value|default:'' }}"
+                        class="input input-bordered w-full focus:border-[#226ce0] bg-gray-50 focus:bg-white transition-colors"
+                        placeholder="{{ field.label }}" {% if field.field.required %}required{% endif %}>
+                    {% endif %}
+
+                    {% if field.help_text %}<label class="label"><span class="label-text-alt text-gray-500">{{
+                            field.help_text }}</span></label>{% endif %}
+                    {% for error in field.errors %}<label class="label"><span class="label-text-alt text-red-500">{{
+                            error }}</span></label>{% endfor %}
+                </div>
+                {% endif %}
                 {% endfor %}
-            </select>
-            <input type="hidden" name="collaborators" id="id_collaborators" value="{{ collaborator_emails|join:", " }}">
-        </div>
 
-        <!-- Components Section -->
-        <div class="mt-8 pt-8 border-t-2">
-            <h3 class="text-lg font-bold mb-4">Components</h3>
-            
-            {{ component_formset.management_form }}
-            
-            <div id="componentsContainer">
-                {% for component_form in component_formset %}
-                    <div class="component-form mb-6 p-4 bg-gray-50 rounded-lg component-item">
+                <!-- Collaborators -->
+                <div class="form-control w-full">
+                    <label for="id_collaborators_select2" class="label">
+                        <span class="label-text font-semibold text-gray-700">Collaborators</span>
+                    </label>
+                    <select id="id_collaborators_select2" class="w-full" multiple="multiple">
+                        {% for email in collaborator_emails %}
+                        <option value="{{ email }}" selected="selected">{{ email }}</option>
+                        {% endfor %}
+                    </select>
+                    <input type="hidden" name="collaborators" id="id_collaborators" value="{{ collaborator_emails|join:"
+                        , " }}">
+                    <label class="label">
+                        <span class="label-text-alt text-gray-500">Update team members.</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Components Section -->
+            <div class="p-8 bg-gray-50/50">
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-900">Components</h3>
+                        <p class="text-sm text-gray-500">Manage components.</p>
+                    </div>
+                </div>
+
+                {{ component_formset.management_form }}
+
+                <div id="componentsContainer" class="space-y-4">
+                    {% for component_form in component_formset %}
+                    <div
+                        class="component-form p-6 bg-white rounded-xl border border-gray-200 shadow-sm component-item relative group">
+                        <!-- Hidden ID if editing -->
                         {% if component_form.instance.pk %}{{ component_form.id }}{% endif %}
+
                         {% if component_form.non_form_errors %}
-                            <div class="text-red-500 text-sm mb-2">
-                                {% for error in component_form.non_form_errors %}
-                                    <p>{{ error }}</p>
+                        <div class="alert alert-error text-sm mb-4">
+                            {% for error in component_form.non_form_errors %}<p>{{ error }}</p>{% endfor %}
+                        </div>
+                        {% endif %}
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {% for field in component_form %}
+                            {% if field.name == 'DELETE' %}
+                            <!-- Hidden DELETE checkbox logic -->
+                            {% if component_form.instance.pk %}
+                            <div class="hidden">{{ field }}</div>
+                            {% endif %}
+                            {% else %}
+                            <!-- Keep hidden PK fields etc hidden, only show visible fields -->
+                            {% if field.is_hidden %}
+                            {{ field }}
+                            {% else %}
+                            <div class="form-control">
+                                <label for="{{ field.id_for_label }}" class="label pt-0">
+                                    <span class="label-text font-medium text-gray-600">{{ field.label }}</span>
+                                </label>
+                                <input type="text" name="{{ field.name }}" id="{{ field.id_for_label }}"
+                                    value="{{ field.value|default:'' }}"
+                                    class="input input-sm input-bordered w-full focus:border-[#226ce0]"
+                                    placeholder="{{ field.label }}">
+                                {% for error in field.errors %}
+                                <span class="text-red-500 text-xs mt-1">{{ error }}</span>
                                 {% endfor %}
                             </div>
-                        {% endif %}
-                        
-                        {% for field in component_form %}
-                            {% if field.name == 'DELETE' %}
-                                {% if component_form.instance.pk %}
-                                <div class="flex items-center mt-4">
-                                    <label class="flex items-center text-gray-700 text-sm">
-                                        {{ field }}
-                                        <span class="ml-2">Remove this component</span>
-                                    </label>
-                                </div>
-                                {% endif %}
-                            {% else %}
-                                <div class="mb-4">
-                                    <label for="{{ field.id_for_label }}" class="block text-gray-700 text-sm font-bold mb-2">{{ field.label }}</label>
-                                    {{ field }}
-                                    {% for error in field.errors %}
-                                        <p class="text-red-500 text-xs italic mt-1">{{ error }}</p>
-                                    {% endfor %}
-                                </div>
                             {% endif %}
-                        {% endfor %}
-                    </div>
-                {% endfor %}
-            </div>
-            
-            <button type="button" id="addComponentBtn" class="mt-4 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-                + Add Another Component
-            </button>
-        </div>
+                            {% endif %}
+                            {% endfor %}
+                        </div>
 
-        <!-- Submit Button -->
-        <div class="mt-8">
-            <button type="submit" class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-                Save Changes
-            </button>
-        </div>
-    </form>
+                        <!-- Delete Button -->
+                        {% if component_form.instance.pk %}
+                        <div class="mt-4 flex items-center justify-end">
+                            <label class="cursor-pointer label p-0 gap-2">
+                                <span class="label-text text-red-500 text-sm font-medium group-hover:underline">Delete
+                                    Component</span>
+                                <input type="checkbox" name="{{ component_form.prefix }}-DELETE"
+                                    class="checkbox checkbox-error checkbox-xs">
+                            </label>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <button type="button" id="addComponentBtn"
+                    class="btn btn-outline btn-primary btn-sm mt-6 gap-2 bg-white">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                    Add Another Component
+                </button>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="p-8 bg-gray-50 border-t border-gray-100 flex justify-end">
+                <button type="submit"
+                    class="btn btn-primary text-white px-8 font-semibold shadow-md hover:shadow-lg transition-all">
+                    Save Changes
+                </button>
+            </div>
+        </form>
+    </div>
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const addComponentBtn = document.getElementById('addComponentBtn');
-    const componentsContainer = document.getElementById('componentsContainer');
-    const totalFormsInput = document.querySelector('input[name="components-TOTAL_FORMS"]');
-    const emptyFormTemplate = document.createElement('template');
+    document.addEventListener('DOMContentLoaded', function () {
+        const addComponentBtn = document.getElementById('addComponentBtn');
+        const componentsContainer = document.getElementById('componentsContainer');
+        const totalFormsInput = document.querySelector('input[name="components-TOTAL_FORMS"]');
 
-    // Create a template for a new form from the empty_form
-    const emptyForm = `{{ component_formset.empty_form }}`;
-    emptyFormTemplate.innerHTML = `
-        <div class="component-form mb-6 p-4 bg-gray-50 rounded-lg component-item">
-            ${emptyForm.replace(/<label/g, '<label class="block text-gray-700 text-sm font-bold mb-2"')}
-        </div>
-    `;
+        addComponentBtn.addEventListener('click', function () {
+            const currentFormCount = parseInt(totalFormsInput.value);
 
-    addComponentBtn.addEventListener('click', function() {
-        const currentFormCount = componentsContainer.querySelectorAll('.component-item').length;
-        const newForm = emptyFormTemplate.content.cloneNode(true);
+            const newFormHTML = `
+            <div class="component-form p-6 bg-white rounded-xl border border-gray-200 shadow-sm component-item relative group fade-in mb-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="form-control">
+                        <label for="id_components-${currentFormCount}-name" class="label pt-0">
+                            <span class="label-text font-medium text-gray-600">Name</span>
+                        </label>
+                        <input type="text" name="components-${currentFormCount}-name" id="id_components-${currentFormCount}-name" class="input input-sm input-bordered w-full focus:border-[#226ce0]" placeholder="Name">
+                    </div>
+                    <div class="form-control">
+                        <label for="id_components-${currentFormCount}-description" class="label pt-0">
+                            <span class="label-text font-medium text-gray-600">Description</span>
+                        </label>
+                        <input type="text" name="components-${currentFormCount}-description" id="id_components-${currentFormCount}-description" class="input input-sm input-bordered w-full focus:border-[#226ce0]" placeholder="Description">
+                    </div>
+                </div>
+            </div>
+        `;
 
-        // Update indices for the new form
-        const newFormHtml = newForm.firstElementChild.innerHTML.replace(/__prefix__/g, currentFormCount);
-        newForm.firstElementChild.innerHTML = newFormHtml;
-        componentsContainer.appendChild(newForm);
-
-        // Update the management form's total forms count
-        totalFormsInput.value = currentFormCount + 1;
+            componentsContainer.insertAdjacentHTML('beforeend', newFormHTML);
+            totalFormsInput.value = currentFormCount + 1;
+        });
     });
-});
 </script>
 {% endblock %}

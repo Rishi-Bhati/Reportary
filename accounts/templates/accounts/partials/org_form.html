@@ -4,43 +4,50 @@
         <p class="text-gray-500">We need Some more Info for the Organisation</p>
     </div>
 
-    <form method="POST" action="{% url 'onboarding_org_form' %}">
+    <form method="POST" action="{% url 'accounts:onboarding_org_form' %}">
         {% csrf_token %}
-        
+
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="space-y-4">
                 <div class="form-control">
-                    <label class="label"><span class="label-text font-semibold text-gray-700">Organisation Name</span></label>
+                    <label class="label"><span class="label-text font-semibold text-gray-700">Organisation
+                            Name</span></label>
                     <input type="text" name="org_name" class="input input-bordered bg-white text-gray-900" required />
                 </div>
 
                 <div class="form-control">
-                    <label class="label"><span class="label-text font-semibold text-gray-700">Organisation Domain</span></label>
-                    <input type="text" name="org_domain" placeholder="example.com" class="input input-bordered bg-white text-gray-900" required />
+                    <label class="label"><span class="label-text font-semibold text-gray-700">Organisation
+                            Domain</span></label>
+                    <input type="text" name="org_domain" placeholder="example.com"
+                        class="input input-bordered bg-white text-gray-900" required />
                 </div>
 
-                </div>
+            </div>
 
             <div class="space-y-4">
                 <div class="form-control">
-                    <label class="label"><span class="label-text font-semibold text-gray-700">What Should we Call you?</span></label>
+                    <label class="label"><span class="label-text font-semibold text-gray-700">What Should we Call
+                            you?</span></label>
                     <input type="text" name="call_name" class="input input-bordered bg-white text-gray-900" required />
                 </div>
 
                 <div class="form-control">
-                    <label class="label"><span class="label-text font-semibold text-gray-700">Your Role in Company?</span></label>
+                    <label class="label"><span class="label-text font-semibold text-gray-700">Your Role in
+                            Company?</span></label>
                     <input type="text" name="cp_role" class="input input-bordered bg-white text-gray-900" />
                 </div>
 
                 <div class="form-control">
-                    <label class="label"><span class="label-text font-semibold text-gray-700">Your Business Email</span></label>
+                    <label class="label"><span class="label-text font-semibold text-gray-700">Your Business
+                            Email</span></label>
                     <input type="email" name="biz_email" class="input input-bordered bg-white text-gray-900" />
                 </div>
             </div>
         </div>
 
         <div class="card-actions justify-end mt-8">
-            <button type="submit" class="btn btn-neutral px-8 text-white">Done? -></button>
+            <button type="submit" class="btn btn-primary px-8 text-white shadow-lg hover:shadow-xl transition-all">Done?
+                -></button>
         </div>
     </form>
 </div>
