@@ -73,4 +73,4 @@ If you are a developer looking to contribute or run the code locally, you can do
 
 ## License
 
-Reportary is open-source software licensed under the [GNU Affero General Public License v3.0 (AGPL v3)](LICENSE).
+Reportary is open-source software licensed under the [GNU Affero General Public License v3.0 (AGPL v3)](LICENSE.md).
