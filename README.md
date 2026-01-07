@@ -65,6 +65,7 @@ If you are a developer looking to contribute or run the code locally, you can do
 
 ## Future Plans
 
+*   Proper history logging for reports.
 *   Organization/Team Support
 *   Anonymous Reporting Workflows
 *   Role-Based Access Control (RBAC)
@@ -72,4 +73,4 @@ If you are a developer looking to contribute or run the code locally, you can do
 
 ## License
 
-Open Source.
+Reportary is open-source software licensed under the [GNU Affero General Public License v3.0 (AGPL v3)](LICENSE).
