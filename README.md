@@ -16,7 +16,7 @@ Reportary is a streamlined issue tracking and project management tool designed f
 
 **Try Reportary without installing anything.**
 
-The best way to experience Reportary is through the live web preview. I designed it to be used directly in the browser.
+The best way to experience Reportary is through the live web preview.
 
 [**Launch Reportary Live Preview**](#) *(Link coming soon)*
 
