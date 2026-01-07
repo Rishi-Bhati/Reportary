@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from projects.models import Project
 from django.http import HttpResponseForbidden
 from accounts.models import User
+from django.db.models import Q
 
 logger = logging.getLogger(__name__)
 
@@ -57,6 +58,14 @@ def register_project(request):
 
 def projects_view(request):
     projects = Project.objects.filter(public=True)
+
+    # Page-specific search
+    q = request.GET.get('q', '').strip()
+    if q:
+        projects = projects.filter(
+            Q(title__icontains=q) | Q(description__icontains=q) | Q(owner__username__icontains=q)
+        ).distinct()
+
     return render(request, 'projects_view.html', {'projects': projects})
 
 

@@ -57,7 +57,7 @@
         </div>
 
         <!-- Stat Card 3 (Action) -->
-        <a href="#"
+        <a href="{% url 'reports:new' %}"
             class="bg-[#226ce0] p-6 rounded-xl border border-[#1b56b3] shadow-md flex items-center justify-between group hover:bg-[#1b56b3] hover:shadow-lg transition-all duration-300 cursor-pointer relative overflow-hidden">
             <div class="relative z-10 text-white">
                 <p class="text-sm font-medium text-white/70 mb-1">Quick Action</p>
@@ -82,7 +82,8 @@
             <section>
                 <div class="flex items-center justify-between mb-4">
                     <h2 class="text-lg font-bold text-gray-900">Your Projects</h2>
-                    <a href="#" class="text-sm text-[#226ce0] font-medium hover:text-[#1b56b3] transition-colors">View
+                    <a href="{% url 'projects:my_projects' %}"
+                        class="text-sm text-[#226ce0] font-medium hover:text-[#1b56b3] transition-colors">View
                         all</a>
                 </div>
 
@@ -112,13 +113,14 @@
                                 <div class="inline-block h-6 w-6 rounded-full bg-gray-200 ring-2 ring-white"></div>
                                 <div class="inline-block h-6 w-6 rounded-full bg-gray-300 ring-2 ring-white"></div>
                             </div>
-                            <span class="text-xs text-gray-400 font-medium whitespace-nowrap">{{ project.updated_at|timesince }} ago</span>
+                            <span class="text-xs text-gray-400 font-medium whitespace-nowrap">{{
+                                project.updated_at|timesince }} ago</span>
                         </div>
                     </a>
                     {% endfor %}
 
                     <!-- New Project Card -->
-                    <a href="#"
+                    <a href="{% url 'projects:new' %}"
                         class="group border-2 border-dashed border-gray-300 rounded-xl p-5 flex flex-col items-center justify-center text-center hover:border-[#226ce0] hover:bg-[#226ce0]/5 transition-all duration-300 min-h-[200px]">
                         <div
                             class="w-12 h-12 rounded-full bg-gray-50 text-gray-400 flex items-center justify-center mb-3 group-hover:bg-[#226ce0] group-hover:text-white transition-all duration-300 shadow-sm">
@@ -155,7 +157,8 @@
             <section>
                 <div class="flex items-center justify-between mb-4">
                     <h2 class="text-lg font-bold text-gray-900">Assigned to Me</h2>
-                    <a href="#" class="text-sm text-[#226ce0] font-medium hover:text-[#1b56b3] transition-colors">View
+                    <a href="{% url 'reports:assigned_to_me' %}"
+                        class="text-sm text-[#226ce0] font-medium hover:text-[#1b56b3] transition-colors">View
                         all</a>
                 </div>
 
@@ -196,7 +199,9 @@
                                         <span
                                             class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#a499b3]/20 text-[#534b62]">Resolved</span>
                                         {% else %}
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">{{ report.get_status_display }}</span>
+                                        <span
+                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">{{
+                                            report.get_status_display }}</span>
                                         {% endif %}
                                     </td>
                                     <td class="px-6 py-4">
@@ -263,7 +268,8 @@
                                 <p class="text-sm text-gray-800 font-medium group cursor-pointer">
                                     You reported <span class="text-[#226ce0] hover:underline">{{ report.title }}</span>
                                 </p>
-                                    <p class="text-xs text-gray-500 mt-1">in <span class="font-medium text-gray-700">{{ report.project.title }}</span> • {{ report.created_at|timesince }} ago</p>
+                                <p class="text-xs text-gray-500 mt-1">in <span class="font-medium text-gray-700">{{
+                                        report.project.title }}</span> • {{ report.created_at|timesince }} ago</p>
                             </div>
                         </li>
                         {% empty %}
@@ -280,10 +286,11 @@
                     <h3 class="font-bold text-lg mb-2">Need Help?</h3>
                     <p class="text-white/70 text-sm mb-4 leading-relaxed">Check out our documentation to learn how to
                         manage your projects effectively.</p>
-                    <button
-                        class="px-4 py-2 bg-white text-[#226ce0] text-sm font-semibold rounded-lg hover:bg-[#f4f0f6] hover:scale-105 active:scale-95 transition-all shadow-sm">
-                        Read Documentation
-                    </button>
+                    <a href="{% url 'nota' %}">
+                        <button
+                            class="px-4 py-2 bg-white text-[#226ce0] text-sm font-semibold rounded-lg hover:bg-[#f4f0f6] hover:scale-105 active:scale-95 transition-all shadow-sm">
+                            Read Documentation
+                        </button></a>
                 </div>
                 <!-- Decorative BG -->
                 <div class="absolute top-0 right-0 -mt-8 -mr-8 w-32 h-32 bg-white opacity-10 rounded-full blur-2xl">

@@ -1,0 +1,100 @@
+{% load static tailwind_tags %}
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <title>Coming Soon | Reportary</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% tailwind_css %}
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body class="bg-[#f8f6fa] text-[#1b1725] font-sans min-h-screen flex items-center justify-center">
+
+    <div class="text-center px-6 max-w-2xl mx-auto animate-fade-in-up">
+        <!-- Fun Illustration -->
+        <div class="mb-8">
+            <div
+                class="w-32 h-32 mx-auto bg-gradient-to-br from-[#226ce0] to-[#1b56b3] rounded-3xl flex items-center justify-center shadow-2xl shadow-[#226ce0]/25 animate-bounce-slow">
+                <svg class="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                        d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z">
+                    </path>
+                </svg>
+            </div>
+        </div>
+
+        <!-- Title -->
+        <h1 class="text-4xl md:text-5xl font-bold text-[#1b1725] mb-4 tracking-tight">
+            Work in Progress
+        </h1>
+
+        <!-- Random Fun Message -->
+        <p class="text-xl md:text-2xl text-[#534b62] mb-8 leading-relaxed">
+            {{ message }}
+        </p>
+
+        <!-- Subtitle -->
+        <p class="text-[#a499b3] mb-10">
+            This feature is being crafted with love. I promise it'll be worth the wait!
+        </p>
+
+        <!-- Action Buttons -->
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <a href="{% url 'dashboard' %}"
+                class="btn bg-gradient-to-r from-[#226ce0] to-[#1b56b3] text-white border-none px-8 py-3 rounded-xl font-semibold shadow-lg shadow-[#226ce0]/25 hover:shadow-xl hover:opacity-90 transition-all">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
+                    </path>
+                </svg>
+                Go to Dashboard
+            </a>
+            <button onclick="location.reload()"
+                class="btn bg-white text-[#534b62] border-2 border-[#d0bcd5] hover:border-[#a499b3] hover:bg-[#f8f6fa] px-8 py-3 rounded-xl font-semibold transition-all">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
+                    </path>
+                </svg>
+                Try Another Message?
+                <br>(yeah i was free enough to add these but not features :) )
+            </button>
+        </div>
+
+        <!-- Fun Footer -->
+        <p class="mt-16 text-sm text-[#a499b3]">
+            💡 Pro tip: keep trying multiple pages and maybe you could report them as an issue on Reportary?
+        </p>
+        <a href="{% url 'reports:new' %}"
+            class="mt-4 inline-flex items-center px-4 py-2 bg-white text-[#226ce0] border-2 border-[#226ce0]/10 rounded-xl text-sm font-semibold hover:border-[#226ce0] hover:bg-[#226ce0]/5 transition-all">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z">
+                </path>
+            </svg>
+            Report issue (select reportary in projects)</a>
+    </div>
+
+    <style>
+        @keyframes bounce-slow {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .animate-bounce-slow {
+            animation: bounce-slow 3s ease-in-out infinite;
+        }
+    </style>
+
+</body>
+
+</html>

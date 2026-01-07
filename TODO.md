@@ -117,3 +117,11 @@ If you skip and jump around, you’ll confuse yourself and burn out. The correct
 - [X] Collaborators on new project and edit project
 - [X] Collaborators cannot reassign reports, but change other things like status etc.
 - [X] Basic logic properly implemented
+
+### ☐ 10. ~~UI improvements and Beta Launch Ready~~
+> make the ui enhancements to make it usable and fix important features
+
+- [X] Improve the UI
+- [X] Verify and fix the workflow
+- [x] Enable searching features
+- [ ] Fix all the broken links on UI where href=#

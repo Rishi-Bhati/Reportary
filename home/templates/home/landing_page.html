@@ -30,9 +30,9 @@
                 <div class="hidden md:flex space-x-10">
                     <a href="{% url 'dashboard'%}"
                         class="text-gray-600 hover:text-[#226ce0] font-medium transition-colors duration-200 text-sm relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#226ce0] hover:after:w-full after:transition-all after:duration-300">Product</a>
-                    <a href="#"
+                    <a href="{% url 'nota' %}"
                         class="text-gray-600 hover:text-[#226ce0] font-medium transition-colors duration-200 text-sm relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#226ce0] hover:after:w-full after:transition-all after:duration-300">Solutions</a>
-                    <a href="#"
+                    <a href="{% url 'nota' %}"
                         class="text-gray-600 hover:text-[#226ce0] font-medium transition-colors duration-200 text-sm relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#226ce0] hover:after:w-full after:transition-all after:duration-300">Pricing</a>
                 </div>
 
@@ -41,7 +41,7 @@
                     <a href="{% url 'dashboard' %}"
                         class="hidden md:block text-sm font-semibold text-gray-700 hover:text-[#226ce0] transition-colors duration-200">Sign
                         in</a>
-                    <a href="#"
+                    <a href="{% url 'nota' %}"
                         class="btn btn-primary h-10 min-h-[2.5rem] px-6 text-white rounded-lg font-semibold border-none shadow-lg shadow-[#226ce0]/25 hover:shadow-xl hover:shadow-[#226ce0]/35 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 text-sm uppercase tracking-wide">Get
                         Started</a>
                 </div>
@@ -81,11 +81,11 @@
 
                 <!-- CTA Buttons -->
                 <div class="flex flex-col sm:flex-row gap-4 mb-14 animate-fade-in-up delay-300">
-                    <a href="#"
+                    <a href="{% url 'nota' %}"
                         class="btn btn-primary h-12 px-8 text-white rounded-xl font-bold border-none shadow-xl shadow-[#226ce0]/25 hover:shadow-2xl hover:shadow-[#226ce0]/35 hover:-translate-y-1 active:translate-y-0 active:scale-[0.98] transition-all duration-300 text-base">
                         Start Building Free
                     </a>
-                    <a href="#"
+                    <a href="{% url 'nota' %}"
                         class="btn h-12 px-8 bg-white text-[#534b62] hover:bg-[#f8f6fa] hover:text-[#1b1725] rounded-xl font-semibold text-base border-2 border-[#d0bcd5] hover:border-[#a499b3] transition-all duration-300">
                         View Live Demo
                     </a>
@@ -146,7 +146,8 @@
             class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
             <p class="text-sm text-[#534b62]">© 2024 Reportary Inc. All rights reserved.</p>
             <div class="flex space-x-6">
-                <a href="#" class="text-[#a499b3] hover:text-[#226ce0] transition-colors duration-200">
+                <a href="https://github.com/Rishi-Bhati/Reportary" target="_blank"
+                    class="text-[#a499b3] hover:text-[#226ce0] transition-colors duration-200">
                     <span class="sr-only">GitHub</span>
                     <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path fill-rule="evenodd"

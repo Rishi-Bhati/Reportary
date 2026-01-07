@@ -21,10 +21,14 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth.urls import views as auth_views
 # from dashboard.views import home
+from core import views as core_views
 
 urlpatterns = [
     # The Django admin interface
     path('admin/', admin.site.urls),
+    # Global search
+    path('search/', core_views.global_search, name='global_search'),
+
     
     # URLs for the landing page, login, and signup
     path('', include('home.urls')),

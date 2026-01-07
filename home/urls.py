@@ -24,4 +24,7 @@ urlpatterns = [
     # These URLs handle the form submissions for login and signup.
     path('auth/submit/login/', views.handle_login, name='handle_login'),
     path('auth/submit/signup/', views.handle_signup, name='handle_signup'),
+    
+    # Under development / coming soon page
+    path('nota/', views.nota_page, name='nota'),
 ]

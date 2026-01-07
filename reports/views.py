@@ -38,6 +38,13 @@ def report_list(request, project_pk=None):
         # Anonymous users only see visible reports
         reports = base_qs.filter(visibility=True)
 
+    # Page-specific search
+    q = request.GET.get('q', '').strip()
+    if q:
+        reports = reports.filter(
+            Q(title__icontains=q) | Q(description__icontains=q) | Q(component__name__icontains=q)
+        ).distinct()
+
     # Renders the 'report_list.html' template, passing the reports and project as context.
     return render(request, 'report_list.html', {'reports': reports, 'project': project})
 

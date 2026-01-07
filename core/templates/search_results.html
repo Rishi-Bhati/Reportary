@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}Search Results | Reportary{% endblock %}
+
+{% block content %}
+<div class="space-y-6 max-w-6xl">
+    <div>
+        <h1 class="text-2xl font-bold">Search Results</h1>
+        <p class="text-gray-500 mt-1">Showing matches for <span class="font-semibold">"{{ q }}"</span></p>
+    </div>
+
+    {% if not q %}
+    <div class="text-gray-500">Type something to search across projects, reports, and users.</div>
+    {% else %}
+
+    <!-- Projects -->
+    <div class="card bg-white p-6 rounded-xl border border-gray-100">
+        <h2 class="text-lg font-bold mb-4">Projects</h2>
+        {% if projects %}
+        <ul class="space-y-3">
+            {% for project in projects %}
+            <li>
+                <a href="{% url 'projects:project_detail' project.pk %}" class="block hover:underline">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <div class="text-sm font-medium text-gray-900">{{ project.title }}</div>
+                            <div class="text-xs text-gray-500">{{ project.description|truncatechars:120 }}</div>
+                        </div>
+                        <div class="text-xs text-gray-400">Updated {{ project.updated_at|timesince }} ago</div>
+                    </div>
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p class="text-sm text-gray-500">No projects found.</p>
+        {% endif %}
+    </div>
+
+    <!-- Reports -->
+    <div class="card bg-white p-6 rounded-xl border border-gray-100">
+        <h2 class="text-lg font-bold mb-4">Reports</h2>
+        {% if reports %}
+        <ul class="space-y-3">
+            {% for report in reports %}
+            <li>
+                <a href="{% url 'projects:reports:report_detail' project_pk=report.project.pk report_pk=report.pk %}" class="block hover:underline">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <div class="text-sm font-medium text-gray-900">{{ report.title }}</div>
+                            <div class="text-xs text-gray-500">#{{ report.id }} • {{ report.component.name|default:'General' }} • {{ report.project.title }}</div>
+                        </div>
+                        <div class="text-xs text-gray-400">{{ report.created_at|timesince }} ago</div>
+                    </div>
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p class="text-sm text-gray-500">No reports found.</p>
+        {% endif %}
+    </div>
+
+    <!-- Users -->
+    <div class="card bg-white p-6 rounded-xl border border-gray-100">
+        <h2 class="text-lg font-bold mb-4">Users</h2>
+        {% if users %}
+        <ul class="space-y-2">
+            {% for user in users %}
+            <li class="text-sm text-gray-900">{{ user.username }} <span class="text-xs text-gray-400">({{ user.email }})</span></li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p class="text-sm text-gray-500">No users found.</p>
+        {% endif %}
+    </div>
+
+    {% endif %}
+</div>
+{% endblock %}
