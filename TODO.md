@@ -124,4 +124,4 @@ If you skip and jump around, you’ll confuse yourself and burn out. The correct
 - [X] Improve the UI
 - [X] Verify and fix the workflow
 - [x] Enable searching features
-- [ ] Fix all the broken links on UI where href=#
+- [X] Fix all the broken links on UI where href=#
