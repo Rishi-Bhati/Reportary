@@ -25,13 +25,19 @@ def report_list(request, project_pk=None):
     project = get_object_or_404(Project, pk=project_pk)
     # Filters reports that belong to the fetched project.
 
-    
-    for report in Report.objects.filter(project=project):
-        if rules.is_assigned_to(request.user, report) or rules.is_reporter(request.user, report) or rules.is_project_member(request.user, project):
-            reports = Report.objects.filter(project=project).select_related('reported_by').distinct()
+    base_qs = Report.objects.filter(project=project).select_related('reported_by').distinct()
 
+    if request.user.is_authenticated:
+        # Project owners and project members can see all reports
+        if rules.is_project_owner(request.user, project) or rules.is_project_member(request.user, project):
+            reports = base_qs
         else:
-            reports = Report.objects.filter(project=project, visibility=True).select_related('reported_by').distinct()
+            # Non-members can see visible reports and any reports they reported themselves
+            reports = base_qs.filter(Q(visibility=True) | Q(reported_by=request.user))
+    else:
+        # Anonymous users only see visible reports
+        reports = base_qs.filter(visibility=True)
+
     # Renders the 'report_list.html' template, passing the reports and project as context.
     return render(request, 'report_list.html', {'reports': reports, 'project': project})
 
