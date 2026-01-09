@@ -14,8 +14,8 @@ def dashboard(request):
     ).distinct().order_by('-updated_at')[:5]
     
     # Fetch assigned or reported reports
-    assigned_reports = Report.objects.filter(assigned_to=user).order_by('-updated_at')[:5]
-    my_reports = Report.objects.filter(reported_by=user).order_by('-created_at')[:5]
+    assigned_reports = Report.objects.filter(assigned_to=user).select_related('project').order_by('-updated_at')[:5]
+    my_reports = Report.objects.filter(reported_by=user).select_related('project').order_by('-created_at')[:5]
     
     context = {
         'projects': projects,

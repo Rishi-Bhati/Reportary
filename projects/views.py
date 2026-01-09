@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from projects.models import Project
 from django.http import HttpResponseForbidden
 from accounts.models import User
-from django.db.models import Q
+from django.db.models import Q, Count
 
 logger = logging.getLogger(__name__)
 
@@ -57,7 +57,7 @@ def register_project(request):
 
 
 def projects_view(request):
-    projects = Project.objects.filter(public=True)
+    projects = Project.objects.filter(public=True).annotate(num_components=Count('components'))
 
     # Page-specific search
     q = request.GET.get('q', '').strip()
@@ -127,5 +127,5 @@ def edit_project(request, pk):
 
 @login_required
 def my_projects_view(request):
-    projects = Project.objects.filter(owner=request.user)
+    projects = Project.objects.filter(owner=request.user).annotate(num_components=Count('components'))
     return render(request, 'projects_view.html', {'projects': projects})
