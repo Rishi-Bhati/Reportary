@@ -133,6 +133,10 @@ DATABASES = {
         # "OPTIONS": dict(parse_qsl(tmpPostgres.query)),
         "OPTIONS": {
             "sslmode": "require",
+            "keepalives": 1,
+            "keepalives_idle": 30,
+            "keepalives_interval": 10,
+            "keepalives_count": 5,
         },
     }
 }
