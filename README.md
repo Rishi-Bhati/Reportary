@@ -4,7 +4,7 @@
 
 Reportary is a streamlined issue tracking and project management tool designed for engineering teams. It focuses on unified data, real-time collaboration, and workflows that minimize friction.
 
-### Phase 1.5: Functional Prototype (Early Beta)
+### Phase 1.5: Functional Prototype (Public Alpha)
 
 **Reportary is currently in Phase 1.5.** This is an early-stage functional prototype intended for **testing and feedback**. It is not a complete product. Features are evolving rapidly.
 
@@ -18,7 +18,7 @@ Reportary is a streamlined issue tracking and project management tool designed f
 
 The best way to experience Reportary is through the live web preview.
 
-[**Launch Reportary Live Preview**](#) *(Link coming soon)*
+[**Launch Reportary Live Preview**](https://reportary.onrender.com) 
 
 ---
 

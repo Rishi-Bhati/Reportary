@@ -1,4 +1,4 @@
-# Release Notes - Phase 1.5 (Early Beta)
+# Release Notes - Phase 1.5 (Public Alpha)
 
 **Date**: January 7, 2026
 
