@@ -66,26 +66,24 @@ def handle_login(request):
         email = request.POST.get('email')
         password = request.POST.get('password')
 
-        # Since we use email for login, but Django's authenticate function uses 'username' by default,
-        # we first fetch the user by their email to get their actual username.
-        try:
-            user_obj = User.objects.get(email=email)
-            # Then we authenticate with the fetched username and the provided password.
-            user = authenticate(username=user_obj.username, password=password)
-            
-            if user is not None:
-                # If authentication is successful, log the user in.
-                login(request, user)
-                # The original code had redirect('home'), which caused a NoReverseMatch error
-                # because there was no URL pattern named 'home'.
-                # This was fixed by redirecting to 'dashboard' instead.
-                return redirect('dashboard') # Go to Dashboard
-            else:
-                # If authentication fails (e.g., wrong password), show an error message.
-                messages.error(request, "Invalid password.")
-        except User.DoesNotExist:
-            # If no user is found with the given email, show an error message.
-            messages.error(request, "Account does not exist.")
+        # Since we use email for login, we pass the email as the 'username' argument
+        # to the authenticate function, because our User model has USERNAME_FIELD = 'email'.
+        # The default ModelBackend expects the 'username' kwarg to match the USERNAME_FIELD.
+        print(f"DEBUG: Attempting login for email: {email}")
+        user = authenticate(request, username=email, password=password)
+        
+        if user is not None:
+            print(f"DEBUG: Authentication successful for user: {user.email} (type: {user.type})")
+            # If authentication is successful, log the user in.
+            login(request, user)
+            # The original code had redirect('home'), which caused a NoReverseMatch error
+            # because there was no URL pattern named 'home'.
+            # This was fixed by redirecting to 'dashboard' instead.
+            return redirect('dashboard') # Go to Dashboard
+        else:
+            print(f"DEBUG: Authentication failed for email: {email}")
+            # If authentication fails (e.g., wrong password), show an error message.
+            messages.error(request, "Invalid password.")
 
     # If the login fails or if the request is not POST, redirect back to the landing page.
     return redirect('landing_page')
