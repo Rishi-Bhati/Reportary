@@ -24,11 +24,11 @@ def nota_page(request):
         # "You expected a feature? In THIS economy? In THIS codebase?",
         "We could finish this page, or we could add another notification bell that doesn't work.",
         # Logout roasts
-        "Fun fact: This app doesn't even have a proper logout button. But sure, let's add more features.",
+        # "Fun fact: This app doesn't even have a proper logout button. But sure, let's add more features.",
         "Want to logout? Good luck. The developer hasn't figured that out yet either.",
         "This page is missing. So is the logout button. We have priorities, clearly.",
         "The logout feature and this page have something in common: they don't exist.",
-        "You're stuck here forever. Just like you're stuck logged in. We don't do exits.",
+        # "You're stuck here forever. Just like you're stuck logged in. We don't do exits.",
     ]
     
     context = {

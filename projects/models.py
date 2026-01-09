@@ -20,4 +20,4 @@ class Project(models.Model):
     @property
     def components(self):
         """Get all components related to this project"""
-        return self.component_set.all()
+        return self.project_components.all()
