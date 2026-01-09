@@ -66,23 +66,15 @@ def handle_login(request):
         email = request.POST.get('email')
         password = request.POST.get('password')
 
-        # Since we use email for login, we pass the email as the 'username' argument
-        # to the authenticate function, because our User model has USERNAME_FIELD = 'email'.
-        # The default ModelBackend expects the 'username' kwarg to match the USERNAME_FIELD.
-        print(f"DEBUG: Attempting login for email: {email}")
+        # Authenticate using the email address.
+        # Note: 'username' argument is the specific keyword argument for the backend, 
+        # even though we are passing the email.
         user = authenticate(request, username=email, password=password)
         
         if user is not None:
-            print(f"DEBUG: Authentication successful for user: {user.email} (type: {user.type})")
-            # If authentication is successful, log the user in.
             login(request, user)
-            # The original code had redirect('home'), which caused a NoReverseMatch error
-            # because there was no URL pattern named 'home'.
-            # This was fixed by redirecting to 'dashboard' instead.
-            return redirect('dashboard') # Go to Dashboard
+            return redirect('dashboard')
         else:
-            print(f"DEBUG: Authentication failed for email: {email}")
-            # If authentication fails (e.g., wrong password), show an error message.
             messages.error(request, "Invalid password.")
 
     # If the login fails or if the request is not POST, redirect back to the landing page.
@@ -108,16 +100,13 @@ def handle_signup(request):
             return redirect('landing_page')
 
         # Create the user.
-        # We are setting the username to be the email initially.
-        # The user will be prompted to choose a proper username during the onboarding process.
+        # Initialize username as email; user will set a display name/tag during onboarding.
         try:
             user = User.objects.create_user(username=email, email=email, password=password)
-            # Log the user in immediately after successful signup.
             login(request, user)
-            # Redirect the new user to the onboarding page to complete their profile.
-            return redirect('accounts:onboarding_home') # Go to Onboarding
+            return redirect('accounts:onboarding_home')
         except Exception as e:
-            messages.error(request, f"Error creating account: {e}")
+            messages.error(request, "An error occurred during account creation.")
             
     # If signup fails or if the request is not POST, redirect back to the landing page.
     return redirect('landing_page')
