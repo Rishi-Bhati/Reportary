@@ -43,3 +43,31 @@ class ReportListTests(TestCase):
         reports = resp.context['reports']
         self.assertIn(self.visible_report, reports)
         self.assertIn(self.hidden_report, reports)
+
+
+class ReportDetailTests(TestCase):
+    def setUp(self):
+        self.owner = User.objects.create_user(username='report_owner', email='report_owner@example.com', password='password')
+        self.collaborator = User.objects.create_user(username='collab', email='collab@example.com', password='password')
+        
+        self.project = Project.objects.create(title='Project A', link='https://example.com', description='desc', owner=self.owner)
+        self.project.collaborators.add(self.collaborator)
+        
+        self.report = Report.objects.create(
+            project=self.project, 
+            title='Report 1', 
+            description='desc', 
+            reported_by=self.owner,
+            visibility=True
+        )
+
+    def test_collaborators_in_context(self):
+        self.client.force_login(self.owner)
+        url = reverse('projects:reports:report_detail', kwargs={'project_pk': self.project.pk, 'report_pk': self.report.pk})
+        resp = self.client.get(url)
+        self.assertEqual(resp.status_code, 200)
+        
+        # Check if collaborators are correctly passed to context
+        collaborators = resp.context['collaborators']
+        
+        self.assertIn(self.collaborator, collaborators)

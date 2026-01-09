@@ -3,7 +3,8 @@
         <h2 class="card-title">Report Actions</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-                <form method="post" action="{% url 'projects:reports:reassign_report' project_pk=project.pk report_pk=report.pk %}">
+                <form method="post"
+                    action="{% url 'projects:reports:reassign_report' project_pk=project.pk report_pk=report.pk %}">
                     {% csrf_token %}
                     <div class="form-control">
                         <label class="label" for="id_assignee">
@@ -11,10 +12,10 @@
                         </label>
                         <select name="assignee" id="id_assignee" class="select select-bordered w-full max-w-xs">
                             <option disabled selected>Assign to...</option>
-                            {% for user in all_users %}
-                                <option value="{{ user.pk }}" {% if report.assigned_to.pk == user.pk %}selected{% endif %}>
-                                    {{ user.username }}
-                                </option>
+                            {% for user in collaborators %}
+                            <option value="{{ user.pk }}" {% if report.assigned_to.pk == user.pk %}selected{% endif %}>
+                                {{ user.username }}
+                            </option>
                             {% endfor %}
                         </select>
                     </div>
@@ -24,7 +25,8 @@
                 </form>
             </div>
             <div>
-                <form method="post" action="{% url 'projects:reports:change_report_status' project_pk=project.pk report_pk=report.pk %}">
+                <form method="post"
+                    action="{% url 'projects:reports:change_report_status' project_pk=project.pk report_pk=report.pk %}">
                     {% csrf_token %}
                     <div class="form-control">
                         <label class="label" for="id_status">
@@ -32,9 +34,9 @@
                         </label>
                         <select name="status" id="id_status" class="select select-bordered w-full max-w-xs">
                             {% for value, display in status_choices %}
-                                <option value="{{ value }}" {% if report.status == value %}selected{% endif %}>
-                                    {{ display }}
-                                </option>
+                            <option value="{{ value }}" {% if report.status == value %}selected{% endif %}>
+                                {{ display }}
+                            </option>
                             {% endfor %}
                         </select>
                     </div>
@@ -44,7 +46,8 @@
                 </form>
             </div>
             <div>
-                <form method="post" action="{% url 'projects:reports:change_report_visibility' project_pk=project.pk report_pk=report.pk %}">
+                <form method="post"
+                    action="{% url 'projects:reports:change_report_visibility' project_pk=project.pk report_pk=report.pk %}">
                     {% csrf_token %}
                     <div class="form-control">
                         <label class="label">
@@ -61,7 +64,8 @@
                 </form>
             </div>
             <div>
-                <form method="post" action="{% url 'projects:reports:change_report_impact' project_pk=project.pk report_pk=report.pk %}">
+                <form method="post"
+                    action="{% url 'projects:reports:change_report_impact' project_pk=project.pk report_pk=report.pk %}">
                     {% csrf_token %}
                     <div class="form-control">
                         <label class="label" for="id_impact">
@@ -69,9 +73,9 @@
                         </label>
                         <select name="impact" id="id_impact" class="select select-bordered w-full max-w-xs">
                             {% for value, display in impact_choices %}
-                                <option value="{{ value }}" {% if report.impact == value %}selected{% endif %}>
-                                    {{ display }}
-                                </option>
+                            <option value="{{ value }}" {% if report.impact == value %}selected{% endif %}>
+                                {{ display }}
+                            </option>
                             {% endfor %}
                         </select>
                     </div>

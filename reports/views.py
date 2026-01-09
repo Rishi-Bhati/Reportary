@@ -86,7 +86,7 @@ def report_detail(request, project_pk, report_pk):
     for comment in comments:
         is_commenter = rules.is_commenter(request.user, comment)
     
-    all_users = User.objects.all()
+    collaborators = report.project.collaborators.all()
 
     # Renders the 'report_detail.html' template with all the necessary context.
     return render(request, 'report_detail.html', {
@@ -98,7 +98,7 @@ def report_detail(request, project_pk, report_pk):
         'is_reporter': is_reporter, 
         'is_commenter': is_commenter, 
         'is_report_hidden': is_report_hidden,
-        'all_users': all_users,
+        'collaborators': collaborators,
         'status_choices': Report.STATUS_CHOICES,
         'impact_choices': Report.IMPACT_CHOICES,
         'can_change_status': user_can_change_status,

@@ -19,7 +19,7 @@ class ProjectAdmin(admin.ModelAdmin): # Admin for Project model
     filter_horizontal = ('collaborators',)
     
     def component_count(self, obj):
-        return obj.component_set.count()
+        return obj.project_components.count()
     component_count.short_description = 'Components'
 
 
