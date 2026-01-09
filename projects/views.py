@@ -57,7 +57,7 @@ def register_project(request):
 
 
 def projects_view(request):
-    projects = Project.objects.filter(public=True).annotate(num_components=Count('components'))
+    projects = Project.objects.filter(public=True).annotate(num_components=Count('component_set'))
 
     # Page-specific search
     q = request.GET.get('q', '').strip()
@@ -127,5 +127,5 @@ def edit_project(request, pk):
 
 @login_required
 def my_projects_view(request):
-    projects = Project.objects.filter(owner=request.user).annotate(num_components=Count('components'))
+    projects = Project.objects.filter(owner=request.user).annotate(num_components=Count('component_set'))
     return render(request, 'projects_view.html', {'projects': projects})
