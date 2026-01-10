@@ -118,6 +118,8 @@ If you skip and jump around, you’ll confuse yourself and burn out. The correct
 - [X] Collaborators cannot reassign reports, but change other things like status etc.
 - [X] Basic logic properly implemented
 
+---
+
 ### ☐ 10. ~~UI improvements and Beta Launch Ready~~
 > make the ui enhancements to make it usable and fix important features
 
@@ -125,3 +127,40 @@ If you skip and jump around, you’ll confuse yourself and burn out. The correct
 - [X] Verify and fix the workflow
 - [x] Enable searching features
 - [X] Fix all the broken links on UI where href=#
+
+---
+
+
+## **Phase 2.0 : Trust & Structure**
+
+> Phase 2 focuses on strengthening the core foundation of Reportary by making users, actions, and access clear, traceable, and reliable.
+
+
+
+## ☐ 11. User & Identity Foundation
+> Complete the user model with stable roles
+
+- [] Add developer role during onboarding
+- [] User profile page (view & edit basic info)
+- [] Proper logout & session handling
+
+---
+
+## ☐ 12. Report History & Audit Logs
+> Report History and change logs should be displayed properly.
+
+- [] Introduce report history / change log model
+- [] Track who changed what and when
+- [] Display change history to appropriate users
+
+---
+
+## ☐ 13. Basic Organization Support
+> Implement basic org app and model for handleing organisations.
+
+- [] Add organization model (minimal)
+- [] Support org-owned projects
+- [] Add users to organizations
+- [] Scope access based on org membership
+
+---
