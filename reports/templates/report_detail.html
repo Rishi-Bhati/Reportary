@@ -60,8 +60,7 @@
                             <div
                                 class="w-7 h-7 rounded-full bg-[#226ce0] text-white flex items-center justify-center text-xs font-bold">
                                 {{ report.reported_by.username|slice:":1"|upper }}</div>
-                            <span>Reported by <span class="font-semibold text-[#1b1725]">{{ report.reported_by.username
-                                    }}</span></span>
+                            <span>Reported by <span class="font-semibold text-[#1b1725]">{{ report.reported_by.username }}</span></span>
                         </div>
                         <span class="text-[#a499b3]">•</span>
                         <span>{{ report.created_at|date:"F j, Y" }}</span>

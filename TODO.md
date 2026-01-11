@@ -133,7 +133,7 @@ If you skip and jump around, you’ll confuse yourself and burn out. The correct
 
 ## **Phase 2.0 : Trust & Structure**
 
-> Phase 2 focuses on strengthening the core foundation of Reportary by making users, actions, and access clear, traceable, and reliable.
+> Phase 2 focuses on strengthening the core foundation of Reportary by making users, actions, and access clear, traceable, and reliable. and fixes minor errors from last stage.
 
 
 

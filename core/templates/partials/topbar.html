@@ -62,9 +62,12 @@
                         class="text-[#1b1725] hover:bg-[#226ce0]/10 hover:text-[#226ce0]">Profile</a></li>
                 <li><a href="{% url 'nota' %}"
                         class="text-[#1b1725] hover:bg-[#226ce0]/10 hover:text-[#226ce0]">Settings</a></li>
-                <!-- <li class="border-t border-[#d0bcd5]/30 mt-2 pt-2">
-                    <a href="{% url 'nota' %}" class="text-[#ef4444] hover:bg-red-50">Logout</a>
-                </li> -->
+                <li class="border-t border-[#d0bcd5]/30 mt-2 pt-2">
+                    <form action="{% url 'logout' %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="w-full text-left text-[#ef4444] hover:bg-red-50 px-4 py-2 rounded-lg">Logout</button>
+                    </form>
+                </li> 
             </ul>
         </div>
     </div>

@@ -48,6 +48,8 @@ urlpatterns = [
     # We add a namespace 'comments' here.
     # This was the fix for the NoReverseMatch error, which occurred because Django couldn't find the namespaced URL 'comments:add_comment'.
     path('comments/', include('comments.urls', namespace='comments')),
+
+    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
 ]
 
 # This is a standard practice for serving static files during development.

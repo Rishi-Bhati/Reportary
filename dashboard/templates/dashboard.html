@@ -90,7 +90,7 @@
                 {% if projects %}
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {% for project in projects %}
-                    <a href="{{ project.link }}"
+                    <a href="{% url 'projects:project_detail' project.pk %}"
                         class="group bg-white rounded-xl p-5 border border-gray-100 shadow-sm hover:shadow-md hover:border-[#a499b3] transition-all flex flex-col h-full">
                         <div class="flex justify-between items-start mb-4">
                             <div
@@ -113,8 +113,7 @@
                                 <div class="inline-block h-6 w-6 rounded-full bg-gray-200 ring-2 ring-white"></div>
                                 <div class="inline-block h-6 w-6 rounded-full bg-gray-300 ring-2 ring-white"></div>
                             </div>
-                            <span class="text-xs text-gray-400 font-medium whitespace-nowrap">{{
-                                project.updated_at|timesince }} ago</span>
+                            <span class="text-xs text-gray-400 font-medium whitespace-nowrap">{{ project.updated_at|timesince }} ago</span>
                         </div>
                     </a>
                     {% endfor %}
@@ -146,8 +145,7 @@
                         </svg>
                     </div>
                     <h3 class="text-lg font-medium text-gray-900">No projects yet</h3>
-                    <p class="mt-2 text-sm text-gray-500 max-w-sm mx-auto">Get started by creating a new project to
-                        track issues and manage reports.</p>
+                    <p class="mt-2 text-sm text-gray-500 max-w-sm mx-auto">Get started by creating a new project to track issues and manage reports.</p>
                     <button class="btn btn-primary mt-6 text-white capitalize font-medium">Create Project</button>
                 </div>
                 {% endif %}
@@ -158,8 +156,7 @@
                 <div class="flex items-center justify-between mb-4">
                     <h2 class="text-lg font-bold text-gray-900">Assigned to Me</h2>
                     <a href="{% url 'reports:assigned_to_me' %}"
-                        class="text-sm text-[#226ce0] font-medium hover:text-[#1b56b3] transition-colors">View
-                        all</a>
+                        class="text-sm text-[#226ce0] font-medium hover:text-[#1b56b3] transition-colors">View all</a>
                 </div>
 
                 <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
@@ -179,7 +176,7 @@
                             </thead>
                             <tbody class="divide-y divide-gray-100">
                                 {% for report in assigned_reports %}
-                                <tr class="hover:bg-[#226ce0]/10 transition-colors cursor-pointer group">
+                                <tr class="hover:bg-[#226ce0]/10 transition-colors cursor-pointer group" onclick="window.location='{% url 'projects:reports:report_detail' project_pk=report.project_id report_pk=report.pk %}'">
                                     <td class="px-6 py-4">
                                         <div
                                             class="font-semibold text-gray-900 group-hover:text-[#226ce0] transition-colors">
@@ -200,8 +197,7 @@
                                             class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#a499b3]/20 text-[#534b62]">Resolved</span>
                                         {% else %}
                                         <span
-                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">{{
-                                            report.get_status_display }}</span>
+                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">{{ report.get_status_display }}</span>
                                         {% endif %}
                                     </td>
                                     <td class="px-6 py-4">
@@ -266,7 +262,10 @@
 
                             <div>
                                 <p class="text-sm text-gray-800 font-medium group cursor-pointer">
-                                    You reported <span class="text-[#226ce0] hover:underline">{{ report.title }}</span>
+                                    You reported 
+                                    <a href="{% url 'projects:reports:report_detail' project_pk=report.project_id report_pk=report.pk %}">
+                                        <span class="text-[#226ce0] hover:underline">{{ report.title }}</span>
+                                    </a>
                                 </p>
                                 <p class="text-xs text-gray-500 mt-1">in <span class="font-medium text-gray-700">{{ report.project.title }}</span> • {{ report.created_at|timesince }} ago</p>
                             </div>
@@ -283,8 +282,7 @@
                 class="relative overflow-hidden bg-gradient-to-br from-[#226ce0] to-[#1b56b3] rounded-xl p-6 text-white shadow-lg animate-fade-in-up delay-300">
                 <div class="relative z-10">
                     <h3 class="font-bold text-lg mb-2">Need Help?</h3>
-                    <p class="text-white/70 text-sm mb-4 leading-relaxed">Check out our documentation to learn how to
-                        manage your projects effectively.</p>
+                    <p class="text-white/70 text-sm mb-4 leading-relaxed">Check out our documentation to learn how to manage your projects effectively.</p>
                     <a href="{% url 'nota' %}">
                         <button
                             class="px-4 py-2 bg-white text-[#226ce0] text-sm font-semibold rounded-lg hover:bg-[#f4f0f6] hover:scale-105 active:scale-95 transition-all shadow-sm">
