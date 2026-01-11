@@ -36,6 +36,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     )
 
     # BASIC FIELDS
+    name = models.CharField(max_length=150, null=True, blank=True)
     username = models.CharField(max_length=150, unique=True)
     email = models.EmailField(unique=True)
 
@@ -47,6 +48,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     business_email = models.EmailField(null=True, blank=True)
     cp_role = models.CharField(max_length=100, null=True, blank=True)
 
+    github_link = models.CharField(max_length=255, null=True, blank=True)
     github_oauth_id = models.CharField(max_length=255, null=True, blank=True)
     github_verified = models.BooleanField(default=False)
 

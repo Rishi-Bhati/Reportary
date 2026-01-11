@@ -142,7 +142,7 @@ If you skip and jump around, you’ll confuse yourself and burn out. The correct
 
 - [] Add developer role during onboarding
 - [] User profile page (view & edit basic info)
-- [] Proper logout & session handling
+- [X] Proper logout & session handling
 
 ---
 

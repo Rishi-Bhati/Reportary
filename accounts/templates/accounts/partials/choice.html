@@ -20,5 +20,10 @@
             hx-get="{% url 'accounts:onboarding_user_form' %}" hx-target="#onboarding-card" hx-swap="innerHTML">
             No, I'm a User
         </button>
+        
+        <button class="btn btn-ghost hover:bg-gray-50 text-gray-600 font-medium px-8"
+            hx-get="{% url 'accounts:onboarding_dev_form' %}" hx-target="#onboarding-card" hx-swap="innerHTML">
+            I'm a Developer
+        </button>
     </div>
 </div>

@@ -39,7 +39,7 @@ def onboarding_user_form(request):
 
         # 2. Update User Model
         if call_name:
-            user.first_name = call_name
+            user.name = call_name
         
         if tag:
             # Check if tag (username) is taken by someone else
@@ -73,7 +73,7 @@ def onboarding_org_form(request):
         
         # 2. Update User Details
         if call_name:
-            user.first_name = call_name
+            user.name = call_name
         if cp_role:
             user.cp_role = cp_role
         if biz_email:
@@ -91,3 +91,39 @@ def onboarding_org_form(request):
         return redirect('dashboard')
 
     return render(request, "accounts/partials/org_form.html")
+
+
+@login_required
+def onboarding_dev_form(request):
+    if request.method == "POST":
+        # 1. Get Data
+        call_name = request.POST.get('call_name')
+        tag = request.POST.get('tag')
+        github = request.POST.get('github')
+        country = request.POST.get('country')
+        bio = request.POST.get('bio')
+
+        user = request.user
+
+        # 2. Update User Model
+        if call_name:
+            user.name = call_name
+        if tag:
+            # Check if tag (username) is taken by someone else
+            if User.objects.filter(username=tag).exclude(pk=user.pk).exists():
+                # For HTMX, handling errors inline is best, but for now simple return:
+                # In a real app, you'd re-render the form with an error message.
+                pass 
+            else:
+                user.username = tag
+        if github:
+            user.github_link = github
+
+        # We set type to dev since this is the Developer flow
+        user.type = 'dev'
+        user.save()
+
+        # 3. Redirect to Dashboard
+        return redirect('dashboard')
+
+    return render(request, "accounts/partials/dev_form.html")
