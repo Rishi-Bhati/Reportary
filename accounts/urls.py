@@ -15,4 +15,7 @@ urlpatterns = [
 
     # User search for autocomplete
     path('user-search/', views.user_search, name='user_search'),
+
+    # Edit profile
+    path('profile/edit/', views.edit_profile, name='edit_profile'),
 ]

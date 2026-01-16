@@ -110,3 +110,12 @@ def handle_signup(request):
             
     # If signup fails or if the request is not POST, redirect back to the landing page.
     return redirect('landing_page')
+
+
+def profile_page(request):
+    """Renders the user's profile page."""
+    user = request.user
+    content = {
+        'user': user,
+    }
+    return render(request, "home/profile.html", content)

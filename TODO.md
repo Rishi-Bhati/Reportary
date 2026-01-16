@@ -140,8 +140,8 @@ If you skip and jump around, you’ll confuse yourself and burn out. The correct
 ## ☐ 11. User & Identity Foundation
 > Complete the user model with stable roles
 
-- [] Add developer role during onboarding
-- [] User profile page (view & edit basic info)
+- [X] Add developer role during onboarding
+- [X] User profile page (view & edit basic info)
 - [X] Proper logout & session handling
 
 ---

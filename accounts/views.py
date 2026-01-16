@@ -1,8 +1,10 @@
+
 from django.shortcuts import render, redirect
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import JsonResponse
+from .forms import UserProfileForm
 
 User = get_user_model()
 
@@ -127,3 +129,20 @@ def onboarding_dev_form(request):
         return redirect('dashboard')
 
     return render(request, "accounts/partials/dev_form.html")
+
+
+@login_required
+def edit_profile(request):
+    if request.method == 'POST':
+        form = UserProfileForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Your profile has been updated successfully!')
+            return redirect('profile')
+    else:
+        form = UserProfileForm(instance=request.user)
+    
+    context = {
+        'form': form
+    }
+    return render(request, 'accounts/edit_profile.html', context)
