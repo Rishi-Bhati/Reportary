@@ -71,6 +71,10 @@
                         <dt class="text-sm font-medium text-gray-500">Joined</dt>
                         <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ user.date_joined|date:"F j, Y" }}</dd>
                     </div>
+                    <div class="py-4 sm:py-5 px-8 sm:grid sm:grid-cols-3 sm:gap-4">
+                        <dt class="text-sm font-medium text-gray-500">Github</dt>
+                        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ user.github_link|cut:"https://"|cut:"http://" }}</dd>
+                    </div>
                      <div class="py-4 sm:py-5 px-8 sm:grid sm:grid-cols-3 sm:gap-4">
                         <dt class="text-sm font-medium text-gray-500">Github Verified</dt>
                         <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">

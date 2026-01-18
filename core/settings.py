@@ -34,8 +34,6 @@ DEBUG = True
 ALLOWED_HOSTS = ['*']
 
 CSRF_TRUSTED_ORIGINS = [
-    'http://192.168.29.97:3000',
-    'http://100.95.232.2:3000',
     'http://127.0.0.1:8000',
     'http://localhost:3000',
 ]
@@ -73,6 +71,7 @@ INSTALLED_APPS = [
     "components",
     "reports",
     "comments",
+    "audit",
 ]
 
 TAILWIND_APP_NAME = "theme"

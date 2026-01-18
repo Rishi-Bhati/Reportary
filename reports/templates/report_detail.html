@@ -36,8 +36,7 @@
                             class="px-3 py-1 rounded-full text-xs font-bold bg-[#a499b3] text-[#1b1725] uppercase tracking-wide">Resolved</span>
                         {% else %}
                         <span
-                            class="px-3 py-1 rounded-full text-xs font-bold bg-gray-200 text-gray-700 uppercase tracking-wide">{{
-                            report.get_status_display }}</span>
+                            class="px-3 py-1 rounded-full text-xs font-bold bg-gray-200 text-gray-700 uppercase tracking-wide">{{ report.get_status_display }}</span>
                         {% endif %}
 
                         {% if report.impact == 'Critical' or report.impact == 'High' %}
@@ -230,7 +229,15 @@
                             {{ report.component.name|default:"General" }}
                         </span>
                     </div>
-report.impact==value
+                    
+                    <div>
+                        <h5 class="text-xs font-bold text-[#a499b3] uppercase tracking-wider mb-2">Impact</h5>
+                            <span class="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium bg-[#226ce0]/10 text-[#226ce0]">
+                            {{ report.impact|default:"Normal" }}
+                            </span>
+                        
+                    </div>
+                    
                     <!-- Project -->
                     <div>
                         <h5 class="text-xs font-bold text-[#a499b3] uppercase tracking-wider mb-2">Project</h5>

@@ -11,6 +11,7 @@ from django.db.models import Q
 import rules.views as rules
 from accounts.models import User
 import rules.views as rules
+from reports.services import assign_report, update_report_status
 
 
 
@@ -178,15 +179,7 @@ def reassign_report(request, project_pk, report_pk):
     if not rules.is_project_owner(request.user, project):
         return HttpResponseForbidden("You are not authorized to perform this action.")
 
-    if request.method == 'POST':
-        assignee_id = request.POST.get('assignee')
-        if assignee_id:
-            try:
-                assignee = User.objects.get(pk=assignee_id)
-                report.assigned_to = assignee
-                report.save()
-            except User.DoesNotExist:
-                pass
+    assign_report(request=request, report=report, assignee=request.user, actor=request.user)
     
     return redirect('projects:reports:report_detail', project_pk=project.pk, report_pk=report.pk)
 
@@ -197,13 +190,12 @@ def change_report_status(request, project_pk, report_pk):
 
     if not rules.can_change_status(request.user, report):
         return HttpResponseForbidden("You are not authorized to perform this action.")
-
+    
     if request.method == 'POST':
         status = request.POST.get('status')
-        if status and status in [choice[0] for choice in Report.STATUS_CHOICES]:
-            report.status = status
-            report.save()
-            
+
+    update_report_status(request=request, report=report, new_status=status, actor=request.user)
+
     return redirect('projects:reports:report_detail', project_pk=report.project.pk, report_pk=report.pk)
 
 @login_required

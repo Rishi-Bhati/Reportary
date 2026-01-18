@@ -137,7 +137,7 @@ If you skip and jump around, you’ll confuse yourself and burn out. The correct
 
 
 
-## ☐ 11. User & Identity Foundation
+## ~~☐ 11. User & Identity Foundation~~
 > Complete the user model with stable roles
 
 - [X] Add developer role during onboarding
@@ -149,8 +149,8 @@ If you skip and jump around, you’ll confuse yourself and burn out. The correct
 ## ☐ 12. Report History & Audit Logs
 > Report History and change logs should be displayed properly.
 
-- [] Introduce report history / change log model
-- [] Track who changed what and when
+- [X] Introduce report history / change log model
+- [X] Track who changed what and when
 - [] Display change history to appropriate users
 
 ---
