@@ -1,4 +1,5 @@
-from audit.services import log_action
+from audit.services import log_action, get_entity_history
+import rules.views as rules
 from accounts.models import User
 from .models import Report
 
@@ -52,3 +53,52 @@ def update_report_status(*, request, report, new_status, actor):
     )
 
     return report
+
+def update_report_impact(*, report, new_impact, actor):
+
+    old_impact = report.impact
+
+    if old_impact == new_impact:
+        return report  # no-op
+
+    if new_impact and new_impact in [choice[0] for choice in Report.IMPACT_CHOICES]:
+        report.impact = new_impact
+        report.save()
+    
+    log_action(
+        actor=actor,
+        action="update",
+        entity_type="Report",
+        entity_id=report.id,
+        field_name="impact",
+        old_value=old_impact,
+        new_value=new_impact,
+    )
+    return report
+
+
+def update_report_visibility(*, report, new_visibility, actor):
+
+    old_visibility = report.visibility
+
+    if old_visibility == new_visibility:
+        return report  # no-op
+
+    report.visibility = new_visibility
+    report.save()
+    
+    log_action(
+        actor=actor,
+        action="update",
+        entity_type="Report",
+        entity_id=report.id,
+        field_name="visibility",
+        old_value=old_visibility,
+        new_value=new_visibility,
+    )
+    return report
+
+def get_report_history(user, report):
+    if rules.can_see_history(user, report):
+        return get_entity_history("Report", report.id)
+    return []

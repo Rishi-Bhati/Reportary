@@ -11,7 +11,7 @@ from django.db.models import Q
 import rules.views as rules
 from accounts.models import User
 import rules.views as rules
-from reports.services import assign_report, update_report_status
+from reports.services import *
 
 
 
@@ -103,6 +103,7 @@ def report_detail(request, project_pk, report_pk):
         'status_choices': Report.STATUS_CHOICES,
         'impact_choices': Report.IMPACT_CHOICES,
         'can_change_status': user_can_change_status,
+        'history': get_report_history(request.user, report),
         })
 
 @login_required
@@ -207,11 +208,8 @@ def change_report_visibility(request, project_pk, report_pk):
 
     if request.method == 'POST':
         visibility = request.POST.get('visibility')
-        if visibility == 'True':
-            report.visibility = True
-        else:
-            report.visibility = False
-        report.save()
+        
+    update_report_visibility(report=report, new_visibility=(visibility == 'true'), actor=request.user)
             
     return redirect('projects:reports:report_detail', project_pk=report.project.pk, report_pk=report.pk)
 
@@ -224,8 +222,7 @@ def change_report_impact(request, project_pk, report_pk):
 
     if request.method == 'POST':
         impact = request.POST.get('impact')
-        if impact and impact in [choice[0] for choice in Report.IMPACT_CHOICES]:
-            report.impact = impact
-            report.save()
+
+    update_report_impact(report=report, new_impact=impact, actor=request.user)
             
     return redirect('projects:reports:report_detail', project_pk=report.project.pk, report_pk=report.pk)

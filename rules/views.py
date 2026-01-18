@@ -29,3 +29,7 @@ def can_change_status(user, report):
 
 def is_commenter(user, comment):
     return comment.commented_by == user
+
+
+def can_see_history(user, report):
+    return is_project_member(user, report.project) or is_reporter(user, report)
