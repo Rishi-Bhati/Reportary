@@ -164,3 +164,26 @@ If you skip and jump around, you’ll confuse yourself and burn out. The correct
 - [] Scope access based on org membership
 
 ---
+
+## ☐ 14. Basic Security
+> Implement the most imp very basic layer of security.
+
+- [] Require users to use strong passwords.
+- [] Show login/password failures in the login/signup card itself.
+- [] Provide each project, report and everything with a UUID instead of default django pk id.
+- [] Implement forgot password and reset functionality.
+- [] 
+  
+---
+
+## ☐ 15. Misc.
+> Minor misc. fixes from last stage...
+
+- [] Fix the "Search this page" search box and refresh button not working.
+- [] Replace the refresh button to the right of the search box near the search icon.
+- [] Get Started page should ask users to login and then take users to dashboard instead of just showing nota
+- [] Fix hover color contrasts of the "New Project" Button in the sidebar.
+- [] Make the collaborating page and enable the button "Collaborating" in the sidebar to show users the projects they are collaborating (later collaborating reports as well)
+- [] Make a changelog / whats new page shown in the Notification bell for now. (later, it'll be separated)
+- [] Add the critical reports assigned to user or reported on user's projects in the "Needs attention" section. (later, it'll be update based as well)
+- [] 
