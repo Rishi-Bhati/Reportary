@@ -131,7 +131,7 @@ If you skip and jump around, you’ll confuse yourself and burn out. The correct
 ---
 
 
-## **Phase 2.0 : Trust & Structure**
+## **Phase 2.0 : Trust, Structure and Security**
 
 > Phase 2 focuses on strengthening the core foundation of Reportary by making users, actions, and access clear, traceable, and reliable. and fixes minor errors from last stage.
 
@@ -172,7 +172,6 @@ If you skip and jump around, you’ll confuse yourself and burn out. The correct
 - [] Show login/password failures in the login/signup card itself.
 - [] Provide each project, report and everything with a UUID instead of default django pk id.
 - [] Implement forgot password and reset functionality.
-- [] 
   
 ---
 
@@ -186,4 +185,5 @@ If you skip and jump around, you’ll confuse yourself and burn out. The correct
 - [] Make the collaborating page and enable the button "Collaborating" in the sidebar to show users the projects they are collaborating (later collaborating reports as well)
 - [] Make a changelog / whats new page shown in the Notification bell for now. (later, it'll be separated)
 - [] Add the critical reports assigned to user or reported on user's projects in the "Needs attention" section. (later, it'll be update based as well)
-- [] 
+
+---
