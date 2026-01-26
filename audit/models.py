@@ -25,6 +25,9 @@ class AuditLog(models.Model):
     entity_type = models.CharField(max_length=50)
     entity_id = models.CharField(max_length=36)  # works for UUID/int
 
+    parent_type = models.CharField(max_length=50, null=True, blank=True)
+    parent_id = models.CharField(max_length=36, null=True, blank=True)  # works for UUID/int
+
     field_name = models.CharField(max_length=100, null=True, blank=True)
     old_value = models.TextField(null=True, blank=True)
     new_value = models.TextField(null=True, blank=True)

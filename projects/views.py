@@ -6,6 +6,8 @@ from projects.models import Project
 from django.http import HttpResponseForbidden
 from accounts.models import User
 from django.db.models import Q, Count
+from projects.services import update_project
+
 
 logger = logging.getLogger(__name__)
 
@@ -88,40 +90,41 @@ def project_detail(request, pk):
 @login_required
 def edit_project(request, pk):
     project = Project.objects.get(pk=pk)
-    
+
     if project.owner != request.user:
         return HttpResponseForbidden("You are not the owner of this project.")
 
     if request.method == "POST":
         project_form = ProjectForm(request.POST, instance=project)
-        component_formset = ComponentFormSet(request.POST, instance=project, prefix='components')
-        
+        component_formset = ComponentFormSet(
+            request.POST, instance=project, prefix="components"
+        )
+
         if project_form.is_valid() and component_formset.is_valid():
-            project = project_form.save()
-            component_formset.save()
-
-            project.collaborators.clear()
-            project.collaborators.add(request.user)
-            collaborators_emails = request.POST.get('collaborators', '')
-            if collaborators_emails:
-                emails = [email.strip() for email in collaborators_emails.split(',')]
-                for email in emails:
-                    user = User.objects.filter(email=email).first()
-                    if user:
-                        project.collaborators.add(user)
-
+            update_project(
+                project=project,
+                form=project_form,
+                component_formset=component_formset,
+                collaborator_emails=request.POST.get("collaborators", ""),
+                actor=request.user,
+            )
             return redirect("projects:project_detail", pk=project.pk)
+
     else:
         project_form = ProjectForm(instance=project)
-        component_formset = ComponentFormSet(instance=project, prefix='components')
-    
-    collaborator_email_list = [user.email for user in project.collaborators.all() if user != request.user]
-    return render(request, 'edit_project.html', {
-        'form': project_form,
-        'component_formset': component_formset,
-        'project': project,
-        'collaborator_email_list': collaborator_email_list,
-        'collaborator_emails': ", ".join(collaborator_email_list)
+        component_formset = ComponentFormSet(instance=project, prefix="components")
+
+    collaborator_email_list = [
+        user.email for user in project.collaborators.all()
+        if user != request.user
+    ]
+
+    return render(request, "edit_project.html", {
+        "form": project_form,
+        "component_formset": component_formset,
+        "project": project,
+        "collaborator_email_list": collaborator_email_list,
+        "collaborator_emails": ", ".join(collaborator_email_list),
     })
 
 
