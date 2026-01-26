@@ -6,7 +6,8 @@ from projects.models import Project
 from django.http import HttpResponseForbidden
 from accounts.models import User
 from django.db.models import Q, Count
-from projects.services import update_project
+from projects.services import update_project, get_project_history
+import rules.views as rules
 
 
 logger = logging.getLogger(__name__)
@@ -80,10 +81,13 @@ def project_detail(request, pk):
     # Debug/log: confirm the view received the project and what it contains
     logger.info(f"project_detail called for pk={pk}, project.title={project.title!r}")
     print(f"DEBUG project_detail: pk={pk}, title={project.title}")
-    is_owner = user.is_authenticated and (project.owner == user)    
+    is_owner = user.is_authenticated and (project.owner == user)
+    is_member = user.is_authenticated and rules.is_project_member(user, project)
     return render(request, 'project_details.html', {
         'project': project,
         'is_owner': is_owner,
+        'is_member': is_member,
+        'history': get_project_history(user, project),
     })
 
 

@@ -130,3 +130,8 @@ def update_project(
         )
 
     return project
+
+def get_project_history(user, project):
+    if rules.is_project_member(user, project):
+        return get_entity_history("Project", project.id)
+    return []

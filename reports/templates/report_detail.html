@@ -170,64 +170,68 @@
             </div>
             <!-- History Section (Only for privileged users) -->
             {% if history %}
-            <div class="space-y-6">
-                <div class="flex items-center justify-between">
-                    <h3 class="text-xl font-bold text-[#1b1725] flex items-center gap-3">
-                        <svg class="w-6 h-6 text-[#226ce0]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="bg-white rounded-2xl border border-[#d0bcd5]/30 shadow-sm overflow-hidden">
+                <div class="px-6 py-4 border-b border-[#d0bcd5]/30 bg-[#f8f6fa]/50 flex items-center justify-between">
+                    <h3 class="text-sm font-bold text-[#1b1725] uppercase tracking-wider flex items-center gap-2">
+                        <svg class="w-5 h-5 text-[#226ce0]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
                         History Log
                     </h3>
+                    <button class="btn btn-sm btn-ghost text-[#534b62] hover:text-[#226ce0] transition-colors"
+                        onclick="toggleHistory(this)">
+                        <svg class="w-4 h-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
                 </div>
 
-                <div class="bg-white rounded-2xl border border-[#d0bcd5]/30 shadow-sm overflow-hidden">
-                    <div class="divide-y divide-[#d0bcd5]/30">
-                        {% for log in history %}
-                        <div class="p-4 hover:bg-[#f8f6fa] transition-colors flex gap-4 items-start">
-                            <div class="mt-1">
-                                <div
-                                    class="w-8 h-8 rounded-full bg-[#d0bcd5]/30 flex items-center justify-center text-xs font-bold text-[#534b62]">
-                                    {{ log.actor.username|slice:":1"|upper }}
-                                </div>
-                            </div>
-                            <div class="flex-1 space-y-1">
-                                <div class="flex items-center justify-between">
-                                    <p class="text-sm font-semibold text-[#1b1725]">
-                                        {{ log.actor.username }}
-                                        <span class="font-normal text-[#534b62]">
-                                            {% if log.action == 'create' %}
-                                            created this report
-                                            {% elif log.action == 'update' %}
-                                            updated
-                                            {% if log.field_name %}
-                                            <span class="font-medium text-[#226ce0]">{{ log.field_name|title }}</span>
-                                            {% else %}
-                                            the report
-                                            {% endif %}
-                                            {% endif %}
-                                        </span>
-                                    </p>
-                                    <span class="text-xs text-[#a499b3]">{{ log.created_at|timesince }} ago</span>
-                                </div>
-                                {% if log.old_value or log.new_value %}
-                                <div
-                                    class="text-xs bg-[#f8f6fa] p-2 rounded-lg border border-[#d0bcd5]/30 mt-2 font-mono text-[#534b62]">
-                                    {% if log.old_value %}
-                                    <span class="line-through opacity-70">{{ log.old_value }}</span>
-                                    <svg class="w-3 h-3 inline mx-1 text-[#a499b3]" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
-                                    </svg>
-                                    {% endif %}
-                                    <span class="text-[#226ce0] font-semibold">{{ log.new_value }}</span>
-                                </div>
-                                {% endif %}
+                <div id="history-content" class="divide-y divide-[#d0bcd5]/30 max-h-96 overflow-y-auto" style="display: none;">
+                    {% for log in history %}
+                    <div class="p-4 hover:bg-[#f8f6fa] transition-colors flex gap-4 items-start">
+                        <div class="mt-1">
+                            <div
+                                class="w-8 h-8 rounded-full bg-[#d0bcd5]/30 flex items-center justify-center text-xs font-bold text-[#534b62]">
+                                {{ log.actor.username|slice:":1"|upper }}
                             </div>
                         </div>
-                        {% endfor %}
+                        <div class="flex-1 space-y-1">
+                            <div class="flex items-center justify-between">
+                                <p class="text-sm font-semibold text-[#1b1725]">
+                                    {{ log.actor.username }}
+                                    <span class="font-normal text-[#534b62]">
+                                        {% if log.action == 'create' %}
+                                        created this report
+                                        {% elif log.action == 'update' %}
+                                        updated
+                                        {% if log.field_name %}
+                                        <span class="font-medium text-[#226ce0]">{{ log.field_name|title }}</span>
+                                        {% else %}
+                                        the report
+                                        {% endif %}
+                                        {% endif %}
+                                    </span>
+                                </p>
+                                <span class="text-xs text-[#a499b3]">{{ log.created_at|timesince }} ago</span>
+                            </div>
+                            {% if log.old_value or log.new_value %}
+                            <div
+                                class="text-xs bg-[#f8f6fa] p-2 rounded-lg border border-[#d0bcd5]/30 mt-2 font-mono text-[#534b62]">
+                                {% if log.old_value %}
+                                <span class="line-through opacity-70">{{ log.old_value }}</span>
+                                <svg class="w-3 h-3 inline mx-1 text-[#a499b3]" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                                </svg>
+                                {% endif %}
+                                <span class="text-[#226ce0] font-semibold">{{ log.new_value }}</span>
+                            </div>
+                            {% endif %}
+                        </div>
                     </div>
+                    {% endfor %}
                 </div>
             </div>
             {% endif %}
@@ -341,4 +345,21 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function toggleHistory(button) {
+    const content = document.getElementById('history-content');
+    const icon = button.querySelector('svg');
+    
+    if (content.style.display === 'none') {
+        content.style.display = 'block';
+        icon.classList.add('rotate-180');
+    } else {
+        content.style.display = 'none';
+        icon.classList.remove('rotate-180');
+    }
+}
+</script>
 {% endblock %}
