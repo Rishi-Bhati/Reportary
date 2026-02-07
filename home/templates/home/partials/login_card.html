@@ -5,7 +5,17 @@
             <p class="text-sm text-gray-500 mt-1">Welcome back to Reportary</p>
         </div>
 
-        <form action="{% url 'handle_login' %}" method="post" class="space-y-4">
+        {% if error %}
+        <div role="alert" class="alert alert-error bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-lg mb-4 flex justify-between items-center" id="error-alert">
+            <div class="flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                <span>{{ error }}</span>
+            </div>
+            <button class="text-red-700" onclick="document.getElementById('error-alert').style.display='none'">&times;</button>
+        </div>
+        {% endif %}
+
+        <form hx-post="{% url 'handle_login' %}" hx-target="#auth-card-container" hx-swap="innerHTML" class="space-y-4">
             {% csrf_token %}
 
             <div class="form-control w-full">

@@ -1,3 +1,7 @@
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
+from django.http import HttpResponse
+from django.urls import reverse
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.contrib.auth import get_user_model
@@ -73,9 +77,12 @@ def handle_login(request):
         
         if user is not None:
             login(request, user)
-            return redirect('dashboard')
+            response = HttpResponse(status_code=204)
+            response["HX-Redirect"] = reverse("dashboard")
+            return response
         else:
-            messages.error(request, "Invalid password.")
+            context = {'error': 'Invalid credentials. Please try again.'}
+            return render(request, "home/partials/login_card.html", context)
 
     # If the login fails or if the request is not POST, redirect back to the landing page.
     return redirect('landing_page')
@@ -91,22 +98,29 @@ def handle_signup(request):
 
         # Basic validation for passwords.
         if password != confirm_password:
-            messages.error(request, "Passwords do not match!")
-            return redirect('landing_page')
+            context = {'error': 'Passwords do not match.'}
+            return render(request, "home/partials/signup_card.html", context)
         
         # Check if a user with this email already exists.
         if User.objects.filter(email=email).exists():
-            messages.error(request, "Email already exists!")
-            return redirect('landing_page')
+            context = {'error': 'Email already exists. Please try to log in.'}
+            return render(request, "home/partials/signup_card.html", context)
 
         # Create the user.
         # Initialize username as email; user will set a display name/tag during onboarding.
         try:
+            validate_password(password)
             user = User.objects.create_user(username=email, email=email, password=password)
             login(request, user)
-            return redirect('accounts:onboarding_home')
+            response = HttpResponse(status_code=204)
+            response["HX-Redirect"] = reverse("accounts:onboarding_home")
+            return response
+        except ValidationError as e:
+            context = {'error': list(e.messages)}
+            return render(request, "home/partials/signup_card.html", context)
         except Exception as e:
-            messages.error(request, "An error occurred during account creation.")
+            context = {'error': 'An error occurred during account creation.'}
+            return render(request, "home/partials/signup_card.html", context)
             
     # If signup fails or if the request is not POST, redirect back to the landing page.
     return redirect('landing_page')
