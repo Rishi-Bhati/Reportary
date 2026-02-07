@@ -2,6 +2,10 @@ from audit.services import log_action, get_entity_history
 import rules.views as rules
 from accounts.models import User
 from .models import Project
+from audit.models import AuditLog
+from components.models import Component
+from django.utils import timezone
+from datetime import timedelta
 
 
 def track_component_deletions(*, formset, actor, project):
@@ -135,3 +139,45 @@ def get_project_history(user, project):
     if rules.is_project_member(user, project):
         return get_entity_history("Project", project.id)
     return []
+
+
+def get_component_changes_for_project_log(project_id, log_entry):
+    """
+    Get all component changes (create, update, delete) for a specific project log entry.
+    This queries for all Component logs with the same project_id as parent, created within 5 seconds of the project log.
+    """
+    # Use a 5-second window to account for slight timing differences
+    time_window_start = log_entry.created_at - timedelta(seconds=5)
+    time_window_end = log_entry.created_at + timedelta(seconds=5)
+    
+    component_logs = AuditLog.objects.filter(
+        entity_type="Component",
+        parent_type="Project",
+        parent_id=str(project_id),
+        created_at__gte=time_window_start,
+        created_at__lte=time_window_end,
+        actor=log_entry.actor
+    ).order_by("action", "entity_id")
+    
+    # Group by entity_id and action
+    changes = {}
+    for log in component_logs:
+        key = log.entity_id
+        if key not in changes:
+            # Try to get component name, fallback to ID if not found
+            try:
+                component = Component.objects.get(id=log.entity_id)
+                component_name = component.name
+            except Component.DoesNotExist:
+                component_name = f"Component (ID: {log.entity_id})"
+            
+            changes[key] = {
+                'id': log.entity_id,
+                'name': component_name,
+                'actions': [],
+                'logs': []
+            }
+        changes[key]['actions'].append(log.action)
+        changes[key]['logs'].append(log)
+    
+    return list(changes.values())

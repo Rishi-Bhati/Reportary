@@ -6,7 +6,7 @@ from projects.models import Project
 from django.http import HttpResponseForbidden
 from accounts.models import User
 from django.db.models import Q, Count
-from projects.services import update_project, get_project_history
+from projects.services import update_project, get_project_history, get_component_changes_for_project_log
 import rules.views as rules
 
 
@@ -83,11 +83,24 @@ def project_detail(request, pk):
     print(f"DEBUG project_detail: pk={pk}, title={project.title}")
     is_owner = user.is_authenticated and (project.owner == user)
     is_member = user.is_authenticated and rules.is_project_member(user, project)
+    history = get_project_history(user, project)
+    
+    # Enrich history with component changes
+    enriched_history = []
+    for log in history:
+        log_dict = {
+            'log': log,
+            'component_changes': None
+        }
+        if log.field_name == 'components':
+            log_dict['component_changes'] = get_component_changes_for_project_log(project.id, log)
+        enriched_history.append(log_dict)
+    
     return render(request, 'project_details.html', {
         'project': project,
         'is_owner': is_owner,
         'is_member': is_member,
-        'history': get_project_history(user, project),
+        'history': enriched_history,
     })
 
 

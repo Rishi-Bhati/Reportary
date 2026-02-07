@@ -182,7 +182,8 @@
                 </div>
 
                 <div id="history-content" class="divide-y divide-[#d0bcd5]/30 max-h-96 overflow-y-auto" style="display: none;">
-                    {% for log in history %}
+                    {% for entry in history %}
+                    {% with log=entry.log component_changes=entry.component_changes %}
                     <div class="p-4 hover:bg-[#f8f6fa] transition-colors flex gap-4 items-start">
                         <div class="mt-1">
                             <div
@@ -209,7 +210,72 @@
                                 </p>
                                 <span class="text-xs text-[#a499b3]">{{ log.created_at|timesince }} ago</span>
                             </div>
+                            
+                            <!-- Component Changes Details (Expandable) -->
+                            {% if component_changes %}
+                            <button class="text-xs font-medium text-[#226ce0] hover:text-[#1b56b3] transition-colors mt-2 flex items-center gap-1"
+                                onclick="toggleComponentChanges(this)">
+                                <svg class="w-4 h-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                                View component changes ({{ component_changes|length }})
+                            </button>
+                            
+                            <div class="component-changes hidden mt-3 space-y-2 ml-2 pl-3 border-l-2 border-[#226ce0]/30">
+                                {% for change in component_changes %}
+                                <div class="text-xs bg-[#f8f6fa] p-3 rounded-lg border border-[#d0bcd5]/30 space-y-1">
+                                    <div class="flex items-center justify-between">
+                                        <div class="font-semibold text-[#1b1725]">
+                                            <span>{{ change.name }}</span>
+                                            <span class="text-[#a499b3] font-mono text-xs">(ID: {{ change.id }})</span>
+                                        </div>
+                                        <span class="inline-flex items-center gap-1">
+                                            {% for action in change.actions %}
+                                                {% if action == 'create' %}
+                                                <span class="px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-700">Added</span>
+                                                {% elif action == 'update' %}
+                                                <span class="px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-700">Modified</span>
+                                                {% elif action == 'delete' %}
+                                                <span class="px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-700">Deleted</span>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </span>
+                                    </div>
+                                    
+                                    <!-- Component log details -->
+                                    {% for comp_log in change.logs %}
+                                    <div class="text-xs text-[#534b62] space-y-1">
+                                        {% if comp_log.action == 'create' %}
+                                        <div class="text-green-700">
+                                            <span class="font-medium">Created:</span> {{ comp_log.new_value }}
+                                        </div>
+                                        {% elif comp_log.action == 'delete' %}
+                                        <div class="text-red-700">
+                                            <span class="font-medium">Deleted:</span> {{ comp_log.old_value }}
+                                        </div>
+                                        {% elif comp_log.action == 'update' %}
+                                        <div class="text-blue-700 bg-blue-50 p-2 rounded border border-blue-200">
+                                            <div class="font-medium mb-1">{{ comp_log.field_name|title }}:</div>
+                                            <div class="flex items-center gap-2 text-xs">
+                                                <span class="line-through opacity-70 bg-red-100 px-2 py-1 rounded">{{ comp_log.old_value }}</span>
+                                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                                                </svg>
+                                                <span class="bg-green-100 px-2 py-1 rounded text-[#226ce0] font-semibold">{{ comp_log.new_value }}</span>
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% elif log.field_name == 'components' %}
+                            <div class="text-xs text-[#a499b3] italic mt-2">No component changes recorded</div>
+                            {% endif %}
+                            
                             {% if log.old_value or log.new_value %}
+                            {% if log.field_name != 'components' %}
                             <div
                                 class="text-xs bg-[#f8f6fa] p-2 rounded-lg border border-[#d0bcd5]/30 mt-2 font-mono text-[#534b62]">
                                 {% if log.old_value %}
@@ -223,8 +289,10 @@
                                 <span class="text-[#226ce0] font-semibold">{{ log.new_value }}</span>
                             </div>
                             {% endif %}
+                            {% endif %}
                         </div>
                     </div>
+                    {% endwith %}
                     {% endfor %}
                 </div>
             </div>
@@ -325,6 +393,19 @@ function toggleHistory(button) {
         icon.classList.add('rotate-180');
     } else {
         content.style.display = 'none';
+        icon.classList.remove('rotate-180');
+    }
+}
+
+function toggleComponentChanges(button) {
+    const changesDiv = button.closest('div').querySelector('.component-changes');
+    const icon = button.querySelector('svg');
+    
+    if (changesDiv.classList.contains('hidden')) {
+        changesDiv.classList.remove('hidden');
+        icon.classList.add('rotate-180');
+    } else {
+        changesDiv.classList.add('hidden');
         icon.classList.remove('rotate-180');
     }
 }

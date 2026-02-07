@@ -149,7 +149,7 @@ If you skip and jump around, you’ll confuse yourself and burn out. The correct
 ## ~~☐ 12. Report History & Audit Logs~~
 > Report History and change logs should be displayed properly.
 
-- [X] Introduce report history / change log model
+- [X] Introduce report and project history / change log model
 - [X] Track who changed what and when
 - [X] Display change history to appropriate users
 
