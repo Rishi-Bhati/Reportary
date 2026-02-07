@@ -7,6 +7,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth import get_user_model
 from django.contrib import messages
 import random
+import re
 
 User = get_user_model()
 
@@ -106,19 +107,40 @@ def handle_signup(request):
             context = {'error': 'Email already exists. Please try to log in.'}
             return render(request, "home/partials/signup_card.html", context)
 
+        # Validate password strength with custom rules and Django validators.
+        errors = []
+
+        # Custom rules: min 8 chars, at least one uppercase, one lowercase, one number, one special character
+        if len(password) < 8:
+            errors.append('Password must be at least 8 characters long.')
+        if not re.search(r'[A-Z]', password):
+            errors.append('Password must contain at least one uppercase letter.')
+        if not re.search(r'[a-z]', password):
+            errors.append('Password must contain at least one lowercase letter.')
+        if not re.search(r'[0-9]', password):
+            errors.append('Password must contain at least one number.')
+        if not re.search(r'[!@#$%^&*()_\-+=\[\]{};:\'",.<>?/\\`~]', password):
+            errors.append('Password must contain at least one special character (e.g. @, #, $, !, &).')
+
+        # Also run Django's validators to catch common/weak passwords
+        try:
+            validate_password(password)
+        except ValidationError as e:
+            errors.extend(list(e.messages))
+
+        if errors:
+            context = {'error': errors}
+            return render(request, "home/partials/signup_card.html", context)
+
         # Create the user.
         # Initialize username as email; user will set a display name/tag during onboarding.
         try:
-            validate_password(password)
             user = User.objects.create_user(username=email, email=email, password=password)
             login(request, user)
-            response = HttpResponse(status_code=204)
+            response = HttpResponse(status=204)
             response["HX-Redirect"] = reverse("accounts:onboarding_home")
             return response
-        except ValidationError as e:
-            context = {'error': list(e.messages)}
-            return render(request, "home/partials/signup_card.html", context)
-        except Exception as e:
+        except Exception:
             context = {'error': 'An error occurred during account creation.'}
             return render(request, "home/partials/signup_card.html", context)
             

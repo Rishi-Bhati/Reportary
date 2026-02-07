@@ -153,7 +153,7 @@ If you skip and jump around, you’ll confuse yourself and burn out. The correct
 - [X] Track who changed what and when
 - [X] Display change history to appropriate users
 
----
+--- 
 
 ## ☐ 13. Basic Organization Support
 > Implement basic org app and model for handleing organisations.
@@ -165,13 +165,12 @@ If you skip and jump around, you’ll confuse yourself and burn out. The correct
 
 ---
 
-## ☐ 14. Basic Security
+## ~~☐ 14. Basic Security~~
 > Implement the most imp very basic layer of security.
 
 - [X] Require users to use strong passwords.
 - [X] Show login/password failures in the login/signup card itself.
 - [X] Provide each project, report and everything with a UUID instead of default django pk id.
-- [] Implement forgot password and reset functionality.
   
 ---
 
