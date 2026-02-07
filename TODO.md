@@ -170,7 +170,7 @@ If you skip and jump around, you’ll confuse yourself and burn out. The correct
 
 - [X] Require users to use strong passwords.
 - [X] Show login/password failures in the login/signup card itself.
-- [] Provide each project, report and everything with a UUID instead of default django pk id.
+- [X] Provide each project, report and everything with a UUID instead of default django pk id.
 - [] Implement forgot password and reset functionality.
   
 ---

@@ -19,7 +19,7 @@ class ReportListTests(TestCase):
         self.hidden_report = Report.objects.create(project=self.project, title='Hidden', description='hid', reported_by=self.reporter, visibility=False)
 
     def test_anonymous_sees_visible_only(self):
-        url = reverse('projects:reports:report_list', kwargs={'project_pk': self.project.pk})
+        url = reverse('projects:reports:report_list', kwargs={'project_uuid': self.project.uuid})
         resp = self.client.get(url)
         self.assertEqual(resp.status_code, 200)
         reports = resp.context['reports']
@@ -28,7 +28,7 @@ class ReportListTests(TestCase):
 
     def test_owner_sees_all_reports(self):
         self.client.force_login(self.owner)
-        url = reverse('projects:reports:report_list', kwargs={'project_pk': self.project.pk})
+        url = reverse('projects:reports:report_list', kwargs={'project_uuid': self.project.uuid})
         resp = self.client.get(url)
         self.assertEqual(resp.status_code, 200)
         reports = resp.context['reports']
@@ -37,7 +37,7 @@ class ReportListTests(TestCase):
 
     def test_reporter_sees_their_hidden_report(self):
         self.client.force_login(self.reporter)
-        url = reverse('projects:reports:report_list', kwargs={'project_pk': self.project.pk})
+        url = reverse('projects:reports:report_list', kwargs={'project_uuid': self.project.uuid})
         resp = self.client.get(url)
         self.assertEqual(resp.status_code, 200)
         reports = resp.context['reports']
@@ -63,7 +63,7 @@ class ReportDetailTests(TestCase):
 
     def test_collaborators_in_context(self):
         self.client.force_login(self.owner)
-        url = reverse('projects:reports:report_detail', kwargs={'project_pk': self.project.pk, 'report_pk': self.report.pk})
+        url = reverse('projects:reports:report_detail', kwargs={'project_uuid': self.project.uuid, 'report_uuid': self.report.uuid})
         resp = self.client.get(url)
         self.assertEqual(resp.status_code, 200)
         

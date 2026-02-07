@@ -73,14 +73,14 @@ def projects_view(request):
 
 
 
-def project_detail(request, pk):
+def project_detail(request, project_uuid):
     user = request.user
 
     # if user is the owner of the project, show all the details and give option to edit, else show only public details and no edit option
-    project = Project.objects.get(pk=pk)
+    project = Project.objects.get(uuid=project_uuid)
     # Debug/log: confirm the view received the project and what it contains
-    logger.info(f"project_detail called for pk={pk}, project.title={project.title!r}")
-    print(f"DEBUG project_detail: pk={pk}, title={project.title}")
+    logger.info(f"project_detail called for uuid={project_uuid}, project.title={project.title!r}")
+    print(f"DEBUG project_detail: uuid={project_uuid}, title={project.title}")
     is_owner = user.is_authenticated and (project.owner == user)
     is_member = user.is_authenticated and rules.is_project_member(user, project)
     history = get_project_history(user, project)
@@ -105,8 +105,8 @@ def project_detail(request, pk):
 
 
 @login_required
-def edit_project(request, pk):
-    project = Project.objects.get(pk=pk)
+def edit_project(request, project_uuid):
+    project = Project.objects.get(uuid=project_uuid)
 
     if project.owner != request.user:
         return HttpResponseForbidden("You are not the owner of this project.")
@@ -125,7 +125,7 @@ def edit_project(request, pk):
                 collaborator_emails=request.POST.get("collaborators", ""),
                 actor=request.user,
             )
-            return redirect("projects:project_detail", pk=project.pk)
+            return redirect("projects:project_detail", project_uuid=project.uuid)
 
     else:
         project_form = ProjectForm(instance=project)

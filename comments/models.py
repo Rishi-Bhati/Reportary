@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from uuid6 import uuid7
 
 # The Comment model represents a single comment made by a user on a report.
 class Comment(models.Model):
@@ -9,6 +10,16 @@ class Comment(models.Model):
     # The 'related_name="comments"' is crucial. It creates a reverse relationship on the Report model,
     # allowing us to access all comments for a report object using 'report.comments.all()'.
     # The lack of this was causing an AttributeError: 'Report' object has no attribute 'comments'.
+
+    #UUID Field
+    uuid = models.UUIDField(
+    default=uuid7,
+    editable=False,
+    unique=True,
+    db_index=True,
+    # null=True,
+    # blank=True,
+    )
     report = models.ForeignKey('reports.Report', on_delete=models.CASCADE, related_name='comments')
     
     # This ForeignKey links the comment to the user who wrote it.

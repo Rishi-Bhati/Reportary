@@ -15,14 +15,14 @@ from .forms import CommentForm
 @require_POST
 # The '@login_required' decorator ensures that only logged-in users can add comments.
 @login_required
-def add_comment(request, report_pk):
+def add_comment(request, report_uuid):
     """
     This view handles the creation of a new comment for a specific report.
     It's triggered by an HTMX POST request from the report detail page.
     """
     # First, we get the report object using the primary key from the URL.
     # If the report does not exist, it will return a 404 Not Found error.
-    report = get_object_or_404(Report, pk=report_pk)
+    report = get_object_or_404(Report, uuid=report_uuid)
     
     # We instantiate the CommentForm with the POST data from the request.
     form = CommentForm(request.POST)
@@ -46,15 +46,15 @@ def add_comment(request, report_pk):
 
 # The '@login_required' decorator ensures that only logged-in users can edit comments.
 @login_required
-def edit_comment(request, report_pk, comment_pk):
+def edit_comment(request, report_uuid, comment_uuid):
     """
     This view handles both displaying the edit form (GET) and processing the
     submission of the form (POST) for editing a comment.
     """
     # Retrieve the report and the specific comment to be edited.
     # It's crucial to ensure the comment exists and belongs to the current user.
-    report = get_object_or_404(Report, pk=report_pk)
-    comment = get_object_or_404(Comment, pk=comment_pk, commented_by=request.user, report=report)
+    report = get_object_or_404(Report, uuid=report_uuid)
+    comment = get_object_or_404(Comment, uuid=comment_uuid, commented_by=request.user, report=report)
 
     # Requirement: A hidden comment cannot be edited.
     if not comment.visibility:
@@ -81,31 +81,31 @@ def edit_comment(request, report_pk, comment_pk):
     return render(request, 'comments/partials/edit_comment_form.html', {'form': form, 'comment': comment, 'report': report})
 
 @login_required
-def cancel_edit_comment(request, report_pk, comment_pk):
+def cancel_edit_comment(request, report_uuid, comment_uuid):
     """
     This view handles the cancellation of an edit comment operation.
     It returns the original comment content.
     """
-    report = get_object_or_404(Report, pk=report_pk)
-    comment = get_object_or_404(Comment, pk=comment_pk, report=report)
+    report = get_object_or_404(Report, uuid=report_uuid)
+    comment = get_object_or_404(Comment, uuid=comment_uuid, report=report)
     return render(request, 'comments/partials/comment_content.html', {'comment': comment, 'report': report})
 
 
 @require_POST
 @login_required
-def toggle_comment_visibility(request, report_pk, comment_pk):
+def toggle_comment_visibility(request, report_uuid, comment_uuid):
     """
     This view handles toggling the visibility of a comment.
     Only the project owner can perform this action.
     """
-    report = get_object_or_404(Report, pk=report_pk)
+    report = get_object_or_404(Report, uuid=report_uuid)
     
     # Security check: Only the project owner can hide a comment.
     if request.user != report.project.owner:
         # Return a 403 Forbidden response if the user is not the project owner.
         return HttpResponse(status=403)
 
-    comment = get_object_or_404(Comment, pk=comment_pk, report=report)
+    comment = get_object_or_404(Comment, uuid=comment_uuid, report=report)
 
     # Toggle the visibility status.
     comment.visibility = not comment.visibility

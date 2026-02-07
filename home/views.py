@@ -77,7 +77,7 @@ def handle_login(request):
         
         if user is not None:
             login(request, user)
-            response = HttpResponse(status_code=204)
+            response = HttpResponse(status=204)
             response["HX-Redirect"] = reverse("dashboard")
             return response
         else:

@@ -4,11 +4,11 @@
 {% block title %}{{ report.title }} | Reports{% endblock %}
 {% block breadcrumb %}
 <a href="{% url 'projects:my_projects' %}" class="hover:text-[#226ce0] transition-colors">Projects</a> /
-<a href="{% url 'projects:project_detail' pk=project.id %}" class="hover:text-[#226ce0] transition-colors">{{
+<a href="{% url 'projects:project_detail' project_uuid=project.uuid %}" class="hover:text-[#226ce0] transition-colors">{{
     project.title }}</a> /
-<a href="{% url 'projects:reports:report_list' project.id %}" class="hover:text-[#226ce0] transition-colors">Reports</a>
+<a href="{% url 'projects:reports:report_list' project.uuid %}" class="hover:text-[#226ce0] transition-colors">Reports</a>
 /
-<span class="text-[#226ce0] font-medium">#{{ report.id }}</span>
+<span class="text-[#226ce0] font-medium">#{{ report.uuid }}</span>
 {% endblock %}
 
 {% block content %}
@@ -23,7 +23,7 @@
             <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
                 <div class="flex-1">
                     <div class="flex flex-wrap items-center gap-3 mb-3">
-                        <span class="text-[#a499b3] text-lg font-mono">#{{ report.id }}</span>
+                        <span class="text-[#a499b3] text-lg font-mono">#{{ report.uuid }}</span>
                         {% if report.status == 'open' %}
                         <span
                             class="px-3 py-1 rounded-full text-xs font-bold bg-[#226ce0] text-white uppercase tracking-wide">Open</span>
@@ -69,7 +69,7 @@
                 </div>
 
                 <div class="flex items-center gap-3">
-                    <a href="{% url 'projects:reports:report_list' project.id %}"
+                    <a href="{% url 'projects:reports:report_list' project.uuid %}"
                         class="btn bg-white border-2 border-[#d0bcd5] text-[#534b62] hover:bg-[#f8f6fa] hover:border-[#a499b3] hover:text-[#1b1725] transition-all duration-200">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -146,7 +146,7 @@
                         </svg>
                         Leave a Comment
                     </h4>
-                    <form hx-post="{% url 'comments:add_comment' report.pk %}" hx-target="#comments-section"
+                    <form hx-post="{% url 'comments:add_comment' report.uuid %}" hx-target="#comments-section"
                         hx-swap="beforeend"
                         hx-on::after-request="this.reset(); document.getElementById('no-comments-msg')?.remove()">
                         {% csrf_token %}
@@ -309,7 +309,7 @@
                     <!-- Project -->
                     <div>
                         <h5 class="text-xs font-bold text-[#a499b3] uppercase tracking-wider mb-2">Project</h5>
-                        <a href="{% url 'projects:project_detail' pk=project.id %}"
+                        <a href="{% url 'projects:project_detail' project_uuid=project.uuid %}"
                             class="inline-flex items-center gap-2 text-sm font-medium text-[#226ce0] hover:text-[#1b56b3] transition-colors">
                             <div
                                 class="w-6 h-6 rounded bg-[#226ce0]/10 flex items-center justify-center text-xs font-bold text-[#226ce0]">

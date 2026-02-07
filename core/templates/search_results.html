@@ -44,7 +44,7 @@
         <ul class="space-y-3">
             {% for report in reports %}
             <li>
-                <a href="{% url 'projects:reports:report_detail' project_pk=report.project.pk report_pk=report.pk %}" class="block hover:underline">
+                <a href="{% url 'projects:reports:report_detail' project_uuid=report.project.uuid report_uuid=report.uuid %}" class="block hover:underline">
                     <div class="flex items-start justify-between">
                         <div>
                             <div class="text-sm font-medium text-gray-900">{{ report.title }}</div>

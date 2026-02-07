@@ -4,7 +4,7 @@
 {% block title %}Edit {{ project.title }} | Projects{% endblock %}
 {% block breadcrumb %}
 <a href="{% url 'projects:my_projects' %}" class="hover:text-[#226ce0]">Projects</a> /
-<a href="{% url 'projects:project_detail' pk=project.pk %}" class="hover:text-[#226ce0]">{{ project.title }}</a> /
+<a href="{% url 'projects:project_detail' project_uuid=project.uuid %}" class="hover:text-[#226ce0]">{{ project.title }}</a> /
 Edit
 {% endblock %}
 
@@ -18,7 +18,7 @@ Edit
     </div>
 
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-        <form method="post" action="{% url 'projects:edit_project' pk=project.pk %}" id="projectForm"
+        <form method="post" action="{% url 'projects:edit_project' project_uuid=project.uuid %}" id="projectForm"
             class="divide-y divide-gray-100">
             {% csrf_token %}
 
@@ -92,7 +92,7 @@ Edit
                     <div
                         class="component-form p-6 bg-white rounded-xl border border-gray-200 shadow-sm component-item relative group">
                         <!-- Hidden ID if editing -->
-                        {% if component_form.instance.pk %}{{ component_form.id }}{% endif %}
+                        {% if component_form.instance.uuid %}{{ component_form.id }}{% endif %}
 
                         {% if component_form.non_form_errors %}
                         <div class="alert alert-error text-sm mb-4">
@@ -104,11 +104,11 @@ Edit
                             {% for field in component_form %}
                             {% if field.name == 'DELETE' %}
                             <!-- Hidden DELETE checkbox logic -->
-                            {% if component_form.instance.pk %}
+                            {% if component_form.instance.uuid %}
                             <div class="hidden">{{ field }}</div>
                             {% endif %}
                             {% else %}
-                            <!-- Keep hidden PK fields etc hidden, only show visible fields -->
+                            <!-- Keep hidden uuid fields etc hidden, only show visible fields -->
                             {% if field.is_hidden or field.name == 'id' or field.name == 'project' %}
                             <div class="hidden">{{ field }}</div>
                             {% else %}
@@ -127,7 +127,7 @@ Edit
                         </div>
 
                         <!-- Delete Button -->
-                        {% if component_form.instance.pk %}
+                        {% if component_form.instance.uuid %}
                         <div class="mt-4 flex items-center justify-end">
                             <label class="cursor-pointer label p-0 gap-2">
                                 <span class="label-text text-red-500 text-sm font-medium group-hover:underline">Delete

@@ -46,7 +46,7 @@
 
                 <!-- Right: Actions -->
                 <div class="flex flex-wrap gap-3">
-                    <a href="{% url 'projects:reports:new' project_pk=project.pk %}"
+                    <a href="{% url 'projects:reports:new' project_uuid=project.uuid %}"
                         class="btn btn-primary text-white shadow-md hover:shadow-lg transition-all">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4">
@@ -54,7 +54,7 @@
                         </svg>
                         Report Issue
                     </a>
-                    <a href="{% url 'projects:reports:report_list' project_pk=project.pk %}"
+                    <a href="{% url 'projects:reports:report_list' project_uuid=project.uuid %}"
                         class="btn bg-white border-2 border-[#d0bcd5] text-[#534b62] hover:bg-[#f8f6fa] hover:border-[#a499b3] transition-all">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -64,7 +64,7 @@
                         View Reports
                     </a>
                     {% if user == project.owner %}
-                    <a href="{% url 'projects:edit_project' pk=project.pk %}" class="btn btn-secondary shadow-md">
+                    <a href="{% url 'projects:edit_project' project_uuid=project.uuid %}" class="btn btn-secondary shadow-md">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">

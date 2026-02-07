@@ -30,9 +30,9 @@ def track_component_additions_and_modifications(*, formset, actor, project):
             actor=actor,
             action="create",
             entity_type="Component",
-            entity_id=component.pk,
+            entity_id=component.uuid,
             parent_type="Project",
-            parent_id=project.id,
+            parent_id=project.uuid,
             field_name="name",
             new_value=component.name,
         )
@@ -51,7 +51,7 @@ def track_component_additions_and_modifications(*, formset, actor, project):
                     entity_type="Component",
                     entity_id=form.instance.pk,
                     parent_type="Project",
-                    parent_id=project.id,
+                    parent_id=project.uuid,
                     field_name=field,
                     old_value=form.initial.get(field),
                     new_value=form.cleaned_data.get(field),
@@ -85,7 +85,7 @@ def update_project(
             actor=actor,
             action="update",
             entity_type="Project",
-            entity_id=project.id,
+            entity_id=project.uuid,
             field_name="components",
             old_value="---",
             new_value="Components were updated",
@@ -105,7 +105,7 @@ def update_project(
             user = User.objects.filter(email=email).first()
             if user:
                 project.collaborators.add(user)
-                new_collaborators.add(user.id)
+                new_collaborators.add(user.uuid)
 
     # ---- Audit logs ----
 
@@ -115,7 +115,7 @@ def update_project(
             actor=actor,
             action="update",
             entity_type="Project",
-            entity_id=project.id,
+            entity_id=project.uuid,
             field_name=field,
             old_value=old,
             new_value=new,
@@ -127,7 +127,7 @@ def update_project(
             actor=actor,
             action="update",
             entity_type="Project",
-            entity_id=project.id,
+            entity_id=project.uuid,
             field_name="collaborators",
             old_value=list(old_collaborators),
             new_value=list(new_collaborators),
@@ -137,7 +137,7 @@ def update_project(
 
 def get_project_history(user, project):
     if rules.is_project_member(user, project):
-        return get_entity_history("Project", project.id)
+        return get_entity_history("Project", project.uuid)
     return []
 
 

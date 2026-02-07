@@ -18,12 +18,12 @@ from reports.services import *
 # Create your views here.
 
 
-def report_list(request, project_pk=None):
+def report_list(request, project_uuid=None):
     """
     Displays a list of all reports for a specific project.
     """
     # Fetches the project object based on the primary key from the URL.
-    project = get_object_or_404(Project, pk=project_pk)
+    project = get_object_or_404(Project, uuid=project_uuid)
     # Filters reports that belong to the fetched project.
 
     base_qs = Report.objects.filter(project=project).select_related('reported_by').distinct()
@@ -49,12 +49,12 @@ def report_list(request, project_pk=None):
     # Renders the 'report_list.html' template, passing the reports and project as context.
     return render(request, 'report_list.html', {'reports': reports, 'project': project})
 
-def report_detail(request, project_pk, report_pk):
+def report_detail(request, project_uuid, report_uuid):
     """
     Displays the details of a single report, including its comments.
     """
     # Fetches the specific report, ensuring it belongs to the correct project.
-    report = get_object_or_404(Report, project__pk=project_pk, pk=report_pk)
+    report = get_object_or_404(Report, project__uuid=project_uuid, uuid=report_uuid)
     # Gets the project from the report object.
     project = report.project
 
@@ -107,21 +107,21 @@ def report_detail(request, project_pk, report_pk):
         })
 
 @login_required
-def create_report(request, project_pk=None):    
+def create_report(request, project_uuid=None):    
     """
     View for creating a new report.
     
     Supports two different workflows:
     1. /reports/new/ - User selects a project from dropdown, then creates report
-    2. /projects/<pk>/reports/new/ - Project is pre-selected from URL, user only fills other fields
+    2. /projects/<uuid>/reports/new/ - Project is pre-selected from URL, user only fills other fields
     
     Args:
-        project_pk: Optional project ID from URL. If provided, the project is pre-selected.
+        project_uuid: Optional project ID from URL. If provided, the project is pre-selected.
     """
     project = None
     
-    if project_pk is not None:
-        project = get_object_or_404(Project, pk=project_pk)
+    if project_uuid is not None:
+        project = get_object_or_404(Project, uuid=project_uuid)
 
     if request.method == 'POST':
         form = ReportForm(request.POST, request.FILES, project=project)
@@ -133,7 +133,7 @@ def create_report(request, project_pk=None):
                 report.project = project
             report.assigned_to = report.project.owner
             report.save()
-            return redirect('projects:reports:report_detail', project_pk=report.project.pk, report_pk=report.pk)
+            return redirect('projects:reports:report_detail', project_uuid=report.project.uuid, report_uuid=report.uuid)
     else:
         form = ReportForm(project=project)
         
@@ -173,8 +173,8 @@ def assigned_to_me(request):
 
 
 @login_required
-def reassign_report(request, project_pk, report_pk):
-    report = get_object_or_404(Report, pk=report_pk, project__pk=project_pk)
+def reassign_report(request, project_uuid, report_uuid):
+    report = get_object_or_404(Report, uuid=report_uuid, project__uuid=project_uuid)
     project = report.project
 
     if not rules.is_project_owner(request.user, project):
@@ -182,12 +182,12 @@ def reassign_report(request, project_pk, report_pk):
 
     assign_report(request=request, report=report, assignee=request.user, actor=request.user)
     
-    return redirect('projects:reports:report_detail', project_pk=project.pk, report_pk=report.pk)
+    return redirect('projects:reports:report_detail', project_uuid=project.uuid, report_uuid=report.uuid)
 
 
 @login_required
-def change_report_status(request, project_pk, report_pk):
-    report = get_object_or_404(Report, pk=report_pk, project__pk=project_pk)
+def change_report_status(request, project_uuid, report_uuid):
+    report = get_object_or_404(Report, uuid=report_uuid, project__uuid=project_uuid)
 
     if not rules.can_change_status(request.user, report):
         return HttpResponseForbidden("You are not authorized to perform this action.")
@@ -197,11 +197,11 @@ def change_report_status(request, project_pk, report_pk):
 
     update_report_status(request=request, report=report, new_status=status, actor=request.user)
 
-    return redirect('projects:reports:report_detail', project_pk=report.project.pk, report_pk=report.pk)
+    return redirect('projects:reports:report_detail', project_uuid=report.project.uuid, report_uuid=report.uuid)
 
 @login_required
-def change_report_visibility(request, project_pk, report_pk):
-    report = get_object_or_404(Report, pk=report_pk, project__pk=project_pk)
+def change_report_visibility(request, project_uuid, report_uuid):
+    report = get_object_or_404(Report, uuid=report_uuid, project__uuid=project_uuid)
 
     if not rules.is_project_member(request.user, report.project):
         return HttpResponseForbidden("You are not authorized to perform this action.")
@@ -211,11 +211,11 @@ def change_report_visibility(request, project_pk, report_pk):
         
     update_report_visibility(report=report, new_visibility=(visibility == 'true'), actor=request.user)
             
-    return redirect('projects:reports:report_detail', project_pk=report.project.pk, report_pk=report.pk)
+    return redirect('projects:reports:report_detail', project_uuid=report.project.uuid, report_uuid=report.uuid)
 
 @login_required
-def change_report_impact(request, project_pk, report_pk):
-    report = get_object_or_404(Report, pk=report_pk, project__pk=project_pk)
+def change_report_impact(request, project_uuid, report_uuid):
+    report = get_object_or_404(Report, uuid=report_uuid, project__uuid=project_uuid)
 
     if not rules.is_project_member(request.user, report.project):
         return HttpResponseForbidden("You are not authorized to perform this action.")
@@ -225,4 +225,4 @@ def change_report_impact(request, project_pk, report_pk):
 
     update_report_impact(report=report, new_impact=impact, actor=request.user)
             
-    return redirect('projects:reports:report_detail', project_pk=report.project.pk, report_pk=report.pk)
+    return redirect('projects:reports:report_detail', project_uuid=report.project.uuid, report_uuid=report.uuid)

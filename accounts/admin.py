@@ -5,8 +5,9 @@ from .models import User
 class UserAdmin(BaseUserAdmin):
     list_display = ('email', 'username', 'is_staff', 'github_link')
     list_filter = ('is_staff',)
+    readonly_fields = ('uuid',)
     fieldsets = (
-        (None, {'fields': ('email', 'password')}),
+        (None, {'fields': ('uuid', 'email', 'password')}),
         ('Personal info', {'fields': ('name', 'username',)}),
         ('Permissions', {'fields': ('is_staff', 'is_active', 'is_superuser')}),
         ('Important dates', {'fields': ('last_login',)}),

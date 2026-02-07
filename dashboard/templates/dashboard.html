@@ -90,7 +90,7 @@
                 {% if projects %}
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {% for project in projects %}
-                    <a href="{% url 'projects:project_detail' project.pk %}"
+                    <a href="{% url 'projects:project_detail' project.uuid %}"
                         class="group bg-white rounded-xl p-5 border border-gray-100 shadow-sm hover:shadow-md hover:border-[#a499b3] transition-all flex flex-col h-full">
                         <div class="flex justify-between items-start mb-4">
                             <div
@@ -176,7 +176,7 @@
                             </thead>
                             <tbody class="divide-y divide-gray-100">
                                 {% for report in assigned_reports %}
-                                <tr class="hover:bg-[#226ce0]/10 transition-colors cursor-pointer group" onclick="window.location='{% url 'projects:reports:report_detail' project_pk=report.project_id report_pk=report.pk %}'">
+                                <tr class="hover:bg-[#226ce0]/10 transition-colors cursor-pointer group" onclick="window.location='{% url 'projects:reports:report_detail' project_uuid=report.project.uuid report_uuid=report.uuid %}'">
                                     <td class="px-6 py-4">
                                         <div
                                             class="font-semibold text-gray-900 group-hover:text-[#226ce0] transition-colors">
@@ -263,7 +263,7 @@
                             <div>
                                 <p class="text-sm text-gray-800 font-medium group cursor-pointer">
                                     You reported 
-                                    <a href="{% url 'projects:reports:report_detail' project_pk=report.project_id report_pk=report.pk %}">
+                                    <a href="{% url 'projects:reports:report_detail' project_uuid=report.project.uuid report_uuid=report.uuid %}">
                                         <span class="text-[#226ce0] hover:underline">{{ report.title }}</span>
                                     </a>
                                 </p>

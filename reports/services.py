@@ -10,7 +10,7 @@ def assign_report(*, request, report, assignee, actor):
         assignee_id = request.POST.get('assignee')
         if assignee_id:
             try:
-                assignee = User.objects.get(pk=assignee_id)
+                assignee = User.objects.get(uuid=assignee_id)
                 report.assigned_to = assignee
                 report.save()
             except User.DoesNotExist:
@@ -20,7 +20,7 @@ def assign_report(*, request, report, assignee, actor):
         actor=actor,
         action="update",
         entity_type="Report",
-        entity_id=report.id,
+        entity_id=report.uuid,
         field_name="assigned_to",
         old_value=old.email if old else None,
         new_value=assignee.email,
@@ -46,7 +46,7 @@ def update_report_status(*, request, report, new_status, actor):
         actor=actor,
         action="update",
         entity_type="Report",
-        entity_id=report.id,
+        entity_id=report.uuid,
         field_name="status",
         old_value=old_status,
         new_value=new_status,
@@ -69,7 +69,7 @@ def update_report_impact(*, report, new_impact, actor):
         actor=actor,
         action="update",
         entity_type="Report",
-        entity_id=report.id,
+        entity_id=report.uuid,
         field_name="impact",
         old_value=old_impact,
         new_value=new_impact,
@@ -91,7 +91,7 @@ def update_report_visibility(*, report, new_visibility, actor):
         actor=actor,
         action="update",
         entity_type="Report",
-        entity_id=report.id,
+        entity_id=report.uuid,
         field_name="visibility",
         old_value=old_visibility,
         new_value=new_visibility,
@@ -100,5 +100,5 @@ def update_report_visibility(*, report, new_visibility, actor):
 
 def get_report_history(user, report):
     if rules.can_see_history(user, report):
-        return get_entity_history("Report", report.id)
+        return get_entity_history("Report", report.uuid)
     return []

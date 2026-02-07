@@ -1,4 +1,5 @@
 from django.db import models
+from uuid6 import uuid7
 from django.contrib.auth.models import (
     AbstractBaseUser, PermissionsMixin, BaseUserManager
 )
@@ -33,6 +34,14 @@ class User(AbstractBaseUser, PermissionsMixin):
         ("normal", "Normal User"),
         ("dev", "Developer"),
         ("cp", "Organisation Contact Person"),
+    )
+    
+    # UUID field
+    uuid = models.UUIDField(
+    default=uuid7,
+    editable=False,
+    unique=True,
+    db_index=True,
     )
 
     # BASIC FIELDS

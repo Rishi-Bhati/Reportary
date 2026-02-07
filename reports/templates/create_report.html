@@ -5,7 +5,7 @@
 {% block breadcrumb %}
 {% if project %}
 <a href="{% url 'projects:my_projects' %}" class="hover:text-[#226ce0]">Projects</a> /
-<a href="{% url 'projects:project_detail' pk=project.pk %}" class="hover:text-[#226ce0]">{{ project.title }}</a> /
+<a href="{% url 'projects:project_detail' project_uuid=project.uuid %}" class="hover:text-[#226ce0]">{{ project.title }}</a> /
 Report Issue
 {% else %}
 Report Issue

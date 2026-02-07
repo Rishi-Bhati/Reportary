@@ -19,14 +19,14 @@
 
         {# Show hide/unhide button only to the project owner #}
         {% if request.user == project.owner %}
-        <button hx-post="{% url 'comments:toggle_comment_visibility' report.pk comment.pk %}"
-            hx-target="#comment-wrapper-{{ comment.pk }}" hx-swap="outerHTML"
+        <button hx-post="{% url 'comments:toggle_comment_visibility' report.uuid comment.uuid %}"
+            hx-target="#comment-wrapper-{{ comment.uuid }}" hx-swap="outerHTML"
             class="ml-4 text-xs text-[#226ce0] hover:underline">
             {% if comment.visibility %}Hide{% else %}Unhide{% endif %}
         </button>
         {% endif %}
     </div>
-    <div id="comment-container-{{ comment.pk }}">
+    <div id="comment-container-{{ comment.uuid }}">
         {# The content is always included because the view logic determines who can see this partial #}
         {% include 'comments/partials/comment_content.html' %}
     </div>

@@ -5,7 +5,7 @@
 {% block breadcrumb %}
 {% if project %}
 <a href="{% url 'projects:my_projects' %}" class="hover:text-[#226ce0]">Projects</a> /
-<a href="{% url 'projects:project_detail' pk=project.pk %}" class="hover:text-[#226ce0]">{{ project.title }}</a> /
+<a href="{% url 'projects:project_detail' project_uuid=project.uuid %}" class="hover:text-[#226ce0]">{{ project.title }}</a> /
 Reports
 {% else %}
 My Reports
@@ -29,7 +29,7 @@ My Reports
         </div>
 
         {% if project %}
-        <a href="{% url 'projects:reports:new' project_pk=project.pk %}"
+        <a href="{% url 'projects:reports:new' project_uuid=project.uuid %}"
             class="btn btn-primary text-white shadow-sm hover:shadow-md transition-all gap-2">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
@@ -59,15 +59,15 @@ My Reports
                     {% for report in reports %}
                     <tr class="hover:bg-[#226ce0]/10 transition-colors group">
                         <td class="px-6 py-4">
-                            <a href="{% url 'projects:reports:report_detail' project_pk=report.project_id report_pk=report.pk %}"
+                            <a href="{% url 'projects:reports:report_detail' project_uuid=report.project.uuid report_uuid=report.uuid %}"
                                 class="block">
                                 <span class="font-semibold text-gray-900 group-hover:text-[#226ce0] transition-colors block">{{ report.title }}</span>
-                                <span class="text-xs text-gray-400 mt-0.5 block">#{{ report.id }} • {{ report.component.name|default:"General" }}</span>
+                                <span class="text-xs text-gray-400 mt-0.5 block">#{{ report.uuid }} • {{ report.component.name|default:"General" }}</span>
                             </a>
                         </td>
                         {% if not project %}
                         <td class="px-6 py-4 text-gray-600">
-                            <a href="{% url 'projects:project_detail' pk=report.project.pk %}"
+                            <a href="{% url 'projects:project_detail' project_uuid=report.project.uuid %}"
                                 class="hover:text-[#226ce0] hover:underline">{{ report.project.title }}</a>
                         </td>
                         {% endif %}

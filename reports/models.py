@@ -1,4 +1,5 @@
 from django.db import models
+from uuid6 import uuid7
 
 # Create your models here.
 
@@ -32,7 +33,16 @@ class Report(models.Model):
         ('resolved', 'Resolved'),
         ('closed', 'Closed'),
     )
-
+    #UUID Field
+    uuid = models.UUIDField(
+    default=uuid7,
+    editable=False,
+    unique=True,
+    db_index=True,
+    # null=True,
+    # blank=True,
+    )
+    
     title = models.CharField(max_length=200)
     project = models.ForeignKey('projects.Project', on_delete=models.CASCADE)
     component = models.ForeignKey('components.Component', on_delete=models.CASCADE, null=True, blank=True)

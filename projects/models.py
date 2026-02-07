@@ -1,10 +1,21 @@
 from django.db import models
 from components.models import Component
-
+from uuid6 import uuid7
 
 # Create your models here.
 
 class Project(models.Model):
+
+    #UUID Field
+    uuid = models.UUIDField(
+    default=uuid7,
+    editable=False,
+    unique=True,
+    db_index=True,
+    # null=True,
+    # blank=True,
+    )
+
     owner = models.ForeignKey('accounts.User', on_delete=models.CASCADE)
     title = models.CharField(max_length=200)
     link = models.URLField(max_length=200)
