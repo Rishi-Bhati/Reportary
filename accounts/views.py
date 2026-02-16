@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import JsonResponse
 from .forms import UserProfileForm
+from organisations.models import Organisation
 
 User = get_user_model()
 
@@ -67,6 +68,7 @@ def onboarding_org_form(request):
         # 1. Get Data
         org_name = request.POST.get('org_name')
         org_domain = request.POST.get('org_domain')
+        org_description = request.POST.get('org_description')
         cp_role = request.POST.get('cp_role')
         biz_email = request.POST.get('biz_email')
         call_name = request.POST.get('call_name')
@@ -86,10 +88,27 @@ def onboarding_org_form(request):
         user.is_cp = True
         user.save()
 
-        # NOTE: You haven't created an 'Organisation' model yet.
-        # Ideally, you would create the Organisation object here 
-        # and link it to user.organisation
-        
+        # 4. Create Organisation and link to user
+        if org_name:
+            # If user already has an organisation id, prefer not to overwrite without check
+            org = Organisation.objects.create(
+                owner=user,
+                name=org_name,
+                domain=org_domain or None,
+                description=org_description or None,
+            )
+            # add the owner as a member
+            org.members.add(user)
+            org.save()
+
+            # link to user model (stores organisation PK)
+            try:
+                user.organisation = org.pk
+                user.save()
+            except Exception:
+                # if linking fails, continue but log could be added
+                pass
+
         return redirect('dashboard')
 
     return render(request, "accounts/partials/org_form.html")

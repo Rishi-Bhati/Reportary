@@ -25,7 +25,7 @@ class Organisation(models.Model):
     # verify_method = models.CharField(max_length=255, blank=True, null=True)
     # verify_token = models.CharField(max_length=255, blank=True, null=True)
 
-    members = models.ManyToManyField("accounts.User", related_name="organisation_mambers", blank=True)
+    members = models.ManyToManyField("accounts.User", related_name="organisation_members", blank=True)
     # admins = models.ManyToManyField("accounts.User", related_name="admin_organisations", blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

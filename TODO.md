@@ -158,7 +158,7 @@ If you skip and jump around, you’ll confuse yourself and burn out. The correct
 ## ☐ 13. Basic Organization Support
 > Implement basic org app and model for handleing organisations.
 
-- [] Add organization model (minimal)
+- [X] Add organization model (minimal)
 - [] Support org-owned projects
 - [] Add users to organizations
 - [] Scope access based on org membership

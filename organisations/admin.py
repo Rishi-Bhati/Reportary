@@ -10,3 +10,8 @@ class OrganisationAdmin(admin.ModelAdmin):
     readonly_fields = ("created_at", "uuid")
     filter_horizontal = ('members',)
     ordering = ("-created_at",)
+    fieldsets = (
+        (None, {'fields': ('uuid', 'name', 'domain', 'verified' )}),
+        ('Details', {'fields': ('owner', 'members')}),
+        ('Timestamps', {'fields': ('created_at',)}),
+    )
