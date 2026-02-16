@@ -72,6 +72,7 @@ INSTALLED_APPS = [
     "reports",
     "comments",
     "audit",
+    "organisations",
 ]
 
 TAILWIND_APP_NAME = "theme"

@@ -3,7 +3,7 @@ from .models import Comment
 
 class CommentAdmin(admin.ModelAdmin):
     readonly_fields = ('uuid', 'created_at', 'updated_at')
-    list_display = ('uuid', 'commented_by', 'report', 'created_at')
+    list_display = ('__str__', 'commented_by', 'report', 'created_at')
     fieldsets = (
         (None, {'fields': ('uuid', 'report', 'commented_by', 'text')}),
         ('Additional info', {'fields': ('visibility', 'is_edited', 'created_at', 'updated_at')}),

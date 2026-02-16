@@ -20,7 +20,7 @@
             <span>Password reset will be available soon. Please store your secrets safely.</span>
         </div>
 
-        <form hx-post="{% url 'handle_login' %}" hx-target="#auth-card-container" hx-swap="innerHTML" class="space-y-4">
+        <form method="POST" hx-post="{% url 'handle_login' %}" hx-target="#auth-card-container" hx-swap="innerHTML" class="space-y-4">
             {% csrf_token %}
 
             <div class="form-control w-full">
