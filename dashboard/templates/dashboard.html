@@ -145,7 +145,8 @@
                         </svg>
                     </div>
                     <h3 class="text-lg font-medium text-gray-900">No projects yet</h3>
-                    <p class="mt-2 text-sm text-gray-500 max-w-sm mx-auto">Get started by creating a new project to track issues and manage reports.</p>
+                    <p class="mt-2 text-sm text-gray-500 max-w-sm mx-auto">Get started by creating a new project to
+                        track issues and manage reports.</p>
                     <button class="btn btn-primary mt-6 text-white capitalize font-medium">Create Project</button>
                 </div>
                 {% endif %}
@@ -176,7 +177,8 @@
                             </thead>
                             <tbody class="divide-y divide-gray-100">
                                 {% for report in assigned_reports %}
-                                <tr class="hover:bg-[#226ce0]/10 transition-colors cursor-pointer group" onclick="window.location='{% url 'projects:reports:report_detail' project_uuid=report.project.uuid report_uuid=report.uuid %}'">
+                                <tr class="hover:bg-[#226ce0]/10 transition-colors cursor-pointer group"
+                                    onclick="window.location='{% url 'projects:reports:report_detail' project_uuid=report.project.uuid report_uuid=report.uuid %}'">
                                     <td class="px-6 py-4">
                                         <div
                                             class="font-semibold text-gray-900 group-hover:text-[#226ce0] transition-colors">
@@ -244,6 +246,48 @@
         <!-- Right Column: Sidebar Widgets -->
         <div class="space-y-8">
 
+            <!-- My Organizations -->
+            <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
+                <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wider mb-6">My Organizations</h3>
+                <div class="space-y-4">
+                    {% for org in owned_organisations %}
+                    <div class="flex items-center justify-between p-3 rounded-lg bg-gray-50 border border-gray-100">
+                        <div class="flex items-center gap-3">
+                            <div
+                                class="w-10 h-10 rounded-lg bg-[#226ce0]/10 text-[#226ce0] flex items-center justify-center font-bold text-lg">
+                                {{ org.name|slice:":1"|upper }}</div>
+                            <div>
+                                <h4 class="font-semibold text-gray-900 text-sm">{{ org.name }}</h4>
+                                <span
+                                    class="text-xs text-[#226ce0] font-medium bg-[#226ce0]/10 px-2 py-0.5 rounded-full">Owner</span>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                    {% for org in member_organisations %}
+                    <div class="flex items-center justify-between p-3 rounded-lg bg-gray-50 border border-gray-100">
+                        <div class="flex items-center gap-3">
+                            <div
+                                class="w-10 h-10 rounded-lg bg-purple-100 text-purple-600 flex items-center justify-center font-bold text-lg">
+                                {{ org.name|slice:":1"|upper }}</div>
+                            <div>
+                                <h4 class="font-semibold text-gray-900 text-sm">{{ org.name }}</h4>
+                                <span
+                                    class="text-xs text-purple-600 font-medium bg-purple-100 px-2 py-0.5 rounded-full">Member</span>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                    {% if not owned_organisations and not member_organisations %}
+                    <div class="text-center py-4 text-gray-500 text-sm">
+                        <p>You are not part of any organizations yet.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
             <!-- Recent Activity -->
             <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
                 <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wider mb-6">Recent Activity</h3>
@@ -262,8 +306,9 @@
 
                             <div>
                                 <p class="text-sm text-gray-800 font-medium group cursor-pointer">
-                                    You reported 
-                                    <a href="{% url 'projects:reports:report_detail' project_uuid=report.project.uuid report_uuid=report.uuid %}">
+                                    You reported
+                                    <a
+                                        href="{% url 'projects:reports:report_detail' project_uuid=report.project.uuid report_uuid=report.uuid %}">
                                         <span class="text-[#226ce0] hover:underline">{{ report.title }}</span>
                                     </a>
                                 </p>
@@ -282,7 +327,8 @@
                 class="relative overflow-hidden bg-gradient-to-br from-[#226ce0] to-[#1b56b3] rounded-xl p-6 text-white shadow-lg animate-fade-in-up delay-300">
                 <div class="relative z-10">
                     <h3 class="font-bold text-lg mb-2">Need Help?</h3>
-                    <p class="text-white/70 text-sm mb-4 leading-relaxed">Check out our documentation to learn how to manage your projects effectively.</p>
+                    <p class="text-white/70 text-sm mb-4 leading-relaxed">Check out our documentation to learn how to
+                        manage your projects effectively.</p>
                     <a href="{% url 'nota' %}">
                         <button
                             class="px-4 py-2 bg-white text-[#226ce0] text-sm font-semibold rounded-lg hover:bg-[#f4f0f6] hover:scale-105 active:scale-95 transition-all shadow-sm">

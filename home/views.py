@@ -151,7 +151,12 @@ def handle_signup(request):
 def profile_page(request):
     """Renders the user's profile page."""
     user = request.user
+    owned_organisations = user.organisations.all()
+    member_organisations = user.organisation_members.all()
+    
     content = {
         'user': user,
+        'owned_organisations': owned_organisations,
+        'member_organisations': member_organisations,
     }
     return render(request, "home/profile.html", content)

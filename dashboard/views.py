@@ -17,10 +17,16 @@ def dashboard(request):
     assigned_reports = Report.objects.filter(assigned_to=user).select_related('project').order_by('-updated_at')[:5]
     my_reports = Report.objects.filter(reported_by=user).select_related('project').order_by('-created_at')[:5]
     
+    # Fetch organisations
+    owned_organisations = user.organisations.all()
+    member_organisations = user.organisation_members.all()
+
     context = {
         'projects': projects,
         'assigned_reports': assigned_reports,
         'my_reports': my_reports,
+        'owned_organisations': owned_organisations,
+        'member_organisations': member_organisations,
     }
     
     return render(request, "dashboard.html", context)

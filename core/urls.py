@@ -38,6 +38,9 @@ urlpatterns = [
     
     # URLs for account management, like onboarding
     path('accounts/', include('accounts.urls')),
+
+    # URLs for organisation management
+    path('organisations/', include('organisations.urls')),
     
     # URLs for project-related views. This is the main entry point for projects and their nested reports.
     path('projects/', include('projects.urls')),
