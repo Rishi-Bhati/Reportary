@@ -39,8 +39,8 @@ def create_organisation(request):
 
 @login_required
 def organisation_list(request):
-    """Display all organisations owned by the user."""
-    organisations = services.get_user_owned_organisations(request.user)
+    """Display all organisations where the user is an owner or member."""
+    organisations = services.get_user_organisations(request.user)
     return render(request, 'organisations/organisation_list.html', {
         'organisations': organisations,
     })
@@ -165,6 +165,15 @@ def organisation_projects(request, uuid):
     projects = services.get_organisation_projects(org)
     
     from django.db.models import Q
+    user = request.user
+    projects = projects.filter(
+        Q(visibility='public') |
+        Q(visibility='org') |
+        Q(owner=user) |
+        Q(project_head=user) |
+        Q(collaborators=user)
+    ).distinct()
+    
     q = request.GET.get('q', '').strip()
     if q:
         projects = projects.filter(

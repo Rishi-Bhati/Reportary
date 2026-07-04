@@ -28,7 +28,7 @@ class OrganisationProjectAccessTests(TestCase):
             'description': 'description',
             'org': self.org.id,
             'project_head': self.org_member.id,
-            'public': 'off',
+            'visibility': 'private',
             'components-TOTAL_FORMS': '0',
             'components-INITIAL_FORMS': '0',
             'components-MIN_NUM_FORMS': '0',
@@ -51,7 +51,7 @@ class OrganisationProjectAccessTests(TestCase):
             'description': 'description',
             'org': self.org.id,
             'project_head': self.org_member.id, # Assign org_member as project head
-            'public': '',
+            'visibility': 'org',
             'components-TOTAL_FORMS': '0',
             'components-INITIAL_FORMS': '0',
             'components-MIN_NUM_FORMS': '0',
@@ -78,7 +78,7 @@ class OrganisationProjectAccessTests(TestCase):
             'description': 'description',
             'org': self.org.id,
             'project_head': self.non_member.id, # Assign non_member as project head
-            'public': '',
+            'visibility': 'org',
             'components-TOTAL_FORMS': '0',
             'components-INITIAL_FORMS': '0',
             'components-MIN_NUM_FORMS': '0',
@@ -99,6 +99,7 @@ class OrganisationProjectAccessTests(TestCase):
             owner=self.org_owner,
             project_head=self.org_member,
             org=self.org,
+            visibility='private',
             public=False
         )
         
@@ -127,6 +128,7 @@ class OrganisationProjectAccessTests(TestCase):
             owner=self.org_owner,
             project_head=self.org_member,
             org=self.org,
+            visibility='private',
             public=False
         )
         
@@ -134,3 +136,38 @@ class OrganisationProjectAccessTests(TestCase):
         self.client.logout()
         resp = self.client.get(detail_url)
         self.assertEqual(resp.status_code, 403)
+
+    def test_private_org_project_hidden_from_unrelated_members(self):
+        # Create another org member who is not related to the project
+        unrelated_member = User.objects.create_user(username='unrelated', email='unrelated@example.com', password='password')
+        self.org.members.add(unrelated_member)
+        
+        # Create private org project owned by owner, head is owner, not org_member or unrelated
+        project = Project.objects.create(
+            title='Secret Project',
+            link='https://example.com',
+            description='desc',
+            owner=self.org_owner,
+            project_head=self.org_owner,
+            org=self.org,
+            visibility='private',
+            public=False
+        )
+        
+        # 1. Unrelated org member cannot access detail page (forbidden)
+        self.client.force_login(unrelated_member)
+        url = reverse('projects:project_detail', kwargs={'project_uuid': project.uuid})
+        resp = self.client.get(url)
+        self.assertEqual(resp.status_code, 403)
+        
+        # 2. Unrelated org member cannot find it in org projects listing page
+        org_projects_url = reverse('organisations:projects', kwargs={'uuid': self.org.uuid})
+        resp = self.client.get(org_projects_url)
+        self.assertEqual(resp.status_code, 200)
+        self.assertNotIn(project, resp.context['projects'])
+        
+        # 3. Unrelated org member cannot see it on their dashboard
+        dashboard_url = reverse('dashboard:dashboard')
+        resp = self.client.get(dashboard_url)
+        self.assertEqual(resp.status_code, 200)
+        self.assertNotIn(project, resp.context['projects'])

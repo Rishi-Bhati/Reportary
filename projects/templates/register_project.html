@@ -20,21 +20,30 @@
             <div class="p-8 space-y-6">
                 <!-- Project Fields -->
                 {% for field in form %}
-                {% if field.name == 'public' %}
-                <div class="form-control">
-                    <label class="label cursor-pointer justify-start gap-4">
-                        {{ field }}
-                        <div>
-                            <span class="label-text font-semibold text-gray-900 block">{{ field.label }}</span>
-                            <span class="text-xs text-gray-500">Make this project visible to everyone in the
-                                organization?</span>
-                        </div>
+                {% if field.name == 'visibility' %}
+                <div class="form-control w-full">
+                    <label class="label">
+                        <span class="label-text font-semibold text-gray-700">{{ field.label }}</span>
                     </label>
+                    <div class="mt-2 space-y-3">
+                        {% for radio in field %}
+                        <label class="flex items-center gap-3 p-4 rounded-xl border border-gray-200 hover:bg-[#226ce0]/5 cursor-pointer transition-all">
+                            <span class="radio-input-wrapper flex items-center">{{ radio.tag }}</span>
+                            <div>
+                                <span class="font-semibold text-gray-900 block text-sm">{{ radio.choice_label }}</span>
+                            </div>
+                        </label>
+                        {% endfor %}
+                    </div>
                     {% if field.help_text %}
-                    <p class="text-gray-500 text-xs mt-1 ml-8">{{ field.help_text }}</p>
+                    <label class="label">
+                        <span class="label-text-alt text-gray-500">{{ field.help_text }}</span>
+                    </label>
                     {% endif %}
                     {% for error in field.errors %}
-                    <p class="text-red-500 text-xs mt-1 ml-8">{{ error }}</p>
+                    <label class="label">
+                        <span class="label-text-alt text-red-500">{{ error }}</span>
+                    </label>
                     {% endfor %}
                 </div>
                 {% else %}
@@ -281,6 +290,34 @@
             'padding': '0.5rem 0.75rem',
             'height': 'auto',
         });
+    });
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const orgSelect = document.getElementById("id_org");
+        const orgRadioOption = document.querySelector('input[name="visibility"][value="org"]');
+        const orgRadioContainer = orgRadioOption ? orgRadioOption.closest('label') : null;
+        
+        function updateVisibilityOptions() {
+            if (!orgSelect || !orgRadioOption || !orgRadioContainer) return;
+            
+            if (orgSelect.value === "" || orgSelect.value === "None") {
+                // Personal project: hide organization visibility option
+                orgRadioContainer.style.display = "none";
+                if (orgRadioOption.checked) {
+                    // Reset to public if it was org
+                    document.querySelector('input[name="visibility"][value="public"]').checked = true;
+                }
+            } else {
+                // Organization project: show option
+                orgRadioContainer.style.display = "flex";
+            }
+        }
+        
+        if (orgSelect) {
+            orgSelect.addEventListener("change", updateVisibilityOptions);
+            updateVisibilityOptions(); // Initial run
+        }
     });
 </script>
 {% endblock %}

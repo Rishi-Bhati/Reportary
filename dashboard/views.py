@@ -11,9 +11,12 @@ def dashboard(request):
     from organisations.services import get_user_organisations
     user_orgs = get_user_organisations(user)
     
-    # Fetch projects where user is owner, collaborator, or organization member
+    # Fetch projects where user is owner (personal/org), project head (org), or collaborator
     projects = Project.objects.filter(
-        Q(owner=user) | Q(collaborators=user) | Q(org__in=user_orgs)
+        Q(org__isnull=True, owner=user) |
+        Q(org__isnull=False, org__owner=user) |
+        Q(org__isnull=False, project_head=user) |
+        Q(collaborators=user)
     ).select_related('org').distinct().order_by('-updated_at')[:5]
     
     # Fetch assigned or reported reports

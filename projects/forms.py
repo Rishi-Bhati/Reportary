@@ -6,11 +6,16 @@ class ProjectForm(forms.ModelForm):
     title = forms.CharField(widget=forms.TextInput(attrs={'class': 'shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'}))
     link = forms.URLField(widget=forms.URLInput(attrs={'class': 'shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'}))
     description = forms.CharField(widget=forms.Textarea(attrs={'rows': 4, 'class': 'shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'}))
-    public = forms.BooleanField(required=False, widget=forms.CheckboxInput(attrs={'class': 'form-checkbox h-5 w-5 text-blue-600'}))
+    visibility = forms.ChoiceField(
+        choices=Project.VISIBILITY_CHOICES,
+        widget=forms.RadioSelect(attrs={'class': 'radio radio-primary'}),
+        initial='public',
+        label="Visibility Scope"
+    )
 
     class Meta:
         model = Project
-        fields = ['title', 'link', 'description', 'org', 'project_head', 'public']
+        fields = ['title', 'link', 'description', 'org', 'project_head', 'visibility']
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)
@@ -62,6 +67,10 @@ class ProjectForm(forms.ModelForm):
         cleaned_data = super().clean()
         org = cleaned_data.get('org')
         project_head = cleaned_data.get('project_head')
+        visibility = cleaned_data.get('visibility')
+
+        if visibility == 'org' and not org:
+            self.add_error('visibility', "You must select an organization to use the 'Organization Members Only' visibility scope.")
 
         if org:
             if not project_head:
@@ -75,10 +84,15 @@ class ProjectForm(forms.ModelForm):
         else:
             # Personal project: project_head is None
             cleaned_data['project_head'] = None
+            if visibility == 'org':
+                self.add_error('visibility', "Organization visibility is only available for organization-owned projects.")
         return cleaned_data
 
     def save(self, commit=True):
         instance = super().save(commit=False)
+        # Update public field to sync with visibility CharField
+        instance.public = (instance.visibility == 'public')
+        
         # Scoping owner: Org owner for org projects, creator for personal projects
         if instance.org:
             instance.owner = instance.org.owner

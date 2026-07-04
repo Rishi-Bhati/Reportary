@@ -2,6 +2,7 @@ from django.test import TestCase
 from django.urls import reverse
 from accounts.models import User
 from .models import Project, Component
+from organisations.models import Organisation
 
 
 class ProjectRegistrationTests(TestCase):
@@ -15,7 +16,7 @@ class ProjectRegistrationTests(TestCase):
             'title': 'Test Project',
             'link': 'https://example.com',
             'description': 'Project description',
-            'public': 'on',
+            'visibility': 'public',
             'collaborators': '',
             'components-TOTAL_FORMS': '1',
             'components-INITIAL_FORMS': '0',
@@ -48,7 +49,7 @@ class ProjectEditTests(TestCase):
             'title': 'Edit Project Updated',
             'link': 'https://example.com/new',
             'description': 'Updated description',
-            'public': 'on',
+            'visibility': 'public',
             'collaborators': 'other@example.com',
             'components-TOTAL_FORMS': '1',
             'components-INITIAL_FORMS': '0',
@@ -109,3 +110,22 @@ class ProjectSearchAndCollaboratingTests(TestCase):
         
         resp = self.client.get(url + '?q=Alpha')
         self.assertEqual(len(resp.context['projects']), 0)
+
+    def test_project_head_sees_project_in_my_projects(self):
+        org = Organisation.objects.create(name='Test Org', owner=self.user1)
+        head_project = Project.objects.create(
+            title='Head Project X',
+            link='https://example.com',
+            description='desc',
+            owner=self.user1,
+            project_head=self.user2,
+            org=org,
+            visibility='private',
+            public=False
+        )
+        
+        self.client.force_login(self.user2)
+        url = reverse('projects:my_projects')
+        resp = self.client.get(url)
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn(head_project, resp.context['projects'])

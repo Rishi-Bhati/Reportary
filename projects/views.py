@@ -173,7 +173,11 @@ def edit_project(request, project_uuid):
 
 @login_required
 def my_projects_view(request):
-    projects = Project.objects.filter(owner=request.user).annotate(num_components=Count('project_components'))
+    projects = Project.objects.filter(
+        Q(org__isnull=True, owner=request.user) |
+        Q(org__isnull=False, org__owner=request.user) |
+        Q(org__isnull=False, project_head=request.user)
+    ).annotate(num_components=Count('project_components')).distinct()
     
     # Page-specific search
     q = request.GET.get('q', '').strip()

@@ -15,17 +15,27 @@ def is_project_owner(user, project):
 def is_project_member(user, project):
     if project.collaborators.filter(id=user.id).exists() or is_project_owner(user, project):
         return True
-    if project.org:
+    if project.visibility == 'org' and project.org:
         return is_organisation_member(user, project.org)
     return False
     
     
 def can_access_project(user, project):
+    if project.visibility == 'public':
+        return True
+    if not user or not user.is_authenticated:
+        return False
+    if project.visibility == 'org':
+        if project.org:
+            return is_organisation_member(user, project.org)
+        return is_project_owner(user, project) or project.collaborators.filter(id=user.id).exists()
+    if project.visibility == 'private':
+        return is_project_owner(user, project) or project.collaborators.filter(id=user.id).exists()
+    
+    # Backwards compatibility fallback
     if project.public:
         return True
-    if not user.is_authenticated:
-        return False
-    return is_project_member(user, project)
+    return False
 
 
 def is_assigned_to(user, report):
