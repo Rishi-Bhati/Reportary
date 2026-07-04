@@ -4,11 +4,11 @@
 
 Reportary is a streamlined issue tracking and project management tool designed for engineering teams. It focuses on unified data, real-time collaboration, and workflows that minimize friction.
 
-### Phase 1.5: Functional Prototype (Public Alpha)
+### Phase 2.0: Public Beta
 
-**Reportary is currently in Phase 1.5.** This is an early-stage functional prototype intended for **testing and feedback**. It is not a complete product. Features are evolving rapidly.
+**Reportary is currently in Phase 2.0.** This is a public beta build featuring robust access scoping, organization support, history logs, and security hardening.
 
-> **Security Notice:** As a prototype, this build may contain security flaws. I am aware of common vulnerabilities and will be patching them in upcoming updates. If you spot a bug or security issue, please report it directly using the "Report Issue" feature on the live site.
+> **Security Notice:** Security has been significantly hardened with strong password policies, input validation, and non-enumerable UUIDv7 identifiers. Please report any found bugs or security issues directly using the "Report Issue" feature on the live site.
 
 ---
 
@@ -24,10 +24,13 @@ The best way to experience Reportary is through the live web preview.
 
 ## Key Features
 
+*   **Organization Support**: Create organizations, invite members, assign Project Heads, and collaborate under a unified space.
+*   **3-Level Access Scoping**: Scope projects, reports, and comments to Public, Org-Only, or Private visibility.
 *   **Project Management**: Create and manage public or private projects.
 *   **Issue Reporting**: Rich reporting interface with Markdown, severity levels, and attachments.
-*   **Collaboration**: Threaded comments and history logs for every issue.
-*   **Dashboard**: Centralized view of your assigned tasks and reported issues.
+*   **Report History & Audit Logs**: Detailed audit trails tracking who changed what and when on reports and projects.
+*   **Collaboration**: Threaded comments with markdown support and togglable visibility.
+*   **Dashboard**: Centralized view of your assigned tasks, collaborating projects, needs-attention items, and reported issues.
 *   **Search**: Innovative global search to find what you need instantly.
 
 ## Technical Stack
@@ -65,10 +68,8 @@ If you are a developer looking to contribute or run the code locally, you can do
 
 ## Future Plans
 
-*   Proper history logging for reports.
-*   Organization/Team Support
 *   Anonymous Reporting Workflows
-*   Role-Based Access Control (RBAC)
+*   Enhanced RBAC (Role-Based Access Control)
 *   Third-party Integrations
 
 ## License
