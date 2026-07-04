@@ -1,8 +1,9 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST, require_http_methods
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseForbidden
 from .models import Comment
+import rules.views as rules
 # The Report model is imported from the 'reports' app.
 # This is necessary because a comment is associated with a report.
 # The previous ImportError occurred because 'Report' was being imported from '.models' (i.e., 'comments.models'), where it is not defined.
@@ -23,6 +24,9 @@ def add_comment(request, report_uuid):
     # First, we get the report object using the primary key from the URL.
     # If the report does not exist, it will return a 404 Not Found error.
     report = get_object_or_404(Report, uuid=report_uuid)
+    
+    if not rules.can_access_project(request.user, report.project):
+        return HttpResponseForbidden("You do not have permission to access this project.")
     
     # We instantiate the CommentForm with the POST data from the request.
     form = CommentForm(request.POST)
@@ -54,6 +58,9 @@ def edit_comment(request, report_uuid, comment_uuid):
     # Retrieve the report and the specific comment to be edited.
     # It's crucial to ensure the comment exists and belongs to the current user.
     report = get_object_or_404(Report, uuid=report_uuid)
+    
+    if not rules.can_access_project(request.user, report.project):
+        return HttpResponseForbidden("You do not have permission to access this project.")
     comment = get_object_or_404(Comment, uuid=comment_uuid, commented_by=request.user, report=report)
 
     # Requirement: A hidden comment cannot be edited.
@@ -87,6 +94,9 @@ def cancel_edit_comment(request, report_uuid, comment_uuid):
     It returns the original comment content.
     """
     report = get_object_or_404(Report, uuid=report_uuid)
+    
+    if not rules.can_access_project(request.user, report.project):
+        return HttpResponseForbidden("You do not have permission to access this project.")
     comment = get_object_or_404(Comment, uuid=comment_uuid, report=report)
     return render(request, 'comments/partials/comment_content.html', {'comment': comment, 'report': report})
 
@@ -99,6 +109,9 @@ def toggle_comment_visibility(request, report_uuid, comment_uuid):
     Only the project owner can perform this action.
     """
     report = get_object_or_404(Report, uuid=report_uuid)
+    
+    if not rules.can_access_project(request.user, report.project):
+        return HttpResponseForbidden("You do not have permission to access this project.")
     
     # Security check: Only the project owner can hide a comment.
     if request.user != report.project.owner:

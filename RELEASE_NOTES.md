@@ -1,3 +1,36 @@
+# Release Notes - Phase 2.0 (Public Beta)
+
+**Date**: July 4, 2026
+
+## Overview
+This release marks **Phase 2.0 (Public Beta)** of Reportary. It introduces crucial improvements to organizational alignment, granular access scoping, secure data identification via UUIDs, full audit logging for reports, and essential security patches.
+
+## Key Features Shipped
+*   **Basic Organization Support**:
+    *   Create organizations and manage member invites.
+    *   Support for organization-owned projects.
+    *   Dedicated **Project Head** role with administrative access to org projects, while the organization owner remains the main head.
+*   **3-Level Access Scoping**:
+    *   Enforced permissions for **Public**, **Org-Only**, and **Private** visibility levels across projects, reports, and comments.
+*   **Report History & Audit Logs**:
+    *   Full event logging for all project modifications, issue updates (status changes, reassignments, severity updates), and collaborator actions.
+*   **Basic Security Hardening**:
+    *   Enforced strong password validations (minimum length, uppercase, numbers, special characters).
+    *   Improved login and signup form validation with error messages displayed directly inside the authentication card.
+    *   Replaced Django auto-incrementing integer PK IDs with secure, non-enumerable **UUIDv7** primary keys for all database models.
+*   **Navigation & Miscellaneous UX**:
+    *   Activated **Collaborating Projects** filter page.
+    *   Activated **Needs Attention** view highlighting critical reports assigned to the user or reported on their projects.
+    *   Integrated **What's New** changelog connected to the topbar notification bell.
+    *   Unified the search box and refresh buttons in a sleek input widget.
+
+## Technical Improvements
+*   Database schema migrations applied for UUID conversion and model relationships.
+*   Cleaned up leftover print and log statements.
+*   All 15 automated integration tests verified green and passing.
+
+---
+
 # Release Notes - Phase 1.5 (Public Alpha)
 
 **Date**: January 7, 2026

@@ -1,3 +1,4 @@
+# pyrefly: ignore [missing-import]
 from django.urls import path, include
 from . import views
 
@@ -5,7 +6,7 @@ from . import views
 # e.g., 'home:landing_page'. The 'NoReverseMatch' error for 'home' occurred because no URL
 # was named 'home', and redirecting often uses URL names. The fix was to use a different,
 # existing URL name like 'dashboard' or 'landing_page'.
-# app_name = 'home'
+app_name = 'home'
 
 urlpatterns = [
     # The main landing page for the website.
@@ -27,6 +28,9 @@ urlpatterns = [
 
     #profile page
     path('profile/', views.profile_page, name='profile'),
+    
+    # Changelog / What's New page
+    path('changelog/', views.changelog_view, name='changelog'),
     
     # Under development / coming soon page
     path('nota/', views.nota_page, name='nota'),

@@ -20,10 +20,17 @@
         <ul class="space-y-3">
             {% for project in projects %}
             <li>
-                <a href="{% url 'projects:project_detail' project.pk %}" class="block hover:underline">
+                <a href="{% url 'projects:project_detail' project_uuid=project.uuid %}" class="block hover:underline">
                     <div class="flex items-start justify-between">
                         <div>
-                            <div class="text-sm font-medium text-gray-900">{{ project.title }}</div>
+                            <div class="text-sm font-medium text-gray-900 flex items-center gap-2">
+                                {{ project.title }}
+                                {% if project.org %}
+                                <span class="px-1.5 py-0.5 text-xs font-semibold bg-blue-50 text-blue-600 rounded-md border border-blue-100">
+                                    {{ project.org.name }}
+                                </span>
+                                {% endif %}
+                            </div>
                             <div class="text-xs text-gray-500">{{ project.description|truncatechars:120 }}</div>
                         </div>
                         <div class="text-xs text-gray-400">Updated {{ project.updated_at|timesince }} ago</div>

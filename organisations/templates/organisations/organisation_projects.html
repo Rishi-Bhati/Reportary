@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Projects - {{ organisation.name }} | Reportary{% endblock %}
+{% block breadcrumb %}
+<a href="{% url 'organisations:list' %}" class="hover:text-[#226ce0]">Organisations</a> /
+<a href="{% url 'organisations:dashboard' uuid=organisation.uuid %}" class="hover:text-[#226ce0]">{{ organisation.name }}</a> /
+Projects
+{% endblock %}
+
+{% block content %}
+
+<div class="space-y-6">
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900 tracking-tight">{{ organisation.name }} Projects</h1>
+            <p class="text-gray-500 mt-1">View and manage all projects in this organisation.</p>
+        </div>
+
+        {% if is_owner %}
+        <a href="{% url 'projects:new' %}?org={{ organisation.uuid }}" 
+           class="btn btn-primary text-white gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+            </svg>
+            New Project
+        </a>
+        {% endif %}
+    </div>
+
+    <!-- Projects Grid -->
+    {% if projects %}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for project in projects %}
+        <div class="bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow p-6">
+            <!-- Project Header -->
+            <div class="mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">{{ project.title }}</h3>
+                {% if project.description %}
+                <p class="text-sm text-gray-500 mt-2">{{ project.description|truncatewords:15 }}</p>
+                {% endif %}
+            </div>
+
+            <!-- Project Stats -->
+            <div class="grid grid-cols-2 gap-3 mb-4 py-3 border-y border-gray-100">
+                <div>
+                    <p class="text-sm font-semibold text-gray-900">{{ project.components.count }}</p>
+                    <p class="text-xs text-gray-500">Components</p>
+                </div>
+                <div>
+                    <p class="text-sm font-semibold text-gray-900">{{ project.collaborators.count }}</p>
+                    <p class="text-xs text-gray-500">Collaborators</p>
+                </div>
+            </div>
+
+            <!-- Owner Info -->
+            <div class="mb-4">
+                <p class="text-xs text-gray-500 uppercase tracking-wider">Owner</p>
+                <p class="text-sm text-gray-900">{{ project.owner.name|default:project.owner.username }}</p>
+            </div>
+
+            <!-- Link -->
+            <div class="mb-4">
+                <p class="text-xs text-gray-500 uppercase tracking-wider">Link</p>
+                <a href="{{ project.link }}" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-600 hover:text-blue-800 break-all">
+                    {{ project.link }}
+                </a>
+            </div>
+
+            <!-- Actions -->
+            <a href="{% url 'projects:project_detail' project_uuid=project.uuid %}" 
+               class="btn btn-primary text-white w-full">
+                View Project
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination (if needed) -->
+    {% else %}
+    <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-12 text-center">
+        <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        <h3 class="text-lg font-semibold text-gray-900 mb-2">No projects in this organisation yet</h3>
+        <p class="text-gray-500 mb-4">Start creating projects to get your team up and running.</p>
+        {% if is_owner %}
+        <a href="{% url 'projects:new' %}?org={{ organisation.uuid }}" class="btn btn-primary text-white">
+            Create First Project
+        </a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}

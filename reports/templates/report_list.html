@@ -1,9 +1,11 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Reports | Reportary{% endblock %}
+{% block title %}{{ title|default:"Reports" }} | Reportary{% endblock %}
 {% block breadcrumb %}
-{% if project %}
+{% if title %}
+{{ title }}
+{% elif project %}
 <a href="{% url 'projects:my_projects' %}" class="hover:text-[#226ce0]">Projects</a> /
 <a href="{% url 'projects:project_detail' project_uuid=project.uuid %}" class="hover:text-[#226ce0]">{{ project.title }}</a> /
 Reports
@@ -19,13 +21,15 @@ My Reports
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
             <h1 class="text-2xl font-bold text-gray-900 tracking-tight">
-                {% if project %}
+                {% if title %}
+                {{ title }}
+                {% elif project %}
                 Reports for {{ project.title }}
                 {% else %}
                 Your Reports
                 {% endif %}
             </h1>
-            <p class="text-gray-500 mt-1">Track and manage issues reported across projects.</p>
+            <p class="text-gray-500 mt-1">{{ subtitle|default:"Track and manage issues reported across projects." }}</p>
         </div>
 
         {% if project %}

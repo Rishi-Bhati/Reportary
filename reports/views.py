@@ -24,6 +24,9 @@ def report_list(request, project_uuid=None):
     """
     # Fetches the project object based on the primary key from the URL.
     project = get_object_or_404(Project, uuid=project_uuid)
+    
+    if not rules.can_access_project(request.user, project):
+        return HttpResponseForbidden("You do not have permission to access this project.")
     # Filters reports that belong to the fetched project.
 
     base_qs = Report.objects.filter(project=project).select_related('reported_by').distinct()
@@ -53,10 +56,13 @@ def report_detail(request, project_uuid, report_uuid):
     """
     Displays the details of a single report, including its comments.
     """
-    # Fetches the specific report, ensuring it belongs to the correct project.
+    # Flashes the specific report, ensuring it belongs to the correct project.
     report = get_object_or_404(Report, project__uuid=project_uuid, uuid=report_uuid)
     # Gets the project from the report object.
     project = report.project
+
+    if not rules.can_access_project(request.user, project):
+        return HttpResponseForbidden("You do not have permission to access this project.")
 
     # By default, fetch only visible comments.
     comments = Comment.objects.filter(report=report, visibility=True)
@@ -123,8 +129,11 @@ def create_report(request, project_uuid=None):
     if project_uuid is not None:
         project = get_object_or_404(Project, uuid=project_uuid)
 
+    if project and not rules.can_access_project(request.user, project):
+        return HttpResponseForbidden("You do not have permission to access this project.")
+
     if request.method == 'POST':
-        form = ReportForm(request.POST, request.FILES, project=project)
+        form = ReportForm(request.POST, request.FILES, project=project, user=request.user)
         
         if form.is_valid():
             report = form.save(commit=False)
@@ -135,7 +144,7 @@ def create_report(request, project_uuid=None):
             report.save()
             return redirect('projects:reports:report_detail', project_uuid=report.project.uuid, report_uuid=report.uuid)
     else:
-        form = ReportForm(project=project)
+        form = ReportForm(project=project, user=request.user)
         
     return render(request, 'create_report.html', {'form': form, 'project': project})
 
@@ -157,7 +166,20 @@ def my_report_list(request):
 
     reports = Report.objects.filter(reported_by=request.user).select_related('project', 'reported_by').distinct()
 
-    return render(request, 'report_list.html', {'reports': reports})
+    # Page-specific search
+    q = request.GET.get('q', '').strip()
+    if q:
+        reports = reports.filter(
+            Q(title__icontains=q) | Q(description__icontains=q) | Q(component__name__icontains=q)
+        ).distinct()
+
+    reports = reports.order_by('-updated_at')
+
+    return render(request, 'report_list.html', {
+        'reports': reports,
+        'title': 'My Reports',
+        'subtitle': 'Manage issues and reports created by you.'
+    })
 
 
 def assigned_to_me(request):
@@ -169,7 +191,51 @@ def assigned_to_me(request):
 
     reports = Report.objects.filter(assigned_to=request.user).select_related('project', 'reported_by').distinct()
 
-    return render(request, 'report_list.html', {'reports': reports})
+    # Page-specific search
+    q = request.GET.get('q', '').strip()
+    if q:
+        reports = reports.filter(
+            Q(title__icontains=q) | Q(description__icontains=q) | Q(component__name__icontains=q)
+        ).distinct()
+
+    reports = reports.order_by('-updated_at')
+
+    return render(request, 'report_list.html', {
+        'reports': reports,
+        'title': 'Assigned to Me',
+        'subtitle': 'Manage issues assigned directly to you.'
+    })
+
+
+@login_required
+def needs_attention_view(request):
+    """
+    Displays critical reports assigned to the user or reported on their projects.
+    """
+    user = request.user
+    reports = Report.objects.filter(
+        Q(severity='critical') & (
+            Q(assigned_to=user) | 
+            Q(project__owner=user) | 
+            Q(project__project_head=user) | 
+            Q(project__collaborators=user)
+        )
+    ).select_related('project', 'reported_by').distinct()
+    
+    # Page-specific search
+    q = request.GET.get('q', '').strip()
+    if q:
+        reports = reports.filter(
+            Q(title__icontains=q) | Q(description__icontains=q) | Q(component__name__icontains=q)
+        ).distinct()
+        
+    reports = reports.order_by('-updated_at')
+    
+    return render(request, 'report_list.html', {
+        'reports': reports,
+        'title': 'Needs Attention',
+        'subtitle': 'Critical reports assigned to you or reported on your projects.'
+    })
 
 
 @login_required

@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ organisation.name }} Settings | Reportary{% endblock %}
+{% block breadcrumb %}
+<a href="{% url 'organisations:list' %}" class="hover:text-[#226ce0]">Organisations</a> /
+<a href="{% url 'organisations:dashboard' uuid=organisation.uuid %}" class="hover:text-[#226ce0]">{{ organisation.name }}</a> /
+Settings
+{% endblock %}
+
+{% block content %}
+
+<div class="space-y-6 max-w-2xl">
+    <!-- Header -->
+    <div>
+        <h1 class="text-3xl font-bold text-gray-900 tracking-tight">Organisation Settings</h1>
+        <p class="text-gray-500 mt-1">Manage your organisation details and configuration.</p>
+    </div>
+
+    <!-- Main Settings Form -->
+    <form method="post" class="bg-white rounded-xl border border-gray-100 shadow-sm p-8 space-y-6">
+        {% csrf_token %}
+
+        <!-- Name Field -->
+        <div>
+            <label for="name" class="block text-sm font-semibold text-gray-900 mb-2">
+                Organisation Name
+            </label>
+            <input type="text" 
+                   id="name" 
+                   name="name" 
+                   value="{{ organisation.name }}"
+                   required
+                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                   placeholder="Your organisation name">
+            <p class="text-xs text-gray-500 mt-1">This is the public name of your organisation.</p>
+        </div>
+
+        <!-- Description Field -->
+        <div>
+            <label for="description" class="block text-sm font-semibold text-gray-900 mb-2">
+                Description
+            </label>
+            <textarea id="description" 
+                      name="description" 
+                      rows="4"
+                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="Describe your organisation...">{{ organisation.description }}</textarea>
+            <p class="text-xs text-gray-500 mt-1">Brief description of your organisation.</p>
+        </div>
+
+        <!-- Domain Field -->
+        <div>
+            <label for="domain" class="block text-sm font-semibold text-gray-900 mb-2">
+                Domain
+            </label>
+            <input type="text" 
+                   id="domain" 
+                   name="domain" 
+                   value="{{ organisation.domain }}"
+                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                   placeholder="example.com">
+            <p class="text-xs text-gray-500 mt-1">Optional custom domain for your organisation.</p>
+            {% if organisation.verified %}
+            <p class="text-xs text-green-600 mt-2">✓ Domain verified</p>
+            {% endif %}
+        </div>
+
+        <!-- UUID (Read-only) -->
+        <div>
+            <label for="uuid" class="block text-sm font-semibold text-gray-900 mb-2">
+                Organisation ID
+            </label>
+            <input type="text" 
+                   id="uuid" 
+                   value="{{ organisation.uuid }}"
+                   disabled
+                   class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-500">
+            <p class="text-xs text-gray-500 mt-1">Unique identifier for your organisation (non-editable).</p>
+        </div>
+
+        <!-- Date Info (Read-only) -->
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <label class="block text-sm font-semibold text-gray-900 mb-2">Created</label>
+                <p class="text-gray-700">{{ organisation.created_at|date:"M d, Y" }}</p>
+            </div>
+            <div>
+                <label class="block text-sm font-semibold text-gray-900 mb-2">Last Modified</label>
+                <p class="text-gray-700">{{ organisation.updated_at|date:"M d, Y" }}</p>
+            </div>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="flex gap-3 pt-4 border-t border-gray-100">
+            <button type="submit" class="btn btn-primary text-white">
+                Save Changes
+            </button>
+            <a href="{% url 'organisations:dashboard' uuid=organisation.uuid %}" 
+               class="btn btn-secondary">
+                Cancel
+            </a>
+        </div>
+    </form>
+
+    <!-- Danger Zone -->
+    <div class="bg-red-50 rounded-xl border border-red-200 p-6">
+        <h2 class="text-lg font-semibold text-red-900 mb-2">Danger Zone</h2>
+        <p class="text-sm text-red-700 mb-4">Destructive actions that cannot be undone.</p>
+        
+        <button type="button" 
+                onclick="alert('Organisation deletion is not yet available. Please contact support.')"
+                class="btn bg-red-600 hover:bg-red-700 text-white">
+            Delete Organisation
+        </button>
+    </div>
+</div>
+
+{% endblock %}

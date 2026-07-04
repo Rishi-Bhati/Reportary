@@ -8,6 +8,7 @@ from accounts.models import User
 from django.db.models import Q, Count
 from projects.services import update_project, get_project_history, get_component_changes_for_project_log
 import rules.views as rules
+from organisations.models import Organisation
 
 
 logger = logging.getLogger(__name__)
@@ -18,7 +19,7 @@ logger = logging.getLogger(__name__)
 @login_required
 def register_project(request):
     if request.method == "POST":
-        project_form = ProjectForm(request.POST)
+        project_form = ProjectForm(request.POST, user=request.user)
         component_formset = ComponentFormSet(request.POST, instance=Project(), prefix='components')
 
         collaborators_emails = request.POST.get('collaborators', '')
@@ -27,9 +28,24 @@ def register_project(request):
             from django.db import transaction
             with transaction.atomic():
                 project = project_form.save(commit=False)
-                project.owner = request.user
+                # Fallback to current user if owner not set
+                if not getattr(project, 'owner', None):
+                    project.owner = request.user
+                
+                # Check org-owned constraints via URL parameter just in case
+                org_uuid = request.GET.get('org')
+                if org_uuid:
+                    try:
+                        org = Organisation.objects.get(uuid=org_uuid)
+                        if rules.is_organisation_owner(request.user, org):
+                            project.org = org
+                    except Organisation.DoesNotExist:
+                        pass
+                
                 project.save()
-                project.collaborators.add(request.user)
+                project.collaborators.add(project.owner)
+                if request.user != project.owner:
+                    project.collaborators.add(request.user)
 
                 if collaborators_emails:
                     emails = [email.strip() for email in collaborators_emails.split(',')]
@@ -45,7 +61,15 @@ def register_project(request):
                 return redirect("projects:projects_view")
         # If we get here, either form has errors — fall through to render with errors shown
     else:
-        project_form = ProjectForm()
+        project_form = ProjectForm(user=request.user)
+        org_uuid = request.GET.get('org')
+        if org_uuid:
+            try:
+                org = Organisation.objects.get(uuid=org_uuid)
+                if rules.is_organisation_owner(request.user, org):
+                    project_form.initial['org'] = org
+            except Organisation.DoesNotExist:
+                pass
         component_formset = ComponentFormSet(instance=Project(), prefix='components')
     
     # Preserve collaborators field value for re-render
@@ -60,7 +84,7 @@ def register_project(request):
 
 
 def projects_view(request):
-    projects = Project.objects.filter(public=True).annotate(num_components=Count('project_components'))
+    projects = Project.objects.filter(public=True).select_related('org', 'owner').annotate(num_components=Count('project_components'))
 
     # Page-specific search
     q = request.GET.get('q', '').strip()
@@ -77,11 +101,13 @@ def project_detail(request, project_uuid):
     user = request.user
 
     # if user is the owner of the project, show all the details and give option to edit, else show only public details and no edit option
-    project = Project.objects.get(uuid=project_uuid)
-    # Debug/log: confirm the view received the project and what it contains
-    logger.info(f"project_detail called for uuid={project_uuid}, project.title={project.title!r}")
-    print(f"DEBUG project_detail: uuid={project_uuid}, title={project.title}")
-    is_owner = user.is_authenticated and (project.owner == user)
+    project = Project.objects.select_related('org', 'owner').get(uuid=project_uuid)
+    
+    # Enforce access scoping
+    if not rules.can_access_project(user, project):
+        return HttpResponseForbidden("You do not have permission to view this project.")
+        
+    is_owner = user.is_authenticated and rules.is_project_owner(user, project)
     is_member = user.is_authenticated and rules.is_project_member(user, project)
     history = get_project_history(user, project)
     
@@ -108,11 +134,11 @@ def project_detail(request, project_uuid):
 def edit_project(request, project_uuid):
     project = Project.objects.get(uuid=project_uuid)
 
-    if project.owner != request.user:
-        return HttpResponseForbidden("You are not the owner of this project.")
+    if not rules.is_project_owner(request.user, project):
+        return HttpResponseForbidden("You do not have permission to edit this project.")
 
     if request.method == "POST":
-        project_form = ProjectForm(request.POST, instance=project)
+        project_form = ProjectForm(request.POST, instance=project, user=request.user)
         component_formset = ComponentFormSet(
             request.POST, instance=project, prefix="components"
         )
@@ -128,7 +154,7 @@ def edit_project(request, project_uuid):
             return redirect("projects:project_detail", project_uuid=project.uuid)
 
     else:
-        project_form = ProjectForm(instance=project)
+        project_form = ProjectForm(instance=project, user=request.user)
         component_formset = ComponentFormSet(instance=project, prefix="components")
 
     collaborator_email_list = [
@@ -148,4 +174,37 @@ def edit_project(request, project_uuid):
 @login_required
 def my_projects_view(request):
     projects = Project.objects.filter(owner=request.user).annotate(num_components=Count('project_components'))
-    return render(request, 'projects_view.html', {'projects': projects})
+    
+    # Page-specific search
+    q = request.GET.get('q', '').strip()
+    if q:
+        projects = projects.filter(
+            Q(title__icontains=q) | Q(description__icontains=q)
+        ).distinct()
+        
+    projects = projects.order_by('-updated_at')
+    
+    return render(request, 'projects_view.html', {
+        'projects': projects,
+        'title': 'My Projects',
+        'subtitle': 'Manage projects owned by you.'
+    })
+
+@login_required
+def collaborating_projects_view(request):
+    projects = Project.objects.filter(collaborators=request.user).annotate(num_components=Count('project_components'))
+    
+    # Page-specific search
+    q = request.GET.get('q', '').strip()
+    if q:
+        projects = projects.filter(
+            Q(title__icontains=q) | Q(description__icontains=q)
+        ).distinct()
+        
+    projects = projects.order_by('-updated_at')
+    
+    return render(request, 'projects_view.html', {
+        'projects': projects,
+        'title': 'Collaborating Projects',
+        'subtitle': 'Projects you are collaborating on.'
+    })

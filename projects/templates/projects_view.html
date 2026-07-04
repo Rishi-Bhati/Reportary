@@ -1,17 +1,17 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Projects | Reportary{% endblock %}
+{% block title %}{{ title|default:"Projects" }} | Reportary{% endblock %}
 
-{% block breadcrumb %}Projects{% endblock %}
+{% block breadcrumb %}{{ title|default:"Projects" }}{% endblock %}
 
 {% block content %}
 <div class="space-y-6">
     <!-- Header -->
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-            <h1 class="text-2xl font-bold text-gray-900 tracking-tight">Projects</h1>
-            <p class="text-gray-500 mt-1">Manage all your projects and their components.</p>
+            <h1 class="text-2xl font-bold text-gray-900 tracking-tight">{{ title|default:"Projects" }}</h1>
+            <p class="text-gray-500 mt-1">{{ subtitle|default:"Manage all your projects and their components." }}</p>
         </div>
         <a href="{% url 'projects:new' %}"
             class="btn btn-primary text-white capitalize font-medium shadow-sm hover:shadow-md transition-all">
@@ -45,6 +45,10 @@
                     {% else %}
                     <span
                         class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-50 text-gray-600 border border-gray-100">Private</span>
+                    {% endif %}
+                    {% if project.org %}
+                    <span
+                        class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-purple-50 text-purple-600 border border-purple-100">{{ project.org.name }}</span>
                     {% endif %}
                 </div>
             </div>

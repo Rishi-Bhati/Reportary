@@ -11,4 +11,5 @@ urlpatterns = [
     path('edit_project/<uuid:project_uuid>/',  edit_project, name='edit_project'),
     path('<uuid:project_uuid>/reports/', include('reports.urls')),
     path('my_projects/', my_projects_view, name='my_projects'),
+    path('collaborating/', collaborating_projects_view, name='collaborating_projects'),
 ]

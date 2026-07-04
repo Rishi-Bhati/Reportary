@@ -23,7 +23,7 @@
         <!-- Left: Logo & Breadcrumbs -->
         <div class="flex items-center gap-4 md:gap-8">
             <!-- Logo -->
-            <a href="{% url 'dashboard' %}"
+            <a href="{% url 'dashboard:dashboard' %}"
                 class="text-xl font-bold tracking-tight text-[#1b1725] flex items-center gap-2.5">
                 <div
                     class="w-8 h-8 rounded-lg bg-gradient-to-br from-[#226ce0] to-[#1b56b3] text-white flex items-center justify-center font-bold text-lg shadow-md">
@@ -37,7 +37,7 @@
 
             <!-- Breadcrumbs -->
             <nav class="hidden sm:flex items-center text-sm">
-                <a href="{% url 'dashboard' %}" class="text-gray-500 hover:text-[#226ce0] transition-colors">Home</a>
+                <a href="{% url 'dashboard:dashboard' %}" class="text-gray-500 hover:text-[#226ce0] transition-colors">Home</a>
                 <span class="mx-2 text-gray-400">/</span>
                 <span class="font-semibold text-[#1b1725]">{% block breadcrumb %}Dashboard{% endblock %}</span>
             </nav>

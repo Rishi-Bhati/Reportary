@@ -34,6 +34,10 @@
                                 <span
                                     class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600">Private</span>
                                 {% endif %}
+                                {% if project.org %}
+                                <span
+                                    class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-purple-50 text-purple-600 border border-purple-100">{{ project.org.name }}</span>
+                                {% endif %}
                                 <span class="text-[#a499b3]">•</span>
                                 <span class="text-sm text-[#a499b3]">Created {{ project.created_at|timesince }}
                                     ago</span>
@@ -63,7 +67,7 @@
                         </svg>
                         View Reports
                     </a>
-                    {% if user == project.owner %}
+                    {% if is_owner %}
                     <a href="{% url 'projects:edit_project' project_uuid=project.uuid %}" class="btn btn-secondary shadow-md">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

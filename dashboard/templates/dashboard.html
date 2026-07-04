@@ -11,13 +11,18 @@
             <h1 class="text-2xl font-bold text-gray-900 tracking-tight">Dashboard</h1>
             <p class="text-gray-500 mt-1">Welcome back, {{ user.first_name|default:user.username }}!</p>
         </div>
-        <div
-            class="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg border border-gray-100 shadow-sm text-sm text-gray-500 font-medium">
-            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-            </svg>
-            {% now "F j, Y" %}
+        <div class="flex items-center gap-4">
+            <a href="{% url 'organisations:list' %}" class="btn btn-outline text-[#226ce0] border-[#226ce0] hover:bg-[#226ce0] hover:text-white">
+                My Organisations
+            </a>
+            <div
+                class="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg border border-gray-100 shadow-sm text-sm text-gray-500 font-medium">
+                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                </svg>
+                {% now "F j, Y" %}
+            </div>
         </div>
     </div>
 
@@ -329,7 +334,7 @@
                     <h3 class="font-bold text-lg mb-2">Need Help?</h3>
                     <p class="text-white/70 text-sm mb-4 leading-relaxed">Check out our documentation to learn how to
                         manage your projects effectively.</p>
-                    <a href="{% url 'nota' %}">
+                    <a href="{% url 'home:nota' %}">
                         <button
                             class="px-4 py-2 bg-white text-[#226ce0] text-sm font-semibold rounded-lg hover:bg-[#f4f0f6] hover:scale-105 active:scale-95 transition-all shadow-sm">
                             Read Documentation

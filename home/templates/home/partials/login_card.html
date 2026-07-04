@@ -20,7 +20,7 @@
             <span>Password reset will be available soon. Please store your secrets safely.</span>
         </div>
 
-        <form method="POST" hx-post="{% url 'handle_login' %}" hx-target="#auth-card-container" hx-swap="innerHTML" class="space-y-4">
+        <form method="POST" hx-post="{% url 'home:handle_login' %}" hx-target="#auth-card-container" hx-swap="innerHTML" class="space-y-4">
             {% csrf_token %}
 
             <div class="form-control w-full">
@@ -40,7 +40,7 @@
                     class="input input-bordered w-full focus:border-[#226ce0] bg-gray-50 focus:bg-white transition-colors"
                     required />
                 <label class="label">
-                    <a href="{% url 'nota' %}" class="label-text-alt hover:underline text-[#226ce0]">Forgot
+                    <a href="{% url 'home:nota' %}" class="label-text-alt hover:underline text-[#226ce0]">Forgot
                         password?</a>
                 </label>
             </div>
@@ -69,7 +69,7 @@
             <span class="text-gray-500">New to Reportary? </span>
             <button
                 class="text-[#226ce0] hover:text-[#1b56b3] font-medium no-underline hover:underline transition-colors"
-                hx-get="{% url 'signup_card' %}" hx-target="#auth-card-container" hx-swap="innerHTML">
+                hx-get="{% url 'home:signup_card' %}" hx-target="#auth-card-container" hx-swap="innerHTML">
                 Create account
             </button>
         </div>

@@ -13,7 +13,7 @@
                         New Report
                 </a>
                 <a href="{% url 'projects:new' %}"
-                        class="btn bg-white hover:bg-[#f8f6fa] text-[#1b1725] border-2 border-[#d0bcd5] hover:border-[#a499b3] transition-all normal-case font-semibold w-full justify-start gap-2 rounded-xl h-11">
+                        class="btn bg-white hover:bg-[#226ce0]/10 text-[#1b1725] hover:text-[#226ce0] border-2 border-[#d0bcd5] hover:border-[#226ce0]/30 transition-all normal-case font-semibold w-full justify-start gap-2 rounded-xl h-11">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z">
@@ -29,7 +29,7 @@
 
                 <ul class="space-y-1">
                         <li>
-                                <a href="{% url 'dashboard' %}"
+                                <a href="{% url 'dashboard:dashboard' %}"
                                         class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-[#534b62] rounded-xl hover:bg-[#226ce0]/10 hover:text-[#226ce0] transition-all group">
                                         <svg class="w-5 h-5 text-[#a499b3] group-hover:text-[#226ce0] transition-colors"
                                                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -84,7 +84,7 @@
 
                 <ul class="space-y-1">
                         <li>
-                                <a href="{% url 'nota' %}"
+                                <a href="{% url 'home:nota' %}"
                                         class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-[#534b62] rounded-xl hover:bg-[#226ce0]/10 hover:text-[#226ce0] transition-all group">
                                         <svg class="w-5 h-5 text-[#a499b3] group-hover:text-[#226ce0] transition-colors"
                                                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -96,7 +96,7 @@
                                 </a>
                         </li>
                         <li>
-                                <a href="{% url 'nota' %}"
+                                <a href="{% url 'projects:collaborating_projects' %}"
                                         class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-[#534b62] rounded-xl hover:bg-[#226ce0]/10 hover:text-[#226ce0] transition-all group">
                                         <svg class="w-5 h-5 text-[#a499b3] group-hover:text-[#226ce0] transition-colors"
                                                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -108,7 +108,7 @@
                                 </a>
                         </li>
                         <li>
-                                <a href="{% url 'nota' %}"
+                                <a href="{% url 'reports:needs_attention' %}"
                                         class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-[#534b62] rounded-xl hover:bg-[#226ce0]/10 hover:text-[#226ce0] transition-all group">
                                         <svg class="w-5 h-5 text-[#a499b3] group-hover:text-[#226ce0] transition-colors"
                                                 fill="none" stroke="currentColor" viewBox="0 0 24 24">

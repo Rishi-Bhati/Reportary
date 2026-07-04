@@ -28,21 +28,29 @@
 
                 <!-- Links -->
                 <div class="hidden md:flex space-x-10">
-                    <a href="{% url 'dashboard'%}"
+                    <a href="{% url 'home:landing_page'%}"
                         class="text-gray-600 hover:text-[#226ce0] font-medium transition-colors duration-200 text-sm relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#226ce0] hover:after:w-full after:transition-all after:duration-300">Product</a>
-                    <a href="{% url 'nota' %}"
+                    <a href="{% url 'home:nota' %}"
                         class="text-gray-600 hover:text-[#226ce0] font-medium transition-colors duration-200 text-sm relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#226ce0] hover:after:w-full after:transition-all after:duration-300">Solutions</a>
-                    <a href="{% url 'nota' %}"
+                    <a href="{% url 'home:nota' %}"
                         class="text-gray-600 hover:text-[#226ce0] font-medium transition-colors duration-200 text-sm relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#226ce0] hover:after:w-full after:transition-all after:duration-300">Pricing</a>
                 </div>
 
                 <!-- CTA -->
                 <div class="flex items-center space-x-4">
-                    <a href="{% url 'dashboard' %}"
+                    {% if user.is_authenticated %}
+                    <a href="{% url 'dashboard:dashboard' %}"
                         class="hidden md:block text-sm font-semibold text-gray-700 hover:text-[#226ce0] transition-colors duration-200">Dashboard</a>
-                    <a href="{% url 'nota' %}"
+                    <a href="{% url 'dashboard:dashboard' %}"
                         class="btn btn-primary h-10 min-h-[2.5rem] px-6 text-white rounded-lg font-semibold border-none shadow-lg shadow-[#226ce0]/25 hover:shadow-xl hover:shadow-[#226ce0]/35 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 text-sm uppercase tracking-wide">Get
                         Started</a>
+                    {% else %}
+                    <a href="#auth-section"
+                        class="hidden md:block text-sm font-semibold text-gray-700 hover:text-[#226ce0] transition-colors duration-200">Dashboard</a>
+                    <a href="#auth-section"
+                        class="btn btn-primary h-10 min-h-[2.5rem] px-6 text-white rounded-lg font-semibold border-none shadow-lg shadow-[#226ce0]/25 hover:shadow-xl hover:shadow-[#226ce0]/35 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 text-sm uppercase tracking-wide">Get
+                        Started</a>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -60,7 +68,7 @@
                 <div
                     class="inline-flex items-center rounded-full px-4 py-1.5 text-xs font-bold text-[#226ce0] bg-[#226ce0]/10 mb-8 border border-[#226ce0]/20 animate-fade-in-up">
                     <span class="flex h-2 w-2 rounded-full bg-[#226ce0] mr-2 animate-pulse"></span>
-                    REPORTARY PHASE 1.5 : Public Alpha
+                    REPORTARY PHASE 2.0 : Public Beta
                 </div>
 
                 <!-- Headline -->
@@ -80,14 +88,25 @@
 
                 <!-- CTA Buttons -->
                 <div class="flex flex-col sm:flex-row gap-4 mb-14 animate-fade-in-up delay-300">
-                    <a href="{% url 'nota' %}"
+                    {% if user.is_authenticated %}
+                    <a href="{% url 'dashboard:dashboard' %}"
                         class="btn btn-primary h-12 px-8 text-white rounded-xl font-bold border-none shadow-xl shadow-[#226ce0]/25 hover:shadow-2xl hover:shadow-[#226ce0]/35 hover:-translate-y-1 active:translate-y-0 active:scale-[0.98] transition-all duration-300 text-base">
                         Start Building Free
                     </a>
-                    <a href="{% url 'nota' %}"
+                    <a href="{% url 'dashboard:dashboard' %}"
                         class="btn h-12 px-8 bg-white text-[#534b62] hover:bg-[#f8f6fa] hover:text-[#1b1725] rounded-xl font-semibold text-base border-2 border-[#d0bcd5] hover:border-[#a499b3] transition-all duration-300">
                         View Live Demo
                     </a>
+                    {% else %}
+                    <a href="#auth-section"
+                        class="btn btn-primary h-12 px-8 text-white rounded-xl font-bold border-none shadow-xl shadow-[#226ce0]/25 hover:shadow-2xl hover:shadow-[#226ce0]/35 hover:-translate-y-1 active:translate-y-0 active:scale-[0.98] transition-all duration-300 text-base">
+                        Start Building Free
+                    </a>
+                    <a href="#auth-section"
+                        class="btn h-12 px-8 bg-white text-[#534b62] hover:bg-[#f8f6fa] hover:text-[#1b1725] rounded-xl font-semibold text-base border-2 border-[#d0bcd5] hover:border-[#a499b3] transition-all duration-300">
+                        View Live Demo
+                    </a>
+                    {% endif %}
                 </div>
 
                 <!-- Feature List -->
@@ -118,7 +137,7 @@
             </div>
 
             <!-- Right: Auth Card Wrapper -->
-            <div class="relative lg:ml-auto w-full max-w-md mx-auto animate-fade-in-up delay-300">
+            <div id="auth-section" class="relative lg:ml-auto w-full max-w-md mx-auto animate-fade-in-up delay-300">
                 <!-- Decorative Elements behind card -->
                 <div
                     class="absolute -top-20 -right-20 w-80 h-80 bg-[#a499b3] rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-blob">

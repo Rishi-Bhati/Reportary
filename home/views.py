@@ -44,16 +44,17 @@ def nota_page(request):
 def landing_page(request):
     """
     Renders the main landing page.
-    The commented-out code shows a previous implementation detail where an authenticated user
-    would be redirected to the dashboard. This logic is often handled by middleware or
-    in the views that require authentication.
+    Redirects authenticated users to the dashboard.
     """
-    # if request.user.is_authenticated:
-    #     return redirect('home')
-    # if request.user.is_authenticated:
-    #     return redirect('dashboard/')
-    
+    if request.user.is_authenticated:
+        return redirect('dashboard:dashboard')
     return render(request, "home/landing_page.html")
+
+def changelog_view(request):
+    """
+    Renders the changelog/what's new page.
+    """
+    return render(request, "home/changelog.html")
 
 def login_card(request):
     """Renders the HTMX partial for the login card."""
@@ -79,14 +80,14 @@ def handle_login(request):
         if user is not None:
             login(request, user)
             response = HttpResponse(status=204)
-            response["HX-Redirect"] = reverse("dashboard")
+            response["HX-Redirect"] = reverse("dashboard:dashboard")
             return response
         else:
             context = {'error': 'Invalid credentials. Please try again.'}
             return render(request, "home/partials/login_card.html", context)
 
     # If the login fails or if the request is not POST, redirect back to the landing page.
-    return redirect('landing_page')
+    return redirect('home:landing_page')
 
 def handle_signup(request):
     """
@@ -145,7 +146,7 @@ def handle_signup(request):
             return render(request, "home/partials/signup_card.html", context)
             
     # If signup fails or if the request is not POST, redirect back to the landing page.
-    return redirect('landing_page')
+    return redirect('home:landing_page')
 
 
 def profile_page(request):

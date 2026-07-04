@@ -47,6 +47,8 @@ Edit
                     <textarea name="{{ field.name }}" id="{{ field.id_for_label }}" rows="4"
                         class="textarea textarea-bordered w-full focus:border-[#226ce0] bg-gray-50 focus:bg-white transition-colors text-base"
                         placeholder="{{ field.label }}...">{{ field.value|default:'' }}</textarea>
+                    {% elif field.name == 'org' or field.name == 'project_head' %}
+                    {{ field }}
                     {% else %}
                     <input type="{{ field.field.widget.input_type|default:'text' }}" name="{{ field.name }}"
                         id="{{ field.id_for_label }}" value="{{ field.value|default:'' }}"

@@ -16,5 +16,7 @@ urlpatterns = [
     path('<uuid:report_uuid>/visibility/', change_report_visibility, name='change_report_visibility'),
     path('<uuid:report_uuid>/impact/', change_report_impact, name='change_report_impact'),
     path('my_reports/', my_report_list, name='my_reports'),
+    # URL pattern for showing reports assigned to logged in user
     path('assigned_to_me/', assigned_to_me, name='assigned_to_me'),
+    path('needs_attention/', needs_attention_view, name='needs_attention'),
 ]

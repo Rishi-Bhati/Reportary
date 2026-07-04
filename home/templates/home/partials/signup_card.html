@@ -30,7 +30,7 @@
             <span>Password reset will be available soon. Please store your secrets safely.</span>
         </div>
 
-        <form hx-post="{% url 'handle_signup' %}" hx-target="#auth-card-container" hx-swap="innerHTML" class="space-y-4">
+        <form hx-post="{% url 'home:handle_signup' %}" hx-target="#auth-card-container" hx-swap="innerHTML" class="space-y-4">
             {% csrf_token %}
 
             <div class="form-control w-full">
@@ -84,7 +84,7 @@
             <span class="text-gray-500">Already have an account? </span>
             <button
                 class="text-[#226ce0] hover:text-[#1b56b3] font-medium no-underline hover:underline transition-colors"
-                hx-get="{% url 'login_card' %}" hx-target="#auth-card-container" hx-swap="innerHTML">
+                hx-get="{% url 'home:login_card' %}" hx-target="#auth-card-container" hx-swap="innerHTML">
                 Sign In
             </button>
         </div>

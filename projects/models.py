@@ -20,6 +20,8 @@ class Project(models.Model):
     title = models.CharField(max_length=200)
     link = models.URLField(max_length=200)
     description = models.TextField()
+    org = models.ForeignKey('organisations.Organisation', on_delete=models.SET_NULL, null=True, blank=True)
+    project_head = models.ForeignKey('accounts.User', on_delete=models.SET_NULL, null=True, blank=True, related_name='managed_projects')
     public = models.BooleanField(default=True)
     collaborators = models.ManyToManyField('accounts.User', related_name='collaborations')
     created_at = models.DateTimeField(auto_now_add=True)

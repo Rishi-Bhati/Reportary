@@ -18,7 +18,7 @@
         {% endif %}
 
         {# Show hide/unhide button only to the project owner #}
-        {% if request.user == project.owner %}
+        {% if request.user == project.owner or request.user == project.project_head %}
         <button hx-post="{% url 'comments:toggle_comment_visibility' report.uuid comment.uuid %}"
             hx-target="#comment-wrapper-{{ comment.uuid }}" hx-swap="outerHTML"
             class="ml-4 text-xs text-[#226ce0] hover:underline">

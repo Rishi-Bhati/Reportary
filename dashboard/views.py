@@ -8,10 +8,13 @@ from django.db.models import Q
 def dashboard(request):
     user = request.user
     
-    # Fetch projects where user is owner or collaborator
+    from organisations.services import get_user_organisations
+    user_orgs = get_user_organisations(user)
+    
+    # Fetch projects where user is owner, collaborator, or organization member
     projects = Project.objects.filter(
-        Q(owner=user) | Q(collaborators=user)
-    ).distinct().order_by('-updated_at')[:5]
+        Q(owner=user) | Q(collaborators=user) | Q(org__in=user_orgs)
+    ).select_related('org').distinct().order_by('-updated_at')[:5]
     
     # Fetch assigned or reported reports
     assigned_reports = Report.objects.filter(assigned_to=user).select_related('project').order_by('-updated_at')[:5]

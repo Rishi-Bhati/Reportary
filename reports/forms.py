@@ -37,6 +37,7 @@ class ReportForm(forms.ModelForm):
         # This allows us to know if the report is being created for a specific project (from URL)
         # or if the user is selecting a project themselves (from /reports/new/)
         project = kwargs.pop('project', None)
+        user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
         
         # Store the project as an instance variable so we can access it in clean() and save() methods
@@ -61,9 +62,21 @@ class ReportForm(forms.ModelForm):
             # SCENARIO 2: User accessed via /reports/new/
             # No project in URL, so the user must select one from the dropdown
             
-            # Keep the project field visible and allow them to select from all projects
+            # Keep the project field visible and allow them to select from accessible projects
             if 'project' in self.fields:
-                self.fields['project'].queryset = Project.objects.all()
+                if user:
+                    from django.db.models import Q
+                    from organisations.services import get_user_organisations
+                    user_orgs = get_user_organisations(user)
+                    
+                    self.fields['project'].queryset = Project.objects.filter(
+                        Q(public=True) |
+                        Q(owner=user) |
+                        Q(collaborators=user) |
+                        Q(org__in=user_orgs)
+                    ).distinct()
+                else:
+                    self.fields['project'].queryset = Project.objects.filter(public=True)
             
             # Don't pre-filter components because no project is selected yet
             # We'll let JavaScript dynamically load them when the user selects a project

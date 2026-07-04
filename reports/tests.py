@@ -71,3 +71,47 @@ class ReportDetailTests(TestCase):
         collaborators = resp.context['collaborators']
         
         self.assertIn(self.collaborator, collaborators)
+
+class ReportsSearchAndNeedsAttentionTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username='testuser', email='testuser@example.com', password='password')
+        self.user2 = User.objects.create_user(username='user2', email='user2@example.com', password='password')
+        
+        self.project_owned = Project.objects.create(title='Owned Project', link='https://example.com', description='desc', owner=self.user)
+        self.project_other = Project.objects.create(title='Other Project', link='https://example.com', description='desc', owner=self.user2)
+        self.project_other.collaborators.add(self.user)
+        
+        # Reports
+        self.critical_assigned = Report.objects.create(project=self.project_other, title='Critical assigned', severity='critical', assigned_to=self.user, reported_by=self.user2, visibility=True)
+        self.critical_on_my_project = Report.objects.create(project=self.project_owned, title='Critical on owned', severity='critical', reported_by=self.user2, visibility=True)
+        self.normal_report = Report.objects.create(project=self.project_owned, title='Normal report', severity='medium', reported_by=self.user2, visibility=True)
+
+    def test_my_reports_search(self):
+        self.client.force_login(self.user)
+        # Create a report created by self.user
+        my_rep = Report.objects.create(project=self.project_owned, title='My Special Report', severity='low', reported_by=self.user, visibility=True)
+        
+        url = reverse('reports:my_reports')
+        resp = self.client.get(url)
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(len(resp.context['reports']), 1)
+        self.assertEqual(resp.context['reports'][0], my_rep)
+        
+        resp = self.client.get(url + '?q=Special')
+        self.assertEqual(len(resp.context['reports']), 1)
+        
+        resp = self.client.get(url + '?q=NonExistent')
+        self.assertEqual(len(resp.context['reports']), 0)
+
+    def test_needs_attention(self):
+        self.client.force_login(self.user)
+        url = reverse('reports:needs_attention')
+        resp = self.client.get(url)
+        self.assertEqual(resp.status_code, 200)
+        
+        # Needs attention should include critical assigned and critical on user's projects, but not normal severity reports
+        reports = resp.context['reports']
+        self.assertEqual(len(reports), 2)
+        self.assertIn(self.critical_assigned, reports)
+        self.assertIn(self.critical_on_my_project, reports)
+        self.assertNotIn(self.normal_report, reports)
