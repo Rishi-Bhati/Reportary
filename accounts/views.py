@@ -58,7 +58,7 @@ def onboarding_user_form(request):
         user.save()
 
         # 3. Redirect to Dashboard
-        return redirect('dashboard')
+        return redirect('dashboard:dashboard')
 
     return render(request, "accounts/partials/user_form.html")
 
@@ -109,7 +109,7 @@ def onboarding_org_form(request):
                 # if linking fails, continue but log could be added
                 pass
 
-        return redirect('dashboard')
+        return redirect('dashboard:dashboard')
 
     return render(request, "accounts/partials/org_form.html")
 
@@ -145,7 +145,7 @@ def onboarding_dev_form(request):
         user.save()
 
         # 3. Redirect to Dashboard
-        return redirect('dashboard')
+        return redirect('dashboard:dashboard')
 
     return render(request, "accounts/partials/dev_form.html")
 
