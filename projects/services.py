@@ -91,21 +91,36 @@ def update_project(
             new_value="Components were updated",
         )
 
-    # ---- Collaborators diffing ----
+    # ---- Collaborators diffing & inviting ----
+    from notifications.services import create_invitation
+    
     old_collaborators = set(project.collaborators.values_list("id", flat=True))
+    existing_collaborators = set(project.collaborators.all())
+    emails_entered = set()
+    if collaborator_emails:
+        emails_entered = {e.strip() for e in collaborator_emails.split(",") if e.strip()}
 
     project.collaborators.clear()
     project.collaborators.add(actor)
 
     new_collaborators = {actor.id}
 
-    if collaborator_emails:
-        emails = [e.strip() for e in collaborator_emails.split(",")]
-        for email in emails:
-            user = User.objects.filter(email=email).first()
-            if user:
-                project.collaborators.add(user)
-                new_collaborators.add(user.uuid)
+    for user in existing_collaborators:
+        if user == actor or user.email in emails_entered:
+            project.collaborators.add(user)
+            new_collaborators.add(user.id)
+
+    # Send invites to new users who are not already collaborators
+    for email in emails_entered:
+        user = User.objects.filter(email=email).first()
+        if user and user != actor:
+            if user not in existing_collaborators:
+                create_invitation(
+                    invite_type='collaborator',
+                    invited_by=actor,
+                    invited_user=user,
+                    project=project
+                )
 
     # ---- Audit logs ----
 

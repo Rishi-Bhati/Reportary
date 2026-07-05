@@ -60,6 +60,14 @@ class ProjectEditTests(TestCase):
         }
         resp = self.client.post(url, data)
         self.assertEqual(resp.status_code, 302)
+
+        # Accept the invitation
+        from notifications.models import Invitation
+        from notifications.services import accept_invitation
+        invite = Invitation.objects.filter(invite_type='collaborator', invited_user=self.other).first()
+        self.assertIsNotNone(invite)
+        accept_invitation(invite, self.other)
+
         self.project.refresh_from_db()
         self.assertEqual(self.project.title, 'Edit Project Updated')
         self.assertTrue(self.project.collaborators.filter(email='other@example.com').exists())

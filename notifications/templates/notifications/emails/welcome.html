@@ -1,0 +1,25 @@
+{% extends "notifications/emails/base_email.html" %}
+
+{% block email_content %}
+<h2 style="margin-top: 0; font-size: 20px; font-weight: 700; color: #1b1725; margin-bottom: 16px;">Hello @{{ username }},</h2>
+<p style="font-size: 16px; line-height: 1.6; color: #534b62; margin-bottom: 24px;">
+    Welcome to Reportary! We are thrilled to have you join our developer collaboration platform.
+</p>
+<p style="font-size: 16px; line-height: 1.6; color: #534b62; margin-bottom: 24px;">
+    Your email address has been successfully verified. You can now unlock the full power of Reportary:
+</p>
+<ul style="font-size: 15px; color: #534b62; line-height: 1.8; margin-bottom: 32px; padding-left: 20px;">
+    <li>Create projects and add your team members</li>
+    <li>File detailed issues and track their progress</li>
+    <li>Collaborate on code comments and task boards</li>
+    <li>Organize work under shared Organisations</li>
+</ul>
+
+<div style="text-align: center; margin-bottom: 32px;">
+    <a href="{{ site_url|default:'http://127.0.0.1:8000/' }}dashboard/" style="background-color: #226ce0; color: #ffffff; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 16px; display: inline-block;">Go to Dashboard</a>
+</div>
+
+<p style="font-size: 14px; color: #a499b3; line-height: 1.5; margin: 0;">
+    If you have any questions, feel free to reach out to our team at any time. Happy tracking!
+</p>
+{% endblock %}

@@ -52,12 +52,15 @@ def report_list(request, project_uuid=None):
     # Renders the 'report_list.html' template, passing the reports and project as context.
     return render(request, 'report_list.html', {'reports': reports, 'project': project})
 
-def report_detail(request, project_uuid, report_uuid):
+def report_detail(request, report_uuid, project_uuid=None):
     """
     Displays the details of a single report, including its comments.
     """
-    # Flashes the specific report, ensuring it belongs to the correct project.
-    report = get_object_or_404(Report, project__uuid=project_uuid, uuid=report_uuid)
+    # Flashes the specific report, ensuring it belongs to the correct project if project_uuid is provided.
+    if project_uuid:
+        report = get_object_or_404(Report, project__uuid=project_uuid, uuid=report_uuid)
+    else:
+        report = get_object_or_404(Report, uuid=report_uuid)
     # Gets the project from the report object.
     project = report.project
 
@@ -116,14 +119,11 @@ def report_detail(request, project_uuid, report_uuid):
 def create_report(request, project_uuid=None):    
     """
     View for creating a new report.
-    
-    Supports two different workflows:
-    1. /reports/new/ - User selects a project from dropdown, then creates report
-    2. /projects/<uuid>/reports/new/ - Project is pre-selected from URL, user only fills other fields
-    
-    Args:
-        project_uuid: Optional project ID from URL. If provided, the project is pre-selected.
     """
+    if not request.user.is_email_verified:
+        from accounts.views import render_verification_required
+        return render_verification_required(request, "Verify your email to create reports.")
+
     project = None
     
     if project_uuid is not None:
@@ -142,6 +142,21 @@ def create_report(request, project_uuid=None):
                 report.project = project
             report.assigned_to = report.project.owner
             report.save()
+
+            from notifications.services import create_notification
+            recipients = {report.project.owner, report.project.project_head}
+            for recipient in recipients:
+                if recipient and recipient != request.user:
+                    create_notification(
+                        recipient=recipient,
+                        actor=request.user,
+                        notification_type='report_assigned',  # Using report_assigned as template/type
+                        title="New Issue Reported",
+                        message=f"A new issue '{report.title}' was reported by {request.user.username} in project '{report.project.title}'.",
+                        target_content_type='report',
+                        target_uuid=report.uuid
+                    )
+
             return redirect('projects:reports:report_detail', project_uuid=report.project.uuid, report_uuid=report.uuid)
     else:
         form = ReportForm(project=project, user=request.user)
@@ -214,12 +229,14 @@ def needs_attention_view(request):
     """
     user = request.user
     reports = Report.objects.filter(
-        Q(severity='critical') & (
+        (Q(severity='critical') | Q(impact='critical')) & (
             Q(assigned_to=user) | 
             Q(project__owner=user) | 
             Q(project__project_head=user) | 
             Q(project__collaborators=user)
         )
+    ).exclude(
+        status__in=['resolved', 'closed']
     ).select_related('project', 'reported_by').distinct()
     
     # Page-specific search

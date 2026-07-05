@@ -66,3 +66,12 @@ class Report(models.Model):
 
     def __str__(self):
         return self.title
+
+    @property
+    def safe_attatchment_size(self):
+        if self.attatchment:
+            try:
+                return self.attatchment.size
+            except Exception:
+                return None
+        return None

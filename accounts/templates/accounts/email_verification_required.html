@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Verification Required | Reportary{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto my-12">
+    <div class="bg-white border border-gray-100 shadow-xl rounded-2xl overflow-hidden p-8 text-center space-y-6">
+        <!-- Shield/Lock Icon -->
+        <div class="mx-auto w-16 h-16 bg-yellow-50 text-yellow-600 rounded-full flex items-center justify-center">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+            </svg>
+        </div>
+
+        <!-- Heading -->
+        <div class="space-y-2">
+            <h2 class="text-xl font-bold text-gray-900">Email Verification Required</h2>
+            <p class="text-gray-600 text-sm leading-relaxed">
+                {{ action_message }}
+            </p>
+        </div>
+
+        <!-- Info alert -->
+        <div class="bg-blue-50 border border-blue-100 text-blue-800 text-xs rounded-xl p-4 text-left leading-relaxed">
+            📧 A verification email was sent to <strong>{{ user.email }}</strong> when you registered. Please check your inbox and spam folders for the verification link.
+        </div>
+
+        <!-- Resend button and cancel link -->
+        <div class="pt-2 space-y-4">
+            <form method="post" action="{% url 'accounts:resend_verification' %}">
+                {% csrf_token %}
+                <button type="submit" class="w-full btn bg-[#226ce0] hover:bg-[#1b56b3] text-white font-semibold rounded-xl border-none shadow-md hover:shadow-lg transition-all capitalize">
+                    Resend Verification Email
+                </button>
+            </form>
+            
+            <a href="javascript:history.back()" class="inline-block text-sm font-semibold text-gray-500 hover:text-gray-700 transition-colors">
+                ← Go Back
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

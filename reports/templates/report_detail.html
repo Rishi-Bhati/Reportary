@@ -102,6 +102,26 @@
                     <div class="prose max-w-none text-[#534b62] leading-relaxed">
                         {{ report.description|linebreaks }}
                     </div>
+
+                    {% if report.attatchment %}
+                    <div class="mt-6 pt-6 border-t border-gray-100">
+                        <h4 class="text-sm font-bold text-[#1b1725] uppercase tracking-wider mb-3">Attachment</h4>
+                        <div class="flex items-center gap-4 bg-gray-50 p-4 rounded-xl border border-gray-100 max-w-md">
+                            <svg class="w-8 h-8 text-[#226ce0]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path>
+                            </svg>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-semibold text-gray-900 truncate">{{ report.attatchment.name }}</p>
+                                {% if report.safe_attatchment_size %}
+                                <p class="text-xs text-gray-500">{{ report.safe_attatchment_size|filesizeformat }}</p>
+                                {% endif %}
+                            </div>
+                            <a href="{{ report.attatchment.url }}" target="_blank" class="btn btn-xs btn-outline text-[#226ce0] border-[#226ce0] hover:bg-[#226ce0] hover:text-white rounded-lg">
+                                View / Download
+                            </a>
+                        </div>
+                    </div>
+                    {% endif %}
                 </div>
             </div>
 

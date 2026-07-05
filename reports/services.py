@@ -26,6 +26,19 @@ def assign_report(*, request, report, assignee, actor):
         new_value=assignee.email,
     )
 
+    if report.assigned_to != old:
+        from notifications.services import create_notification
+        if report.assigned_to and report.assigned_to != actor:
+            create_notification(
+                recipient=report.assigned_to,
+                actor=actor,
+                notification_type='report_assigned',
+                title="Report Assigned",
+                message=f"Report '{report.title}' has been assigned to you by {actor.username}.",
+                target_content_type='report',
+                target_uuid=report.uuid
+            )
+
     return report
 
 
@@ -35,8 +48,6 @@ def update_report_status(*, request, report, new_status, actor):
 
     if old_status == new_status:
         return report  # no-op
-
-
 
     if new_status and new_status in [choice[0] for choice in Report.STATUS_CHOICES]:
         report.status = new_status
@@ -51,6 +62,20 @@ def update_report_status(*, request, report, new_status, actor):
         old_value=old_status,
         new_value=new_status,
     )
+
+    from notifications.services import create_notification
+    recipients = {report.assigned_to, report.reported_by, report.project.owner, report.project.project_head}
+    for recipient in recipients:
+        if recipient and recipient != actor:
+            create_notification(
+                recipient=recipient,
+                actor=actor,
+                notification_type='report_status_changed',
+                title="Report Status Changed",
+                message=f"Report '{report.title}' status was changed from '{old_status}' to '{new_status}' by {actor.username}.",
+                target_content_type='report',
+                target_uuid=report.uuid
+            )
 
     return report
 
@@ -74,6 +99,21 @@ def update_report_impact(*, report, new_impact, actor):
         old_value=old_impact,
         new_value=new_impact,
     )
+
+    from notifications.services import create_notification
+    recipients = {report.assigned_to, report.reported_by, report.project.owner, report.project.project_head}
+    for recipient in recipients:
+        if recipient and recipient != actor:
+            create_notification(
+                recipient=recipient,
+                actor=actor,
+                notification_type='report_impact_changed',
+                title="Report Impact Changed",
+                message=f"Report '{report.title}' impact was changed from '{old_impact}' to '{new_impact}' by {actor.username}.",
+                target_content_type='report',
+                target_uuid=report.uuid
+            )
+
     return report
 
 

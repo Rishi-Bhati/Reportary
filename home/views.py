@@ -137,11 +137,22 @@ def handle_signup(request):
         # Initialize username as email; user will set a display name/tag during onboarding.
         try:
             user = User.objects.create_user(username=email, email=email, password=password)
+            user.is_email_verified = False
+            user.save()
+
+            # Trigger email verification email
+            from accounts.email_utils import send_verification_email
+            try:
+                send_verification_email(request, user)
+            except Exception as e:
+                print(f"Failed to send verification email: {e}")
+
             login(request, user)
             response = HttpResponse(status=204)
             response["HX-Redirect"] = reverse("accounts:onboarding_home")
             return response
-        except Exception:
+        except Exception as e:
+            print(f"Signup error: {e}")
             context = {'error': 'An error occurred during account creation.'}
             return render(request, "home/partials/signup_card.html", context)
             

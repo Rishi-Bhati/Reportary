@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Notifications | Reportary{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto space-y-6">
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-gray-100 pb-5">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900 tracking-tight">Notification Center</h1>
+            <p class="text-gray-500 mt-1">Stay updated on report reassignments, status updates, comments, and project invites.</p>
+        </div>
+        
+        {% if unread_count > 0 %}
+        <form method="post" action="{% url 'notifications:mark_all_read' %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-sm btn-outline text-[#226ce0] border-[#226ce0] hover:bg-[#226ce0] hover:text-white transition-all rounded-xl font-semibold">
+                Mark All as Read
+            </button>
+        </form>
+        {% endif %}
+    </div>
+
+    <!-- Tabs -->
+    <div class="flex border-b border-gray-200">
+        <a href="?tab=all" class="px-6 py-3 font-semibold text-sm border-b-2 {% if active_tab == 'all' %}border-[#226ce0] text-[#226ce0]{% else %}border-transparent text-gray-500 hover:text-gray-700{% endif %} transition-all">
+            All ({{ all_count }})
+        </a>
+        <a href="?tab=unread" class="px-6 py-3 font-semibold text-sm border-b-2 {% if active_tab == 'unread' %}border-[#226ce0] text-[#226ce0]{% else %}border-transparent text-gray-500 hover:text-gray-700{% endif %} transition-all">
+            Unread ({{ unread_count }})
+        </a>
+        <a href="?tab=invites" class="px-6 py-3 font-semibold text-sm border-b-2 {% if active_tab == 'invites' %}border-[#226ce0] text-[#226ce0]{% else %}border-transparent text-gray-500 hover:text-gray-700{% endif %} transition-all">
+            Invitations ({{ invites_count }})
+        </a>
+    </div>
+
+    <!-- Notifications List -->
+    <div class="space-y-4">
+        {% for notif in notifications %}
+        <div class="group relative flex flex-col md:flex-row items-start md:items-center justify-between p-5 bg-white rounded-2xl border transition-all duration-200 
+            {% if not notif.is_read %}border-[#226ce0]/30 bg-blue-50/10 shadow-sm hover:shadow-md{% else %}border-gray-100 hover:border-gray-200 shadow-sm{% endif %}">
+            
+            <!-- Left Blue Highlight Border for Unread -->
+            {% if not notif.is_read %}
+            <div class="absolute left-0 top-0 bottom-0 w-1 bg-[#226ce0] rounded-l-2xl"></div>
+            {% endif %}
+
+            <div class="flex items-start gap-4 flex-1">
+                <!-- Icon mapping -->
+                <div class="p-3 rounded-xl 
+                    {% if notif.requires_action %}bg-purple-50 text-purple-600
+                    {% elif 'assigned' in notif.notification_type %}bg-blue-50 text-blue-600
+                    {% elif 'status' in notif.notification_type %}bg-yellow-50 text-yellow-600
+                    {% elif 'commented' in notif.notification_type %}bg-green-50 text-green-600
+                    {% else %}bg-gray-50 text-gray-600{% endif %}">
+                    
+                    {% if notif.requires_action %}
+                    <!-- Invite icon -->
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+                    </svg>
+                    {% elif 'assigned' in notif.notification_type %}
+                    <!-- User icon -->
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                    </svg>
+                    {% elif 'status' in notif.notification_type %}
+                    <!-- Status check/refresh icon -->
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                    </svg>
+                    {% elif 'commented' in notif.notification_type %}
+                    <!-- Message bubble icon -->
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                    </svg>
+                    {% else %}
+                    <!-- Info icon -->
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    {% endif %}
+                </div>
+
+                <!-- Title & description -->
+                <div class="space-y-1">
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <h3 class="font-bold text-gray-900 text-base leading-snug group-hover:text-[#226ce0] transition-colors">
+                            {{ notif.title }}
+                        </h3>
+                        {% if not notif.is_read %}
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-800">New</span>
+                        {% endif %}
+                    </div>
+                    <p class="text-gray-600 text-sm leading-relaxed">{{ notif.message }}</p>
+                    <span class="text-xs text-gray-400 font-medium block pt-1">{{ notif.created_at|timesince }} ago</span>
+                </div>
+            </div>
+
+            <!-- Actions block -->
+            <div class="flex items-center gap-3 mt-4 md:mt-0 w-full md:w-auto justify-end">
+                {% if notif.requires_action and notif.invitation and notif.invitation.status == 'pending' %}
+                <!-- Accept / Decline for Invites -->
+                <div class="flex gap-2.5">
+                    <form method="post" action="{% url 'notifications:accept_invite' uuid=notif.invitation.uuid %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-xs bg-[#226ce0] hover:bg-[#1b56b3] text-white border-none rounded-lg px-4 py-1.5 h-auto text-xs font-semibold transition-all">
+                            Accept
+                        </button>
+                    </form>
+                    <form method="post" action="{% url 'notifications:decline_invite' uuid=notif.invitation.uuid %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-xs bg-gray-100 hover:bg-gray-200 text-gray-700 border-none rounded-lg px-4 py-1.5 h-auto text-xs font-semibold transition-all">
+                            Decline
+                        </button>
+                    </form>
+                </div>
+                {% elif notif.requires_action and notif.invitation %}
+                <!-- Invite state display -->
+                <span class="text-xs font-semibold px-3 py-1 rounded-full 
+                    {% if notif.invitation.status == 'accepted' %}bg-green-100 text-green-800
+                    {% else %}bg-gray-100 text-gray-500{% endif %}">
+                    {{ notif.invitation.status|capfirst }}
+                </span>
+                {% else %}
+                <!-- Direct target link if applicable -->
+                {% if notif.target_content_type == 'report' %}
+                <a href="{% url 'reports:report_detail' report_uuid=notif.target_uuid %}" 
+                   class="btn btn-xs btn-ghost text-[#226ce0] hover:bg-[#226ce0]/10 rounded-lg text-xs font-semibold">
+                    View Report
+                </a>
+                {% elif notif.target_content_type == 'project' %}
+                <a href="{% url 'projects:project_detail' project_uuid=notif.target_uuid %}" 
+                   class="btn btn-xs btn-ghost text-[#226ce0] hover:bg-[#226ce0]/10 rounded-lg text-xs font-semibold">
+                    View Project
+                </a>
+                {% elif notif.target_content_type == 'organisation' %}
+                <a href="{% url 'organisations:dashboard' uuid=notif.target_uuid %}" 
+                   class="btn btn-xs btn-ghost text-[#226ce0] hover:bg-[#226ce0]/10 rounded-lg text-xs font-semibold">
+                    View Org
+                </a>
+                {% endif %}
+                {% endif %}
+
+                <!-- Read/Unread toggling circle -->
+                {% if not notif.requires_action %}
+                <form method="post" action="{% url 'notifications:toggle_read' uuid=notif.uuid %}">
+                    {% csrf_token %}
+                    <button type="submit" class="p-1.5 rounded-full hover:bg-gray-100 transition-colors" title="Mark as {% if notif.is_read %}unread{% else %}read{% endif %}">
+                        <div class="w-3.5 h-3.5 rounded-full border-2 
+                            {% if notif.is_read %}border-gray-300 bg-transparent hover:bg-gray-300
+                            {% else %}border-[#226ce0] bg-[#226ce0] hover:bg-transparent hover:border-gray-300{% endif %} 
+                            transition-all"></div>
+                    </button>
+                </form>
+                {% endif %}
+            </div>
+
+        </div>
+        {% empty %}
+        <!-- Empty State -->
+        <div class="text-center py-16 bg-white rounded-2xl border border-dashed border-gray-200">
+            <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                </svg>
+            </div>
+            <h3 class="text-lg font-bold text-gray-900">No notifications found</h3>
+            <p class="mt-2 text-sm text-gray-500 max-w-sm mx-auto">
+                {% if active_tab == 'unread' %}
+                You are all caught up! There are no unread notifications.
+                {% elif active_tab == 'invites' %}
+                You have no pending invitations.
+                {% else %}
+                Notifications related to report lifecycle, assignments, comments, and invitations will appear here.
+                {% endif %}
+            </p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

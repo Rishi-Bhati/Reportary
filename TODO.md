@@ -186,3 +186,283 @@ If you skip and jump around, you’ll confuse yourself and burn out. The correct
 - [X] Add the critical reports assigned to user or reported on user's projects in the "Needs attention" section. (later, it'll be update based as well)
 
 ---
+
+
+# **Phase 3: Product Readiness & User Experience**
+
+> **Goal:** Transform Reportary from a functional beta into a polished, production-ready platform that teams can confidently adopt.
+
+---
+
+## ~~☐ 16. Notification System~~
+
+> Keep users informed about important events without requiring them to constantly check the dashboard.
+
+### In-App Notifications
+
+- [X] Notification center
+- [X] Mark notifications as read/unread
+- [X] Notification badges
+- [X] Group similar notifications
+
+### Notification Events
+
+- [X] New comment on a report
+- [X] Report assigned to user
+- [X] Report reassigned
+- [X] Report status changed
+- [X] Collaborator added
+- [X] Organization invitation
+
+---
+
+## ~~☐ 17. Email Integration~~
+
+> Users shouldn't need to keep Reportary open.
+
+### Authentication
+
+- [X] Welcome email
+- [X] Email verification
+- [X] Password reset email
+- [X] Change email confirmation
+
+### Report Updates
+
+- [X] Assignment notification
+- [X] Comment notification
+- [X] Status update notification
+<!-- - [ ] Mention notification (future) -->
+
+### Miscellaneous
+
+- [X] Organization invitation email
+<!-- - [ ] Weekly activity digest (optional) -->
+
+---
+
+## ☐ 18. Dashboard & Analytics
+
+> Make dashboards meaningful.
+
+### Personal Dashboard
+
+- [ ] Assigned reports
+- [ ] Reported reports
+- [ ] Recently viewed
+- [ ] Pending actions
+
+### Analytics
+
+- [ ] Open vs Closed reports
+- [ ] Reports by severity
+- [ ] Reports over time
+- [ ] Average resolution time
+- [ ] Reports by component
+- [ ] Most active projects
+- [ ] Most active contributors
+
+---
+
+## ☐ 19. Better Report Workflow
+
+> Complete the report lifecycle.
+
+### Report Actions
+
+- [ ] Edit report
+- [ ] Delete report (permissions)
+- [ ] Duplicate report detection
+- [ ] Bookmark reports
+- [ ] Watch/Follow reports
+
+### Content Improvements
+
+- [ ] Markdown support
+- [ ] Rich text preview
+- [ ] Better attachment uploader
+- [ ] Drag & drop upload
+
+---
+
+## ☐ 20. Search Improvements
+
+> Search should be powerful enough for real projects.
+
+### Global Search
+
+- [ ] Search reports
+- [ ] Search projects
+- [ ] Search comments
+- [ ] Search organizations
+
+### Filters
+
+- [ ] Status
+- [ ] Severity
+- [ ] Assignee
+- [ ] Reporter
+- [ ] Organization
+- [ ] Components
+- [ ] Date range
+
+### Extra
+
+- [ ] Saved searches
+- [ ] Recent searches
+
+---
+
+## ☐ 21. Project Dashboard
+
+> Every project deserves its own overview.
+
+### Overview
+
+- [ ] Project statistics
+- [ ] Recent activity
+- [ ] Recent reports
+- [ ] Active collaborators
+- [ ] Project health summary
+
+---
+
+## ☐ 22. User Experience Improvements
+
+> Small improvements that make the application feel polished.
+
+### UI
+
+- [ ] Better empty states
+- [ ] Loading skeletons
+- [ ] Toast notifications
+- [ ] Improved mobile responsiveness
+- [ ] Keyboard shortcuts
+- [ ] Better dark mode
+
+---
+
+## ☐ 23. Attachments & Media
+
+> Improve report evidence handling.
+
+- [ ] Multiple attachments
+- [ ] Image previews
+- [ ] Download attachments
+- [ ] File validation
+- [ ] File size limits
+
+---
+
+## ☐ 24. Developer Platform
+
+> Prepare Reportary for future integrations.
+
+### API
+
+- [ ] Basic REST API
+- [ ] API tokens
+- [ ] API documentation
+
+### Future
+
+- [ ] Webhooks foundation
+
+---
+
+## ☐ 25. Administration
+
+> Better control for administrators.
+
+### Admin
+
+- [ ] User management
+- [ ] Organization management
+- [ ] Project moderation
+- [ ] Report moderation
+- [ ] Site announcements
+- [ ] Allow users to delete their account
+
+---
+
+## ☐ 26. Launch Readiness
+
+> Polish everything before the public announcement.
+
+### Product
+
+- [ ] Demo project
+- [ ] Demo reports
+- [ ] Landing page improvements
+- [ ] FAQ page
+- [ ] Documentation
+- [ ] Privacy Policy
+- [ ] Terms of Service
+- [ ] Contact page
+
+### Deployment
+
+- [ ] Custom domain
+- [ ] Production deployment
+- [ ] Performance optimization
+- [ ] Accessibility review
+
+### Testing
+
+- [ ] Internal testing
+- [ ] Beta testing (10–20 users)
+- [ ] Fix critical issues
+- [ ] Production checklist
+
+---
+
+# Not Yet (Future Versions)
+
+These are intentionally postponed until after the stable release.
+
+- [ ] AI report summaries
+- [ ] AI duplicate detection
+- [ ] Mobile application
+- [ ] Desktop application
+- [ ] Browser extension
+- [ ] Slack integration
+- [ ] Discord integration
+- [ ] OAuth providers
+- [ ] Sprint planning
+- [ ] Agile boards
+- [ ] Roadmaps
+- [ ] Time tracking
+- [ ] Gantt charts
+
+---
+
+# Stable Release Checklist
+
+## The product should have:
+
+- [ ] Notifications
+- [ ] Emails
+- [ ] Dashboard analytics
+- [ ] Complete report workflow
+- [ ] Better attachments
+- [ ] Powerful search
+- [ ] Mobile-friendly UI
+- [ ] Production deployment
+- [ ] Custom domain
+- [ ] Documentation
+- [ ] Privacy Policy
+- [ ] Terms of Service
+- [ ] Demo project
+- [ ] No known critical bugs
+
+---
+
+# 🚀 Stable Launch
+
+Once everything above is complete:
+
+- Public announcement
+- LinkedIn launch
+- Community showcase
+- Open beta feedback
+- Begin versioning (`v1.0.0`)

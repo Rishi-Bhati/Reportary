@@ -99,9 +99,41 @@ class ProjectForm(forms.ModelForm):
         elif self.user:
             instance.owner = self.user
 
+        # Handle project_head invite-based workflow
+        if self.instance and self.instance.pk:
+            try:
+                old_instance = Project.objects.get(pk=self.instance.pk)
+                old_head = old_instance.project_head
+            except Project.DoesNotExist:
+                old_head = None
+            new_head = instance.project_head
+            if new_head != old_head:
+                # Revert to old head so it's not changed directly until accepted
+                instance.project_head = old_head
+                if new_head:
+                    from notifications.services import create_invitation
+                    # We will trigger the invite after saving to ensure db consistency
+                    self.pending_project_head_invite = new_head
+        else:
+            new_head = instance.project_head
+            if new_head:
+                instance.project_head = None
+                self.pending_project_head_invite = new_head
+
         if commit:
             instance.save()
+            self._save_project_head_invite(instance)
         return instance
+
+    def _save_project_head_invite(self, instance):
+        if hasattr(self, 'pending_project_head_invite') and self.pending_project_head_invite:
+            from notifications.services import create_invitation
+            create_invitation(
+                invite_type='project_head',
+                invited_by=self.user,
+                invited_user=self.pending_project_head_invite,
+                project=instance
+            )
 
 class ComponentForm(forms.ModelForm):
     name = forms.CharField(widget=forms.TextInput(attrs={'class': 'input input-sm input-bordered w-full focus:border-[#226ce0]', 'placeholder': 'Name'}))

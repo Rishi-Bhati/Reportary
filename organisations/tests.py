@@ -64,6 +64,15 @@ class OrganisationProjectAccessTests(TestCase):
         # Verify project is created
         project = Project.objects.get(title='Org Project A')
         self.assertEqual(project.org, self.org)
+        
+        # Accept the designation invitation
+        from notifications.models import Invitation
+        from notifications.services import accept_invitation
+        invite = Invitation.objects.filter(invite_type='project_head', invited_user=self.org_member).first()
+        self.assertIsNotNone(invite)
+        accept_invitation(invite, self.org_member)
+        
+        project.refresh_from_db()
         self.assertEqual(project.project_head, self.org_member)
         self.assertEqual(project.owner, self.org_owner) # Org owner is the main project owner
 

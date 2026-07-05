@@ -18,6 +18,10 @@ logger = logging.getLogger(__name__)
 
 @login_required
 def register_project(request):
+    if not request.user.is_email_verified:
+        from accounts.views import render_verification_required
+        return render_verification_required(request, "Verify your email to create projects.")
+
     if request.method == "POST":
         project_form = ProjectForm(request.POST, user=request.user)
         component_formset = ComponentFormSet(request.POST, instance=Project(), prefix='components')
@@ -43,16 +47,26 @@ def register_project(request):
                         pass
                 
                 project.save()
+                project_form._save_project_head_invite(project)
                 project.collaborators.add(project.owner)
                 if request.user != project.owner:
                     project.collaborators.add(request.user)
 
                 if collaborators_emails:
                     emails = [email.strip() for email in collaborators_emails.split(',')]
+                    from notifications.services import create_invitation
                     for email in emails:
                         user = User.objects.filter(email=email).first()
-                        if user:
-                            project.collaborators.add(user)
+                        if user and user != request.user and user != project.owner:
+                            try:
+                                create_invitation(
+                                    invite_type='collaborator',
+                                    invited_by=request.user,
+                                    invited_user=user,
+                                    project=project
+                                )
+                            except PermissionError as e:
+                                messages.warning(request, str(e))
 
                 # Bind component formset to the saved project and save
                 component_formset.instance = project

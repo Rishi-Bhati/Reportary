@@ -24,6 +24,39 @@
         {% include "partials/sidebar.html" %}
 
         <main class="flex-1 ml-64 p-8 w-full min-h-[calc(100vh-4rem)]">
+            {% if request.user.is_authenticated and not request.user.is_email_verified %}
+            <div id="verification-banner" class="mb-6 flex flex-col sm:flex-row justify-between items-center gap-4 bg-yellow-50 border border-yellow-100 text-yellow-800 p-4 rounded-xl shadow-sm text-sm">
+                <div class="flex items-center gap-2">
+                    <span>📧 Verify your email to unlock reporting, commenting, project creation, and collaboration.</span>
+                </div>
+                <div class="flex items-center gap-3">
+                    <form method="post" action="{% url 'accounts:resend_verification' %}" class="inline-block">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-xs bg-[#226ce0] hover:bg-[#1b56b3] text-white border-none rounded-lg px-3 py-1 font-semibold text-xs transition-all uppercase">
+                            Resend verification
+                        </button>
+                    </form>
+                    <button type="button" onclick="document.getElementById('verification-banner').remove()" class="text-yellow-600 hover:text-yellow-900 font-bold px-2 focus:outline-none">
+                        ✕
+                    </button>
+                </div>
+            </div>
+            {% endif %}
+
+            {% if messages %}
+            <div class="mb-6 space-y-2 max-w-6xl">
+                {% for message in messages %}
+                <div class="p-4 rounded-xl text-sm border flex justify-between items-center
+                    {% if message.tags == 'error' %}bg-red-50 border-red-100 text-red-800
+                    {% elif message.tags == 'success' %}bg-green-50 border-green-100 text-green-800
+                    {% else %}bg-blue-50 border-blue-100 text-blue-800{% endif %}">
+                    <span>{{ message }}</span>
+                    <button onclick="this.parentElement.remove()" class="font-bold opacity-60 hover:opacity-100 px-1 focus:outline-none">✕</button>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
             <div class="flex items-center gap-4 mb-8 max-w-6xl">
                 <form method="get" action="" class="input input-bordered flex items-center gap-2.5 w-full bg-white text-gray-900 border-gray-300 focus-within:border-[#226ce0] focus-within:outline focus-within:outline-offset-0">
                     <input type="text" name="q" class="grow bg-white placeholder-gray-500 font-medium text-base focus:outline-none"
