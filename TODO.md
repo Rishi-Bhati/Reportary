@@ -241,26 +241,26 @@ If you skip and jump around, you’ll confuse yourself and burn out. The correct
 
 ---
 
-## ☐ 18. Dashboard & Analytics
+## ~~☐ 18. Dashboard & Analytics~~
 
 > Make dashboards meaningful.
 
 ### Personal Dashboard
 
-- [ ] Assigned reports
-- [ ] Reported reports
-- [ ] Recently viewed
-- [ ] Pending actions
+- [X] Assigned reports
+- [X] Reported reports
+- [X] Recently viewed
+- [X] Pending actions
 
 ### Analytics
 
-- [ ] Open vs Closed reports
-- [ ] Reports by severity
-- [ ] Reports over time
-- [ ] Average resolution time
-- [ ] Reports by component
-- [ ] Most active projects
-- [ ] Most active contributors
+- [X] Open vs Closed reports
+- [X] Reports by severity
+- [X] Reports over time
+- [X] Average resolution time
+- [X] Reports by component
+- [X] Most active projects
+- [X] Most active contributors
 
 ---
 
@@ -324,6 +324,7 @@ If you skip and jump around, you’ll confuse yourself and burn out. The correct
 - [ ] Recent reports
 - [ ] Active collaborators
 - [ ] Project health summary
+- [ ] Tasks
 
 ---
 

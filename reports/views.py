@@ -67,6 +67,15 @@ def report_detail(request, report_uuid, project_uuid=None):
     if not rules.can_access_project(request.user, project):
         return HttpResponseForbidden("You do not have permission to access this project.")
 
+    # Track recently viewed in session
+    recently_viewed = request.session.get('recently_viewed_reports', [])
+    report_uuid_str = str(report.uuid)
+    if report_uuid_str in recently_viewed:
+        recently_viewed.remove(report_uuid_str)
+    recently_viewed.insert(0, report_uuid_str)
+    request.session['recently_viewed_reports'] = recently_viewed[:5]
+    request.session.modified = True
+
     # By default, fetch only visible comments.
     comments = Comment.objects.filter(report=report, visibility=True)
 
