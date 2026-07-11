@@ -139,6 +139,7 @@ DATABASES = {
         'HOST': tmpPostgres.hostname,
         'PORT': 5432,
         'CONN_MAX_AGE': 600,  # Persistent connections for 10 minutes
+        'CONN_HEALTH_CHECKS': True,  # Re-establish connection if dropped by remote host
         # "OPTIONS": dict(parse_qsl(tmpPostgres.query)),
         "OPTIONS": {
             "sslmode": "require",
