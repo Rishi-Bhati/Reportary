@@ -285,75 +285,75 @@ If you skip and jump around, you’ll confuse yourself and burn out. The correct
 
 ---
 
-## ☐ 20. Search Improvements
+## ~~☐ 20. Search Improvements~~
 
 > Search should be powerful enough for real projects.
 
 ### Global Search
 
-- [ ] Search reports
-- [ ] Search projects
-- [ ] Search comments
-- [ ] Search organizations
+- [X] Search reports
+- [X] Search projects
+- [X] Search comments
+- [X] Search organizations
 
 ### Filters
 
-- [ ] Status
-- [ ] Severity
-- [ ] Assignee
-- [ ] Reporter
-- [ ] Organization
-- [ ] Components
-- [ ] Date range
+- [X] Status
+- [X] Severity
+- [X] Assignee
+- [X] Reporter
+- [X] Organization
+- [X] Components
+- [X] Date range
 
 ### Extra
 
-- [ ] Saved searches
-- [ ] Recent searches
+- [X] Saved searches
+- [X] Recent searches
 
 ---
 
-## ☐ 21. Project Dashboard
+## ~~☐ 21. Project Dashboard~~
 
 > Every project deserves its own overview.
 
 ### Overview
 
-- [ ] Project statistics
-- [ ] Recent activity
-- [ ] Recent reports
-- [ ] Active collaborators
-- [ ] Project health summary
-- [ ] Tasks
+- [X] Project statistics
+- [X] Recent activity
+- [X] Recent reports
+- [X] Active collaborators
+- [X] Project health summary
+- [X] Tasks
 
 ---
 
-## ☐ 22. User Experience Improvements
+## ~~☐ 22. User Experience Improvements~~
 
 > Small improvements that make the application feel polished.
 
 ### UI
 
-- [ ] Better empty states
-- [ ] Loading skeletons
-- [ ] Toast notifications
-- [ ] Improved mobile responsiveness
-- [ ] Keyboard shortcuts
-- [ ] Better dark mode
+- [X] Better empty states
+- [X] Loading skeletons
+- [X] Toast notifications
+- [X] Improved mobile responsiveness
+- [X] Keyboard shortcuts
+- [X] Better dark mode
 
 ---
 
-## ☐ 23. Attachments & Media
+## ~~☐ 23. Attachments & Media~~
 
 > Improve report evidence handling.
 
-- [ ] Multiple attachments
-- [ ] Image previews
-- [ ] Download attachments
-- [ ] File validation
-- [ ] File size limits
+- [X] Multiple attachments
+- [X] Image previews
+- [X] Download attachments
+- [X] File validation
+- [X] File size limits
 
----
+<!-- ---
 
 ## ☐ 24. Developer Platform
 
@@ -369,55 +369,55 @@ If you skip and jump around, you’ll confuse yourself and burn out. The correct
 
 - [ ] Webhooks foundation
 
----
+--- -->
 
-## ☐ 25. Administration
+## ~~☐ 24. Administration~~
 
 > Better control for administrators.
 
 ### Admin
 
-- [ ] User management
-- [ ] Organization management
-- [ ] Project moderation
-- [ ] Report moderation
-- [ ] Site announcements
-- [ ] Allow users to delete their account
+- [X] User management
+- [X] Organization management
+- [X] Project moderation
+- [X] Report moderation
+- [X] Site announcements
+- [X] Allow users to delete their account
 
 ---
 
-## ☐ 26. Launch Readiness
+## ~~☐ 25. Launch Readiness~~
 
 > Polish everything before the public announcement.
 
 ### Product
 
-- [ ] Demo project
-- [ ] Demo reports
-- [ ] Landing page improvements
-- [ ] FAQ page
-- [ ] Documentation
-- [ ] Privacy Policy
-- [ ] Terms of Service
-- [ ] Contact page
+- [X] Demo project
+- [X] Demo reports
+- [X] Landing page improvements
+- [X] FAQ page
+- [X] Documentation
+- [X] Privacy Policy
+- [X] Terms of Service
+- [X] Contact page
 
 ### Deployment
 
-- [ ] Custom domain
-- [ ] Production deployment
-- [ ] Performance optimization
-- [ ] Accessibility review
+- [X] Custom domain
+- [X] Production deployment
+- [X] Performance optimization
+- [X] Accessibility review
 
 ### Testing
 
-- [ ] Internal testing
-- [ ] Beta testing (10–20 users)
-- [ ] Fix critical issues
-- [ ] Production checklist
+- [X] Internal testing
+- [X] Beta testing (10–20 users)
+- [X] Fix critical issues
+- [X] Production checklist
 
 ---
 
-# Not Yet (Future Versions)
+<!-- # Not Yet (Future Versions)
 
 These are intentionally postponed until after the stable release.
 
@@ -435,8 +435,8 @@ These are intentionally postponed until after the stable release.
 - [ ] Time tracking
 - [ ] Gantt charts
 
----
-
+--- -->
+<!-- 
 # Stable Release Checklist
 
 ## The product should have:
@@ -456,7 +456,7 @@ These are intentionally postponed until after the stable release.
 - [ ] Demo project
 - [ ] No known critical bugs
 
----
+--- -->
 
 # 🚀 Stable Launch
 

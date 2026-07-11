@@ -1,3 +1,102 @@
+# Release Notes - v1.0.0-beta.1 (Major Public Beta)
+
+**Date**: July 12, 2026
+
+## Overview
+This is the first versioned release of Reportary — **v1.0.0-beta.1**. It consolidates everything shipped between Phase 2.0 and now into a single cohesive release, covering a major security audit, new features, UX polish, administration tools, and all the pages needed for a public launch.
+
+## Security Fixes
+
+### 🔴 Endpoint Security Hardening
+Multiple endpoints were accessible without authentication and have been remediated:
+- `GET /reports/get_components/` — now requires login + project membership check
+- `GET /reports/get_project_config/` — now requires login + project membership check
+- `GET /search/` and `GET /search/glimpse/` — now require login
+- `GET /profile/` — now requires login
+- `my_report_list` and `assigned_to_me` views — replaced weak manual auth checks with `@login_required`
+
+### 🔴 Global HTMX CSRF Token Fix
+HTMX-driven POST/PUT/DELETE requests (task toggles, bookmarks, comment actions, reactions) were silently rejected due to missing CSRF token headers. Fixed via a centralised `htmx:configRequest` event handler in `base.html` that automatically injects the CSRF token for all HTMX mutations site-wide.
+
+## New Features
+
+### Project Dashboard
+Every project now has a dedicated dashboard showing:
+- Real-time statistics (open/resolved/total reports, critical count)
+- Dynamic project health score (0–100)
+- Recent reports with status indicators
+- Active collaborators with avatars
+- Interactive task checklist — fully persistent, toggle/add/delete without page reloads
+
+### Global Search — Real-time Popdown
+- Live result popdown as you type (no Enter required) via HTMX
+- Results span projects, reports, comments, and organisations
+- Recent searches shown on focus; saved in session
+- Clicking a result navigates directly and highlights the selected item on the full search results page
+- Contextual filters on the full results page: status, severity, assignee, date range
+
+### Filter & Sort on Every List View
+All list views (reports, projects, organisations) now have contextual filter and sort controls:
+- Reports: status, severity, assignee, date range
+- Projects: visibility (public/private), creation date
+
+### Bookmark & Watch Reports
+- Bookmark any report for quick access from a dedicated Bookmarks & Watches view
+- Watch a report to receive in-app notifications on status, assignee, or severity changes
+
+## UX Improvements
+
+### Toast Notifications
+Replaced inline Django messages with an animated toast notification system. Toasts slide in from the top-right with a countdown progress bar and auto-dismiss after 4 seconds. All success, error, warning, and info messages now display as toasts.
+
+### HTMX Global Loading Bar
+A thin blue progress bar appears at the very top of every page during any HTMX request, providing clear visual feedback on network activity.
+
+### Notification Centre Redesign
+- Cleaner layout and improved empty state
+- Invite cards have inline accept/decline buttons
+- Unread badge count now reflects accurate server-side counts
+
+## Administration
+
+### Site Announcements (Superuser Only)
+Superusers can now post site-wide announcement banners from the Django admin. Banners support four levels — Info, Warning, Critical, Success — are dismissable by users, and support optional auto-expiry via a date/time field.
+
+### Account Deletion (Soft-delete with 30-day Hard-delete)
+Users can delete their account from the Edit Profile > Danger Zone section. Requires password confirmation. On deletion:
+1. Account is immediately deactivated (`is_active=False`)
+2. `scheduled_deletion_date` is set to 30 days from now
+3. User is logged out and redirected to the landing page
+4. Account is permanently and irreversibly deleted after 30 days by the `purge_deleted_accounts` management command
+5. User can reactivate at any time within the 30-day window by simply logging back in
+
+### Improved Django Admin
+- All models now registered with `list_display`, filters, search, and ordering
+- `UserAdmin` includes `is_active`, `type`, `is_email_verified`, `scheduled_deletion_date`, and a `reactivate_accounts` bulk action
+- `AuditLogAdmin` is read-only (immutable audit trail)
+- `AnnouncementAdmin` restricted to superusers only
+
+## Launch Readiness
+
+- **FAQ page** (`/faq/`) — 10-question accordion FAQ
+- **Privacy Policy** (`/privacy/`) — full policy covering data collection, storage, retention, and deletion
+- **Terms of Service** (`/terms/`) — comprehensive terms
+- **Contact page** (`/contact/`) — form submissions routed to `anujkumar123.mp@gmail.com`
+- **Landing page** — upgraded footer with Product / Support / Legal link columns; badge updated to `v1.0.0-beta.1`
+- **Sidebar** — new Help section with FAQ and Contact links
+
+## Technical
+
+- Migration `accounts.0011_user_scheduled_deletion_date` — adds `scheduled_deletion_date` to the User model
+- Migration `core.0001_initial` — creates the `Announcement` model
+- New management command: `python manage.py purge_deleted_accounts [--dry-run]`
+- `core` app added to `INSTALLED_APPS` for model and admin registration
+- `core.context_processors.announcements` added to template context processors
+- `CONTACT_EMAIL = 'anujkumar123.mp@gmail.com'` added to settings
+- All 47 automated integration tests verified green and passing
+
+---
+
 # Release Notes - Phase 2.0 (Public Beta)
 
 **Date**: July 4, 2026

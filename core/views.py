@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from projects.models import Project
 from reports.models import Report
@@ -8,6 +9,7 @@ from organisations.models import Organisation
 from reports.models import SavedSearch
 
 
+@login_required
 def global_search(request):
     """Global search across Projects, Reports, Comments, and Organizations with rich filters & highlights."""
     q = request.GET.get('q', '').strip()
@@ -189,6 +191,7 @@ def global_search(request):
     return render(request, 'search_results.html', context)
 
 
+@login_required
 def global_search_glimpse(request):
     """Return a minimal glimpse of search results for popdown dropdown menu."""
     q = request.GET.get('q', '').strip()

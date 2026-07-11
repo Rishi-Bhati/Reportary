@@ -1,5 +1,5 @@
 import logging
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .forms import ProjectForm, ComponentFormSet, ComponentForm, ComponentFormSet
 from django.contrib.auth.decorators import login_required
 from projects.models import Project
@@ -156,9 +156,7 @@ def projects_view(request):
 
 def project_detail(request, project_uuid):
     user = request.user
-
-    # if user is the owner of the project, show all the details and give option to edit, else show only public details and no edit option
-    project = Project.objects.select_related('org', 'owner').get(uuid=project_uuid)
+    project = Project.objects.select_related('org', 'owner', 'project_head').get(uuid=project_uuid)
     
     # Enforce access scoping
     if not rules.can_access_project(user, project):
@@ -166,11 +164,60 @@ def project_detail(request, project_uuid):
         
     is_owner = user.is_authenticated and rules.is_project_owner(user, project)
     is_member = user.is_authenticated and rules.is_project_member(user, project)
-    history = get_project_history(user, project)
+
+    # Calculate Statistics
+    from reports.models import Report
+    reports_qs = Report.objects.filter(project=project)
+    total_reports = reports_qs.count()
+    open_reports = reports_qs.filter(status__in=['open', 'in_progress']).count()
+    resolved_reports = reports_qs.filter(status='resolved').count()
+    closed_reports = reports_qs.filter(status='closed').count()
+    critical_reports = reports_qs.filter(severity__in=['high', 'critical']).count()
+
+    # Average Resolution Time
+    resolved_and_closed = reports_qs.filter(status__in=['resolved', 'closed'])
+    avg_resolution_time = "N/A"
+    if resolved_and_closed.exists():
+        durations = [r.updated_at - r.created_at for r in resolved_and_closed]
+        total_seconds = sum(d.total_seconds() for d in durations)
+        avg_seconds = total_seconds / len(durations)
+        if avg_seconds < 3600:
+            avg_resolution_time = f"{int(avg_seconds / 60)}m"
+        elif avg_seconds < 86400:
+            avg_resolution_time = f"{round(avg_seconds / 3600, 1)}h"
+        else:
+            avg_resolution_time = f"{round(avg_seconds / 86400, 1)}d"
+
+    # Project Health Summary
+    health_score = 100
+    health_rating = "Healthy"
+    if total_reports > 0:
+        resolved_ratio = (resolved_reports + closed_reports) / total_reports
+        health_score = int(resolved_ratio * 100)
+        open_critical = reports_qs.filter(status__in=['open', 'in_progress'], severity__in=['high', 'critical']).count()
+        if open_critical > 3 or resolved_ratio < 0.4:
+            health_rating = "Critical"
+        elif open_critical > 0 or resolved_ratio < 0.7:
+            health_rating = "Warning"
+        else:
+            health_rating = "Healthy"
+
+    # Recent Reports
+    recent_reports = reports_qs.select_related('reported_by', 'component').order_by('-created_at')[:5]    # Tasks Checklist
+    active_tasks = project.tasks.filter(is_completed=False).order_by('-created_at')
+    completed_tasks = project.tasks.filter(is_completed=True).order_by('-created_at')
+
+    # Unified Activities history
+    from audit.models import AuditLog
+    report_uuids = [str(u) for u in reports_qs.values_list('uuid', flat=True)]
+    activities = AuditLog.objects.filter(
+        (Q(entity_type="Project") & Q(entity_id=str(project.uuid))) |
+        (Q(parent_type="Project") & Q(parent_id=str(project.id))) |
+        (Q(entity_type="Report") & Q(entity_id__in=report_uuids))
+    ).select_related('actor').order_by('-created_at')[:10]
     
-    # Enrich history with component changes
     enriched_history = []
-    for log in history:
+    for log in activities:
         log_dict = {
             'log': log,
             'component_changes': None
@@ -183,6 +230,17 @@ def project_detail(request, project_uuid):
         'project': project,
         'is_owner': is_owner,
         'is_member': is_member,
+        'total_reports': total_reports,
+        'open_reports': open_reports,
+        'resolved_reports': resolved_reports,
+        'closed_reports': closed_reports,
+        'critical_reports': critical_reports,
+        'avg_resolution_time': avg_resolution_time,
+        'health_score': health_score,
+        'health_rating': health_rating,
+        'recent_reports': recent_reports,
+        'active_tasks': active_tasks,
+        'completed_tasks': completed_tasks,
         'history': enriched_history,
     })
 
@@ -278,3 +336,64 @@ def collaborating_projects_view(request):
         return render(request, 'projects/partials/projects_grid_partial.html', context)
 
     return render(request, 'projects_view.html', context)
+
+
+@login_required
+def add_project_task(request, project_uuid):
+    project = get_object_or_404(Project, uuid=project_uuid)
+    if not rules.is_project_member(request.user, project):
+        return HttpResponseForbidden("Forbidden")
+    
+    title = request.POST.get('title', '').strip()
+    if title:
+        from projects.models import ProjectTask
+        ProjectTask.objects.create(project=project, title=title)
+        
+    active_tasks = project.tasks.filter(is_completed=False).order_by('-created_at')
+    completed_tasks = project.tasks.filter(is_completed=True).order_by('-created_at')
+    return render(request, 'projects/partials/tasks_partial.html', {
+        'project': project, 
+        'active_tasks': active_tasks,
+        'completed_tasks': completed_tasks
+    })
+
+
+@login_required
+def toggle_project_task(request, project_uuid, task_id):
+    project = get_object_or_404(Project, uuid=project_uuid)
+    if not rules.is_project_member(request.user, project):
+        return HttpResponseForbidden("Forbidden")
+        
+    from projects.models import ProjectTask
+    task = get_object_or_404(ProjectTask, id=task_id, project=project)
+    
+    # Check if request comes from checkbox toggle via csrf post
+    task.is_completed = not task.is_completed
+    task.save()
+    
+    active_tasks = project.tasks.filter(is_completed=False).order_by('-created_at')
+    completed_tasks = project.tasks.filter(is_completed=True).order_by('-created_at')
+    return render(request, 'projects/partials/tasks_partial.html', {
+        'project': project, 
+        'active_tasks': active_tasks,
+        'completed_tasks': completed_tasks
+    })
+
+
+@login_required
+def delete_project_task(request, project_uuid, task_id):
+    project = get_object_or_404(Project, uuid=project_uuid)
+    if not rules.is_project_member(request.user, project):
+        return HttpResponseForbidden("Forbidden")
+        
+    from projects.models import ProjectTask
+    task = get_object_or_404(ProjectTask, id=task_id, project=project)
+    task.delete()
+    
+    active_tasks = project.tasks.filter(is_completed=False).order_by('-created_at')
+    completed_tasks = project.tasks.filter(is_completed=True).order_by('-created_at')
+    return render(request, 'projects/partials/tasks_partial.html', {
+        'project': project, 
+        'active_tasks': active_tasks,
+        'completed_tasks': completed_tasks
+    })

@@ -20,6 +20,9 @@ urlpatterns = [
     # Edit profile
     path('profile/edit/', views.edit_profile, name='edit_profile'),
 
+    # Account deletion (soft-delete with 30-day scheduled hard-delete)
+    path('delete/', views.delete_account, name='delete_account'),
+
     # Email verification
     path('verify-email/<str:uidb64>/<str:token>/', views.verify_email, name='verify_email'),
     path('confirm-email-change/<str:uidb64>/<str:token>/<str:new_email_b64>/', views.confirm_email_change, name='confirm_email_change'),

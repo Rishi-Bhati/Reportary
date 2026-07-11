@@ -34,4 +34,10 @@ urlpatterns = [
     
     # Under development / coming soon page
     path('nota/', views.nota_page, name='nota'),
+
+    # Launch readiness static pages
+    path('faq/', views.faq_page, name='faq'),
+    path('privacy/', views.privacy_page, name='privacy'),
+    path('terms/', views.terms_page, name='terms'),
+    path('contact/', views.contact_page, name='contact'),
 ]

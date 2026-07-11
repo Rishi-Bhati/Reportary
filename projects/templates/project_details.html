@@ -1,80 +1,64 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}{{ project.title }} | Projects{% endblock %}
+{% block title %}Dashboard | {{ project.title }} | Reportary{% endblock %}
 {% block breadcrumb %}
 <a href="{% url 'projects:projects_view' %}" class="hover:text-[#226ce0] transition-colors">Projects</a> /
 <span class="text-[#226ce0] font-medium">{{ project.title }}</span>
 {% endblock %}
 
 {% block content %}
-<div class="max-w-6xl mx-auto space-y-8">
+<div class="max-w-7xl mx-auto space-y-6">
 
     <!-- Header Card -->
-    <div class="bg-white rounded-2xl border border-[#d0bcd5]/30 shadow-lg overflow-hidden">
-        <!-- Gradient Header Bar -->
-        <div class="h-2 bg-gradient-to-r from-[#226ce0] to-[#1b56b3]"></div>
-
-        <div class="p-8">
-            <div class="flex flex-col lg:flex-row justify-between items-start gap-6">
-                <!-- Left: Project Info -->
-                <div class="flex-1">
-                    <div class="flex items-center gap-4 mb-4">
-                        <div
-                            class="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#226ce0] to-[#1b56b3] flex items-center justify-center text-2xl font-bold text-white shadow-lg">
+    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+        <div class="h-1.5 bg-gradient-to-r from-[#226ce0] to-[#1b56b3]"></div>
+        <div class="p-6 md:p-8">
+            <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+                <!-- Left: Project Title & description -->
+                <div class="space-y-3">
+                    <div class="flex items-center gap-4">
+                        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#226ce0] to-[#1b56b3] flex items-center justify-center text-xl font-bold text-white shadow-sm">
                             {{ project.title|slice:":1"|upper }}
                         </div>
                         <div>
-                            <h1 class="text-3xl font-bold text-[#1b1725] tracking-tight">{{ project.title }}</h1>
-                            <div class="flex items-center gap-3 mt-1">
+                            <h1 class="text-2xl font-bold text-gray-900 tracking-tight">{{ project.title }}</h1>
+                            <div class="flex items-center gap-2 mt-1">
                                 {% if project.public %}
-                                <span
-                                    class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#226ce0]/10 text-[#226ce0]">Public</span>
+                                <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-[#226ce0]/10 text-[#226ce0] border border-[#226ce0]/20">Public</span>
                                 {% else %}
-                                <span
-                                    class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600">Private</span>
+                                <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-gray-50 text-gray-600 border border-gray-100">Private</span>
                                 {% endif %}
                                 {% if project.org %}
-                                <span
-                                    class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-purple-50 text-purple-600 border border-purple-100">{{ project.org.name }}</span>
+                                <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-purple-50 text-purple-600 border border-purple-100">{{ project.org.name }}</span>
                                 {% endif %}
-                                <span class="text-[#a499b3]">•</span>
-                                <span class="text-sm text-[#a499b3]">Created {{ project.created_at|timesince }}
-                                    ago</span>
+                                <span class="text-xs text-gray-400">Created {{ project.created_at|date:"M d, Y" }}</span>
                             </div>
                         </div>
                     </div>
-
-                    <p class="text-[#534b62] leading-relaxed max-w-2xl">{{ project.description|default:"No description provided." }}</p>
+                    <p class="text-xs text-gray-500 max-w-2xl leading-relaxed">{{ project.description|default:"No description provided for this project." }}</p>
                 </div>
 
-                <!-- Right: Actions -->
-                <div class="flex flex-wrap gap-3">
-                    <a href="{% url 'projects:reports:new' project_uuid=project.uuid %}"
-                        class="btn btn-primary text-white shadow-md hover:shadow-lg transition-all">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4">
-                            </path>
+                <!-- Right: Action Buttons -->
+                <div class="flex flex-wrap gap-2.5 shrink-0">
+                    <a href="{% url 'projects:reports:new' project_uuid=project.uuid %}" class="btn btn-sm btn-primary text-white font-medium capitalize shadow-sm rounded-xl">
+                        <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                         </svg>
                         Report Issue
                     </a>
-                    <a href="{% url 'projects:reports:report_list' project_uuid=project.uuid %}"
-                        class="btn bg-white border-2 border-[#d0bcd5] text-[#534b62] hover:bg-[#f8f6fa] hover:border-[#a499b3] transition-all">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2">
-                            </path>
+                    <a href="{% url 'projects:reports:report_list' project_uuid=project.uuid %}" class="btn btn-sm btn-outline text-gray-700 border-gray-200 hover:bg-[#226ce0]/10 hover:text-[#226ce0] hover:border-[#226ce0]/20 transition-all font-medium capitalize rounded-xl">
+                        <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
                         </svg>
                         View Reports
                     </a>
                     {% if is_owner %}
-                    <a href="{% url 'projects:edit_project' project_uuid=project.uuid %}" class="btn btn-secondary shadow-md">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
-                            </path>
+                    <a href="{% url 'projects:edit_project' project_uuid=project.uuid %}" class="btn btn-sm btn-outline border-[#534b62] text-[#534b62] hover:bg-[#534b62] hover:text-white hover:border-[#534b62] transition-all font-medium capitalize rounded-xl">
+                        <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                         </svg>
-                        Edit Project
+                        Edit
                     </a>
                     {% endif %}
                 </div>
@@ -82,217 +66,224 @@
         </div>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <!-- Main Content -->
-        <div class="lg:col-span-2 space-y-6">
-
-            <!-- Repository Link -->
-            {% if project.link %}
-            <div class="bg-white rounded-2xl border border-[#d0bcd5]/30 shadow-sm p-6">
-                <div class="flex items-center gap-4">
-                    <div class="w-12 h-12 rounded-xl bg-[#226ce0]/10 flex items-center justify-center">
-                        <svg class="w-6 h-6 text-[#226ce0]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
-                        </svg>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <h3 class="text-sm font-bold text-[#1b1725] uppercase tracking-wider mb-1">Repository</h3>
-                        <a href="{{ project.link }}" target="_blank"
-                            class="text-[#226ce0] hover:text-[#1b56b3] hover:underline transition-colors truncate block">
-                            {{ project.link }}
-                        </a>
-                    </div>
-                    <a href="{{ project.link }}" target="_blank"
-                        class="btn btn-sm bg-[#226ce0]/10 text-[#226ce0] border-none hover:bg-[#226ce0] hover:text-white hover:!text-white transition-all">
-                        Open
-                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-                        </svg>
-                    </a>
-                </div>
-            </div>
-            {% endif %}
-
-            <!-- Components Section -->
-            <div class="bg-white rounded-2xl border border-[#d0bcd5]/30 shadow-sm overflow-hidden">
-                <div class="px-6 py-4 border-b border-[#d0bcd5]/30 bg-[#f8f6fa]/50 flex items-center justify-between">
-                    <h3 class="text-sm font-bold text-[#1b1725] uppercase tracking-wider flex items-center gap-2">
-                        <svg class="w-5 h-5 text-[#226ce0]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10">
-                            </path>
-                        </svg>
-                        Components
-                    </h3>
-                    <span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#226ce0]/10 text-[#226ce0]">
-                        {{ project.components.count|default:"0" }}
-                    </span>
-                </div>
-
-                <div class="p-6">
-                    {% if project.components.exists %}
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        {% for component in project.components.all %}
-                        <div
-                            class="p-4 rounded-xl bg-[#f8f6fa] border border-[#d0bcd5]/30 hover:border-[#226ce0]/30 transition-colors">
-                            <div class="flex items-start gap-3">
-                                <div
-                                    class="w-8 h-8 rounded-lg bg-[#226ce0]/10 flex items-center justify-center flex-shrink-0">
-                                    <span class="text-sm font-bold text-[#226ce0]">{{ component.name|slice:":1"|upper }}</span>
-                                </div>
-                                <div>
-                                    <h4 class="font-semibold text-[#1b1725]">{{ component.name }}</h4>
-                                    <p class="text-sm text-[#a499b3] mt-0.5">{{ component.description|default:"No description" }}</p>
-                                </div>
-                            </div>
-                        </div>
-                        {% endfor %}
-                    </div>
+    <!-- Top Metrics Overview Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- Project Health -->
+        <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex items-center justify-between">
+            <div class="space-y-1">
+                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Project Health</span>
+                <span class="text-xl font-bold text-gray-850 flex items-center gap-1.5">
+                    {% if health_rating == 'Healthy' %}
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span class="text-emerald-600">Healthy</span>
+                    {% elif health_rating == 'Warning' %}
+                    <span class="w-2.5 h-2.5 rounded-full bg-yellow-500 animate-pulse"></span>
+                    <span class="text-yellow-600">Warning</span>
                     {% else %}
-                    <div class="text-center py-8">
-                        <div class="w-16 h-16 rounded-2xl bg-[#f8f6fa] flex items-center justify-center mx-auto mb-4">
-                            <svg class="w-8 h-8 text-[#a499b3]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                    d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10">
-                                </path>
-                            </svg>
-                        </div>
-                        <p class="text-[#534b62] font-medium">No components yet</p>
-                        <p class="text-sm text-[#a499b3] mt-1">Components help organize issues by area</p>
-                    </div>
+                    <span class="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse"></span>
+                    <span class="text-red-600">Critical</span>
                     {% endif %}
+                </span>
+                <span class="text-[10px] text-gray-400 block">{{ health_score }}% resolved • {{ critical_reports }} critical</span>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-red-50 text-red-500 flex items-center justify-center">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                </svg>
+            </div>
+        </div>
+
+        <!-- Open & Active Reports -->
+        <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex items-center justify-between">
+            <div class="space-y-1">
+                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Open & Active Issues</span>
+                <span class="text-2xl font-bold text-gray-900 block">{{ open_reports }}</span>
+                <span class="text-[10px] text-gray-400 block">Out of {{ total_reports }} reported issues</span>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-blue-50 text-[#226ce0] flex items-center justify-center">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+            </div>
+        </div>
+
+        <!-- Resolved & Closed Reports -->
+        <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex items-center justify-between">
+            <div class="space-y-1">
+                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Resolved & Closed</span>
+                <span class="text-2xl font-bold text-gray-900 block">{{ resolved_reports|add:closed_reports }}</span>
+                <span class="text-[10px] text-gray-400 block">{{ resolved_reports }} resolved • {{ closed_reports }} closed</span>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            </div>
+        </div>
+
+        <!-- Avg Resolution Time -->
+        <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex items-center justify-between">
+            <div class="space-y-1">
+                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Avg Resolution Time</span>
+                <span class="text-2xl font-bold text-gray-900 block">{{ avg_resolution_time }}</span>
+                <span class="text-[10px] text-gray-400 block">From report to resolution</span>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Columns -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        
+        <!-- Left 2/3: Tasks, Reports Table, Activity Timeline -->
+        <div class="lg:col-span-8 space-y-6">
+
+            <!-- Tasks Section (Interactive Checklist) -->
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-4">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wider flex items-center gap-2">
+                        <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                        </svg>
+                        Project Tasks Checklist
+                    </h3>
+                </div>
+                
+                <div id="project-tasks-wrapper">
+                    {% include "projects/partials/tasks_partial.html" %}
+                </div>
+
+                {% if is_member %}
+                <form hx-post="{% url 'projects:add_project_task' project_uuid=project.uuid %}" 
+                      hx-target="#project-tasks-container" 
+                      hx-swap="outerHTML" 
+                      hx-on::after-request="this.reset()"
+                      class="flex gap-2 mt-4 pt-2 border-t border-gray-50">
+                    {% csrf_token %}
+                    <input type="text" name="title" placeholder="Add a new task item..." 
+                           class="input input-sm h-9 input-bordered flex-1 rounded-xl bg-gray-50 focus:bg-white text-xs focus:border-[#226ce0]" required>
+                    <button type="submit" class="btn btn-sm h-9 btn-primary text-white text-xs font-semibold rounded-xl px-4">Add Task</button>
+                </form>
+                {% endif %}
+            </div>
+
+            <!-- Recent Reports (Last 5 issues) -->
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-100 bg-[#f8f6fa]/30 flex items-center justify-between">
+                    <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wider flex items-center gap-2">
+                        <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01m-.01 4h.01" />
+                        </svg>
+                        Recent Issues & Reports
+                    </h3>
+                    <a href="{% url 'projects:reports:report_list' project_uuid=project.uuid %}" class="text-xs text-[#226ce0] hover:underline font-semibold">View All</a>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs">
+                        <thead class="bg-gray-50 border-b border-gray-100">
+                            <tr>
+                                <th class="px-6 py-3 font-semibold text-gray-500 uppercase tracking-wider">Issue</th>
+                                <th class="px-6 py-3 font-semibold text-gray-500 uppercase tracking-wider">Reporter</th>
+                                <th class="px-6 py-3 font-semibold text-gray-500 uppercase tracking-wider">Severity</th>
+                                <th class="px-6 py-3 font-semibold text-gray-500 uppercase tracking-wider">Status</th>
+                                <th class="px-6 py-3 font-semibold text-gray-500 uppercase tracking-wider">Created</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                            {% for report in recent_reports %}
+                            <tr class="hover:bg-gray-50/50 transition-colors">
+                                <td class="px-6 py-4 font-semibold text-gray-900">
+                                    <a href="{% url 'projects:reports:report_detail' project_uuid=project.uuid report_uuid=report.uuid %}" class="hover:text-[#226ce0] hover:underline block">
+                                        {{ report.title }}
+                                    </a>
+                                </td>
+                                <td class="px-6 py-4 text-gray-600">{{ report.reported_by.username }}</td>
+                                <td class="px-6 py-4">
+                                    {% if report.severity == 'critical' %}
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-red-50 text-red-600 border border-red-100">Critical</span>
+                                    {% elif report.severity == 'high' %}
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-orange-50 text-orange-600 border border-orange-100">High</span>
+                                    {% elif report.severity == 'medium' %}
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-yellow-50 text-yellow-800 border border-yellow-100">Medium</span>
+                                    {% else %}
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-blue-50 text-blue-600 border border-blue-100">Low</span>
+                                    {% endif %}
+                                </td>
+                                <td class="px-6 py-4">
+                                    {% if report.status == 'open' %}
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-[#226ce0]/10 text-[#226ce0]">Open</span>
+                                    {% elif report.status == 'in_progress' %}
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-yellow-50 text-yellow-800">In Progress</span>
+                                    {% elif report.status == 'resolved' %}
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-600">Resolved</span>
+                                    {% else %}
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-gray-50 text-gray-500">Closed</span>
+                                    {% endif %}
+                                </td>
+                                <td class="px-6 py-4 text-gray-400 whitespace-nowrap">{{ report.created_at|timesince }} ago</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" class="px-6 py-12 text-center text-gray-400 italic">No reports submitted to this project yet.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
-            <!-- Project History Section (Only for project members) -->
+            <!-- Unified Recent Activity Timeline -->
             {% if is_member and history %}
-            <div class="bg-white rounded-2xl border border-[#d0bcd5]/30 shadow-sm overflow-hidden">
-                <div class="px-6 py-4 border-b border-[#d0bcd5]/30 bg-[#f8f6fa]/50 flex items-center justify-between">
-                    <h3 class="text-sm font-bold text-[#1b1725] uppercase tracking-wider flex items-center gap-2">
-                        <svg class="w-5 h-5 text-[#226ce0]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-100 bg-[#f8f6fa]/30">
+                    <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wider flex items-center gap-2">
+                        <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
-                        Project History
+                        Project Activity Feed
                     </h3>
-                    <button class="btn btn-sm btn-ghost text-[#534b62] hover:text-[#226ce0] transition-colors"
-                        onclick="toggleHistory(this)">
-                        <svg class="w-4 h-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                        </svg>
-                    </button>
                 </div>
 
-                <div id="history-content" class="divide-y divide-[#d0bcd5]/30 max-h-96 overflow-y-auto" style="display: none;">
+                <div class="divide-y divide-gray-50 max-h-96 overflow-y-auto">
                     {% for entry in history %}
                     {% with log=entry.log component_changes=entry.component_changes %}
-                    <div class="p-4 hover:bg-[#f8f6fa] transition-colors flex gap-4 items-start">
-                        <div class="mt-1">
-                            <div
-                                class="w-8 h-8 rounded-full bg-[#d0bcd5]/30 flex items-center justify-center text-xs font-bold text-[#534b62]">
+                    <div class="p-4 hover:bg-gray-50/40 transition-colors flex gap-4.5 items-start text-xs">
+                        <div class="shrink-0 mt-0.5">
+                            <div class="w-8 h-8 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center font-bold text-gray-600">
                                 {{ log.actor.username|slice:":1"|upper }}
                             </div>
                         </div>
                         <div class="flex-1 space-y-1">
-                            <div class="flex items-center justify-between">
-                                <p class="text-sm font-semibold text-[#1b1725]">
-                                    {{ log.actor.username }}
-                                    <span class="font-normal text-[#534b62]">
-                                        {% if log.action == 'create' %}
-                                        created this project
-                                        {% elif log.action == 'update' %}
-                                        updated
-                                        {% if log.field_name %}
-                                        <span class="font-medium text-[#226ce0]">{{ log.field_name|title }}</span>
+                            <div class="flex items-center justify-between gap-4">
+                                <p class="text-gray-900">
+                                    <span class="font-bold">{{ log.actor.username }}</span>
+                                    <span class="text-gray-500">
+                                        {% if log.entity_type == 'Project' %}
+                                            {% if log.action == 'create' %}created this project{% else %}updated the project metadata{% endif %}
+                                        {% elif log.entity_type == 'Report' %}
+                                            {% if log.action == 'create' %}reported a new issue{% else %}updated report field <span class="font-semibold text-gray-800">{{ log.field_name }}</span>{% endif %}
                                         {% else %}
-                                        the project
-                                        {% endif %}
+                                            {{ log.action }}d {{ log.entity_type }}
                                         {% endif %}
                                     </span>
                                 </p>
-                                <span class="text-xs text-[#a499b3]">{{ log.created_at|timesince }} ago</span>
+                                <span class="text-[10px] text-gray-400 shrink-0">{{ log.created_at|timesince }} ago</span>
                             </div>
-                            
-                            <!-- Component Changes Details (Expandable) -->
-                            {% if component_changes %}
-                            <button class="text-xs font-medium text-[#226ce0] hover:text-[#1b56b3] transition-colors mt-2 flex items-center gap-1"
-                                onclick="toggleComponentChanges(this)">
-                                <svg class="w-4 h-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                                </svg>
-                                View component changes ({{ component_changes|length }})
-                            </button>
-                            
-                            <div class="component-changes hidden mt-3 space-y-2 ml-2 pl-3 border-l-2 border-[#226ce0]/30">
-                                {% for change in component_changes %}
-                                <div class="text-xs bg-[#f8f6fa] p-3 rounded-lg border border-[#d0bcd5]/30 space-y-1">
-                                    <div class="flex items-center justify-between">
-                                        <div class="font-semibold text-[#1b1725]">
-                                            <span>{{ change.name }}</span>
-                                            <span class="text-[#a499b3] font-mono text-xs">(ID: {{ change.id }})</span>
-                                        </div>
-                                        <span class="inline-flex items-center gap-1">
-                                            {% for action in change.actions %}
-                                                {% if action == 'create' %}
-                                                <span class="px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-700">Added</span>
-                                                {% elif action == 'update' %}
-                                                <span class="px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-700">Modified</span>
-                                                {% elif action == 'delete' %}
-                                                <span class="px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-700">Deleted</span>
-                                                {% endif %}
-                                            {% endfor %}
-                                        </span>
-                                    </div>
-                                    
-                                    <!-- Component log details -->
-                                    {% for comp_log in change.logs %}
-                                    <div class="text-xs text-[#534b62] space-y-1">
-                                        {% if comp_log.action == 'create' %}
-                                        <div class="text-green-700">
-                                            <span class="font-medium">Created:</span> {{ comp_log.new_value }}
-                                        </div>
-                                        {% elif comp_log.action == 'delete' %}
-                                        <div class="text-red-700">
-                                            <span class="font-medium">Deleted:</span> {{ comp_log.old_value }}
-                                        </div>
-                                        {% elif comp_log.action == 'update' %}
-                                        <div class="text-blue-700 bg-blue-50 p-2 rounded border border-blue-200">
-                                            <div class="font-medium mb-1">{{ comp_log.field_name|title }}:</div>
-                                            <div class="flex items-center gap-2 text-xs">
-                                                <span class="line-through opacity-70 bg-red-100 px-2 py-1 rounded">{{ comp_log.old_value }}</span>
-                                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
-                                                </svg>
-                                                <span class="bg-green-100 px-2 py-1 rounded text-[#226ce0] font-semibold">{{ comp_log.new_value }}</span>
-                                            </div>
-                                        </div>
-                                        {% endif %}
-                                    </div>
-                                    {% endfor %}
-                                </div>
-                                {% endfor %}
-                            </div>
-                            {% elif log.field_name == 'components' %}
-                            <div class="text-xs text-[#a499b3] italic mt-2">No component changes recorded</div>
-                            {% endif %}
-                            
+
                             {% if log.old_value or log.new_value %}
-                            {% if log.field_name != 'components' %}
-                            <div
-                                class="text-xs bg-[#f8f6fa] p-2 rounded-lg border border-[#d0bcd5]/30 mt-2 font-mono text-[#534b62]">
+                            <div class="bg-gray-50 p-2.5 rounded-lg border border-gray-100 font-mono text-gray-600 mt-1.5 flex items-center gap-1.5 flex-wrap">
                                 {% if log.old_value %}
-                                <span class="line-through opacity-70">{{ log.old_value }}</span>
-                                <svg class="w-3 h-3 inline mx-1 text-[#a499b3]" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                                <span class="line-through text-gray-400">{{ log.old_value }}</span>
+                                <svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
                                 </svg>
                                 {% endif %}
                                 <span class="text-[#226ce0] font-semibold">{{ log.new_value }}</span>
                             </div>
-                            {% endif %}
                             {% endif %}
                         </div>
                     </div>
@@ -301,117 +292,103 @@
                 </div>
             </div>
             {% endif %}
+
         </div>
 
-        <!-- Sidebar -->
-        <div class="space-y-6">
-            <!-- Project Details Card -->
-            <div class="bg-white rounded-2xl border border-[#d0bcd5]/30 shadow-sm overflow-hidden">
-                <div class="px-6 py-4 border-b border-[#d0bcd5]/30 bg-[#f8f6fa]/50">
-                    <h4 class="text-sm font-bold text-[#1b1725] uppercase tracking-wider">Details</h4>
-                </div>
+        <!-- Right 1/3: Active Collaborators, Repository details, Components -->
+        <div class="lg:col-span-4 space-y-6">
 
-                <div class="p-6 space-y-5">
+            <!-- Active Collaborators -->
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-100 bg-[#f8f6fa]/30">
+                    <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wider">Active Collaborators</h3>
+                </div>
+                <div class="p-5 space-y-4">
                     <!-- Owner -->
-                    <div>
-                        <h5 class="text-xs font-bold text-[#a499b3] uppercase tracking-wider mb-2">Owner</h5>
+                    <div class="flex items-center justify-between">
                         <div class="flex items-center gap-3">
-                            <div
-                                class="w-9 h-9 rounded-full bg-gradient-to-br from-[#226ce0] to-[#1b56b3] flex items-center justify-center text-sm font-bold text-white shadow-md">
+                            <div class="w-8 h-8 rounded-full bg-gradient-to-br from-[#226ce0] to-[#1b56b3] text-white flex items-center justify-center font-bold text-xs">
                                 {{ project.owner.username|slice:":1"|upper }}
                             </div>
                             <div>
-                                <p class="font-semibold text-[#1b1725]">{{ project.owner.username }}</p>
-                                <p class="text-xs text-[#a499b3]">Project Owner</p>
+                                <p class="text-xs font-semibold text-gray-800">{{ project.owner.username }}</p>
+                                <p class="text-[10px] text-gray-400">Project Owner</p>
+                            </div>
+                        </div>
+                        <span class="px-2 py-0.5 text-[9px] bg-blue-50 text-blue-600 rounded border border-blue-100 font-semibold uppercase">Owner</span>
+                    </div>
+
+                    <!-- Project Head -->
+                    {% if project.project_head %}
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full bg-purple-500 text-white flex items-center justify-center font-bold text-xs">
+                                {{ project.project_head.username|slice:":1"|upper }}
+                            </div>
+                            <div>
+                                <p class="text-xs font-semibold text-gray-800">{{ project.project_head.username }}</p>
+                                <p class="text-[10px] text-gray-400">Project Head</p>
+                            </div>
+                        </div>
+                        <span class="px-2 py-0.5 text-[9px] bg-purple-50 text-purple-600 rounded border border-purple-100 font-semibold uppercase">Head</span>
+                    </div>
+                    {% endif %}
+
+                    <!-- Collaborators list -->
+                    {% for col in project.collaborators.all %}
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full bg-gray-100 border border-gray-200 text-gray-600 flex items-center justify-center font-bold text-xs">
+                                {{ col.username|slice:":1"|upper }}
+                            </div>
+                            <div>
+                                <p class="text-xs font-semibold text-gray-800">{{ col.username }}</p>
+                                <p class="text-[10px] text-gray-400">Collaborator</p>
                             </div>
                         </div>
                     </div>
-
-                    <!-- Visibility -->
-                    <div>
-                        <h5 class="text-xs font-bold text-[#a499b3] uppercase tracking-wider mb-2">Visibility</h5>
-                        {% if project.public %}
-                        <span
-                            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium bg-[#226ce0]/10 text-[#226ce0]">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
-                                </path>
-                            </svg>
-                            Public
-                        </span>
-                        {% else %}
-                        <span
-                            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium bg-gray-100 text-gray-600">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z">
-                                </path>
-                            </svg>
-                            Private
-                        </span>
-                        {% endif %}
-                    </div>
-
-                    <!-- Created -->
-                    <div>
-                        <h5 class="text-xs font-bold text-[#a499b3] uppercase tracking-wider mb-2">Created</h5>
-                        <p class="text-sm font-medium text-[#1b1725]">{{ project.created_at|date:"F j, Y" }}</p>
-                    </div>
-
-                    <!-- Last Updated -->
-                    <div>
-                        <h5 class="text-xs font-bold text-[#a499b3] uppercase tracking-wider mb-2">Last Updated</h5>
-                        <p class="text-sm font-medium text-[#1b1725]">{{ project.updated_at|timesince }} ago</p>
-                    </div>
+                    {% empty %}
+                    {% if not project.project_head %}
+                    <p class="text-xs text-gray-400 italic">No additional collaborators assigned.</p>
+                    {% endif %}
+                    {% endfor %}
                 </div>
             </div>
 
-            <!-- Quick Stats -->
-            <div class="bg-gradient-to-br from-[#226ce0] to-[#1b56b3] rounded-2xl p-6 text-white shadow-lg">
-                <h4 class="text-sm font-bold uppercase tracking-wider mb-4 text-white/80">Quick Stats</h4>
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="bg-white/10 rounded-xl p-4 text-center backdrop-blur-sm">
-                        <p class="text-2xl font-bold">{{ project.components.count|default:"0" }}</p>
-                        <p class="text-xs text-white/70 mt-1">Components</p>
-                    </div>
-                    <div class="bg-white/10 rounded-xl p-4 text-center backdrop-blur-sm">
-                        <p class="text-2xl font-bold">{{ project.reports.count|default:"0" }}</p>
-                        <p class="text-xs text-white/70 mt-1">Reports</p>
-                    </div>
+            <!-- Repository Card -->
+            {% if project.link %}
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-3">
+                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Repository Link</span>
+                <div class="flex items-center gap-3">
+                    <svg class="w-5 h-5 text-gray-400 shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.464-1.11-1.464-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.831.092-.646.35-1.086.636-1.336-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.579.688.481C19.137 20.162 22 16.418 22 12c0-5.523-4.477-10-10-10z" />
+                    </svg>
+                    <a href="{{ project.link }}" target="_blank" class="text-xs text-[#226ce0] hover:underline truncate font-medium">
+                        {{ project.link }}
+                    </a>
                 </div>
             </div>
+            {% endif %}
+
+            <!-- Components list -->
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-4">
+                <div class="flex items-center justify-between">
+                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Components</span>
+                    <span class="px-2 py-0.5 text-[10px] font-semibold bg-gray-50 border border-gray-100 rounded text-gray-500">{{ project.components.count }}</span>
+                </div>
+                <div class="flex flex-wrap gap-1.5">
+                    {% for comp in project.components.all %}
+                    <span class="px-2.5 py-1 text-xs bg-gray-50 text-gray-600 rounded-lg border border-gray-100 font-medium">
+                        {{ comp.name }}
+                    </span>
+                    {% empty %}
+                    <p class="text-xs text-gray-400 italic">No component tags defined yet.</p>
+                    {% endfor %}
+                </div>
+            </div>
+
         </div>
+
     </div>
 </div>
-{% endblock %}
-
-{% block scripts %}
-<script>
-function toggleHistory(button) {
-    const content = document.getElementById('history-content');
-    const icon = button.querySelector('svg');
-    
-    if (content.style.display === 'none') {
-        content.style.display = 'block';
-        icon.classList.add('rotate-180');
-    } else {
-        content.style.display = 'none';
-        icon.classList.remove('rotate-180');
-    }
-}
-
-function toggleComponentChanges(button) {
-    const changesDiv = button.closest('div').querySelector('.component-changes');
-    const icon = button.querySelector('svg');
-    
-    if (changesDiv.classList.contains('hidden')) {
-        changesDiv.classList.remove('hidden');
-        icon.classList.add('rotate-180');
-    } else {
-        changesDiv.classList.add('hidden');
-        icon.classList.remove('rotate-180');
-    }
-}
-</script>
 {% endblock %}

@@ -2,6 +2,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
 from django.contrib import messages
 from django.http import JsonResponse
 from .forms import UserProfileForm
@@ -305,3 +306,34 @@ def render_verification_required(request, action_message):
     return render(request, 'accounts/email_verification_required.html', {
         'action_message': action_message
     })
+
+
+@login_required
+@require_POST
+def delete_account(request):
+    """
+    Soft-deletes the user's account after password confirmation.
+    Sets is_active=False and schedules permanent deletion in 30 days.
+    """
+    from django.contrib.auth import logout
+    from django.utils import timezone
+    from datetime import timedelta
+
+    password = request.POST.get('password', '')
+    user = request.user
+
+    if not user.check_password(password):
+        messages.error(request, 'Incorrect password. Account deletion cancelled.')
+        return redirect('accounts:edit_profile')
+
+    # Soft delete: deactivate account and schedule hard-delete in 30 days
+    user.is_active = False
+    user.scheduled_deletion_date = timezone.now() + timedelta(days=30)
+    user.save(update_fields=['is_active', 'scheduled_deletion_date'])
+
+    logout(request)
+    messages.success(request,
+        'Your account has been deactivated. It will be permanently deleted after 30 days. '
+        'Log in before then to reactivate it.'
+    )
+    return redirect('home:landing_page')

@@ -31,7 +31,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'reportary.onrender.com']
 
 CSRF_TRUSTED_ORIGINS = [
     'http://127.0.0.1:8000',
@@ -74,6 +74,7 @@ INSTALLED_APPS = [
     "audit",
     "organisations",
     "notifications",
+    "core",
 ]
 
 TAILWIND_APP_NAME = "theme"
@@ -103,6 +104,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'notifications.context_processors.notification_context',
+                'core.context_processors.announcements',
             ],
         },
     },
@@ -117,42 +119,42 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 tmpPostgres = urlparse(os.getenv("DATABASE_URL"))
 
-DATABASES = {
-
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-
-    }
-}
-
-
-###### PRODUCTION DATABASE SETUP ##########
 # DATABASES = {
+
 #     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': tmpPostgres.path.replace('/', ''),
-#         'USER': tmpPostgres.username,
-#         'PASSWORD': tmpPostgres.password,
-#         'HOST': tmpPostgres.hostname,
-#         'PORT': 5432,
-#         'CONN_MAX_AGE': 600,  # Persistent connections for 10 minutes
-#         # "OPTIONS": dict(parse_qsl(tmpPostgres.query)),
-#         "OPTIONS": {
-#             "sslmode": "require",
-#             "keepalives": 1,
-#             "keepalives_idle": 30,
-#             "keepalives_interval": 10,
-#             "keepalives_count": 5,
-#         },
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+
 #     }
 # }
 
-# CLOUDINARY_STORAGE = {
-#     'CLOUD_NAME': os.getenv('CLOUD_NAME'),
-#     'API_KEY': os.getenv('CLOUDINARY_API_KEY'),
-#     'API_SECRET': os.getenv('CLOUDINARY_API_SECRET'),
-# }
+
+###### PRODUCTION DATABASE SETUP ##########
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': tmpPostgres.path.replace('/', ''),
+        'USER': tmpPostgres.username,
+        'PASSWORD': tmpPostgres.password,
+        'HOST': tmpPostgres.hostname,
+        'PORT': 5432,
+        'CONN_MAX_AGE': 600,  # Persistent connections for 10 minutes
+        # "OPTIONS": dict(parse_qsl(tmpPostgres.query)),
+        "OPTIONS": {
+            "sslmode": "require",
+            "keepalives": 1,
+            "keepalives_idle": 30,
+            "keepalives_interval": 10,
+            "keepalives_count": 5,
+        },
+    }
+}
+
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.getenv('CLOUD_NAME'),
+    'API_KEY': os.getenv('CLOUDINARY_API_KEY'),
+    'API_SECRET': os.getenv('CLOUDINARY_API_SECRET'),
+}
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
@@ -244,4 +246,7 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.getenv('MAIL_ID', '')
 EMAIL_HOST_PASSWORD = os.getenv('MAIL_APP_PASSWORD', '')
 DEFAULT_FROM_EMAIL = os.getenv('MAIL_ID', 'noreply@reportary.com')
+
+# Contact form submissions recipient
+CONTACT_EMAIL = 'anujkumar123.mp@gmail.com'
 

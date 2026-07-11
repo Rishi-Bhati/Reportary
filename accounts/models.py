@@ -70,6 +70,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
 
     date_joined = models.DateTimeField(auto_now_add=True)
+    scheduled_deletion_date = models.DateTimeField(null=True, blank=True,
+        help_text="If set, account is soft-deleted and will be permanently purged after this date.")
 
     # MANDATORY FIELDS FOR DJANGO
     USERNAME_FIELD = "email"

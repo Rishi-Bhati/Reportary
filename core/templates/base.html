@@ -10,10 +10,18 @@
     <link rel="stylesheet" href="{% static 'css/dist/styles.css' %}">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
+    <meta name="csrf-token" content="{{ csrf_token }}">
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
     <script>
         document.addEventListener('htmx:load', function () {
             document.documentElement.style.colorScheme = 'light';
+        });
+        // Globally configure HTMX to send CSRF token on all mutating requests
+        document.addEventListener('htmx:configRequest', function(evt) {
+            const method = evt.detail.verb.toUpperCase();
+            if (method === 'POST' || method === 'PUT' || method === 'PATCH' || method === 'DELETE') {
+                evt.detail.headers['X-CSRFToken'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            }
         });
     </script>
 </head>
@@ -24,6 +32,27 @@
         {% include "partials/sidebar.html" %}
 
         <main class="flex-1 ml-64 p-8 w-full min-h-[calc(100vh-4rem)]">
+
+            {# Site Announcements Banner (superuser-created) #}
+            {% for announcement in site_announcements %}
+            {% with level=announcement.level %}
+            <div id="announcement-{{ announcement.pk }}" class="mb-4 flex items-start justify-between gap-4 p-4 rounded-xl border text-sm
+                {% if level == 'warning' %}bg-yellow-50 border-yellow-200 text-yellow-900
+                {% elif level == 'critical' %}bg-red-50 border-red-200 text-red-900
+                {% elif level == 'success' %}bg-emerald-50 border-emerald-200 text-emerald-900
+                {% else %}bg-blue-50 border-blue-200 text-blue-900{% endif %}">
+                <div class="flex items-start gap-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 mt-0.5 shrink-0"><path stroke-linecap="round" stroke-linejoin="round" d="M10.34 15.84c-.688-.06-1.386-.09-2.09-.09H7.5a4.5 4.5 0 1 1 0-9h.75c.704 0 1.402-.03 2.09-.09m0 9.18c.253.962.584 1.892.985 2.783.247.55.06 1.21-.463 1.511l-.657.38c-.551.318-1.26.117-1.527-.461a20.845 20.845 0 0 1-1.44-4.282m3.102.069a18.03 18.03 0 0 1-.59-4.59c0-1.586.205-3.124.59-4.59m0 9.18a23.848 23.848 0 0 1 8.835 2.535M10.34 6.66a23.847 23.847 0 0 1 8.835-2.535m0 0A23.74 23.74 0 0 1 18.795 3m.38 1.125a23.91 23.91 0 0 1 1.014 5.395m-1.014 8.855c-.118.38-.245.754-.38 1.125m.38-1.125a23.91 23.91 0 0 0 1.014-5.395m-14.456 0a23.85 23.85 0 0 0-.38 4.208c0 1.064.078 2.107.22 3.127M6.38 19.5a23.697 23.697 0 0 0 .38 1.125" /></svg>
+                    <div>
+                        <span class="font-semibold">{{ announcement.title }}</span>
+                        {% if announcement.body %}<span class="ml-1.5 opacity-80">{{ announcement.body }}</span>{% endif %}
+                    </div>
+                </div>
+                <button onclick="document.getElementById('announcement-{{ announcement.pk }}').remove()" class="shrink-0 opacity-50 hover:opacity-100 font-bold px-1 focus:outline-none">&times;</button>
+            </div>
+            {% endwith %}
+            {% endfor %}
+
             {% if request.user.is_authenticated and not request.user.is_email_verified %}
             <div id="verification-banner" class="mb-6 flex flex-col sm:flex-row justify-between items-center gap-4 bg-yellow-50 border border-yellow-100 text-yellow-800 p-4 rounded-xl shadow-sm text-sm">
                 <div class="flex items-center gap-2">
@@ -43,16 +72,11 @@
             </div>
             {% endif %}
 
+            {# Django messages → rendered as toasts via JS below #}
             {% if messages %}
-            <div class="mb-6 space-y-2 max-w-6xl">
+            <div id="django-messages" class="hidden">
                 {% for message in messages %}
-                <div class="p-4 rounded-xl text-sm border flex justify-between items-center
-                    {% if message.tags == 'error' %}bg-red-50 border-red-100 text-red-800
-                    {% elif message.tags == 'success' %}bg-green-50 border-green-100 text-green-800
-                    {% else %}bg-blue-50 border-blue-100 text-blue-800{% endif %}">
-                    <span>{{ message }}</span>
-                    <button onclick="this.parentElement.remove()" class="font-bold opacity-60 hover:opacity-100 px-1 focus:outline-none">✕</button>
-                </div>
+                <span data-type="{{ message.tags }}" data-text="{{ message }}"></span>
                 {% endfor %}
             </div>
             {% endif %}
@@ -91,8 +115,85 @@
             </div>
         </main>
     </div>
+    <!-- HTMX Global Loading Bar -->
+    <div id="htmx-loading-bar" class="fixed top-0 left-0 right-0 z-[9999] h-0.5 bg-gradient-to-r from-[#226ce0] to-[#1b56b3] opacity-0 transition-opacity duration-200 pointer-events-none"></div>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed top-5 right-5 z-[9998] flex flex-col gap-2.5 pointer-events-none" style="max-width: 360px;"></div>
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        // ─── Toast System ───────────────────────────────────────────────────────
+        const TOAST_CONFIG = {
+            success: { icon: '✓', bg: 'bg-emerald-50', border: 'border-emerald-200', text: 'text-emerald-800', bar: 'bg-emerald-500' },
+            error:   { icon: '✕', bg: 'bg-red-50',     border: 'border-red-200',     text: 'text-red-800',     bar: 'bg-red-500'     },
+            warning: { icon: '!', bg: 'bg-yellow-50',  border: 'border-yellow-200',  text: 'text-yellow-800',  bar: 'bg-yellow-500'  },
+            info:    { icon: 'i', bg: 'bg-blue-50',    border: 'border-blue-200',    text: 'text-blue-800',    bar: 'bg-blue-500'    },
+        };
+
+        function showToast(text, type = 'info', duration = 4000) {
+            const cfg = TOAST_CONFIG[type] || TOAST_CONFIG.info;
+            const toast = document.createElement('div');
+            toast.className = `pointer-events-auto flex items-start gap-3 px-4 py-3.5 rounded-xl shadow-lg border ${cfg.bg} ${cfg.border} ${cfg.text} text-xs font-medium translate-x-16 opacity-0 transition-all duration-300 relative overflow-hidden`;
+            toast.innerHTML = `
+                <span class="shrink-0 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold text-white ${cfg.bar}">${cfg.icon}</span>
+                <span class="flex-1 leading-relaxed">${text}</span>
+                <button onclick="dismissToast(this.closest('[data-toast]'))" class="shrink-0 opacity-50 hover:opacity-100 transition-opacity text-sm leading-none">&times;</button>
+                <div class="absolute bottom-0 left-0 h-0.5 ${cfg.bar} opacity-40 transition-all" style="width:100%" data-progress></div>
+            `;
+            toast.setAttribute('data-toast', '');
+            document.getElementById('toast-container').appendChild(toast);
+
+            requestAnimationFrame(() => {
+                toast.classList.remove('translate-x-16', 'opacity-0');
+                toast.classList.add('translate-x-0', 'opacity-100');
+            });
+
+            const progress = toast.querySelector('[data-progress]');
+            const start = performance.now();
+            const tick = () => {
+                const elapsed = performance.now() - start;
+                const pct = Math.max(0, 100 - (elapsed / duration) * 100);
+                if (progress) progress.style.width = pct + '%';
+                if (elapsed < duration) requestAnimationFrame(tick);
+                else dismissToast(toast);
+            };
+            requestAnimationFrame(tick);
+        }
+
+        function dismissToast(el) {
+            if (!el) return;
+            el.classList.add('translate-x-16', 'opacity-0');
+            setTimeout(() => el.remove(), 300);
+        }
+
+        // Convert Django messages to toasts on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            const container = document.getElementById('django-messages');
+            if (container) {
+                container.querySelectorAll('span[data-text]').forEach(el => {
+                    const type = el.dataset.type || 'info';
+                    const normalizedType = type.includes('error') ? 'error' : type.includes('success') ? 'success' : type.includes('warning') ? 'warning' : 'info';
+                    showToast(el.dataset.text, normalizedType);
+                });
+            }
+        });
+
+        // ─── HTMX Loading Bar ───────────────────────────────────────────────────
+        const loadingBar = document.getElementById('htmx-loading-bar');
+        document.addEventListener('htmx:beforeRequest', () => {
+            loadingBar.style.opacity = '1';
+            loadingBar.style.width = '60%';
+        });
+        document.addEventListener('htmx:afterRequest', () => {
+            loadingBar.style.width = '100%';
+            setTimeout(() => { loadingBar.style.opacity = '0'; loadingBar.style.width = '0%'; }, 300);
+        });
+
+        // Expose showToast globally for use in templates
+        window.showToast = showToast;
+    </script>
     {% block scripts %}{% endblock %}
 </body>
 

@@ -68,7 +68,7 @@
                 <div
                     class="inline-flex items-center rounded-full px-4 py-1.5 text-xs font-bold text-[#226ce0] bg-[#226ce0]/10 mb-8 border border-[#226ce0]/20 animate-fade-in-up">
                     <span class="flex h-2 w-2 rounded-full bg-[#226ce0] mr-2 animate-pulse"></span>
-                    REPORTARY PHASE 2.0 : Public Beta
+                    REPORTARY v1.0.0-beta.1
                 </div>
 
                 <!-- Headline -->
@@ -158,20 +158,45 @@
 
     </main>
 
-    <!-- Simple Footer -->
+    <!-- Footer -->
     <footer class="bg-[#f8f6fa] border-t border-[#d0bcd5] py-12 mt-auto">
-        <div
-            class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
-            <p class="text-sm text-[#534b62]">© 2024 Reportary Inc. All rights reserved.</p>
-            <div class="flex space-x-6">
-                <a href="https://github.com/Rishi-Bhati/Reportary" target="_blank"
-                    class="text-[#a499b3] hover:text-[#226ce0] transition-colors duration-200">
-                    <span class="sr-only">GitHub</span>
-                    <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                        <path fill-rule="evenodd"
-                            d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
-                            clip-rule="evenodd" />
-                    </svg>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-10">
+                <div>
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="w-7 h-7 rounded-lg bg-[#226ce0] text-white flex items-center justify-center font-bold text-sm">R</div>
+                        <span class="font-bold text-gray-900">Reportary</span>
+                    </div>
+                    <p class="text-xs text-[#534b62] leading-relaxed">Modern issue tracking for engineering teams. Built in the open.</p>
+                </div>
+                <div>
+                    <h4 class="text-xs font-semibold text-gray-900 uppercase tracking-widest mb-4">Product</h4>
+                    <ul class="space-y-2.5 text-xs text-[#534b62]">
+                        <li><a href="#auth-section" class="hover:text-[#226ce0] transition-colors">Get Started</a></li>
+                        <li><a href="{% url 'home:changelog' %}" class="hover:text-[#226ce0] transition-colors">What's New</a></li>
+                        <li><a href="https://github.com/Rishi-Bhati/Reportary" target="_blank" class="hover:text-[#226ce0] transition-colors">GitHub</a></li>
+                        <li><a href="/projects/019f2e92-7f0d-78e9-92b3-9431a1014882/reports/new/" class="hover:text-[#226ce0] transition-colors">Report an issue?</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-xs font-semibold text-gray-900 uppercase tracking-widest mb-4">Support</h4>
+                    <ul class="space-y-2.5 text-xs text-[#534b62]">
+                        <li><a href="{% url 'home:faq' %}" class="hover:text-[#226ce0] transition-colors">FAQ</a></li>
+                        <li><a href="{% url 'home:contact' %}" class="hover:text-[#226ce0] transition-colors">Contact Us</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-xs font-semibold text-gray-900 uppercase tracking-widest mb-4">Legal</h4>
+                    <ul class="space-y-2.5 text-xs text-[#534b62]">
+                        <li><a href="{% url 'home:privacy' %}" class="hover:text-[#226ce0] transition-colors">Privacy Policy</a></li>
+                        <li><a href="{% url 'home:terms' %}" class="hover:text-[#226ce0] transition-colors">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-[#d0bcd5] pt-6 flex flex-col md:flex-row justify-between items-center gap-4">
+                <p class="text-xs text-[#534b62]">© 2025 Reportary. All rights reserved.</p>
+                <a href="https://github.com/Rishi-Bhati/Reportary" target="_blank" class="text-[#a499b3] hover:text-[#226ce0] transition-colors">
+                    <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd" /></svg>
                 </a>
             </div>
         </div>

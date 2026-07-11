@@ -300,34 +300,43 @@ def create_report(request, project_uuid=None):
     return render(request, 'create_report.html', {'form': form, 'project': project})
 
 
+@login_required
 def get_components(request):
     project_id = request.GET.get('project_id')
     if not project_id:
+        return JsonResponse([], safe=False)
+    try:
+        project = Project.objects.get(id=project_id)
+    except Project.DoesNotExist:
+        return JsonResponse([], safe=False)
+    if not rules.can_access_project(request.user, project):
         return JsonResponse([], safe=False)
     components = list(Component.objects.filter(project_id=project_id).values('id', 'name'))
     return JsonResponse(components, safe=False)
 
 
+@login_required
 def get_project_config(request):
     project_id = request.GET.get('project_id')
     if not project_id:
         return JsonResponse({}, safe=False)
     try:
         project = Project.objects.get(id=project_id)
-        return JsonResponse({
-            'max_attachments': project.max_attachments,
-            'allowed_attachment_types': project.allowed_attachment_types
-        })
     except Project.DoesNotExist:
         return JsonResponse({}, safe=False)
+    if not rules.can_access_project(request.user, project):
+        return JsonResponse({}, safe=False)
+    return JsonResponse({
+        'max_attachments': project.max_attachments,
+        'allowed_attachment_types': project.allowed_attachment_types
+    })
 
 
+@login_required
 def my_report_list(request):
     """
     Displays a list of reports created by the logged-in user.
     """
-    if not request.user.is_authenticated:
-        return redirect('login')
 
     reports = Report.objects.filter(reported_by=request.user).select_related('project', 'reported_by', 'component').distinct()
     reports = apply_report_filters_and_sorting(reports, request)
@@ -359,12 +368,11 @@ def my_report_list(request):
     return render(request, 'report_list.html', context)
 
 
+@login_required
 def assigned_to_me(request):
     """
     Displays a list of reports assigned to the logged-in user.
     """
-    if not request.user.is_authenticated:
-        return redirect('login')
 
     reports = Report.objects.filter(assigned_to=request.user).select_related('project', 'reported_by', 'component').distinct()
     reports = apply_report_filters_and_sorting(reports, request)
