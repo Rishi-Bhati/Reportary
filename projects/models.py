@@ -30,6 +30,10 @@ class Project(models.Model):
     visibility = models.CharField(max_length=20, choices=VISIBILITY_CHOICES, default='public')
     public = models.BooleanField(default=True)
     collaborators = models.ManyToManyField('accounts.User', related_name='collaborations')
+    
+    max_attachments = models.PositiveIntegerField(default=5)
+    allowed_attachment_types = models.CharField(max_length=255, default=".jpg,.jpeg,.png,.pdf,.doc,.docx,.xls,.xlsx,.zip,.txt")
+    
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -40,3 +44,13 @@ class Project(models.Model):
     def components(self):
         """Get all components related to this project"""
         return self.project_components.all()
+
+
+class ProjectTask(models.Model):
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='tasks')
+    title = models.CharField(max_length=255)
+    is_completed = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title

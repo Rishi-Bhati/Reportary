@@ -1,4 +1,5 @@
 from django.urls import path
+from django.contrib.auth import views as auth_views
 from . import views
 
 app_name = 'accounts'
@@ -18,4 +19,30 @@ urlpatterns = [
 
     # Edit profile
     path('profile/edit/', views.edit_profile, name='edit_profile'),
+
+    # Account deletion (soft-delete with 30-day scheduled hard-delete)
+    path('delete/', views.delete_account, name='delete_account'),
+
+    # Email verification
+    path('verify-email/<str:uidb64>/<str:token>/', views.verify_email, name='verify_email'),
+    path('confirm-email-change/<str:uidb64>/<str:token>/<str:new_email_b64>/', views.confirm_email_change, name='confirm_email_change'),
+    path('resend-verification/', views.resend_verification, name='resend_verification'),
+
+    # Password Reset
+    path('password-reset/', auth_views.PasswordResetView.as_view(
+        template_name='accounts/password_reset_form.html',
+        email_template_name='notifications/emails/password_reset_email.txt',
+        html_email_template_name='notifications/emails/password_reset_email.html',
+        success_url='/accounts/password-reset/done/'
+    ), name='password_reset'),
+    path('password-reset/done/', auth_views.PasswordResetDoneView.as_view(
+        template_name='accounts/password_reset_done.html'
+    ), name='password_reset_done'),
+    path('password-reset/confirm/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(
+        template_name='accounts/password_reset_confirm.html',
+        success_url='/accounts/password-reset/complete/'
+    ), name='password_reset_confirm'),
+    path('password-reset/complete/', auth_views.PasswordResetCompleteView.as_view(
+        template_name='accounts/password_reset_complete.html'
+    ), name='password_reset_complete'),
 ]

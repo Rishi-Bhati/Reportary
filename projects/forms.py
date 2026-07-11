@@ -13,9 +13,25 @@ class ProjectForm(forms.ModelForm):
         label="Visibility Scope"
     )
 
+    max_attachments = forms.IntegerField(
+        min_value=1,
+        max_value=20,
+        initial=5,
+        required=False,
+        widget=forms.NumberInput(attrs={'class': 'shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'}),
+        label="Max Attachments per Report"
+    )
+    allowed_attachment_types = forms.CharField(
+        initial=".jpg,.jpeg,.png,.pdf,.doc,.docx,.xls,.xlsx,.zip,.txt",
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'}),
+        help_text="Comma-separated file extensions (e.g. .jpg,.png,.pdf)",
+        label="Allowed Attachment Extensions"
+    )
+
     class Meta:
         model = Project
-        fields = ['title', 'link', 'description', 'org', 'project_head', 'visibility']
+        fields = ['title', 'link', 'description', 'org', 'project_head', 'visibility', 'max_attachments', 'allowed_attachment_types']
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)
@@ -86,6 +102,13 @@ class ProjectForm(forms.ModelForm):
             cleaned_data['project_head'] = None
             if visibility == 'org':
                 self.add_error('visibility', "Organization visibility is only available for organization-owned projects.")
+        
+        # Apply defaults if fields are empty/None
+        if not cleaned_data.get('max_attachments'):
+            cleaned_data['max_attachments'] = 5
+        if not cleaned_data.get('allowed_attachment_types'):
+            cleaned_data['allowed_attachment_types'] = ".jpg,.jpeg,.png,.pdf,.doc,.docx,.xls,.xlsx,.zip,.txt"
+            
         return cleaned_data
 
     def save(self, commit=True):
@@ -99,9 +122,41 @@ class ProjectForm(forms.ModelForm):
         elif self.user:
             instance.owner = self.user
 
+        # Handle project_head invite-based workflow
+        if self.instance and self.instance.pk:
+            try:
+                old_instance = Project.objects.get(pk=self.instance.pk)
+                old_head = old_instance.project_head
+            except Project.DoesNotExist:
+                old_head = None
+            new_head = instance.project_head
+            if new_head != old_head:
+                # Revert to old head so it's not changed directly until accepted
+                instance.project_head = old_head
+                if new_head:
+                    from notifications.services import create_invitation
+                    # We will trigger the invite after saving to ensure db consistency
+                    self.pending_project_head_invite = new_head
+        else:
+            new_head = instance.project_head
+            if new_head:
+                instance.project_head = None
+                self.pending_project_head_invite = new_head
+
         if commit:
             instance.save()
+            self._save_project_head_invite(instance)
         return instance
+
+    def _save_project_head_invite(self, instance):
+        if hasattr(self, 'pending_project_head_invite') and self.pending_project_head_invite:
+            from notifications.services import create_invitation
+            create_invitation(
+                invite_type='project_head',
+                invited_by=self.user,
+                invited_user=self.pending_project_head_invite,
+                project=instance
+            )
 
 class ComponentForm(forms.ModelForm):
     name = forms.CharField(widget=forms.TextInput(attrs={'class': 'input input-sm input-bordered w-full focus:border-[#226ce0]', 'placeholder': 'Name'}))

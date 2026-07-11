@@ -1,0 +1,14 @@
+<button hx-post="{% url 'reports:toggle_watch' report_uuid=report.uuid %}"
+        hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+        hx-swap="outerHTML"
+        class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border transition-colors shadow-sm focus:outline-none {% if is_watching %}bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100{% else %}bg-white text-gray-700 border-gray-200 hover:bg-gray-50{% endif %}">
+    <svg class="w-4 h-4 {% if is_watching %}text-blue-500 fill-current{% else %}text-gray-400{% endif %}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+    </svg>
+    {% if is_watching %}
+    Watching
+    {% else %}
+    Watch
+    {% endif %}
+</button>

@@ -15,17 +15,55 @@
     <!-- Right: Navigation & Actions -->
     <div class="flex-none flex items-center gap-2 md:gap-4">
         <!-- Global Search (Desktop) -->
-        <div class="relative hidden md:block">
-            <form action="{% url 'global_search' %}" method="get" class="relative">
-                <input type="text" name="q" value="{{ request.GET.q|default:'' }}" placeholder="Search..."
-                    class="input input-sm h-9 w-56 bg-[#f8f6fa] border-transparent focus:bg-white focus:border-[#226ce0] transition-all rounded-xl pl-9 text-sm placeholder:text-gray-400" />
+        <div class="relative hidden md:block" id="topbar-search-container">
+            <form action="{% url 'global_search' %}" method="get" class="relative" id="topbar-search-form">
+                <input type="text" name="q" id="topbar-search-input" autocomplete="off"
+                    value="{{ request.GET.q|default:'' }}" placeholder="Search..."
+                    hx-get="{% url 'global_search_glimpse' %}"
+                    hx-trigger="keyup changed delay:200ms, focus"
+                    hx-target="#search-glimpse-bubble"
+                    class="input input-sm h-9 w-64 bg-[#f8f6fa] border-transparent focus:bg-white focus:border-[#226ce0] transition-all rounded-xl pl-9 text-sm placeholder:text-gray-400" />
                 <svg class="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" fill="none"
                     stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                 </svg>
             </form>
+            
+            <!-- Popdown Glimpse Bubble Dropdown Menu -->
+            <div id="search-glimpse-bubble" class="absolute right-0 top-full mt-2 w-96 bg-white border border-[#d0bcd5]/30 rounded-2xl shadow-xl z-50 hidden overflow-y-auto max-h-96">
+                <!-- Content is dynamically swapped by HTMX -->
+            </div>
         </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const searchInput = document.getElementById('topbar-search-input');
+                const bubble = document.getElementById('search-glimpse-bubble');
+                const container = document.getElementById('topbar-search-container');
+
+                if (searchInput && bubble) {
+                    searchInput.addEventListener('focus', () => {
+                        bubble.classList.remove('hidden');
+                    });
+
+                    document.addEventListener('click', (e) => {
+                        if (!container.contains(e.target)) {
+                            bubble.classList.add('hidden');
+                        }
+                    });
+                }
+            });
+
+            function selectGlimpseQuery(query) {
+                const searchInput = document.getElementById('topbar-search-input');
+                const searchForm = document.getElementById('topbar-search-form');
+                if (searchInput && searchForm) {
+                    searchInput.value = query;
+                    searchForm.submit();
+                }
+            }
+        </script>
 
         <!-- Nav Links -->
         <nav class="hidden lg:flex items-center gap-1">
@@ -36,7 +74,7 @@
         </nav>
 
         <!-- Notifications -->
-         <a href="{% url 'home:changelog' %}">
+         <a href="{% url 'notifications:center' %}">
 
         <button 
             class="btn btn-ghost btn-circle btn-sm relative hover:bg-[#226ce0]/10 text-[#534b62] hover:text-[#226ce0] transition-colors">
@@ -45,7 +83,11 @@
                     d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9">
                 </path>
             </svg>
-            <span class="absolute top-1 right-1 w-2 h-2 bg-[#ef4444] rounded-full ring-2 ring-white"></span>
+            {% if unread_notification_count > 0 %}
+            <span class="absolute -top-1 -right-1 min-w-5 h-5 px-1 bg-[#ef4444] text-white text-[10px] font-bold rounded-full border-2 border-white flex items-center justify-center shadow-sm">
+                {{ unread_notification_count }}
+            </span>
+            {% endif %}
         </button>
         </a>
         <!-- Profile Dropdown -->

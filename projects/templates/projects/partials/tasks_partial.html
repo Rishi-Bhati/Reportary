@@ -1,0 +1,68 @@
+<div class="space-y-3.5" id="project-tasks-container">
+    <!-- Active Tasks -->
+    {% if active_tasks %}
+    <div class="space-y-2">
+        {% for task in active_tasks %}
+        <div class="flex items-center justify-between p-3.5 bg-gray-50/80 hover:bg-gray-100/50 border border-gray-100 rounded-xl transition-all">
+            <div class="flex items-center gap-3 min-w-0">
+                <input type="checkbox" 
+                       hx-post="{% url 'projects:toggle_project_task' project_uuid=project.uuid task_id=task.id %}"
+                       hx-target="#project-tasks-container"
+                       hx-swap="outerHTML"
+                       class="checkbox checkbox-sm checkbox-primary border-gray-300 rounded-md">
+                <span class="text-sm font-semibold text-gray-750 min-w-0">
+                    {{ task.title }}
+                </span>
+            </div>
+            <button type="button" 
+                    hx-post="{% url 'projects:delete_project_task' project_uuid=project.uuid task_id=task.id %}"
+                    hx-target="#project-tasks-container"
+                    hx-swap="outerHTML"
+                    class="text-gray-400 hover:text-red-500 p-1.5 rounded-lg hover:bg-red-50 transition-colors shrink-0">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+            </button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Completed Divider Line & Section -->
+    {% if completed_tasks %}
+        {% if active_tasks %}
+        <div class="border-t border-dashed border-gray-200 my-4 pt-4"></div>
+        {% endif %}
+        <div class="space-y-2">
+            <p class="text-[9px] font-bold text-gray-400 uppercase tracking-wider px-1">Completed Tasks</p>
+            {% for task in completed_tasks %}
+            <div class="flex items-center justify-between p-3.5 bg-gray-50/40 hover:bg-gray-100/30 border border-gray-100 rounded-xl transition-all opacity-70">
+                <div class="flex items-center gap-3 min-w-0">
+                    <input type="checkbox" 
+                           hx-post="{% url 'projects:toggle_project_task' project_uuid=project.uuid task_id=task.id %}"
+                           hx-target="#project-tasks-container"
+                           hx-swap="outerHTML"
+                           checked
+                           class="checkbox checkbox-sm checkbox-primary border-gray-300 rounded-md">
+                    <span class="text-sm font-medium text-gray-400 line-through min-w-0">
+                        {{ task.title }}
+                    </span>
+                </div>
+                <button type="button" 
+                        hx-post="{% url 'projects:delete_project_task' project_uuid=project.uuid task_id=task.id %}"
+                        hx-target="#project-tasks-container"
+                        hx-swap="outerHTML"
+                        class="text-gray-400 hover:text-red-500 p-1.5 rounded-lg hover:bg-red-50 transition-colors shrink-0">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                </button>
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if not active_tasks and not completed_tasks %}
+    <p class="text-xs text-gray-400 italic py-4 text-center">No tasks listed for this project yet.</p>
+    {% endif %}
+</div>

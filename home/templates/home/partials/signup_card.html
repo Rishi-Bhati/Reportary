@@ -25,10 +25,6 @@
         </div>
         {% endif %}
 
-        <div class="alert alert-info bg-blue-50 border-l-4 border-blue-500 text-blue-700 p-4 rounded-lg mb-4">
-            <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5 inline mr-2" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-            <span>Password reset will be available soon. Please store your secrets safely.</span>
-        </div>
 
         <form hx-post="{% url 'home:handle_signup' %}" hx-target="#auth-card-container" hx-swap="innerHTML" class="space-y-4">
             {% csrf_token %}

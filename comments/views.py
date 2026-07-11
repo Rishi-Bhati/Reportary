@@ -21,6 +21,10 @@ def add_comment(request, report_uuid):
     This view handles the creation of a new comment for a specific report.
     It's triggered by an HTMX POST request from the report detail page.
     """
+    if not request.user.is_email_verified:
+        return render(request, 'accounts/partials/verification_reminder_inline.html', {
+            'action_message': "Verify your email to leave comments."
+        })
     # First, we get the report object using the primary key from the URL.
     # If the report does not exist, it will return a 404 Not Found error.
     report = get_object_or_404(Report, uuid=report_uuid)
@@ -40,6 +44,22 @@ def add_comment(request, report_uuid):
         comment.commented_by = request.user
         # Now we save the comment to the database.
         comment.save()
+
+        from notifications.services import create_notification
+        followers = [f.user for f in report.followers.all()]
+        recipients = {report.assigned_to, report.project.owner, report.project.project_head} | set(followers)
+        for recipient in recipients:
+            if recipient and recipient != request.user:
+                create_notification(
+                    recipient=recipient,
+                    actor=request.user,
+                    notification_type='report_commented',
+                    title="New Comment on Report",
+                    message=f"{request.user.username} commented on report '{report.title}': \"{comment.text[:60]}...\"",
+                    target_content_type='report',
+                    target_uuid=report.uuid
+                )
+
         # Finally, we render the new comment using a partial template and return it as the response.
         # HTMX will then use this response to update the comments section on the page.
         return render(request, 'comments/partials/comment.html', {'comment': comment, 'report': report})

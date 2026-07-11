@@ -2,6 +2,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
 from django.contrib import messages
 from django.http import JsonResponse
 from .forms import UserProfileForm
@@ -152,16 +153,187 @@ def onboarding_dev_form(request):
 
 @login_required
 def edit_profile(request):
+    user = request.user
+    original_email = user.email
     if request.method == 'POST':
-        form = UserProfileForm(request.POST, instance=request.user)
+        form = UserProfileForm(request.POST, instance=user)
         if form.is_valid():
-            form.save()
+            new_email = form.cleaned_data.get('email')
+            
+            # Create a clone of user instance to save without email first
+            profile_instance = form.save(commit=False)
+            
+            if new_email and new_email != original_email:
+                # 1. Reset email in profile_instance to original_email immediately
+                profile_instance.email = original_email
+                # 2. Store the new email in pending_email
+                profile_instance.pending_email = new_email
+                profile_instance.save()
+                
+                # Send email change confirmation
+                import base64
+                from django.contrib.auth.tokens import default_token_generator
+                from django.utils.http import urlsafe_base64_encode
+                from django.utils.encoding import force_bytes
+                from django.urls import reverse
+                from notifications.email_service import send_notification_email
+                
+                uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
+                token = default_token_generator.make_token(user)
+                new_email_b64 = base64.urlsafe_b64encode(new_email.encode('utf-8')).decode('utf-8')
+                
+                confirm_url = request.build_absolute_uri(
+                    reverse('accounts:confirm_email_change', kwargs={
+                        'uidb64': uidb64,
+                        'token': token,
+                        'new_email_b64': new_email_b64
+                    })
+                )
+                
+                context = {
+                    'username': user.username,
+                    'confirm_url': confirm_url,
+                    'new_email': new_email,
+                    'message': f"A request was made to change your Reportary email address to {new_email}. Please click the button below to confirm."
+                }
+                
+                try:
+                    send_notification_email(
+                        notification_type='email_change_confirm',
+                        subject="Confirm your new Reportary email address",
+                        context=context,
+                        to_emails=[new_email]
+                    )
+                    messages.info(request, f"A confirmation link has been sent to {new_email}. Please verify to complete the change.")
+                except Exception as e:
+                    messages.error(request, "Failed to send confirmation email. Email change is pending.")
+            else:
+                profile_instance.save()
+                
             messages.success(request, 'Your profile has been updated successfully!')
-            return redirect('profile')
+            return redirect('home:profile')
     else:
-        form = UserProfileForm(instance=request.user)
+        form = UserProfileForm(instance=user)
     
     context = {
         'form': form
     }
     return render(request, 'accounts/edit_profile.html', context)
+
+
+def verify_email(request, uidb64, token):
+    """View to handle token validation for signup verification."""
+    from django.utils.http import urlsafe_base64_decode
+    from django.utils.encoding import force_str
+    from django.contrib.auth.tokens import default_token_generator
+    from .email_utils import send_welcome_email
+
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+
+    if user is not None and default_token_generator.check_token(user, token):
+        user.is_email_verified = True
+        user.save()
+        
+        # Send welcome email
+        try:
+            send_welcome_email(request, user)
+        except Exception as e:
+            print(f"Failed to send welcome email: {e}")
+            
+        messages.success(request, "Your email has been verified successfully! Welcome to Reportary.")
+    else:
+        messages.error(request, "The verification link is invalid or has expired.")
+        
+    return redirect('home:landing_page')
+
+
+def confirm_email_change(request, uidb64, token, new_email_b64):
+    """View to handle email update confirmation once link is clicked."""
+    from django.utils.http import urlsafe_base64_decode
+    from django.utils.encoding import force_str
+    from django.contrib.auth.tokens import default_token_generator
+    import base64
+
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+        new_email = force_str(base64.urlsafe_b64decode(new_email_b64.encode('utf-8')))
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist, Exception):
+        user = None
+        new_email = None
+
+    if user is not None and new_email and default_token_generator.check_token(user, token):
+        if User.objects.filter(email=new_email).exclude(pk=user.pk).exists():
+            messages.error(request, "This email address is already in use by another account.")
+        else:
+            user.email = new_email
+            user.pending_email = None
+            user.save()
+            messages.success(request, "Your email address has been updated successfully!")
+    else:
+        messages.error(request, "The confirmation link is invalid or has expired.")
+        
+    return redirect('home:profile')
+
+
+@login_required
+def resend_verification(request):
+    """Resends email verification link to user."""
+    user = request.user
+    if user.is_email_verified:
+        messages.info(request, "Your email is already verified.")
+    else:
+        from .email_utils import send_verification_email
+        try:
+            send_verification_email(request, user)
+            messages.success(request, "Verification email has been resent to your inbox.")
+        except Exception as e:
+            messages.error(request, "Failed to send verification email. Please try again later.")
+            
+    # Redirect back to previous page or dashboard
+    next_url = request.META.get('HTTP_REFERER')
+    if next_url:
+        return redirect(next_url)
+    return redirect('dashboard:dashboard')
+
+
+def render_verification_required(request, action_message):
+    """Utility to render the verification warning page."""
+    return render(request, 'accounts/email_verification_required.html', {
+        'action_message': action_message
+    })
+
+
+@login_required
+@require_POST
+def delete_account(request):
+    """
+    Soft-deletes the user's account after password confirmation.
+    Sets is_active=False and schedules permanent deletion in 30 days.
+    """
+    from django.contrib.auth import logout
+    from django.utils import timezone
+    from datetime import timedelta
+
+    password = request.POST.get('password', '')
+    user = request.user
+
+    if not user.check_password(password):
+        messages.error(request, 'Incorrect password. Account deletion cancelled.')
+        return redirect('accounts:edit_profile')
+
+    # Soft delete: deactivate account and schedule hard-delete in 30 days
+    user.is_active = False
+    user.scheduled_deletion_date = timezone.now() + timedelta(days=30)
+    user.save(update_fields=['is_active', 'scheduled_deletion_date'])
+
+    logout(request)
+    messages.success(request,
+        'Your account has been deactivated. It will be permanently deleted after 30 days. '
+        'Log in before then to reactivate it.'
+    )
+    return redirect('home:landing_page')

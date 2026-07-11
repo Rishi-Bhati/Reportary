@@ -28,6 +28,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     # Global search
     path('search/', core_views.global_search, name='global_search'),
+    path('search/glimpse/', core_views.global_search_glimpse, name='global_search_glimpse'),
 
     
     # URLs for the landing page, login, and signup
@@ -41,6 +42,9 @@ urlpatterns = [
 
     # URLs for organisation management
     path('organisations/', include('organisations.urls')),
+
+    # URLs for notification management
+    path('notifications/', include('notifications.urls', namespace='notifications')),
     
     # URLs for project-related views. This is the main entry point for projects and their nested reports.
     path('projects/', include('projects.urls')),
@@ -59,3 +63,4 @@ urlpatterns = [
 # In a production environment, a web server like Nginx or Apache should be configured to serve static files.
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

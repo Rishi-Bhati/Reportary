@@ -12,4 +12,9 @@ urlpatterns = [
     path('<uuid:project_uuid>/reports/', include('reports.urls')),
     path('my_projects/', my_projects_view, name='my_projects'),
     path('collaborating/', collaborating_projects_view, name='collaborating_projects'),
+    
+    # Task checklist routes
+    path('<uuid:project_uuid>/tasks/add/', add_project_task, name='add_project_task'),
+    path('<uuid:project_uuid>/tasks/<int:task_id>/toggle/', toggle_project_task, name='toggle_project_task'),
+    path('<uuid:project_uuid>/tasks/<int:task_id>/delete/', delete_project_task, name='delete_project_task'),
 ]

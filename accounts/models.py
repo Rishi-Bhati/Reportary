@@ -10,6 +10,7 @@ class UserManager(BaseUserManager):
             raise ValueError("Email is required")
 
         email = self.normalize_email(email)
+        extra_fields.setdefault('is_email_verified', True)
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
@@ -60,12 +61,17 @@ class User(AbstractBaseUser, PermissionsMixin):
     github_link = models.CharField(max_length=255, null=True, blank=True)
     github_oauth_id = models.CharField(max_length=255, null=True, blank=True)
     github_verified = models.BooleanField(default=False)
+    
+    is_email_verified = models.BooleanField(default=False)
+    pending_email = models.EmailField(null=True, blank=True)
 
     # Required by Django admin and permissions
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 
     date_joined = models.DateTimeField(auto_now_add=True)
+    scheduled_deletion_date = models.DateTimeField(null=True, blank=True,
+        help_text="If set, account is soft-deleted and will be permanently purged after this date.")
 
     # MANDATORY FIELDS FOR DJANGO
     USERNAME_FIELD = "email"

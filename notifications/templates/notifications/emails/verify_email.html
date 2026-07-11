@@ -1,0 +1,26 @@
+{% extends "notifications/emails/base_email.html" %}
+
+{% block email_content %}
+<h2 style="margin-top: 0; font-size: 20px; font-weight: 700; color: #1b1725; margin-bottom: 16px;">Verify your email address</h2>
+<p style="font-size: 16px; line-height: 1.6; color: #534b62; margin-bottom: 24px;">
+    Hello @{{ username }}, thank you for signing up for Reportary!
+</p>
+<p style="font-size: 16px; line-height: 1.6; color: #534b62; margin-bottom: 32px;">
+    Please click the button below to verify your email address. This will unlock project creation, issue reporting, and collaboration on your account.
+</p>
+
+<div style="text-align: center; margin-bottom: 32px;">
+    <a href="{{ verify_url }}" style="background-color: #226ce0; color: #ffffff; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 16px; display: inline-block;">Verify Email Address</a>
+</div>
+
+<p style="font-size: 14px; color: #a499b3; line-height: 1.5; margin-bottom: 8px;">
+    If you're having trouble clicking the button, copy and paste the URL below into your web browser:
+</p>
+<p style="font-size: 13px; word-break: break-all; color: #226ce0; margin-bottom: 32px; line-height: 1.5;">
+    {{ verify_url }}
+</p>
+
+<p style="font-size: 12px; color: #a499b3; line-height: 1.5; margin: 0; border-top: 1px solid #f3eff5; padding-top: 16px;">
+    If you did not create a Reportary account, you can safely ignore this email.
+</p>
+{% endblock %}

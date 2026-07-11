@@ -1,0 +1,245 @@
+<div class="form-control w-full">
+    <div class="flex justify-between items-center mb-1">
+        <label class="label text-sm font-semibold text-gray-700 p-0" for="id_attachments">Attachments</label>
+        <span class="text-xs text-gray-500 font-medium" id="attachment-limits-info">
+            Max: {{ project.max_attachments|default:5 }} files • Allowed: {{ project.allowed_attachment_types|default:".jpg,.jpeg,.png,.pdf,.zip,.txt" }}
+        </span>
+    </div>
+    
+    <div id="drop-zone" class="border-2 border-dashed border-gray-200 rounded-xl p-6 flex flex-col items-center justify-center text-center cursor-pointer hover:border-[#226ce0] hover:bg-[#226ce0]/5 transition-all duration-200 relative min-h-[140px]">
+        <svg class="w-8 h-8 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+        </svg>
+        <span class="text-sm font-semibold text-gray-800">Drag & drop files here, or <span class="text-[#226ce0] hover:underline">browse</span></span>
+        <span class="text-xs text-gray-400 mt-1" id="drop-zone-help">Image, PDF, Document, Zip</span>
+        
+        <input type="file" name="attachments" id="id_attachments" class="hidden" multiple>
+    </div>
+    
+    <!-- Validation Warnings -->
+    <div id="uploader-warning" class="hidden alert alert-error text-xs mt-3 p-3 bg-red-50 border border-red-200 text-red-800 rounded-xl"></div>
+    
+    <!-- Selected Files Queue Display -->
+    <div id="files-queue-container" class="hidden mt-3 space-y-2">
+        <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Selected Files</p>
+        <div id="files-queue-list" class="space-y-2"></div>
+    </div>
+    
+    <!-- Existing Attachments (For Edit Mode) -->
+    {% if existing_attachments %}
+    <div class="mt-4 space-y-2">
+        <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Current Attachments</p>
+        <div class="space-y-2">
+            {% for attachment in existing_attachments %}
+            <div id="existing-attachment-{{ attachment.id }}" class="p-3 bg-gray-50 border border-gray-100 rounded-xl flex items-center justify-between">
+                <div class="flex items-center gap-2.5 min-w-0">
+                    <svg class="w-5 h-5 text-[#226ce0] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+                    </svg>
+                    <div class="min-w-0">
+                        <a href="{{ attachment.file.url }}" target="_blank" class="text-xs font-semibold text-gray-800 hover:text-[#226ce0] hover:underline truncate block">
+                            {{ attachment.filename }}
+                        </a>
+                        {% if attachment.file_size %}
+                        <p class="text-[10px] text-gray-400" style="margin: 0;">{{ attachment.file_size|filesizeformat }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+                <button type="button" 
+                        hx-post="{% url 'projects:reports:delete_attachment' project_uuid=project.uuid attachment_id=attachment.id %}"
+                        hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+                        hx-target="#existing-attachment-{{ attachment.id }}"
+                        hx-swap="delete"
+                        class="p-1 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                </button>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('id_attachments');
+        const warningDiv = document.getElementById('uploader-warning');
+        const queueContainer = document.getElementById('files-queue-container');
+        const queueList = document.getElementById('files-queue-list');
+        const projectSelect = document.getElementById('id_project');
+        
+        let selectedFiles = [];
+        
+        // Configuration options
+        let maxAttachments = parseInt("{{ project.max_attachments|default:5 }}");
+        let allowedTypes = "{{ project.allowed_attachment_types|default:'.jpg,.jpeg,.png,.pdf,.doc,.docx,.xls,.xlsx,.zip,.txt' }}".toLowerCase().split(',').map(ext => ext.trim());
+        
+        // Count pre-existing attachments in edit mode
+        let existingAttachmentsCount = parseInt("{% if existing_attachments %}{{ existing_attachments.count }}{% else %}0{% endif %}");
+
+        // If the project dropdown is present, we dynamically fetch configuration when selected
+        if (projectSelect) {
+            projectSelect.addEventListener('change', function() {
+                const projectId = this.value;
+                if (projectId) {
+                    fetch(`/reports/ajax/get-project-config/?project_id=${projectId}`)
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.max_attachments) {
+                                maxAttachments = parseInt(data.max_attachments);
+                                allowedTypes = data.allowed_attachment_types.toLowerCase().split(',').map(ext => ext.trim());
+                                document.getElementById('attachment-limits-info').textContent = `Max: ${maxAttachments} files • Allowed: ${data.allowed_attachment_types}`;
+                                document.getElementById('drop-zone-help').textContent = data.allowed_attachment_types.split(',').slice(0, 4).join(', ') + '...';
+                                // Re-validate existing queue
+                                validateAndRefreshQueue([]);
+                            }
+                        });
+                }
+            });
+        }
+
+        if (dropZone && fileInput) {
+            // Click to browse
+            dropZone.addEventListener('click', () => fileInput.click());
+
+            // Drag/Drop Styling
+            ['dragenter', 'dragover'].forEach(name => {
+                dropZone.addEventListener(name, (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    dropZone.classList.add('border-[#226ce0]', 'bg-[#226ce0]/5');
+                });
+            });
+
+            ['dragleave', 'drop'].forEach(name => {
+                dropZone.addEventListener(name, (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    dropZone.classList.remove('border-[#226ce0]', 'bg-[#226ce0]/5');
+                });
+            });
+
+            dropZone.addEventListener('drop', (e) => {
+                const files = e.dataTransfer.files;
+                validateAndRefreshQueue(files);
+            });
+
+            fileInput.addEventListener('change', () => {
+                validateAndRefreshQueue(fileInput.files);
+            });
+        }
+
+        function validateAndRefreshQueue(newFiles) {
+            warningDiv.classList.add('hidden');
+            warningDiv.textContent = '';
+            
+            // Calculate active existing count dynamically
+            const activeExisting = document.querySelectorAll('[id^="existing-attachment-"]').length;
+            const availableSlots = maxAttachments - activeExisting;
+
+            let rejectedReasons = [];
+
+            for (let i = 0; i < newFiles.length; i++) {
+                const file = newFiles[i];
+                const ext = '.' + file.name.split('.').pop().toLowerCase();
+                
+                // 1. File Type Check
+                if (!allowedTypes.includes(ext) && !allowedTypes.includes('*')) {
+                    rejectedReasons.push(`File "${file.name}" has an invalid type (${ext}).`);
+                    continue;
+                }
+
+                // 2. File Size Check (Max 15MB)
+                if (file.size > 15 * 1024 * 1024) {
+                    rejectedReasons.push(`File "${file.name}" exceeds the 15MB size limit.`);
+                    continue;
+                }
+
+                // 3. Duplicate checks in queue
+                if (selectedFiles.some(f => f.name === file.name && f.size === file.size)) {
+                    continue;
+                }
+
+                // Check slots
+                if (selectedFiles.length >= availableSlots) {
+                    rejectedReasons.push(`A maximum of ${maxAttachments} attachments can be uploaded. Slots exhausted.`);
+                    break;
+                }
+
+                selectedFiles.push(file);
+            }
+
+            if (rejectedReasons.length > 0) {
+                warningDiv.innerHTML = rejectedReasons.join('<br>');
+                warningDiv.classList.remove('hidden');
+            }
+
+            updateFileInputAndQueue();
+        }
+
+        function removeFileFromQueue(index) {
+            selectedFiles.splice(index, 1);
+            updateFileInputAndQueue();
+        }
+
+        function updateFileInputAndQueue() {
+            // Update input files
+            const dt = new DataTransfer();
+            selectedFiles.forEach(file => dt.items.add(file));
+            fileInput.files = dt.files;
+
+            // Render Queue
+            if (selectedFiles.length === 0) {
+                queueContainer.classList.add('hidden');
+                queueList.innerHTML = '';
+                return;
+            }
+
+            queueContainer.classList.remove('hidden');
+            queueList.innerHTML = '';
+
+            selectedFiles.forEach((file, index) => {
+                const sizeStr = file.size > 1024 * 1024 
+                    ? (file.size / (1024 * 1024)).toFixed(2) + ' MB' 
+                    : (file.size / 1024).toFixed(2) + ' KB';
+
+                const row = document.createElement('div');
+                row.className = 'p-3 bg-gray-50 border border-gray-100 rounded-xl flex items-center justify-between';
+                row.innerHTML = `
+                    <div class="flex items-center gap-2.5 min-w-0">
+                        <svg class="w-5 h-5 text-[#226ce0] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+                        </svg>
+                        <div class="min-w-0">
+                            <p class="text-xs font-semibold text-gray-800 truncate" style="margin: 0;">${file.name}</p>
+                            <p class="text-[10px] text-gray-400" style="margin: 0;">${sizeStr}</p>
+                        </div>
+                    </div>
+                    <button type="button" class="p-1 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors remove-btn-el">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                `;
+
+                row.querySelector('.remove-btn-el').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    removeFileFromQueue(index);
+                });
+
+                queueList.appendChild(row);
+            });
+        }
+        
+        // Listen to dynamic existing attachment removals
+        document.body.addEventListener('htmx:afterSwap', function(evt) {
+            if (evt.detail.target.id.startsWith('existing-attachment-')) {
+                // Trigger re-validation
+                validateAndRefreshQueue([]);
+            }
+        });
+    });
+</script>

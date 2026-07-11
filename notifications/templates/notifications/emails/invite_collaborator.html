@@ -1,0 +1,10 @@
+{% extends "notifications/emails/base_email.html" %}
+{% block email_content %}
+<h2 style="margin-top: 0; font-size: 20px; font-weight: 700; color: #1b1725;">{{ title }}</h2>
+<p style="font-size: 16px; line-height: 1.6; color: #534b62;">
+    You have been invited by <strong>{{ actor_username }}</strong> to collaborate on the project <strong>{{ project_title }}</strong>.
+</p>
+<p style="font-size: 16px; line-height: 1.6; color: #534b62;">
+    Please log in to your Reportary account, navigate to the Notification Center, and accept or decline the invitation to start collaborating.
+</p>
+{% endblock %}

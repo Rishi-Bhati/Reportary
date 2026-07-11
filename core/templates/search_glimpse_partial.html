@@ -1,0 +1,83 @@
+{% if not q %}
+<div class="p-3.5 space-y-2 text-left bg-white border border-[#d0bcd5]/20 rounded-xl">
+    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider px-2">Recent Searches</p>
+    <div class="space-y-0.5">
+        {% for qs in recent_searches %}
+        <button type="button" 
+                onclick="selectGlimpseQuery('{{ qs|escapejs }}')" 
+                class="flex items-center gap-2.5 w-full text-xs text-gray-600 hover:text-[#226ce0] hover:bg-[#226ce0]/5 p-2 rounded-lg transition-colors text-left font-medium">
+            <svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            {{ qs }}
+        </button>
+        {% empty %}
+        <p class="text-xs text-gray-400 italic px-2 py-1">No recent searches found</p>
+        {% endfor %}
+    </div>
+</div>
+{% else %}
+<div class="p-2 space-y-3.5 max-h-96 overflow-y-auto text-left bg-white border border-[#d0bcd5]/20 rounded-xl">
+    <!-- Projects Section -->
+    {% if projects %}
+    <div>
+        <p class="px-2.5 py-1 text-[9px] font-bold text-gray-400 uppercase tracking-wider">Projects</p>
+        <div class="space-y-0.5">
+            {% for p in projects %}
+            <a href="{% url 'global_search' %}?q={{ q|urlencode }}&highlight=project:{{ p.uuid }}" class="block px-2.5 py-1.5 hover:bg-[#226ce0]/5 text-xs rounded-lg transition-colors font-semibold text-gray-800 truncate">
+                📁 {{ p.title }}
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Organizations Section -->
+    {% if organisations %}
+    <div>
+        <p class="px-2.5 py-1 text-[9px] font-bold text-gray-400 uppercase tracking-wider">Organizations</p>
+        <div class="space-y-0.5">
+            {% for o in organisations %}
+            <a href="{% url 'global_search' %}?q={{ q|urlencode }}&highlight=org:{{ o.uuid }}" class="block px-2.5 py-1.5 hover:bg-[#226ce0]/5 text-xs rounded-lg transition-colors font-semibold text-gray-800 truncate">
+                🏢 {{ o.name }}
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Reports Section -->
+    {% if reports %}
+    <div>
+        <p class="px-2.5 py-1 text-[9px] font-bold text-gray-400 uppercase tracking-wider">Reports</p>
+        <div class="space-y-0.5">
+            {% for r in reports %}
+            <a href="{% url 'global_search' %}?q={{ q|urlencode }}&highlight=report:{{ r.uuid }}" class="block px-2.5 py-1.5 hover:bg-[#226ce0]/5 text-xs rounded-lg transition-colors font-semibold text-gray-800 truncate">
+                📋 {{ r.title }}
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Comments Section -->
+    {% if comments %}
+    <div>
+        <p class="px-2.5 py-1 text-[9px] font-bold text-gray-400 uppercase tracking-wider">Comments</p>
+        <div class="space-y-0.5">
+            {% for c in comments %}
+            <a href="{% url 'global_search' %}?q={{ q|urlencode }}&highlight=comment:{{ c.id }}" class="block px-2.5 py-1.5 hover:bg-[#226ce0]/5 text-xs rounded-lg transition-colors font-semibold text-gray-800 truncate">
+                💬 "{{ c.text }}"
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    {% if not projects and not organisations and not reports and not comments %}
+    <div class="p-4 text-center text-gray-400 text-xs italic">
+        No previews match "{{ q }}"
+    </div>
+    {% endif %}
+</div>
+{% endif %}

@@ -31,7 +31,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'reportary.onrender.com']
 
 CSRF_TRUSTED_ORIGINS = [
     'http://127.0.0.1:8000',
@@ -73,6 +73,8 @@ INSTALLED_APPS = [
     "comments",
     "audit",
     "organisations",
+    "notifications",
+    "core",
 ]
 
 TAILWIND_APP_NAME = "theme"
@@ -101,6 +103,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'notifications.context_processors.notification_context',
+                'core.context_processors.announcements',
             ],
         },
     },
@@ -152,9 +156,8 @@ CLOUDINARY_STORAGE = {
     'API_SECRET': os.getenv('CLOUDINARY_API_SECRET'),
 }
 
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = BASE_DIR / 'media'
 
 
 # Password validation
@@ -234,3 +237,16 @@ LOGGING = {
 }
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Email Configuration (Gmail SMTP)
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.getenv('MAIL_ID', '')
+EMAIL_HOST_PASSWORD = os.getenv('MAIL_APP_PASSWORD', '')
+DEFAULT_FROM_EMAIL = os.getenv('MAIL_ID', 'noreply@reportary.com')
+
+# Contact form submissions recipient
+CONTACT_EMAIL = 'anujkumar123.mp@gmail.com'
+

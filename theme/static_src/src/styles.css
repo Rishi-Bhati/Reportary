@@ -157,11 +157,11 @@ body {
 /* ============================================
    LINK & ANCHOR OVERRIDES (Remove Purple)
    ============================================ */
-a {
+a:not(.btn):not(.text-white):not([class*="text-"]) {
   color: inherit;
 }
 
-a:hover {
+a:not(.btn):not(.text-white):not([class*="text-"]):hover {
   color: #226ce0;
 }
 

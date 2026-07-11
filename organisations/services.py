@@ -106,22 +106,21 @@ def add_organisation_member(*, organisation, member_email, actor):
     try:
         user = User.objects.get(email=member_email)
         
+        if not user.is_email_verified:
+            return user, False, f"The user '{member_email}' has not verified their email yet and cannot be invited."
+            
         if organisation.members.filter(id=user.id).exists() or user == organisation.owner:
             return user, False, "User is already a member of this organisation"
         
-        organisation.members.add(user)
-        
-        log_action(
-            actor=actor,
-            action="update",
-            entity_type="Organisation",
-            entity_id=organisation.uuid,
-            field_name="members",
-            old_value=f"Added user: {member_email}",
-            new_value=f"Member count: {organisation.members.count()}",
+        from notifications.services import create_invitation
+        create_invitation(
+            invite_type='organisation',
+            invited_by=actor,
+            invited_user=user,
+            organisation=organisation
         )
         
-        return user, True, f"Successfully added {member_email} to the organisation"
+        return user, True, f"Invitation sent to {member_email} successfully."
     
     except User.DoesNotExist:
         return None, False, f"User with email {member_email} does not exist"
@@ -201,17 +200,27 @@ def create_organisation(*, name, description, owner, domain=None):
     return organisation
 
 
-def get_organisation_stats(organisation):
+def get_organisation_stats(organisation, user=None):
     """
     Get statistics about an organisation.
     
     Args:
         organisation: Organisation instance
+        user: Optional user to filter projects visibility for
     
     Returns:
         Dictionary with various stats
     """
-    projects = organisation.org_projects.all() if hasattr(organisation, 'org_projects') else Project.objects.filter(org=organisation)
+    projects = Project.objects.filter(org=organisation)
+    if user and organisation.owner != user:
+        from django.db.models import Q
+        projects = projects.filter(
+            Q(visibility='public') |
+            Q(visibility='org') |
+            Q(owner=user) |
+            Q(project_head=user) |
+            Q(collaborators=user)
+        ).distinct()
     
     return {
         'members_count': organisation.members.count(),

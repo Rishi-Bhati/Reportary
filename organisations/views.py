@@ -56,7 +56,7 @@ def organisation_dashboard(request, uuid):
         return HttpResponseForbidden("You don't have permission to view this organisation.")
     
     # Get stats and related data
-    stats = services.get_organisation_stats(org)
+    stats = services.get_organisation_stats(org, user=request.user)
     projects = services.get_organisation_projects(org)
     members = services.get_organisation_members(org)
     
