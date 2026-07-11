@@ -15,7 +15,6 @@ My Reports
 {% endblock %}
 
 {% block content %}
-
 <div class="space-y-6">
     <!-- Header -->
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -34,7 +33,7 @@ My Reports
 
         {% if project %}
         <a href="{% url 'projects:reports:new' project_uuid=project.uuid %}"
-            class="btn btn-primary text-white shadow-sm hover:shadow-md transition-all gap-2">
+            class="btn btn-primary text-white shadow-sm hover:shadow-md transition-all gap-2 rounded-xl">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
             </svg>
@@ -43,89 +42,135 @@ My Reports
         {% endif %}
     </div>
 
-    <!-- Reports Table -->
-    <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
-        <div class="overflow-x-auto">
-            <table class="w-full text-left text-sm">
-                <thead class="bg-gray-50 border-b border-gray-100">
-                    <tr>
-                        <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Issue</th>
-                        {% if not project %}
-                        <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Project</th>
-                        {% endif %}
-                        <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Reported By
-                        </th>
-                        <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
-                        <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Date</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-100">
-                    {% for report in reports %}
-                    <tr class="hover:bg-[#226ce0]/10 transition-colors group">
-                        <td class="px-6 py-4">
-                            <a href="{% url 'projects:reports:report_detail' project_uuid=report.project.uuid report_uuid=report.uuid %}"
-                                class="block">
-                                <span class="font-semibold text-gray-900 group-hover:text-[#226ce0] transition-colors block">{{ report.title }}</span>
-                                <span class="text-xs text-gray-400 mt-0.5 block">#{{ report.uuid }} • {{ report.component.name|default:"General" }}</span>
-                            </a>
-                        </td>
-                        {% if not project %}
-                        <td class="px-6 py-4 text-gray-600">
-                            <a href="{% url 'projects:project_detail' project_uuid=report.project.uuid %}"
-                                class="hover:text-[#226ce0] hover:underline">{{ report.project.title }}</a>
-                        </td>
-                        {% endif %}
-                        <td class="px-6 py-4">
-                            <div class="flex items-center gap-2">
-                                <div
-                                    class="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center text-xs font-bold text-gray-500">
-                                    {{ report.reported_by.username|slice:":1"|upper }}
-                                </div>
-                                <span class="text-gray-700">{{ report.reported_by.username }}</span>
-                            </div>
-                        </td>
-                        <td class="px-6 py-4">
-                            {% if report.status == 'open' %}
-                            <span
-                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#226ce0]/15 text-[#1b1725]">Open</span>
-                            {% elif report.status == 'in_progress' %}
-                            <span
-                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">In
-                                Progress</span>
-                            {% elif report.status == 'resolved' %}
-                            <span
-                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#a499b3]/20 text-[#534b62]">Resolved</span>
-                            {% else %}
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">{{ report.get_status_display }}</span>
-                            {% endif %}
-                        </td>
-                        <td class="px-6 py-4 text-gray-500 whitespace-nowrap">
-                            {{ report.created_at|date:"M j, Y" }}
-                        </td>
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="{% if project %}5{% else %}6{% endif %}"
-                            class="px-6 py-12 text-center text-gray-500">
-                            <div class="flex flex-col items-center">
-                                <div class="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center mb-3">
-                                    <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
-                                        </path>
-                                    </svg>
-                                </div>
-                                <p class="font-medium text-gray-900">No reports found</p>
-                                <p class="text-sm mt-1">There are no issues reported yet.</p>
-                            </div>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+    <!-- On-page Filter Toggle and Local Realtime Search Bar -->
+    <div class="flex items-center gap-4 bg-white border border-gray-100 p-4 rounded-2xl shadow-sm justify-between flex-wrap">
+        <div class="flex items-center gap-3 flex-1 min-w-[280px]">
+            <button type="button" onclick="toggleFilterDrawer()" class="btn btn-sm btn-outline text-gray-700 border-gray-200 hover:bg-[#226ce0]/10 hover:text-[#226ce0] hover:border-[#226ce0]/30 transition-all rounded-xl font-medium gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                </svg>
+                Filters & Sorting
+            </button>
+            <div class="relative flex-1">
+                <input type="text" name="q" id="local-search-input" value="{{ q }}" placeholder="Search reports in this list..."
+                       hx-get="" hx-trigger="keyup changed delay:300ms, search" hx-target="#reports-table-wrapper" hx-include="#local-filters-form" hx-push-url="true"
+                       class="input input-sm h-9 w-full bg-gray-50 border border-gray-200 focus:bg-white focus:border-[#226ce0] rounded-xl pl-9 text-xs">
+                <svg class="w-3.5 h-3.5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+            </div>
         </div>
+    </div>
+
+    <!-- Collapsible Local Filters Drawer -->
+    <div id="filter-drawer" class="hidden bg-white border border-gray-100 rounded-2xl p-5 shadow-inner transition-all space-y-4">
+        <form id="local-filters-form" hx-get="" hx-trigger="change from:select, change from:input[type='date']" hx-target="#reports-table-wrapper" hx-push-url="true" class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+            <!-- Sync Search Query -->
+            <input type="hidden" name="q" id="local-filters-q" value="{{ q }}">
+
+            <!-- Status Filter -->
+            <div class="form-control">
+                <label class="label text-[10px] font-bold text-gray-400 uppercase tracking-wider p-0 mb-1">Status</label>
+                <select name="status" class="select select-bordered select-sm w-full bg-gray-50 rounded-xl text-xs">
+                    <option value="">All Statuses</option>
+                    <option value="open" {% if selected_status == 'open' %}selected{% endif %}>Open</option>
+                    <option value="in_progress" {% if selected_status == 'in_progress' %}selected{% endif %}>In Progress</option>
+                    <option value="resolved" {% if selected_status == 'resolved' %}selected{% endif %}>Resolved</option>
+                    <option value="closed" {% if selected_status == 'closed' %}selected{% endif %}>Closed</option>
+                </select>
+            </div>
+
+            <!-- Severity Filter -->
+            <div class="form-control">
+                <label class="label text-[10px] font-bold text-gray-400 uppercase tracking-wider p-0 mb-1">Severity</label>
+                <select name="impact" class="select select-bordered select-sm w-full bg-gray-50 rounded-xl text-xs">
+                    <option value="">All Severities</option>
+                    <option value="low" {% if selected_impact == 'low' %}selected{% endif %}>Low</option>
+                    <option value="medium" {% if selected_impact == 'medium' %}selected{% endif %}>Medium</option>
+                    <option value="high" {% if selected_impact == 'high' %}selected{% endif %}>High</option>
+                    <option value="critical" {% if selected_impact == 'critical' %}selected{% endif %}>Critical</option>
+                </select>
+            </div>
+
+            <!-- Assignee Filter -->
+            <div class="form-control">
+                <label class="label text-[10px] font-bold text-gray-400 uppercase tracking-wider p-0 mb-1">Assignee</label>
+                <select name="assignee_id" class="select select-bordered select-sm w-full bg-gray-50 rounded-xl text-xs">
+                    <option value="">All Assignees</option>
+                    {% for u in filter_users %}
+                    <option value="{{ u.id }}" {% if selected_assignee_id == u.id %}selected{% endif %}>{{ u.username }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Reporter Filter -->
+            <div class="form-control">
+                <label class="label text-[10px] font-bold text-gray-400 uppercase tracking-wider p-0 mb-1">Reporter</label>
+                <select name="reporter_id" class="select select-bordered select-sm w-full bg-gray-50 rounded-xl text-xs">
+                    <option value="">All Reporters</option>
+                    {% for u in filter_users %}
+                    <option value="{{ u.id }}" {% if selected_reporter_id == u.id %}selected{% endif %}>{{ u.username }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Component Filter -->
+            <div class="form-control">
+                <label class="label text-[10px] font-bold text-gray-400 uppercase tracking-wider p-0 mb-1">Component</label>
+                <select name="component_id" class="select select-bordered select-sm w-full bg-gray-50 rounded-xl text-xs">
+                    <option value="">All Components</option>
+                    {% for c in filter_components %}
+                    <option value="{{ c.id }}" {% if selected_component_id == c.id %}selected{% endif %}>{{ c.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- From Date Filter -->
+            <div class="form-control">
+                <label class="label text-[10px] font-bold text-gray-400 uppercase tracking-wider p-0 mb-1">From Date</label>
+                <input type="date" name="date_start" value="{{ selected_date_start }}" class="input input-bordered input-sm w-full bg-gray-50 rounded-xl text-xs">
+            </div>
+
+            <!-- To Date Filter -->
+            <div class="form-control">
+                <label class="label text-[10px] font-bold text-gray-400 uppercase tracking-wider p-0 mb-1">To Date</label>
+                <input type="date" name="date_end" value="{{ selected_date_end }}" class="input input-bordered input-sm w-full bg-gray-50 rounded-xl text-xs">
+            </div>
+
+            <!-- Sorting Choices -->
+            <div class="form-control">
+                <label class="label text-[10px] font-bold text-gray-400 uppercase tracking-wider p-0 mb-1">Sort By</label>
+                <select name="sort_by" class="select select-bordered select-sm w-full bg-gray-50 rounded-xl text-xs">
+                    <option value="">Newest Updated</option>
+                    <option value="oldest" {% if selected_sort_by == 'oldest' %}selected{% endif %}>Oldest Created</option>
+                    <option value="title_asc" {% if selected_sort_by == 'title_asc' %}selected{% endif %}>Title (A-Z)</option>
+                    <option value="title_desc" {% if selected_sort_by == 'title_desc' %}selected{% endif %}>Title (Z-A)</option>
+                    <option value="severity_desc" {% if selected_sort_by == 'severity_desc' %}selected{% endif %}>Severity (High to Low)</option>
+                    <option value="status" {% if selected_sort_by == 'status' %}selected{% endif %}>Status Group</option>
+                </select>
+            </div>
+        </form>
+    </div>
+
+    <!-- Reports Table Wrapper (Target of HTMX Swapping) -->
+    <div id="reports-table-wrapper">
+        {% include "reports/partials/reports_list_partial.html" %}
     </div>
 </div>
 
+<script>
+    function toggleFilterDrawer() {
+        const drawer = document.getElementById('filter-drawer');
+        drawer.classList.toggle('hidden');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const searchInput = document.getElementById('local-search-input');
+        const filtersQ = document.getElementById('local-filters-q');
+        
+        searchInput.addEventListener('input', () => {
+            filtersQ.value = searchInput.value;
+        });
+    });
+</script>
 {% endblock %}

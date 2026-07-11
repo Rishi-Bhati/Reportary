@@ -1,87 +1,236 @@
 {% extends "base.html" %}
+{% load static %}
 
-{% block title %}Search Results | Reportary{% endblock %}
+{% block title %}Search & Filters | Reportary{% endblock %}
+{% block breadcrumb %}Search{% endblock %}
 
 {% block content %}
-<div class="space-y-6 max-w-6xl">
-    <div>
-        <h1 class="text-2xl font-bold">Search Results</h1>
-        <p class="text-gray-500 mt-1">Showing matches for <span class="font-semibold">"{{ q }}"</span></p>
+<div class="max-w-7xl mx-auto space-y-6">
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900 tracking-tight">Global Search & Filters</h1>
+            <p class="text-gray-500 mt-1">Search reports, projects, comments, and organizations in real time.</p>
+        </div>
     </div>
 
-    {% if not q %}
-    <div class="text-gray-500">Type something to search across projects, reports, and users.</div>
-    {% else %}
+    <!-- Dual Column Layout -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        
+        <!-- Left Sidebar: Search, Filters & Saved/Recent -->
+        <div class="lg:col-span-4 space-y-6 bg-white border border-[#d0bcd5]/30 p-6 rounded-2xl shadow-sm">
+            <!-- Search Form Input -->
+            <form method="get" id="search-filters-form" 
+                  hx-get="{% url 'global_search' %}" 
+                  hx-trigger="keyup changed delay:300ms from:#search-input, change from:select, change from:input[type='date']"
+                  hx-target="#search-results-wrapper" 
+                  class="space-y-4">
+                <input type="hidden" name="hx_request" value="true">
 
-    <!-- Projects -->
-    <div class="card bg-white p-6 rounded-xl border border-gray-100">
-        <h2 class="text-lg font-bold mb-4">Projects</h2>
-        {% if projects %}
-        <ul class="space-y-3">
-            {% for project in projects %}
-            <li>
-                <a href="{% url 'projects:project_detail' project_uuid=project.uuid %}" class="block hover:underline">
-                    <div class="flex items-start justify-between">
-                        <div>
-                            <div class="text-sm font-medium text-gray-900 flex items-center gap-2">
-                                {{ project.title }}
-                                {% if project.org %}
-                                <span class="px-1.5 py-0.5 text-xs font-semibold bg-blue-50 text-blue-600 rounded-md border border-blue-100">
-                                    {{ project.org.name }}
-                                </span>
-                                {% endif %}
-                            </div>
-                            <div class="text-xs text-gray-500">{{ project.description|truncatechars:120 }}</div>
-                        </div>
-                        <div class="text-xs text-gray-400">Updated {{ project.updated_at|timesince }} ago</div>
+                <div>
+                    <label class="label text-xs font-bold text-gray-400 uppercase tracking-wider p-0 mb-1" for="search-input">Keyword Search</label>
+                    <div class="relative">
+                        <input type="text" name="q" id="search-input" value="{{ q }}" placeholder="Type keywords..." 
+                               class="input input-bordered w-full focus:border-[#226ce0] bg-gray-50 focus:bg-white transition-all text-sm rounded-xl pl-10" />
+                        <svg class="w-4 h-4 absolute left-3.5 top-1/2 transform -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
                     </div>
-                </a>
-            </li>
-            {% endfor %}
-        </ul>
-        {% else %}
-        <p class="text-sm text-gray-500">No projects found.</p>
-        {% endif %}
-    </div>
+                </div>
 
-    <!-- Reports -->
-    <div class="card bg-white p-6 rounded-xl border border-gray-100">
-        <h2 class="text-lg font-bold mb-4">Reports</h2>
-        {% if reports %}
-        <ul class="space-y-3">
-            {% for report in reports %}
-            <li>
-                <a href="{% url 'projects:reports:report_detail' project_uuid=report.project.uuid report_uuid=report.uuid %}" class="block hover:underline">
-                    <div class="flex items-start justify-between">
-                        <div>
-                            <div class="text-sm font-medium text-gray-900">{{ report.title }}</div>
-                            <div class="text-xs text-gray-500">#{{ report.id }} • {{ report.component.name|default:'General' }} • {{ report.project.title }}</div>
-                        </div>
-                        <div class="text-xs text-gray-400">{{ report.created_at|timesince }} ago</div>
+                <!-- Recent Searches Chips -->
+                {% if recent_searches %}
+                <div class="space-y-2">
+                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Recent Searches</p>
+                    <div class="flex flex-wrap gap-1.5">
+                        {% for query in recent_searches %}
+                        <button type="button" 
+                                onclick="applyRecentSearch('{{ query|escapejs }}')"
+                                class="px-2.5 py-1 text-xs bg-gray-50 text-gray-600 hover:bg-[#226ce0]/10 hover:text-[#226ce0] border border-gray-100 hover:border-[#226ce0]/20 rounded-lg transition-colors font-medium">
+                            {{ query }}
+                        </button>
+                        {% endfor %}
                     </div>
-                </a>
-            </li>
-            {% endfor %}
-        </ul>
-        {% else %}
-        <p class="text-sm text-gray-500">No reports found.</p>
-        {% endif %}
-    </div>
+                </div>
+                {% endif %}
 
-    <!-- Users -->
-    <div class="card bg-white p-6 rounded-xl border border-gray-100">
-        <h2 class="text-lg font-bold mb-4">Users</h2>
-        {% if users %}
-        <ul class="space-y-2">
-            {% for user in users %}
-            <li class="text-sm text-gray-900">{{ user.username }} <span class="text-xs text-gray-400">({{ user.email }})</span></li>
-            {% endfor %}
-        </ul>
-        {% else %}
-        <p class="text-sm text-gray-500">No users found.</p>
-        {% endif %}
-    </div>
+                <!-- Filters Header -->
+                <div class="border-t border-gray-100 pt-4 flex items-center justify-between">
+                    <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Filters</span>
+                    <button type="button" onclick="clearFilters()" class="text-xs text-gray-400 hover:text-[#226ce0] font-semibold transition-colors">Clear All</button>
+                </div>
 
-    {% endif %}
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-4">
+                    <!-- Status Filter -->
+                    <div class="form-control">
+                        <label class="label text-xs font-bold text-gray-500 p-0 mb-1">Status</label>
+                        <select name="status" class="select select-bordered select-sm w-full bg-gray-50 rounded-xl">
+                            <option value="">All Statuses</option>
+                            <option value="open" {% if selected_status == 'open' %}selected{% endif %}>Open</option>
+                            <option value="in_progress" {% if selected_status == 'in_progress' %}selected{% endif %}>In Progress</option>
+                            <option value="resolved" {% if selected_status == 'resolved' %}selected{% endif %}>Resolved</option>
+                            <option value="closed" {% if selected_status == 'closed' %}selected{% endif %}>Closed</option>
+                        </select>
+                    </div>
+
+                    <!-- Severity Filter -->
+                    <div class="form-control">
+                        <label class="label text-xs font-bold text-gray-500 p-0 mb-1">Severity</label>
+                        <select name="impact" class="select select-bordered select-sm w-full bg-gray-50 rounded-xl">
+                            <option value="">All Severities</option>
+                            <option value="low" {% if selected_impact == 'low' %}selected{% endif %}>Low</option>
+                            <option value="medium" {% if selected_impact == 'medium' %}selected{% endif %}>Medium</option>
+                            <option value="high" {% if selected_impact == 'high' %}selected{% endif %}>High</option>
+                            <option value="critical" {% if selected_impact == 'critical' %}selected{% endif %}>Critical</option>
+                        </select>
+                    </div>
+
+                    <!-- Assignee Filter -->
+                    <div class="form-control">
+                        <label class="label text-xs font-bold text-gray-500 p-0 mb-1">Assignee</label>
+                        <select name="assignee_id" class="select select-bordered select-sm w-full bg-gray-50 rounded-xl">
+                            <option value="">All Assignees</option>
+                            {% for u in filter_users %}
+                            <option value="{{ u.id }}" {% if selected_assignee_id == u.id %}selected{% endif %}>{{ u.username }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Reporter Filter -->
+                    <div class="form-control">
+                        <label class="label text-xs font-bold text-gray-500 p-0 mb-1">Reporter</label>
+                        <select name="reporter_id" class="select select-bordered select-sm w-full bg-gray-50 rounded-xl">
+                            <option value="">All Reporters</option>
+                            {% for u in filter_users %}
+                            <option value="{{ u.id }}" {% if selected_reporter_id == u.id %}selected{% endif %}>{{ u.username }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Organization Filter -->
+                    <div class="form-control">
+                        <label class="label text-xs font-bold text-gray-500 p-0 mb-1">Organization</label>
+                        <select name="org_id" class="select select-bordered select-sm w-full bg-gray-50 rounded-xl">
+                            <option value="">All Organizations</option>
+                            {% for o in filter_orgs %}
+                            <option value="{{ o.id }}" {% if selected_org_id == o.id %}selected{% endif %}>{{ o.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Component Filter -->
+                    <div class="form-control">
+                        <label class="label text-xs font-bold text-gray-500 p-0 mb-1">Component</label>
+                        <select name="component_id" class="select select-bordered select-sm w-full bg-gray-50 rounded-xl">
+                            <option value="">All Components</option>
+                            {% for c in filter_components %}
+                            <option value="{{ c.id }}" {% if selected_component_id == c.id %}selected{% endif %}>{{ c.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Date Range Filter -->
+                    <div class="form-control">
+                        <label class="label text-xs font-bold text-gray-500 p-0 mb-1">From Date</label>
+                        <input type="date" name="date_start" value="{{ selected_date_start }}" class="input input-bordered input-sm w-full bg-gray-50 rounded-xl">
+                    </div>
+
+                    <div class="form-control">
+                        <label class="label text-xs font-bold text-gray-500 p-0 mb-1">To Date</label>
+                        <input type="date" name="date_end" value="{{ selected_date_end }}" class="input input-bordered input-sm w-full bg-gray-50 rounded-xl">
+                    </div>
+                </div>
+            </form>
+
+            <!-- Save Current Search Feature -->
+            {% if request.user.is_authenticated and q %}
+            <form method="post" action="{% url 'reports:save_search' %}" class="bg-[#226ce0]/5 border border-[#226ce0]/10 p-4 rounded-xl space-y-2.5">
+                {% csrf_token %}
+                <input type="hidden" name="q" value="{{ q }}">
+                <input type="hidden" name="status" value="{{ selected_status }}">
+                <input type="hidden" name="impact" value="{{ selected_impact }}">
+                <input type="hidden" name="assignee_id" value="{{ selected_assignee_id }}">
+                <input type="hidden" name="reporter_id" value="{{ selected_reporter_id }}">
+                <input type="hidden" name="org_id" value="{{ selected_org_id }}">
+                <input type="hidden" name="component_id" value="{{ selected_component_id }}">
+                <input type="hidden" name="date_start" value="{{ selected_date_start }}">
+                <input type="hidden" name="date_end" value="{{ selected_date_end }}">
+                
+                <p class="text-[10px] font-bold text-gray-500 uppercase tracking-wider p-0 m-0">Save This Filtered Search</p>
+                <div class="flex gap-2">
+                    <input type="text" name="name" placeholder="Search name (e.g. Critical reports)" class="input input-xs input-bordered flex-1 rounded-lg text-xs bg-white focus:border-[#226ce0]" required>
+                    <button type="submit" class="btn btn-xs btn-primary text-white font-medium rounded-lg">Save</button>
+                </div>
+            </form>
+            {% endif %}
+
+            <!-- Saved Searches List -->
+            {% if saved_searches %}
+            <div class="border-t border-gray-100 pt-4 space-y-2">
+                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Saved Searches</p>
+                <div class="space-y-1.5">
+                    {% for saved in saved_searches %}
+                    <div class="flex items-center justify-between p-2.5 bg-gray-50 hover:bg-gray-100/70 border border-gray-100 rounded-xl transition-all">
+                        <button type="button" 
+                                onclick="applySavedSearch('{{ saved.query|escapejs }}', '{{ saved.filters.status|default:'' }}', '{{ saved.filters.impact|default:'' }}', '{{ saved.filters.assignee_id|default:'' }}', '{{ saved.filters.reporter_id|default:'' }}', '{{ saved.filters.org_id|default:'' }}', '{{ saved.filters.component_id|default:'' }}', '{{ saved.filters.date_start|default:'' }}', '{{ saved.filters.date_end|default:'' }}')"
+                                class="text-xs font-semibold text-gray-800 hover:text-[#226ce0] text-left truncate flex-1 min-w-0 pr-2">
+                            ⭐ {{ saved.name }}
+                        </button>
+                        <form method="post" action="{% url 'reports:delete_saved_search' search_id=saved.id %}" class="shrink-0">
+                            {% csrf_token %}
+                            <button type="submit" class="text-gray-400 hover:text-red-500 p-0.5 rounded-md hover:bg-red-50 transition-colors">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
+                            </button>
+                        </form>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Right Column: Results Wrapper -->
+        <div class="lg:col-span-8">
+            <div id="search-results-wrapper">
+                {% include "search_results_partial.html" %}
+            </div>
+        </div>
+
+    </div>
 </div>
+
+<script>
+    function clearFilters() {
+        const form = document.getElementById('search-filters-form');
+        document.getElementById('search-input').value = '';
+        form.querySelectorAll('select').forEach(sel => sel.value = '');
+        form.querySelectorAll('input[type="date"]').forEach(inp => inp.value = '');
+        
+        // Trigger HTMX search
+        htmx.trigger(form, 'change');
+    }
+
+    function applyRecentSearch(query) {
+        document.getElementById('search-input').value = query;
+        htmx.trigger(document.getElementById('search-filters-form'), 'change');
+    }
+
+    function applySavedSearch(query, status, impact, assignee, reporter, org, component, date_start, date_end) {
+        document.getElementById('search-input').value = query;
+        const form = document.getElementById('search-filters-form');
+        
+        form.querySelector('select[name="status"]').value = status;
+        form.querySelector('select[name="impact"]').value = impact;
+        form.querySelector('select[name="assignee_id"]').value = assignee;
+        form.querySelector('select[name="reporter_id"]').value = reporter;
+        form.querySelector('select[name="org_id"]').value = org;
+        form.querySelector('select[name="component_id"]').value = component;
+        form.querySelector('input[name="date_start"]').value = date_start;
+        form.querySelector('input[name="date_end"]').value = date_end;
+
+        htmx.trigger(form, 'change');
+    }
+</script>
 {% endblock %}

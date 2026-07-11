@@ -28,6 +28,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     # Global search
     path('search/', core_views.global_search, name='global_search'),
+    path('search/glimpse/', core_views.global_search_glimpse, name='global_search_glimpse'),
 
     
     # URLs for the landing page, login, and signup

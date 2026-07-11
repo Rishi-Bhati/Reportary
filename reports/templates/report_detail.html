@@ -68,14 +68,37 @@
                     </div>
                 </div>
 
-                <div class="flex items-center gap-3">
-                    <a href="{% url 'projects:reports:report_list' project.uuid %}"
-                        class="btn bg-white border-2 border-[#d0bcd5] text-[#534b62] hover:bg-[#f8f6fa] hover:border-[#a499b3] hover:text-[#1b1725] transition-all duration-200">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                <div class="flex flex-wrap items-center gap-2">
+                    {% include "reports/partials/watch_button.html" %}
+                    {% include "reports/partials/bookmark_button.html" %}
+                    
+                    {% if can_edit %}
+                    <a href="{% url 'projects:reports:edit_report' project_uuid=project.uuid report_uuid=report.uuid %}" 
+                       class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 transition-colors shadow-sm">
+                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                         </svg>
-                        Back to List
+                        Edit
+                    </a>
+                    {% endif %}
+                    
+                    {% if can_delete %}
+                    <button hx-get="{% url 'projects:reports:delete_report' project_uuid=project.uuid report_uuid=report.uuid %}"
+                            hx-target="#delete-modal-container"
+                            class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border border-red-200 bg-white text-red-600 hover:bg-red-50 transition-colors shadow-sm">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                        Delete
+                    </button>
+                    {% endif %}
+                    
+                    <a href="{% url 'projects:reports:report_list' project.uuid %}"
+                        class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border border-[#d0bcd5] bg-white text-[#534b62] hover:bg-[#f8f6fa] transition-colors shadow-sm">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                        </svg>
+                        Back
                     </a>
                 </div>
             </div>
@@ -99,31 +122,75 @@
                     </h3>
                 </div>
                 <div class="p-8">
-                    <div class="prose max-w-none text-[#534b62] leading-relaxed">
-                        {{ report.description|linebreaks }}
+                    <div class="prose max-w-none text-[#534b62] leading-relaxed markdown-render" id="report-description-content">
+                        {{ report.description }}
                     </div>
 
-                    {% if report.attatchment %}
-                    <div class="mt-6 pt-6 border-t border-gray-100">
-                        <h4 class="text-sm font-bold text-[#1b1725] uppercase tracking-wider mb-3">Attachment</h4>
-                        <div class="flex items-center gap-4 bg-gray-50 p-4 rounded-xl border border-gray-100 max-w-md">
-                            <svg class="w-8 h-8 text-[#226ce0]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path>
-                            </svg>
-                            <div class="flex-1 min-w-0">
-                                <p class="text-sm font-semibold text-gray-900 truncate">{{ report.attatchment.name }}</p>
-                                {% if report.safe_attatchment_size %}
-                                <p class="text-xs text-gray-500">{{ report.safe_attatchment_size|filesizeformat }}</p>
-                                {% endif %}
+                    {% if report.attatchment or report.attachments.exists %}
+                    <div class="mt-6 pt-6 border-t border-gray-100 space-y-3">
+                        <h4 class="text-sm font-bold text-[#1b1725] uppercase tracking-wider mb-2">Attachments</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- Legacy Single Attachment -->
+                            {% if report.attatchment %}
+                            <div class="flex items-center gap-4 bg-gray-50 p-4 rounded-xl border border-gray-100">
+                                <svg class="w-8 h-8 text-[#226ce0]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path>
+                                </svg>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-semibold text-gray-900 truncate">{{ report.attatchment.name }}</p>
+                                    {% if report.safe_attatchment_size %}
+                                    <p class="text-xs text-gray-500">{{ report.safe_attatchment_size|filesizeformat }}</p>
+                                    {% endif %}
+                                </div>
+                                <a href="{{ report.attatchment.url }}" target="_blank" class="btn btn-xs btn-outline text-[#226ce0] border-[#226ce0] hover:bg-[#226ce0] hover:text-white rounded-lg">
+                                    View
+                                </a>
                             </div>
-                            <a href="{{ report.attatchment.url }}" target="_blank" class="btn btn-xs btn-outline text-[#226ce0] border-[#226ce0] hover:bg-[#226ce0] hover:text-white rounded-lg">
-                                View / Download
-                            </a>
+                            {% endif %}
+                            
+                            <!-- Multi-Attachments List -->
+                            {% for attachment in report.attachments.all %}
+                            <div class="flex items-center gap-4 bg-gray-50 p-4 rounded-xl border border-gray-100">
+                                <svg class="w-8 h-8 text-[#226ce0]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path>
+                                </svg>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-semibold text-gray-900 truncate">{{ attachment.filename }}</p>
+                                    {% if attachment.file_size %}
+                                    <p class="text-xs text-gray-500">{{ attachment.file_size|filesizeformat }}</p>
+                                    {% endif %}
+                                </div>
+                                <a href="{{ attachment.file.url }}" target="_blank" class="btn btn-xs btn-outline text-[#226ce0] border-[#226ce0] hover:bg-[#226ce0] hover:text-white rounded-lg">
+                                    View
+                                </a>
+                            </div>
+                            {% endfor %}
                         </div>
                     </div>
                     {% endif %}
                 </div>
             </div>
+
+            <!-- Steps to Reproduce Card -->
+            {% if report.steps %}
+            <div class="bg-white rounded-2xl border border-[#d0bcd5]/30 shadow-sm overflow-hidden">
+                <div class="px-8 py-5 border-b border-[#d0bcd5]/30 bg-[#f8f6fa]/50">
+                    <h3 class="text-lg font-bold text-[#1b1725] flex items-center gap-2">
+                        <svg class="w-5 h-5 text-[#226ce0]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2">
+                            </path>
+                        </svg>
+                        Steps to Reproduce
+                    </h3>
+                </div>
+                <div class="p-8">
+                    <div class="prose max-w-none text-[#534b62] leading-relaxed markdown-render font-mono text-sm" id="report-steps-content">
+                        {{ report.steps }}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
 
             <!-- Comments Section -->
             <div class="space-y-6">
@@ -365,7 +432,13 @@
         </div>
     </div>
 </div>
+
+<!-- Delete Modal Target Container -->
+<div id="delete-modal-container"></div>
 {% endblock %}
+
+<!-- Load Marked.js for Client-Side Markdown Parsing -->
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
 {% block scripts %}
 <script>
@@ -381,5 +454,38 @@ function toggleHistory(button) {
         icon.classList.remove('rotate-180');
     }
 }
+
+// Render Markdown Elements
+document.addEventListener("DOMContentLoaded", function() {
+    // Parse description
+    const descEl = document.getElementById("report-description-content");
+    if (descEl) {
+        descEl.innerHTML = marked.parse(descEl.textContent.trim());
+    }
+    
+    // Parse steps
+    const stepsEl = document.getElementById("report-steps-content");
+    if (stepsEl) {
+        stepsEl.innerHTML = marked.parse(stepsEl.textContent.trim());
+    }
+    
+    // Parse comment texts
+    const parseComments = () => {
+        const commentEls = document.querySelectorAll(".markdown-content");
+        commentEls.forEach(el => {
+            if (!el.dataset.parsed) {
+                el.innerHTML = marked.parse(el.textContent.trim());
+                el.dataset.parsed = "true";
+            }
+        });
+    };
+    
+    parseComments();
+    
+    // Support dynamic HTMX comment loads
+    document.body.addEventListener('htmx:afterOnLoad', function() {
+        parseComments();
+    });
+});
 </script>
 {% endblock %}

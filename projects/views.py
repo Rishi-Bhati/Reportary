@@ -97,17 +97,60 @@ def register_project(request):
 
 
 
-def projects_view(request):
-    projects = Project.objects.filter(public=True).select_related('org', 'owner').annotate(num_components=Count('project_components'))
-
-    # Page-specific search
+def apply_project_filters_and_sorting(projects_qs, request):
+    # 1. On-page Search
     q = request.GET.get('q', '').strip()
     if q:
-        projects = projects.filter(
+        projects_qs = projects_qs.filter(
             Q(title__icontains=q) | Q(description__icontains=q) | Q(owner__username__icontains=q)
         ).distinct()
 
-    return render(request, 'projects_view.html', {'projects': projects})
+    # 2. Filters
+    visibility = request.GET.get('visibility', '').strip()
+    if visibility:
+        projects_qs = projects_qs.filter(visibility=visibility)
+
+    org_id = request.GET.get('org_id', '').strip()
+    if org_id:
+        projects_qs = projects_qs.filter(org_id=org_id)
+
+    # 3. Sorting
+    sort_by = request.GET.get('sort_by', '').strip()
+    if sort_by == 'title_asc':
+        projects_qs = projects_qs.order_by('title')
+    elif sort_by == 'title_desc':
+        projects_qs = projects_qs.order_by('-title')
+    elif sort_by == 'oldest':
+        projects_qs = projects_qs.order_by('created_at')
+    elif sort_by == 'newest':
+        projects_qs = projects_qs.order_by('-created_at')
+    else:
+        # Default recently updated
+        projects_qs = projects_qs.order_by('-updated_at')
+
+    return projects_qs
+
+
+def projects_view(request):
+    projects = Project.objects.filter(public=True).select_related('org', 'owner').annotate(num_components=Count('project_components'))
+    projects = apply_project_filters_and_sorting(projects, request)
+
+    # Get filter choices context
+    filter_orgs = Organisation.objects.all().order_by('name')
+
+    context = {
+        'projects': projects,
+        'filter_orgs': filter_orgs,
+        'selected_visibility': request.GET.get('visibility', ''),
+        'selected_org_id': int(request.GET.get('org_id', '')) if request.GET.get('org_id', '').isdigit() else '',
+        'selected_sort_by': request.GET.get('sort_by', ''),
+        'q': request.GET.get('q', '').strip(),
+    }
+
+    if request.headers.get('HX-Request') or request.GET.get('hx_request') == 'true':
+        return render(request, 'projects/partials/projects_grid_partial.html', context)
+
+    return render(request, 'projects_view.html', context)
 
 
 
@@ -193,36 +236,45 @@ def my_projects_view(request):
         Q(org__isnull=False, project_head=request.user)
     ).annotate(num_components=Count('project_components')).distinct()
     
-    # Page-specific search
-    q = request.GET.get('q', '').strip()
-    if q:
-        projects = projects.filter(
-            Q(title__icontains=q) | Q(description__icontains=q)
-        ).distinct()
-        
-    projects = projects.order_by('-updated_at')
-    
-    return render(request, 'projects_view.html', {
+    projects = apply_project_filters_and_sorting(projects, request)
+    filter_orgs = Organisation.objects.all().order_by('name')
+
+    context = {
         'projects': projects,
+        'filter_orgs': filter_orgs,
         'title': 'My Projects',
-        'subtitle': 'Manage projects owned by you.'
-    })
+        'subtitle': 'Manage projects owned by you.',
+        'selected_visibility': request.GET.get('visibility', ''),
+        'selected_org_id': int(request.GET.get('org_id', '')) if request.GET.get('org_id', '').isdigit() else '',
+        'selected_sort_by': request.GET.get('sort_by', ''),
+        'q': request.GET.get('q', '').strip(),
+    }
+
+    if request.headers.get('HX-Request') or request.GET.get('hx_request') == 'true':
+        return render(request, 'projects/partials/projects_grid_partial.html', context)
+
+    return render(request, 'projects_view.html', context)
+
 
 @login_required
 def collaborating_projects_view(request):
     projects = Project.objects.filter(collaborators=request.user).annotate(num_components=Count('project_components'))
     
-    # Page-specific search
-    q = request.GET.get('q', '').strip()
-    if q:
-        projects = projects.filter(
-            Q(title__icontains=q) | Q(description__icontains=q)
-        ).distinct()
-        
-    projects = projects.order_by('-updated_at')
-    
-    return render(request, 'projects_view.html', {
+    projects = apply_project_filters_and_sorting(projects, request)
+    filter_orgs = Organisation.objects.all().order_by('name')
+
+    context = {
         'projects': projects,
+        'filter_orgs': filter_orgs,
         'title': 'Collaborating Projects',
-        'subtitle': 'Projects you are collaborating on.'
-    })
+        'subtitle': 'Projects you are collaborating on.',
+        'selected_visibility': request.GET.get('visibility', ''),
+        'selected_org_id': int(request.GET.get('org_id', '')) if request.GET.get('org_id', '').isdigit() else '',
+        'selected_sort_by': request.GET.get('sort_by', ''),
+        'q': request.GET.get('q', '').strip(),
+    }
+
+    if request.headers.get('HX-Request') or request.GET.get('hx_request') == 'true':
+        return render(request, 'projects/partials/projects_grid_partial.html', context)
+
+    return render(request, 'projects_view.html', context)

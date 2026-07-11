@@ -1,0 +1,16 @@
+<button hx-post="{% url 'reports:toggle_bookmark' report_uuid=report.uuid %}"
+        hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+        hx-swap="outerHTML"
+        class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border transition-colors shadow-sm focus:outline-none {% if is_bookmarked %}bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100{% else %}bg-white text-gray-700 border-gray-200 hover:bg-gray-50{% endif %}">
+    {% if is_bookmarked %}
+    <svg class="w-4 h-4 text-amber-500 fill-current" viewBox="0 0 20 20" fill="currentColor">
+        <path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z" />
+    </svg>
+    Bookmarked
+    {% else %}
+    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+    </svg>
+    Bookmark
+    {% endif %}
+</button>

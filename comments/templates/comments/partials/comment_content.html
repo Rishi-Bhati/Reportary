@@ -1,4 +1,4 @@
-<div id="comment-{{ comment.uuid }}" class="chat-bubble">{{ comment.text }}</div>
+<div id="comment-{{ comment.uuid }}" class="chat-bubble"><div class="markdown-content">{{ comment.text }}</div></div>
 
 {% comment %} If the logged-in user is the author of the comment, show the edit link. {% endcomment %}
 {% if request.user == comment.commented_by %}

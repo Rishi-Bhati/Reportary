@@ -64,7 +64,8 @@ def update_report_status(*, request, report, new_status, actor):
     )
 
     from notifications.services import create_notification
-    recipients = {report.assigned_to, report.reported_by, report.project.owner, report.project.project_head}
+    followers = [f.user for f in report.followers.all()]
+    recipients = {report.assigned_to, report.reported_by, report.project.owner, report.project.project_head} | set(followers)
     for recipient in recipients:
         if recipient and recipient != actor:
             create_notification(
@@ -101,7 +102,8 @@ def update_report_impact(*, report, new_impact, actor):
     )
 
     from notifications.services import create_notification
-    recipients = {report.assigned_to, report.reported_by, report.project.owner, report.project.project_head}
+    followers = [f.user for f in report.followers.all()]
+    recipients = {report.assigned_to, report.reported_by, report.project.owner, report.project.project_head} | set(followers)
     for recipient in recipients:
         if recipient and recipient != actor:
             create_notification(
@@ -142,3 +144,21 @@ def get_report_history(user, report):
     if rules.can_see_history(user, report):
         return get_entity_history("Report", report.uuid)
     return []
+
+
+def toggle_report_bookmark(*, user, report):
+    from .models import ReportBookmark
+    bookmark, created = ReportBookmark.objects.get_or_create(user=user, report=report)
+    if not created:
+        bookmark.delete()
+        return False
+    return True
+
+
+def toggle_report_follower(*, user, report):
+    from .models import ReportFollower
+    follower, created = ReportFollower.objects.get_or_create(user=user, report=report)
+    if not created:
+        follower.delete()
+        return False
+    return True

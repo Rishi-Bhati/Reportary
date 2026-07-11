@@ -1,20 +1,19 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}{{ title|default:"Projects" }} | Reportary{% endblock %}
-
-{% block breadcrumb %}{{ title|default:"Projects" }}{% endblock %}
+{% block title %}Explore Projects | Reportary{% endblock %}
+{% block breadcrumb %}Projects{% endblock %}
 
 {% block content %}
 <div class="space-y-6">
     <!-- Header -->
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-            <h1 class="text-2xl font-bold text-gray-900 tracking-tight">{{ title|default:"Projects" }}</h1>
-            <p class="text-gray-500 mt-1">{{ subtitle|default:"Manage all your projects and their components." }}</p>
+            <h1 class="text-2xl font-bold text-gray-900 tracking-tight">{{ title|default:"Explore Projects" }}</h1>
+            <p class="text-gray-500 mt-1">{{ subtitle|default:"Browse and search projects to monitor issues and track work items." }}</p>
         </div>
         <a href="{% url 'projects:new' %}"
-            class="btn btn-primary text-white capitalize font-medium shadow-sm hover:shadow-md transition-all">
+            class="btn btn-primary text-white capitalize font-medium shadow-sm hover:shadow-md transition-all rounded-xl">
             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
             </svg>
@@ -22,72 +21,87 @@
         </a>
     </div>
 
-    <!-- Project Grid -->
-    {% if projects %}
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {% for project in projects %}
-        <a href="{% url 'projects:project_detail' project.uuid %}"
-            class="group bg-white rounded-xl p-6 border border-gray-100 shadow-sm hover:shadow-md hover:border-[#a499b3] transition-all flex flex-col h-full relative overflow-hidden">
-            <!-- Hover highlight bar -->
-            <div
-                class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#226ce0] to-[#1b56b3] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left">
+    <!-- On-page Filter Toggle and Local Realtime Search Bar -->
+    <div class="flex items-center gap-4 bg-white border border-gray-100 p-4 rounded-2xl shadow-sm justify-between flex-wrap">
+        <div class="flex items-center gap-3 flex-1 min-w-[280px]">
+            <button type="button" onclick="toggleFilterDrawer()" class="btn btn-sm btn-outline text-gray-700 border-gray-200 hover:bg-[#226ce0]/10 hover:text-[#226ce0] hover:border-[#226ce0]/30 transition-all rounded-xl font-medium gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                </svg>
+                Filters & Sorting
+            </button>
+            <div class="relative flex-1">
+                <input type="text" name="q" id="local-search-input" value="{{ q }}" placeholder="Search projects in this list..."
+                       hx-get="" hx-trigger="keyup changed delay:300ms, search" hx-target="#projects-grid-wrapper" hx-include="#local-filters-form" hx-push-url="true"
+                       class="input input-sm h-9 w-full bg-gray-50 border border-gray-200 focus:bg-white focus:border-[#226ce0] rounded-xl pl-9 text-xs">
+                <svg class="w-3.5 h-3.5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
             </div>
-
-            <div class="flex justify-between items-start mb-4">
-                <div
-                    class="w-12 h-12 rounded-xl bg-[#226ce0]/10 text-[#226ce0] flex items-center justify-center font-bold text-xl group-hover:bg-[#226ce0] group-hover:text-white transition-all duration-300 shadow-sm">
-                    {{ project.title|slice:":1"|upper }}
-                </div>
-                <div class="flex flex-col items-end gap-1">
-                    {% if project.public %}
-                    <span
-                        class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-[#226ce0]/10 text-[#226ce0] border border-[#226ce0]/20">Public</span>
-                    {% else %}
-                    <span
-                        class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-50 text-gray-600 border border-gray-100">Private</span>
-                    {% endif %}
-                    {% if project.org %}
-                    <span
-                        class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-purple-50 text-purple-600 border border-purple-100">{{ project.org.name }}</span>
-                    {% endif %}
-                </div>
-            </div>
-
-            <h3 class="text-lg font-bold text-gray-900 mb-2 group-hover:text-[#226ce0] transition-colors">{{ project.title }}</h3>
-            <p class="text-sm text-gray-500 mb-6 flex-1 line-clamp-3 leading-relaxed">{{ project.description|default:"No description provided." }}</p>
-
-            <div class="pt-4 border-t border-gray-50">
-                <div class="flex items-center justify-between text-xs text-gray-400">
-                    <span class="flex items-center gap-1.5">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10">
-                            </path>
-                        </svg>
-                        {{ project.num_components }} Components
-                    </span>
-                    <span>Updated {{ project.updated_at|timesince }} ago</span>
-                </div>
-            </div>
-        </a>
-        {% endfor %}
-    </div>
-    {% else %}
-    <!-- Empty State -->
-    <div class="text-center py-16 bg-white rounded-xl border-2 border-dashed border-gray-200">
-        <div class="w-16 h-16 bg-gray-50 text-gray-400 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10">
-                </path>
-            </svg>
         </div>
-        <h3 class="text-lg font-medium text-gray-900">No projects found</h3>
-        <p class="mt-2 text-sm text-gray-500 max-w-sm mx-auto">Get started by looking for a new project to contribute
-            to, or create your own.</p>
-        <a href="{% url 'projects:new' %}" class="btn btn-primary mt-6 text-white capitalize font-medium">Register New
-            Project</a>
     </div>
-    {% endif %}
+
+    <!-- Collapsible Local Filters Drawer -->
+    <div id="filter-drawer" class="hidden bg-white border border-gray-100 rounded-2xl p-5 shadow-inner transition-all space-y-4">
+        <form id="local-filters-form" hx-get="" hx-trigger="change from:select" hx-target="#projects-grid-wrapper" hx-push-url="true" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <!-- Sync Search Query -->
+            <input type="hidden" name="q" id="local-filters-q" value="{{ q }}">
+
+            <!-- Visibility Filter -->
+            <div class="form-control">
+                <label class="label text-[10px] font-bold text-gray-400 uppercase tracking-wider p-0 mb-1">Visibility Scope</label>
+                <select name="visibility" class="select select-bordered select-sm w-full bg-gray-50 rounded-xl text-xs">
+                    <option value="">All Scopes</option>
+                    <option value="public" {% if selected_visibility == 'public' %}selected{% endif %}>Public</option>
+                    <option value="org" {% if selected_visibility == 'org' %}selected{% endif %}>Organization</option>
+                    <option value="private" {% if selected_visibility == 'private' %}selected{% endif %}>Private</option>
+                </select>
+            </div>
+
+            <!-- Organization Filter -->
+            <div class="form-control">
+                <label class="label text-[10px] font-bold text-gray-400 uppercase tracking-wider p-0 mb-1">Organization</label>
+                <select name="org_id" class="select select-bordered select-sm w-full bg-gray-50 rounded-xl text-xs">
+                    <option value="">All Organizations</option>
+                    {% for o in filter_orgs %}
+                    <option value="{{ o.id }}" {% if selected_org_id == o.id %}selected{% endif %}>{{ o.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Sorting Choices -->
+            <div class="form-control">
+                <label class="label text-[10px] font-bold text-gray-400 uppercase tracking-wider p-0 mb-1">Sort By</label>
+                <select name="sort_by" class="select select-bordered select-sm w-full bg-gray-50 rounded-xl text-xs">
+                    <option value="">Recently Updated</option>
+                    <option value="newest" {% if selected_sort_by == 'newest' %}selected{% endif %}>Newest Created</option>
+                    <option value="oldest" {% if selected_sort_by == 'oldest' %}selected{% endif %}>Oldest Created</option>
+                    <option value="title_asc" {% if selected_sort_by == 'title_asc' %}selected{% endif %}>Title (A-Z)</option>
+                    <option value="title_desc" {% if selected_sort_by == 'title_desc' %}selected{% endif %}>Title (Z-A)</option>
+                </select>
+            </div>
+        </form>
+    </div>
+
+    <!-- Project Grid Wrapper (Target of HTMX Swapping) -->
+    <div id="projects-grid-wrapper">
+        {% include "projects/partials/projects_grid_partial.html" %}
+    </div>
 </div>
+
+<script>
+    function toggleFilterDrawer() {
+        const drawer = document.getElementById('filter-drawer');
+        drawer.classList.toggle('hidden');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const searchInput = document.getElementById('local-search-input');
+        const filtersQ = document.getElementById('local-filters-q');
+        
+        searchInput.addEventListener('input', () => {
+            filtersQ.value = searchInput.value;
+        });
+    });
+</script>
 {% endblock %}

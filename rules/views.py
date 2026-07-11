@@ -50,6 +50,22 @@ def can_change_status(user, report):
     # Only project members (currently, the owner) can change the status.
     return is_project_member(user, report.project)
 
+
+def can_edit_report(user, report):
+    if not user or not user.is_authenticated:
+        return False
+    if not user.is_email_verified:
+        return False
+    return is_reporter(user, report)
+
+
+def can_delete_report(user, report):
+    if not user or not user.is_authenticated:
+        return False
+    if not user.is_email_verified:
+        return False
+    return is_reporter(user, report)
+
 ### Rules for Comments ###
 
 def is_commenter(user, comment):

@@ -1,28 +1,20 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Report Issue | Reportary{% endblock %}
+{% block title %}Edit Issue: {{ report.title }} | Reportary{% endblock %}
 {% block breadcrumb %}
-{% if project %}
 <a href="{% url 'projects:my_projects' %}" class="hover:text-[#226ce0]">Projects</a> /
 <a href="{% url 'projects:project_detail' project_uuid=project.uuid %}" class="hover:text-[#226ce0]">{{ project.title }}</a> /
-Report Issue
-{% else %}
-Report Issue
-{% endif %}
+<a href="{% url 'projects:reports:report_detail' project_uuid=project.uuid report_uuid=report.uuid %}" class="hover:text-[#226ce0]">#{{ report.id }}</a> /
+Edit Issue
 {% endblock %}
 
 {% block content %}
 <div class="max-w-3xl mx-auto">
     <!-- Header -->
     <div class="mb-8">
-        <h1 class="text-2xl font-bold text-gray-900 tracking-tight">Report New Issue</h1>
-        {% if project %}
-        <p class="text-gray-500 mt-1">Submit a new bug, feature request, or task for <span
-                class="font-bold text-gray-800">{{ project.title }}</span>.</p>
-        {% else %}
-        <p class="text-gray-500 mt-1">Submit a new issue to get it tracked.</p>
-        {% endif %}
+        <h1 class="text-2xl font-bold text-gray-900 tracking-tight">Edit Issue</h1>
+        <p class="text-gray-500 mt-1">Update details for issue <span class="font-bold text-gray-800">#{{ report.id }}</span>.</p>
     </div>
 
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
@@ -38,37 +30,26 @@ Report Issue
                 </div>
                 {% endif %}
 
-                <!-- Title with Duplicate warnings checker -->
+                <!-- Title -->
                 <div class="form-control w-full relative">
                     <label class="label text-sm font-semibold text-gray-700" for="{{ form.title.id_for_label }}">{{ form.title.label }}</label>
                     <input type="text" name="{{ form.title.name }}" id="{{ form.title.id_for_label }}"
+                        value="{{ report.title }}"
                         hx-get="{% url 'reports:ajax_check_duplicate' %}"
                         hx-trigger="keyup changed delay:500ms"
                         hx-target="#duplicate-warnings"
-                        hx-include="[name='project']"
+                        hx-include="[name='project_uuid'], [name='report_uuid']"
                         class="input input-bordered w-full focus:border-[#226ce0] bg-gray-50 focus:bg-white transition-colors"
                         placeholder="Brief summary of the issue" required>
                     {{ form.title.errors }}
                     
-                    <!-- Hidden field to include project uuid in warning check if pre-selected -->
-                    {% if project %}
+                    <!-- Hidden fields to include in duplicate warning search -->
                     <input type="hidden" name="project_uuid" value="{{ project.uuid }}">
-                    {% endif %}
+                    <input type="hidden" name="report_uuid" value="{{ report.uuid }}">
                     
-                    <!-- Duplicate Warnings Div -->
+                    <!-- Duplicate Warnings Target Div -->
                     <div id="duplicate-warnings"></div>
                 </div>
-
-                <!-- Project Selection (if no project context) -->
-                {% if not project %}
-                <div class="form-control w-full">
-                    <label class="label text-sm font-semibold text-gray-700" for="id_project">Project</label>
-                    {{ form.project }}
-                    {{ form.project.errors }}
-                </div>
-                {% else %}
-                <input type="hidden" name="project" value="{{ project.id }}">
-                {% endif %}
 
                 <!-- Component & Frequency Grid -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -100,7 +81,7 @@ Report Issue
                     <div id="container-description-write">
                         <textarea name="{{ form.description.name }}" id="{{ form.description.id_for_label }}" rows="5"
                             class="textarea textarea-bordered w-full focus:border-[#226ce0] bg-gray-50 focus:bg-white transition-colors text-base"
-                            placeholder="Detailed explanation..."></textarea>
+                            placeholder="Detailed explanation...">{{ report.description }}</textarea>
                     </div>
                     <div id="container-description-preview" class="hidden min-h-[130px] p-4 bg-gray-50 border border-gray-200 rounded-xl prose max-w-none text-sm text-gray-800">
                         <em class="text-gray-400">Nothing to preview</em>
@@ -121,7 +102,7 @@ Report Issue
                     <div id="container-steps-write">
                         <textarea name="{{ form.steps.name }}" id="{{ form.steps.id_for_label }}" rows="5"
                             class="textarea textarea-bordered w-full focus:border-[#226ce0] bg-gray-50 focus:bg-white transition-colors text-base font-mono text-sm"
-                            placeholder="1. Go to...&#10;2. Click on..."></textarea>
+                            placeholder="1. Go to...&#10;2. Click on...">{{ report.steps }}</textarea>
                     </div>
                     <div id="container-steps-preview" class="hidden min-h-[130px] p-4 bg-gray-50 border border-gray-200 rounded-xl prose max-w-none text-sm text-gray-800">
                         <em class="text-gray-400">Nothing to preview</em>
@@ -154,11 +135,14 @@ Report Issue
                 </div>
             </div>
 
-            <!-- Submit Button -->
-            <div class="p-8 bg-gray-50 border-t border-gray-100 flex justify-end">
+            <!-- Submit Buttons -->
+            <div class="p-8 bg-gray-50 border-t border-gray-100 flex justify-between items-center">
+                <a href="{% url 'projects:reports:report_detail' project_uuid=project.uuid report_uuid=report.uuid %}" class="btn btn-ghost rounded-xl capitalize">
+                    Cancel
+                </a>
                 <button type="submit"
                     class="btn btn-primary text-white px-8 font-semibold shadow-md hover:shadow-lg transition-all capitalize">
-                    Submit Issue
+                    Save Changes
                 </button>
             </div>
         </form>
@@ -170,56 +154,11 @@ Report Issue
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const projectSelect = document.getElementById('id_project');
-        const componentSelectId = '{{ form.component.id_for_label }}';
-        const componentSelect = document.getElementById(componentSelectId);
-        const componentsUrl = "{% url 'reports:ajax_get_components' %}";
-
-        // Helper styling
+        // Apply styling class to inputs
         const selects = document.querySelectorAll('select:not(.select)');
         selects.forEach(select => {
             select.classList.add('select', 'select-bordered', 'w-full', 'focus:border-[#226ce0]', 'bg-gray-50', 'focus:bg-white', 'transition-colors');
         });
-
-        // Trigger check duplicate logic inclusion
-        const titleInput = document.getElementById('{{ form.title.id_for_label }}');
-        if (titleInput && projectSelect) {
-            titleInput.addEventListener('keyup', function() {
-                // HTMX include project dropdown automatically if exists
-            });
-        }
-
-        if (projectSelect) {
-            projectSelect.addEventListener('change', function () {
-                const projectId = this.value;
-
-                // Clear component options
-                componentSelect.innerHTML = '<option value="">---------</option>';
-
-                if (projectId) {
-                    fetch(`${componentsUrl}?project_id=${projectId}`)
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.length > 0) {
-                                data.forEach(function (component) {
-                                    const option = new Option(component.name, component.id);
-                                    componentSelect.add(option);
-                                });
-                                componentSelect.disabled = false;
-                            } else {
-                                componentSelect.disabled = true;
-                            }
-                        });
-                } else {
-                    componentSelect.disabled = true;
-                }
-            });
-
-            // Trigger change on load if a project is already selected
-            if (projectSelect.value) {
-                projectSelect.dispatchEvent(new Event('change'));
-            }
-        }
     });
 
     // Toggle Preview Tab function

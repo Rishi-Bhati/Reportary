@@ -13,9 +13,25 @@ class ProjectForm(forms.ModelForm):
         label="Visibility Scope"
     )
 
+    max_attachments = forms.IntegerField(
+        min_value=1,
+        max_value=20,
+        initial=5,
+        required=False,
+        widget=forms.NumberInput(attrs={'class': 'shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'}),
+        label="Max Attachments per Report"
+    )
+    allowed_attachment_types = forms.CharField(
+        initial=".jpg,.jpeg,.png,.pdf,.doc,.docx,.xls,.xlsx,.zip,.txt",
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'}),
+        help_text="Comma-separated file extensions (e.g. .jpg,.png,.pdf)",
+        label="Allowed Attachment Extensions"
+    )
+
     class Meta:
         model = Project
-        fields = ['title', 'link', 'description', 'org', 'project_head', 'visibility']
+        fields = ['title', 'link', 'description', 'org', 'project_head', 'visibility', 'max_attachments', 'allowed_attachment_types']
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)
@@ -86,6 +102,13 @@ class ProjectForm(forms.ModelForm):
             cleaned_data['project_head'] = None
             if visibility == 'org':
                 self.add_error('visibility', "Organization visibility is only available for organization-owned projects.")
+        
+        # Apply defaults if fields are empty/None
+        if not cleaned_data.get('max_attachments'):
+            cleaned_data['max_attachments'] = 5
+        if not cleaned_data.get('allowed_attachment_types'):
+            cleaned_data['allowed_attachment_types'] = ".jpg,.jpeg,.png,.pdf,.doc,.docx,.xls,.xlsx,.zip,.txt"
+            
         return cleaned_data
 
     def save(self, commit=True):

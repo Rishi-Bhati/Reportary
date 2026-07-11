@@ -264,24 +264,24 @@ If you skip and jump around, you’ll confuse yourself and burn out. The correct
 
 ---
 
-## ☐ 19. Better Report Workflow
+## ~~☐ 19. Better Report Workflow~~
 
 > Complete the report lifecycle.
 
 ### Report Actions
 
-- [ ] Edit report
-- [ ] Delete report (permissions)
-- [ ] Duplicate report detection
-- [ ] Bookmark reports
-- [ ] Watch/Follow reports
+- [X] Edit report
+- [X] Delete report (permissions)
+- [X] Duplicate report detection
+- [X] Bookmark reports
+- [X] Watch/Follow reports
 
 ### Content Improvements
 
-- [ ] Markdown support
-- [ ] Rich text preview
-- [ ] Better attachment uploader
-- [ ] Drag & drop upload
+- [X] Markdown support
+- [X] Rich text preview
+- [X] Better attachment uploader
+- [X] Drag & drop upload
 
 ---
 

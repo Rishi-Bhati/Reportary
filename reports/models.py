@@ -75,3 +75,52 @@ class Report(models.Model):
             except Exception:
                 return None
         return None
+
+
+class ReportBookmark(models.Model):
+    user = models.ForeignKey('accounts.User', on_delete=models.CASCADE, related_name='report_bookmarks')
+    report = models.ForeignKey(Report, on_delete=models.CASCADE, related_name='bookmarked_by')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'report')
+
+    def __str__(self):
+        return f"{self.user.username} bookmarked {self.report.title}"
+
+
+class ReportFollower(models.Model):
+    user = models.ForeignKey('accounts.User', on_delete=models.CASCADE, related_name='following_reports')
+    report = models.ForeignKey(Report, on_delete=models.CASCADE, related_name='followers')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'report')
+
+    def __str__(self):
+        return f"{self.user.username} follows {self.report.title}"
+
+
+class ReportAttachment(models.Model):
+    report = models.ForeignKey(Report, on_delete=models.CASCADE, related_name='attachments')
+    file = models.FileField(upload_to='reports/attachments/')
+    filename = models.CharField(max_length=255)
+    file_size = models.PositiveIntegerField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Attachment for {self.report.title}: {self.filename}"
+
+
+class SavedSearch(models.Model):
+    user = models.ForeignKey('accounts.User', on_delete=models.CASCADE, related_name='saved_searches')
+    name = models.CharField(max_length=100)
+    query = models.CharField(max_length=255, blank=True)
+    filters = models.JSONField(default=dict, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.user.username}'s search: {self.name}"
