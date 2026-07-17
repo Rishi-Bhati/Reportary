@@ -322,8 +322,8 @@ def contact_page(request):
                         recipient_list=[django_settings.CONTACT_EMAIL],
                         fail_silently=False,
                     )
-                except Exception as e:
-                    logger.error(f"Failed to send contact email in background: {e}", exc_info=True)
+                except Exception:
+                    logger.exception("Failed to send contact email in background thread")
                 finally:
                     close_old_connections()
                     

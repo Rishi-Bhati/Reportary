@@ -7,12 +7,22 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-def _send_email_thread(msg):
+def _send_email_thread(subject, body, from_email, to_emails, cc_emails, html_content):
+    from django.core.mail import EmailMultiAlternatives
     from django.db import close_old_connections
     try:
+        msg = EmailMultiAlternatives(
+            subject=subject,
+            body=body,
+            from_email=from_email,
+            to=to_emails,
+            cc=cc_emails or []
+        )
+        if html_content:
+            msg.attach_alternative(html_content, "text/html")
         msg.send()
-    except Exception as e:
-        logger.error(f"Failed to send async email: {e}", exc_info=True)
+    except Exception:
+        logger.exception("Failed to send asynchronous notification email in background thread")
     finally:
         close_old_connections()
 
@@ -48,18 +58,19 @@ def send_notification_email(*, notification_type, subject, context, to_emails, c
             html_content = f"<h3>{subject}</h3><p>{context.get('message', '')}</p><p>Check details on Reportary dashboard.</p>"
 
     text_content = strip_tags(html_content)
-
-    # Build the email message
-    msg = EmailMultiAlternatives(
-        subject=subject,
-        body=text_content,
-        from_email=settings.DEFAULT_FROM_EMAIL,
-        to=to_emails,
-        cc=cc_emails or []
-    )
-    msg.attach_alternative(html_content, "text/html")
     
     # Send email in a background thread to prevent blocking Gunicorn / causing timeouts
-    thread = threading.Thread(target=_send_email_thread, args=(msg,))
+    # Only pass plain Python datatypes to the thread
+    thread = threading.Thread(
+        target=_send_email_thread,
+        args=(
+            subject,
+            text_content,
+            settings.DEFAULT_FROM_EMAIL,
+            to_emails,
+            cc_emails or [],
+            html_content
+        )
+    )
     thread.daemon = True
     thread.start()
