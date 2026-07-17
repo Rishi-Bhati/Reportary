@@ -583,6 +583,108 @@ a:not(.btn):not(.text-white):not([class*="text-"]):hover {
 }
 
 /* ============================================
+   DARK MODE COLORS & CONTROLS OVERRIDES
+   ============================================ */
+[data-theme="dark"] {
+  --color-base-100: #120f18 !important;
+  --color-base-200: #0a080f !important;
+  --color-base-300: #3a3247 !important;
+  --color-base-content: #f8f6fa !important;
+
+  --color-neutral: #f8f6fa !important;
+  --color-neutral-content: #1b1725 !important;
+}
+
+/* Base override for body in dark mode */
+[data-theme="dark"] body {
+  background-color: var(--color-base-200) !important;
+  color: var(--color-base-content) !important;
+}
+
+/* Overrides for hardcoded light classes under dark mode */
+[data-theme="dark"] .bg-white {
+  background-color: var(--color-base-100) !important;
+}
+[data-theme="dark"] .bg-white\/95 {
+  background-color: rgba(18, 15, 24, 0.95) !important;
+}
+[data-theme="dark"] .bg-white\/90 {
+  background-color: rgba(18, 15, 24, 0.90) !important;
+}
+[data-theme="dark"] .bg-white\/80 {
+  background-color: rgba(18, 15, 24, 0.80) !important;
+}
+[data-theme="dark"] .bg-gray-50 {
+  background-color: var(--color-base-200) !important;
+}
+[data-theme="dark"] .bg-gray-50\/50 {
+  background-color: rgba(58, 50, 71, 0.25) !important;
+}
+[data-theme="dark"] .bg-gray-50\/30 {
+  background-color: rgba(58, 50, 71, 0.15) !important;
+}
+[data-theme="dark"] .bg-gray-100 {
+  background-color: var(--color-base-200) !important;
+}
+[data-theme="dark"] .bg-gray-200 {
+  background-color: var(--color-base-300) !important;
+}
+[data-theme="dark"] .text-gray-900,
+[data-theme="dark"] .text-gray-800,
+[data-theme="dark"] .text-gray-700,
+[data-theme="dark"] .text-\[\#1b1725\] {
+  color: var(--color-base-content) !important;
+}
+[data-theme="dark"] .text-gray-600,
+[data-theme="dark"] .text-gray-500,
+[data-theme="dark"] .text-\[\#534b62\] {
+  color: #a499b3 !important;
+}
+[data-theme="dark"] .text-\[\#534b62\]:hover {
+  color: #226ce0 !important;
+}
+[data-theme="dark"] .text-gray-400 {
+  color: #534b62 !important;
+}
+[data-theme="dark"] .border-gray-100,
+[data-theme="dark"] .border-gray-200,
+[data-theme="dark"] .border-gray-300 {
+  border-color: rgba(208, 188, 213, 0.12) !important;
+}
+[data-theme="dark"] .divide-gray-100 > * + * {
+  border-color: rgba(208, 188, 213, 0.12) !important;
+}
+[data-theme="dark"] .divide-y > * + * {
+  border-color: rgba(208, 188, 213, 0.12) !important;
+}
+[data-theme="dark"] .input,
+[data-theme="dark"] .select,
+[data-theme="dark"] .textarea {
+  background-color: var(--color-base-200) !important;
+  color: var(--color-base-content) !important;
+  border-color: rgba(208, 188, 213, 0.2) !important;
+}
+[data-theme="dark"] .input::placeholder,
+[data-theme="dark"] .textarea::placeholder {
+  color: #534b62 !important;
+}
+[data-theme="dark"] .hover\:bg-gray-50:hover,
+[data-theme="dark"] .hover\:bg-gray-50\/50:hover {
+  background-color: rgba(34, 108, 224, 0.08) !important;
+}
+
+/* Custom Scrollbar for Dark Mode */
+[data-theme="dark"] ::-webkit-scrollbar-track {
+  background: #0a080f;
+}
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: #3a3247;
+}
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+  background: #534b62;
+}
+
+/* ============================================
    FOCUS STATES
    ============================================ */
 input:focus,
@@ -591,6 +693,17 @@ select:focus {
   outline: none;
   border-color: #226ce0 !important;
   box-shadow: 0 0 0 3px rgba(34, 108, 224, 0.15);
+}
+
+/* ============================================
+   PASSWORD TOGGLE BUTTON & BROWSER OVERRIDES
+   ============================================ */
+.password-toggle-btn {
+  z-index: 10 !important;
+}
+input::-ms-reveal,
+input::-ms-clear {
+  display: none !important;
 }
 
 /* ============================================

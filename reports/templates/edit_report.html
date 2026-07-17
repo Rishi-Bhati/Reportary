@@ -123,12 +123,12 @@ Edit Issue
                 </div>
 
                 <!-- Visibility -->
-                <div class="form-control">
-                    <label class="label cursor-pointer justify-start gap-4">
+                <div class="form-control min-w-0">
+                    <label class="label cursor-pointer justify-start gap-4 items-start">
                         {{ form.visibility }}
-                        <div>
+                        <div class="flex-1 min-w-0">
                             <span class="label-text font-semibold text-gray-900 block">{{ form.visibility.label }}</span>
-                            <span class="text-xs text-gray-500">Visible to all project members?</span>
+                            <span class="text-xs text-gray-500 block break-words">Display this report to the public or restrict it to project members only.</span>
                         </div>
                     </label>
                     {{ form.visibility.errors }}

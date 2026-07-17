@@ -29,20 +29,31 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'reportary.onrender.com']
 
 CSRF_TRUSTED_ORIGINS = [
     'http://127.0.0.1:8000',
     'http://localhost:3000',
+    'https://reportary.onrender.com',
 ]
 
 SECURE_PROXY_SSL_HEADER = None
-SESSION_COOKIE_SECURE = False
-CSRF_COOKIE_SECURE = False
+SESSION_COOKIE_SECURE = True      # Set to True in production (when DEBUG=False)
+CSRF_COOKIE_SECURE = True         # Set to True in production (when DEBUG=False)
+SESSION_COOKIE_HTTPONLY = True     # Prevent JS access to session cookie
+CSRF_COOKIE_HTTPONLY = False       # Must stay False so HTMX/JS can read CSRF token
+SESSION_COOKIE_SAMESITE = 'Lax'   # Mitigate CSRF on cross-site navigation
+CSRF_COOKIE_SAMESITE = 'Lax'
+SESSION_COOKIE_AGE = 60 * 60 * 24 * 7  # 7 days
 SESSION_COOKIE_DOMAIN = None
 CSRF_COOKIE_DOMAIN = None
+
+# ─── Security Headers ─────────────────────────────────────────────────────────
+SECURE_CONTENT_TYPE_NOSNIFF = True        # X-Content-Type-Options: nosniff
+SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
+X_FRAME_OPTIONS = 'DENY'                  # Clickjacking protection
 
 AUTH_USER_MODEL = "accounts.User"
 
@@ -74,6 +85,7 @@ INSTALLED_APPS = [
     "audit",
     "organisations",
     "notifications",
+    "public_portal.apps.PublicPortalConfig",
     "core",
 ]
 
@@ -82,12 +94,13 @@ TAILWIND_APP_NAME = "theme"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    # 'whitenoise.middleware.WhiteNoiseMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'core.middleware.HtmxMessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
@@ -129,7 +142,7 @@ tmpPostgres = urlparse(os.getenv("DATABASE_URL"))
 # }
 
 
-###### PRODUCTION DATABASE SETUP ##########
+##### PRODUCTION DATABASE SETUP ##########
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -205,7 +218,8 @@ STATICFILES_DIRS = [
 ]
 
 STATIC_ROOT = BASE_DIR / "staticfiles"
-# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'   ONLY FOR PRODUCTION
+if not DEBUG:
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 TEMPLATES[0]["DIRS"] = [BASE_DIR / "core" / "templates"]
 
 LOGIN_URL = "/"
@@ -249,5 +263,11 @@ EMAIL_HOST_PASSWORD = os.getenv('MAIL_APP_PASSWORD', '')
 DEFAULT_FROM_EMAIL = os.getenv('MAIL_ID', 'noreply@reportary.com')
 
 # Contact form submissions recipient
-CONTACT_EMAIL = 'anujkumar123.mp@gmail.com'
+CONTACT_EMAIL = os.getenv('CONTACT_EMAIL', 'anujkumar123.mp@gmail.com')
 
+
+# ─── Public Portal Rate Limits ────────────────────────────────────────────────
+# Maximum anonymous submissions per IP per link within each window.
+# Override via environment variables in production.
+PUBLIC_PORTAL_RATE_LIMIT_PER_HOUR = int(os.getenv('PUBLIC_PORTAL_RATE_LIMIT_PER_HOUR', 5))
+PUBLIC_PORTAL_RATE_LIMIT_PER_DAY  = int(os.getenv('PUBLIC_PORTAL_RATE_LIMIT_PER_DAY', 20))

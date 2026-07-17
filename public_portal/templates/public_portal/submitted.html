@@ -1,0 +1,114 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report Submitted | Reportary</title>
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="stylesheet" href="{% static 'css/dist/styles.css' %}">
+    <style>
+        /* Force light mode — override DaisyUI dark theme tokens */
+        :root, [data-theme] {
+            color-scheme: light;
+            --b1: 255 255 255;
+            --b2: 248 246 250;
+            --b3: 241 239 244;
+            --bc: 17 24 39;
+            --p: 34 108 224;
+            --pc: 255 255 255;
+        }
+        html, body {
+            background-color: #f8f6fa !important;
+            color: #111827 !important;
+            min-height: 100vh;
+        }
+        h1, h2, h3 { color: #111827 !important; }
+        p { color: inherit; }
+        a { color: #226ce0; }
+        a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body style="background-color:#f8f6fa;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1rem;">
+    <div style="width:100%;max-width:30rem;text-align:center;display:flex;flex-direction:column;align-items:center;gap:1.5rem;">
+
+        <!-- Success checkmark -->
+        <div style="width:4.5rem;height:4.5rem;border-radius:9999px;background:#f0fdf4;border:1px solid #bbf7d0;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(16,185,129,0.08);">
+            <svg style="width:2.25rem;height:2.25rem;color:#10b981;" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+            </svg>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:0.5rem;">
+            <h1 style="font-size:1.5rem;font-weight:800;color:#111827;margin:0;letter-spacing:-0.02em;">Report Submitted!</h1>
+            <p style="font-size:0.875rem;color:#6b7280;margin:0;line-height:1.5;">
+                Thank you for helping improve {% if project_name %}<strong style="color:#374151;">{{ project_name }}</strong>{% else %}the project{% endif %}.
+                The management team has been notified and will review your submission shortly.
+            </p>
+        </div>
+
+        <!-- Tracking ID Box (Conditional) -->
+        {% if tracking_id %}
+        <div style="width:100%;background:#fcfbfe;border:1px dashed #c084fc;border-radius:1rem;padding:1.25rem;text-align:center;box-sizing:border-box;box-shadow:0 2px 6px rgba(124,58,237,0.03);">
+            <p style="font-size:0.7rem;color:#7c3aed;font-weight:700;margin:0 0 0.5rem;text-transform:uppercase;letter-spacing:0.08em;">
+                Report Tracking ID
+            </p>
+            <div style="display:flex;align-items:center;justify-content:center;gap:0.5rem;background:#fff;border:1px solid #e9d5ff;border-radius:0.75rem;padding:0.625rem 0.875rem;max-width:100%;margin:0 auto;box-sizing:border-box;">
+                <code id="tracking-id-value" style="font-family:monospace;font-size:0.95rem;color:#5b21b6;font-weight:700;letter-spacing:-0.01em;word-break:break-all;text-align:left;">{{ tracking_id }}</code>
+                <button type="button" onclick="copyTrackingId()" style="background:#ede9fe;border:none;border-radius:0.5rem;padding:0.375rem 0.5rem;color:#7c3aed;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:background-color 0.15s;flex-shrink:0;height:2rem;width:2rem;" title="Copy to clipboard">
+                    <svg id="copy-icon" style="width:1rem;height:1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/>
+                    </svg>
+                    <svg id="check-icon" style="width:1rem;height:1rem;display:none;color:#10b981;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+                    </svg>
+                </button>
+            </div>
+            <p style="font-size:0.6875rem;color:#7c3aed;margin:0.5rem 0 0;opacity:0.85;line-height:1.4;">
+                Please save this tracking ID for your reference. You can use it to identify this specific report when contacting the team.
+            </p>
+        </div>
+        <script>
+            function copyTrackingId() {
+                const text = document.getElementById('tracking-id-value').innerText;
+                navigator.clipboard.writeText(text).then(() => {
+                    const copyIcon = document.getElementById('copy-icon');
+                    const checkIcon = document.getElementById('check-icon');
+                    copyIcon.style.display = 'none';
+                    checkIcon.style.display = 'inline-block';
+                    setTimeout(() => {
+                        copyIcon.style.display = 'inline-block';
+                        checkIcon.style.display = 'none';
+                    }, 2000);
+                });
+            }
+        </script>
+        {% endif %}
+
+        <!-- Guidelines / Private Info Card -->
+        <div style="width:100%;background:#fff;border-radius:1rem;border:1px solid #e5e7eb;box-shadow:0 1px 4px rgba(0,0,0,.04);padding:1.25rem;text-align:left;box-sizing:border-box;display:flex;flex-direction:column;gap:0.75rem;">
+            <p style="font-size:0.75rem;color:#4b5563;display:flex;align-items:flex-start;gap:0.625rem;margin:0;line-height:1.5;">
+                <svg style="width:1rem;height:1rem;flex-shrink:0;margin-top:2px;color:#226ce0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                </svg>
+                <span><strong>Security &amp; Privacy:</strong> This submission was sent anonymously. Your IP address has been hashed, and no identifying session info has been stored.</span>
+            </p>
+            <p style="font-size:0.75rem;color:#4b5563;display:flex;align-items:flex-start;gap:0.625rem;margin:0;line-height:1.5;border-top:1px solid #f3f4f6;padding-top:0.75rem;">
+                <svg style="width:1rem;height:1rem;flex-shrink:0;margin-top:2px;color:#10b981;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+                </svg>
+                <span><strong>What happens next:</strong> Project members will triage the issue, test the steps to reproduce, and assign a priority level to resolve it.</span>
+            </p>
+        </div>
+
+        <a href="{% url 'public_portal:portal' token=token %}" style="display:inline-flex;align-items:center;gap:0.5rem;font-size:0.875rem;font-weight:600;color:#226ce0;text-decoration:none;margin-top:0.5rem;transition:color 0.15s;">
+            <svg style="width:1rem;height:1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+            </svg>
+            Submit another report
+        </a>
+
+        <p style="font-size:0.6875rem;color:#9ca3af;margin-top:0.5rem;">Powered by <span style="font-weight:600;color:#4b5563;">Reportary</span></p>
+    </div>
+</body>
+</html>

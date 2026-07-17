@@ -123,9 +123,14 @@
                 </div>
             </div>
 
+            <!-- Organisation-wide anonymous reporting policy -->
+            <div class="mt-6">
+                {% include "organisations/partials/anon_policy_toggle_partial.html" with organisation=organisation is_owner=is_owner %}
+            </div>
+
             {% if is_owner %}
             <a href="{% url 'organisations:details' uuid=organisation.uuid %}" 
-               class="mt-6 btn btn-secondary w-full">
+               class="mt-4 btn btn-secondary w-full">
                 Edit Details
             </a>
             {% endif %}

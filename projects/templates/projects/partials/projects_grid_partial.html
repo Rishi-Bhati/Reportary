@@ -49,15 +49,23 @@
 </div>
 {% else %}
 <!-- Empty State -->
-<div class="text-center py-16 bg-white rounded-xl border-2 border-dashed border-gray-200">
-    <div class="w-16 h-16 bg-gray-50 text-gray-400 rounded-full flex items-center justify-center mx-auto mb-4">
+<div class="text-center py-20 bg-white rounded-2xl border border-dashed border-[#d0bcd5]/60 max-w-lg mx-auto shadow-sm my-8 p-8 animate-fade-in">
+    <div class="w-16 h-16 bg-gradient-to-br from-[#226ce0]/10 to-[#534b62]/10 text-[#226ce0] rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-inner">
         <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10">
             </path>
         </svg>
     </div>
-    <h3 class="text-lg font-medium text-gray-900">No projects found</h3>
-    <p class="mt-2 text-sm text-gray-500 max-w-sm mx-auto">Try refining your search keyword or adjust the active filters.</p>
+    <h3 class="text-xl font-bold text-gray-900 mb-2">No Projects Found</h3>
+    <p class="text-sm text-gray-500 max-w-xs mx-auto mb-6 leading-relaxed">It looks like there are no projects matching your search criteria. Try modifying your filter rules or search query.</p>
+    <div class="flex justify-center gap-3">
+        <button type="button" onclick="window.location.href = window.location.pathname;" class="btn btn-sm btn-outline border-gray-300 hover:bg-gray-50 text-gray-700 rounded-xl px-4 py-2 font-medium capitalize">
+            Reset Filters
+        </button>
+        <a href="{% url 'projects:new' %}" class="btn btn-sm bg-[#226ce0] hover:bg-[#1b56b3] text-white border-none rounded-xl px-4 py-2 font-medium capitalize">
+            Create Project
+        </a>
+    </div>
 </div>
 {% endif %}

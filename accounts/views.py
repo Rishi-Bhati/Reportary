@@ -12,8 +12,23 @@ User = get_user_model()
 
 @login_required
 def user_search(request):
-    term = request.GET.get('term', '')
-    users = User.objects.filter(email__icontains=term)[:10]
+    # H-07: Enforce minimum query length and scope to relevant users only
+    term = request.GET.get('term', '').strip()
+    if len(term) < 2:
+        return JsonResponse({'results': []})
+
+    from organisations.services import get_user_organisations
+    from django.db.models import Q
+    user_orgs = get_user_organisations(request.user)
+
+    # Scope: users in the same org, or existing project collaborators
+    # This prevents scraping the entire user database
+    users = User.objects.filter(
+        Q(organisation_members__in=user_orgs) | Q(organisations__in=user_orgs)
+    ).filter(
+        Q(email__icontains=term) | Q(username__icontains=term)
+    ).exclude(id=request.user.id).distinct()[:10]
+
     results = []
     for user in users:
         results.append({
@@ -34,10 +49,10 @@ def onboarding_choice(request):
 def onboarding_user_form(request):
     if request.method == "POST":
         # 1. Get Data
-        call_name = request.POST.get('call_name') # "What should we call you?"
-        tag = request.POST.get('tag')             # "What's your tag?"
-        country = request.POST.get('country')     # Not in model yet
-        bio = request.POST.get('bio')             # Not in model yet
+        call_name = request.POST.get('call_name')
+        tag = request.POST.get('tag')
+        country = request.POST.get('country')
+        bio = request.POST.get('bio')
 
         user = request.user
 
@@ -46,11 +61,12 @@ def onboarding_user_form(request):
             user.name = call_name
         
         if tag:
-            # Check if tag (username) is taken by someone else
+            # M-03: If tag is taken, return an error instead of silently ignoring it
             if User.objects.filter(username=tag).exclude(pk=user.pk).exists():
-                # For HTMX, handling errors inline is best, but for now simple return:
-                # In a real app, you'd re-render the form with an error message.
-                pass 
+                return render(request, "accounts/partials/user_form.html", {
+                    'error': f'The tag \"@{tag}\" is already taken. Please choose a different one.',
+                    'prefill': {'call_name': call_name, 'tag': tag, 'bio': bio}
+                })
             else:
                 user.username = tag
 
@@ -131,11 +147,12 @@ def onboarding_dev_form(request):
         if call_name:
             user.name = call_name
         if tag:
-            # Check if tag (username) is taken by someone else
+            # M-03: If tag is taken, return an error instead of silently ignoring it
             if User.objects.filter(username=tag).exclude(pk=user.pk).exists():
-                # For HTMX, handling errors inline is best, but for now simple return:
-                # In a real app, you'd re-render the form with an error message.
-                pass 
+                return render(request, "accounts/partials/dev_form.html", {
+                    'error': f'The tag \"@{tag}\" is already taken. Please choose a different one.',
+                    'prefill': {'call_name': call_name, 'tag': tag, 'bio': bio, 'github': github}
+                })
             else:
                 user.username = tag
         if github:
@@ -242,7 +259,8 @@ def verify_email(request, uidb64, token):
         try:
             send_welcome_email(request, user)
         except Exception as e:
-            print(f"Failed to send welcome email: {e}")
+            import logging
+            logging.getLogger(__name__).error(f"Failed to send welcome email: {e}")
             
         messages.success(request, "Your email has been verified successfully! Welcome to Reportary.")
     else:
@@ -251,6 +269,7 @@ def verify_email(request, uidb64, token):
     return redirect('home:landing_page')
 
 
+@login_required
 def confirm_email_change(request, uidb64, token, new_email_b64):
     """View to handle email update confirmation once link is clicked."""
     from django.utils.http import urlsafe_base64_decode
@@ -266,7 +285,12 @@ def confirm_email_change(request, uidb64, token, new_email_b64):
         user = None
         new_email = None
 
-    if user is not None and new_email and default_token_generator.check_token(user, token):
+    # M-13: Ensure the logged-in user is the one whose email is being changed
+    if user is None or str(request.user.pk) != str(user.pk):
+        messages.error(request, "You are not authorized to confirm this email change.")
+        return redirect('home:profile')
+
+    if new_email and default_token_generator.check_token(user, token):
         if User.objects.filter(email=new_email).exclude(pk=user.pk).exists():
             messages.error(request, "This email address is already in use by another account.")
         else:
@@ -294,9 +318,10 @@ def resend_verification(request):
         except Exception as e:
             messages.error(request, "Failed to send verification email. Please try again later.")
             
-    # Redirect back to previous page or dashboard
+    # M-04: Validate HTTP_REFERER before using it as a redirect target
+    from django.utils.http import url_has_allowed_host_and_scheme
     next_url = request.META.get('HTTP_REFERER')
-    if next_url:
+    if next_url and url_has_allowed_host_and_scheme(next_url, allowed_hosts={request.get_host()}):
         return redirect(next_url)
     return redirect('dashboard:dashboard')
 

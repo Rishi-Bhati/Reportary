@@ -66,17 +66,22 @@ class DashboardAnalyticsTests(TestCase):
     def test_dashboard_access_and_context(self):
         """Test dashboard view returns 200 and has correct metrics context."""
         self.client.force_login(self.user)
+        # Test dashboard shell
         response = self.client.get(reverse('dashboard:dashboard'))
         self.assertEqual(response.status_code, 200)
-        
-        # Verify counts in context
-        self.assertEqual(response.context['assigned_reports_count'], 1)
-        self.assertEqual(response.context['my_reports_count'], 1)
-        self.assertEqual(response.context['total_reports_count'], 1)  # Only public_project report counted
-        
-        # Check severity counts mapping
-        self.assertEqual(response.context['severity_counts']['critical'], 1)
-        self.assertEqual(response.context['severity_counts']['high'], 0)  # Private report high severity is ignored
+
+        # Test dashboard overview partial
+        response_overview = self.client.get(reverse('dashboard:overview'))
+        self.assertEqual(response_overview.status_code, 200)
+        self.assertEqual(response_overview.context['assigned_reports_count'], 1)
+        self.assertEqual(response_overview.context['my_reports_count'], 1)
+
+        # Test dashboard analytics partial
+        response_analytics = self.client.get(reverse('dashboard:analytics'))
+        self.assertEqual(response_analytics.status_code, 200)
+        self.assertEqual(response_analytics.context['total_reports_count'], 1)  # Only public_project report counted
+        self.assertEqual(response_analytics.context['severity_counts']['critical'], 1)
+        self.assertEqual(response_analytics.context['severity_counts']['high'], 0)  # Private report high severity is ignored
 
     def test_session_recently_viewed_tracking(self):
         """Test visiting a report detail registers in the session recently viewed list."""
@@ -86,8 +91,8 @@ class DashboardAnalyticsTests(TestCase):
         url = reverse('reports:report_detail', kwargs={'report_uuid': self.report1.uuid})
         self.client.get(url)
         
-        # Now visit dashboard and check recently viewed
-        response = self.client.get(reverse('dashboard:dashboard'))
+        # Now visit dashboard overview partial and check recently viewed
+        response = self.client.get(reverse('dashboard:overview'))
         recently_viewed = response.context['recently_viewed_reports']
         self.assertEqual(len(recently_viewed), 1)
         self.assertEqual(recently_viewed[0].uuid, self.report1.uuid)

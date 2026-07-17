@@ -44,6 +44,12 @@ class ReportListTests(TestCase):
         self.assertIn(self.visible_report, reports)
         self.assertIn(self.hidden_report, reports)
 
+    def test_root_reports_redirects(self):
+        self.client.force_login(self.reporter)
+        url = reverse('reports:report_list')
+        resp = self.client.get(url)
+        self.assertRedirects(resp, reverse('reports:my_reports'))
+
 
 class ReportDetailTests(TestCase):
     def setUp(self):
@@ -437,3 +443,80 @@ class ReportWorkflowTests(TestCase):
         self.assertEqual(resp.context['highlighted_report'], self.normal_report)
         # Verify it has been excluded from normal lists context to avoid double rendering
         self.assertNotIn(self.normal_report, resp.context['reports'])
+
+
+class PrivateProjectPublicReportingTests(TestCase):
+    def setUp(self):
+        self.owner = User.objects.create_user(username='owner', email='owner@example.com', password='password')
+        self.reporter = User.objects.create_user(username='reporter', email='reporter@example.com', password='password')
+        self.other = User.objects.create_user(username='other', email='other@example.com', password='password')
+        
+        # Private project
+        self.project = Project.objects.create(
+            title='Private Project', 
+            link='https://example.com', 
+            description='desc', 
+            owner=self.owner,
+            visibility='private',
+            public=False,
+            public_reporting_enabled=True
+        )
+        
+        # Create active public link
+        from public_portal.models import PublicReportingLink
+        self.public_link = PublicReportingLink.objects.create(
+            project=self.project,
+            is_active=True,
+            allow_anonymous=False
+        )
+
+    def test_cannot_report_on_private_project_without_active_public_link(self):
+        # Disable public link
+        self.public_link.is_active = False
+        self.public_link.save()
+        
+        self.client.force_login(self.reporter)
+        url = reverse('projects:reports:new', kwargs={'project_uuid': self.project.uuid})
+        
+        resp = self.client.get(url)
+        self.assertEqual(resp.status_code, 403)
+
+    def test_can_report_on_private_project_with_active_public_link(self):
+        self.client.force_login(self.reporter)
+        url = reverse('projects:reports:new', kwargs={'project_uuid': self.project.uuid})
+        
+        resp = self.client.get(url)
+        self.assertEqual(resp.status_code, 200)
+        self.assertTrue(resp.context['is_public_reporter'])
+
+    def test_can_submit_report_and_view_its_details(self):
+        self.client.force_login(self.reporter)
+        
+        # Submit report
+        url = reverse('projects:reports:new', kwargs={'project_uuid': self.project.uuid})
+        resp = self.client.post(url, {
+            'title': 'Test Public Report',
+            'description': 'Description content',
+            'steps': 'steps to reproduce',
+            'frequency': 'once',
+            'impact': 'medium',
+            'project': self.project.id,
+            'visibility': True,
+        })
+        self.assertEqual(resp.status_code, 302)
+        
+        # Retrieve report
+        report = Report.objects.get(title='Test Public Report')
+        self.assertEqual(report.reported_by, self.reporter)
+        
+        # Access report details (allowed because they are the reporter)
+        detail_url = reverse('projects:reports:report_detail', kwargs={'project_uuid': self.project.uuid, 'report_uuid': report.uuid})
+        resp = self.client.get(detail_url)
+        self.assertEqual(resp.status_code, 200)
+        self.assertFalse(resp.context['has_project_access'])
+
+        # Other unrelated user cannot access details
+        self.client.force_login(self.other)
+        resp = self.client.get(detail_url)
+        self.assertEqual(resp.status_code, 403)
+

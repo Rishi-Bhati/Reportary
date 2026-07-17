@@ -28,10 +28,7 @@
         <div class="form-control w-full mb-4">
             <label class="label"><span class="label-text font-semibold text-gray-700">Country?</span></label>
             <select name="country" class="select select-bordered w-full bg-white text-gray-900">
-                <option disabled selected>Pick your country</option>
-                <option value="IN">India</option>
-                <option value="US">USA</option>
-                <option value="DE">Germany</option>
+                {% include 'accounts/partials/country_options.html' %}
             </select>
         </div>
 

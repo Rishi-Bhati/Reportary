@@ -1,18 +1,14 @@
-<div id="comment-{{ comment.uuid }}" class="chat-bubble"><div class="markdown-content">{{ comment.text }}</div></div>
-
-{% comment %} If the logged-in user is the author of the comment, show the edit link. {% endcomment %}
-{% if request.user == comment.commented_by %}
-<div class="chat-footer">
-    <a href="{% url 'comments:edit_comment' report.uuid comment.uuid %}"
-        hx-get="{% url 'comments:edit_comment' report.uuid comment.uuid %}" hx-target="#comment-container-{{ comment.uuid }}"
-        hx-swap="innerHTML" class="text-xs text-[#226ce0] hover:underline cursor-pointer">Edit</a>
+<div id="comment-{{ comment.uuid }}" class="w-full text-sm text-gray-600 leading-relaxed bg-gray-50/50 border border-gray-100/50 p-4 rounded-xl">
+    <div class="markdown-content">{{ comment.text }}</div>
+    
+    {% if request.user == comment.commented_by %}
+    <div class="mt-3 pt-2.5 border-t border-gray-100 flex justify-end">
+        <a hx-get="{% url 'comments:edit_comment' report.uuid comment.uuid %}" 
+           hx-target="#comment-container-{{ comment.uuid }}"
+           hx-swap="innerHTML" 
+           class="text-[10px] text-[#226ce0] hover:underline font-bold cursor-pointer">
+            Edit
+        </a>
+    </div>
+    {% endif %}
 </div>
-{% endif %}
-
-{% comment %} {% if is_project_owner %}
-
-<a href="{% url 'comments:toggle_comment_visibility' report.uuid comment.uuid %}"
-    hx-delete="{% url 'comments:toggle_comment_visibility' report.uuid comment.uuid %}"
-    hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}' hx-target="#comment-container-{{ comment.uuid }}" hx-swap="outerHTML"
-    class="text-xs text-red-500 hover:underline cursor-pointer">Delete</a>
-{% endif %} {% endcomment %}

@@ -46,10 +46,13 @@ urlpatterns = [
     # URLs for notification management
     path('notifications/', include('notifications.urls', namespace='notifications')),
     
-    # URLs for project-related views. This is the main entry point for projects and their nested reports.
+    # URLs for project-related views.
     path('projects/', include('projects.urls')),
     
     path('reports/', include('reports.urls')),
+
+    # Public reporting portal (no auth) — /p/<token>/
+    path('p/', include('public_portal.urls', namespace='public_portal')),
 
     # URLs for the comments app.
     # We add a namespace 'comments' here.

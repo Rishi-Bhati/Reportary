@@ -1,11 +1,20 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Reportary{% endblock %}</title>
+
+    <script>
+        // Init theme immediately to prevent flashing
+        (function() {
+            const theme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            document.documentElement.setAttribute('data-theme', theme);
+            document.documentElement.style.colorScheme = theme;
+        })();
+    </script>
 
     <link rel="stylesheet" href="{% static 'css/dist/styles.css' %}">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
@@ -14,7 +23,8 @@
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
     <script>
         document.addEventListener('htmx:load', function () {
-            document.documentElement.style.colorScheme = 'light';
+            const theme = document.documentElement.getAttribute('data-theme') || 'light';
+            document.documentElement.style.colorScheme = theme;
         });
         // Globally configure HTMX to send CSRF token on all mutating requests
         document.addEventListener('htmx:configRequest', function(evt) {
@@ -26,12 +36,14 @@
     </script>
 </head>
 
-<body class="bg-white text-gray-900 font-sans antialiased min-h-screen">
+<body class="bg-base-200 text-base-content font-sans antialiased min-h-screen">
     {% include "partials/topbar.html" %}
     <div class="flex pt-16">
         {% include "partials/sidebar.html" %}
+        <!-- Sidebar Backdrop for Mobile view -->
+        <div id="sidebar-backdrop" onclick="toggleMobileSidebar()" class="fixed inset-0 top-16 bg-black/40 backdrop-blur-sm z-30 hidden md:hidden"></div>
 
-        <main class="flex-1 ml-64 p-8 w-full min-h-[calc(100vh-4rem)]">
+        <main class="flex-1 md:ml-64 p-4 md:p-8 w-full min-h-[calc(100vh-4rem)] overflow-x-hidden">
 
             {# Site Announcements Banner (superuser-created) #}
             {% for announcement in site_announcements %}
@@ -123,73 +135,76 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="{% static 'js/main.js' %}"></script>
     <script>
-        // ─── Toast System ───────────────────────────────────────────────────────
-        const TOAST_CONFIG = {
-            success: { icon: '✓', bg: 'bg-emerald-50', border: 'border-emerald-200', text: 'text-emerald-800', bar: 'bg-emerald-500' },
-            error:   { icon: '✕', bg: 'bg-red-50',     border: 'border-red-200',     text: 'text-red-800',     bar: 'bg-red-500'     },
-            warning: { icon: '!', bg: 'bg-yellow-50',  border: 'border-yellow-200',  text: 'text-yellow-800',  bar: 'bg-yellow-500'  },
-            info:    { icon: 'i', bg: 'bg-blue-50',    border: 'border-blue-200',    text: 'text-blue-800',    bar: 'bg-blue-500'    },
-        };
 
-        function showToast(text, type = 'info', duration = 4000) {
-            const cfg = TOAST_CONFIG[type] || TOAST_CONFIG.info;
-            const toast = document.createElement('div');
-            toast.className = `pointer-events-auto flex items-start gap-3 px-4 py-3.5 rounded-xl shadow-lg border ${cfg.bg} ${cfg.border} ${cfg.text} text-xs font-medium translate-x-16 opacity-0 transition-all duration-300 relative overflow-hidden`;
-            toast.innerHTML = `
-                <span class="shrink-0 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold text-white ${cfg.bar}">${cfg.icon}</span>
-                <span class="flex-1 leading-relaxed">${text}</span>
-                <button onclick="dismissToast(this.closest('[data-toast]'))" class="shrink-0 opacity-50 hover:opacity-100 transition-opacity text-sm leading-none">&times;</button>
-                <div class="absolute bottom-0 left-0 h-0.5 ${cfg.bar} opacity-40 transition-all" style="width:100%" data-progress></div>
-            `;
-            toast.setAttribute('data-toast', '');
-            document.getElementById('toast-container').appendChild(toast);
-
-            requestAnimationFrame(() => {
-                toast.classList.remove('translate-x-16', 'opacity-0');
-                toast.classList.add('translate-x-0', 'opacity-100');
-            });
-
-            const progress = toast.querySelector('[data-progress]');
-            const start = performance.now();
-            const tick = () => {
-                const elapsed = performance.now() - start;
-                const pct = Math.max(0, 100 - (elapsed / duration) * 100);
-                if (progress) progress.style.width = pct + '%';
-                if (elapsed < duration) requestAnimationFrame(tick);
-                else dismissToast(toast);
-            };
-            requestAnimationFrame(tick);
-        }
-
-        function dismissToast(el) {
-            if (!el) return;
-            el.classList.add('translate-x-16', 'opacity-0');
-            setTimeout(() => el.remove(), 300);
-        }
-
-        // Convert Django messages to toasts on page load
-        document.addEventListener('DOMContentLoaded', () => {
-            const container = document.getElementById('django-messages');
-            if (container) {
-                container.querySelectorAll('span[data-text]').forEach(el => {
-                    const type = el.dataset.type || 'info';
-                    const normalizedType = type.includes('error') ? 'error' : type.includes('success') ? 'success' : type.includes('warning') ? 'warning' : 'info';
-                    showToast(el.dataset.text, normalizedType);
-                });
+        // ─── Keyboard Shortcuts ──────────────────────────────────────────────────
+        let lastKey = null;
+        document.addEventListener('keydown', function(e) {
+            const activeElt = document.activeElement;
+            if (activeElt && (activeElt.tagName === 'INPUT' || activeElt.tagName === 'TEXTAREA' || activeElt.isContentEditable)) {
+                if (e.key === 'Escape' && activeElt.tagName === 'INPUT' && activeElt.id === 'local-search-input') {
+                    activeElt.blur();
+                }
+                return;
+            }
+            if (e.key === '/') {
+                const searchInput = document.getElementById('local-search-input') || document.querySelector('input[name="q"]');
+                if (searchInput) {
+                    e.preventDefault();
+                    searchInput.focus();
+                    searchInput.select();
+                }
+                return;
+            }
+            if (e.key === 'c' || e.key === 'C') {
+                const newIssueBtn = document.querySelector('a[href$="/reports/new/"]');
+                if (newIssueBtn) {
+                    e.preventDefault();
+                    newIssueBtn.click();
+                }
+                return;
+            }
+            if (e.key === 'Escape') {
+                const deleteModal = document.getElementById('delete-account-modal');
+                if (deleteModal && !deleteModal.classList.contains('hidden')) {
+                    deleteModal.classList.add('hidden');
+                }
+                const filterDrawer = document.getElementById('filter-drawer');
+                if (filterDrawer && !filterDrawer.classList.contains('hidden')) {
+                    filterDrawer.classList.add('hidden');
+                }
+                const sidebar = document.getElementById('sidebar');
+                if (sidebar && sidebar.classList.contains('translate-x-0')) {
+                    toggleMobileSidebar();
+                }
+            }
+            if (lastKey === 'g') {
+                lastKey = null;
+                if (e.key === 'd') window.location.href = '/dashboard/';
+                else if (e.key === 'p') window.location.href = '/projects/';
+                else if (e.key === 'r') window.location.href = '/reports/my_reports/';
+            } else if (e.key === 'g') {
+                lastKey = 'g';
+                setTimeout(() => { if (lastKey === 'g') lastKey = null; }, 1000);
             }
         });
 
-        // ─── HTMX Loading Bar ───────────────────────────────────────────────────
-        const loadingBar = document.getElementById('htmx-loading-bar');
-        document.addEventListener('htmx:beforeRequest', () => {
-            loadingBar.style.opacity = '1';
-            loadingBar.style.width = '60%';
-        });
-        document.addEventListener('htmx:afterRequest', () => {
-            loadingBar.style.width = '100%';
-            setTimeout(() => { loadingBar.style.opacity = '0'; loadingBar.style.width = '0%'; }, 300);
-        });
+        // ─── Mobile Sidebar Drawer Engine ────────────────────────────────────────
+        function toggleMobileSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const backdrop = document.getElementById('sidebar-backdrop');
+            if (!sidebar) return;
+            if (sidebar.classList.contains('-translate-x-full')) {
+                sidebar.classList.remove('-translate-x-full');
+                sidebar.classList.add('translate-x-0');
+                if (backdrop) backdrop.classList.remove('hidden');
+            } else {
+                sidebar.classList.add('-translate-x-full');
+                sidebar.classList.remove('translate-x-0');
+                if (backdrop) backdrop.classList.add('hidden');
+            }
+        }
 
         // Expose showToast globally for use in templates
         window.showToast = showToast;

@@ -30,7 +30,8 @@ def add_comment(request, report_uuid):
     report = get_object_or_404(Report, uuid=report_uuid)
     
     if not rules.can_access_project(request.user, report.project):
-        return HttpResponseForbidden("You do not have permission to access this project.")
+        if not (request.user.is_authenticated and report.reported_by == request.user):
+            return HttpResponseForbidden("You do not have permission to access this project.")
     
     # We instantiate the CommentForm with the POST data from the request.
     form = CommentForm(request.POST)
