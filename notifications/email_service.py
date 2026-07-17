@@ -2,6 +2,19 @@ from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from django.conf import settings
+import threading
+import logging
+
+logger = logging.getLogger(__name__)
+
+def _send_email_thread(msg):
+    from django.db import close_old_connections
+    try:
+        msg.send()
+    except Exception as e:
+        logger.error(f"Failed to send async email: {e}", exc_info=True)
+    finally:
+        close_old_connections()
 
 def send_notification_email(*, notification_type, subject, context, to_emails, cc_emails=None):
     """
@@ -46,5 +59,7 @@ def send_notification_email(*, notification_type, subject, context, to_emails, c
     )
     msg.attach_alternative(html_content, "text/html")
     
-    # Send email
-    msg.send()
+    # Send email in a background thread to prevent blocking Gunicorn / causing timeouts
+    thread = threading.Thread(target=_send_email_thread, args=(msg,))
+    thread.daemon = True
+    thread.start()

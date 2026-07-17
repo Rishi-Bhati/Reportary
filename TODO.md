@@ -573,6 +573,11 @@ Once everything above is complete:
 - [ ] Mobile responsiveness review.
 - [ ] Security review.
 
+Randomize the math question each request (e.g., 7 + 3, 12 - 5, 4 × 2).
+Expire the challenge after a few minutes.
+Rotate the honeypot field name periodically (e.g., website, homepage, company_site) instead of using an obvious name.
+Add a minimum form fill time (e.g., reject submissions completed in under 2–3 seconds), since many bots submit almost instantly.
+
 ### Bug Fixes
 
 - [ ] Resolve all critical bugs.

@@ -297,6 +297,10 @@ def contact_page(request):
         try:
             from django.core.mail import send_mail
             from django.conf import settings as django_settings
+            import threading
+            import logging
+            
+            logger = logging.getLogger(__name__)
 
             full_message = (
                 f"Contact Form Submission\n"
@@ -307,17 +311,30 @@ def contact_page(request):
                 f"{'=' * 40}\n"
                 f"Sent via Reportary Contact Page"
             )
-            send_mail(
-                subject=f"[Reportary Contact] {subject}",
-                message=full_message,
-                from_email=django_settings.DEFAULT_FROM_EMAIL,
-                recipient_list=[django_settings.CONTACT_EMAIL],
-                fail_silently=False,
-            )
-            messages.success(request, "Your message has been sent! We'll get back to you soon.")
+            
+            def _send_contact_email():
+                from django.db import close_old_connections
+                try:
+                    send_mail(
+                        subject=f"[Reportary Contact] {subject}",
+                        message=full_message,
+                        from_email=django_settings.DEFAULT_FROM_EMAIL,
+                        recipient_list=[django_settings.CONTACT_EMAIL],
+                        fail_silently=False,
+                    )
+                except Exception as e:
+                    logger.error(f"Failed to send contact email in background: {e}", exc_info=True)
+                finally:
+                    close_old_connections()
+                    
+            thread = threading.Thread(target=_send_contact_email)
+            thread.daemon = True
+            thread.start()
+            
+            messages.success(request, "Your message has been received! We'll get back to you soon.")
             return redirect("home:contact")
         except Exception as e:
-            messages.error(request, "Failed to send message. Please try again later.")
+            messages.error(request, "Failed to submit form. Please try again later.")
 
     prefill = {}
     if request.user.is_authenticated:
