@@ -1,0 +1,41 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reporting Unavailable | Reportary</title>
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="stylesheet" href="{% static 'css/dist/styles.css' %}">
+    <style>
+        :root, [data-theme], [data-theme="dark"] {
+            color-scheme: light !important;
+            --b1: 255 255 255 !important;
+            --bc: 17 24 39 !important;
+        }
+        html, body {
+            background-color: #f8f6fa !important;
+            color: #111827 !important;
+            min-height: 100vh;
+            font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+        }
+    </style>
+</head>
+<body style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1rem;background:#f8f6fa;">
+    <div style="max-width:26rem;text-align:center;display:flex;flex-direction:column;align-items:center;gap:1.25rem;">
+        <div style="width:4rem;height:4rem;border-radius:1rem;background:#f3f4f6;border:1px solid #e5e7eb;display:flex;align-items:center;justify-content:center;">
+            <svg style="width:2rem;height:2rem;color:#9ca3af;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
+            </svg>
+        </div>
+        <div>
+            <h1 style="font-size:1.1rem;font-weight:700;color:#1f2937;margin:0 0 0.5rem;">Reporting Link Unavailable</h1>
+            <p style="font-size:0.875rem;color:#6b7280;margin:0;">
+                {% if message %}{{ message }}{% else %}This reporting link has been disabled by the project owner.{% endif %}
+            </p>
+        </div>
+        <p style="font-size:0.75rem;color:#9ca3af;margin:0;">If you believe this is an error, please contact the project team directly.</p>
+        <p style="font-size:0.6875rem;color:#9ca3af;margin-top:0.5rem;">Powered by <span style="font-weight:600;color:#4b5563;">Reportary</span></p>
+    </div>
+</body>
+</html>

@@ -466,4 +466,193 @@ Once everything above is complete:
 - LinkedIn launch
 - Community showcase
 - Open beta feedback
-- Begin versioning (`v1.0.0`)
+- Begin versioning (`v1.0.0-beta.1`)
+
+
+# Phase 3.5: Beta 2 (Community & UX)
+
+> **Goal:** Improve the overall user experience, reduce friction, and introduce the first iteration of public/anonymous reporting.
+
+---
+
+## ~~☐ 26. User Experience Improvements~~
+
+### Authentication
+
+- [X] Add "Show / Hide Password" button on login, signup and password forms.
+
+### Performance & Responsiveness
+
+- [X] Add loading indicators on all actions (button spinner and top progress bar).
+- [X] Implement skeleton loaders across the application.
+- [X] Load page layout first, fetch content asynchronously.
+- [X] Improve navigation responsiveness to make transitions feel instant.
+
+### UI Polish
+
+- [X] Better empty states.
+- [X] Toast notifications.
+- [X] Improve mobile responsiveness.
+- [X] Keyboard shortcuts.
+- [X] Improve dark mode consistency.
+- [X] UI consistency review across all pages.
+
+---
+
+## ~~☐ 27. Public Report Portals~~
+
+> Allow users to receive reports without exposing their projects.
+
+### Public Reporting Links
+
+- [X] Generate a dedicated public reporting link for every project.
+- [X] Allow users to regenerate report links.
+- [X] Allow users to disable public reporting links.
+- [X] Copy-to-clipboard button for report links.
+
+### Private Project Reporting
+
+- [X] Allow completely private projects to receive reports through public report links.
+- [X] Ensure project details remain hidden from anonymous users.
+
+---
+
+## ~~☐ 28. Anonymous Reporting (Basic)~~
+
+> Introduce the first version of anonymous reporting.
+
+### Anonymous Reports
+
+- [X] Allow anonymous users to submit reports.
+- [X] Clearly mark anonymous reports.
+- [X] Allow project owners to enable/disable anonymous reporting.
+
+### Organization Policies
+
+- [X] Organization-wide toggle for anonymous reporting.
+- [X] If disabled at organization level, prevent projects from overriding it.
+
+### Public Links
+
+- [X] Allow anonymous reporting to be enabled/disabled per public reporting link.
+
+### Security
+
+- [X] Add spam protection.
+- [X] Add rate limiting.
+- [X] Add CAPTCHA / Cloudflare Turnstile.
+- [X] Restrict anonymous attachment abuse.
+
+---
+
+## ~~☐ 29. Report Submission Improvements~~
+
+> Make reporting as effortless as possible.
+
+- [X] Improve report submission workflow.
+- [X] Better success page after report submission.
+- [X] Display report tracking ID after submission.
+- [X] Improve attachment experience.
+- [X] Review and polish all report forms.
+
+---
+
+# Phase 3.8: Release Candidate (Feature Freeze)
+
+> **No major features beyond this point. Only stability, polish and bug fixes.**
+
+---
+
+## ☐ 30. Release Candidate Preparation
+
+### Product Review
+
+- [ ] Full UI consistency review.
+- [ ] Accessibility improvements.
+- [ ] Performance review.
+- [ ] Mobile responsiveness review.
+- [ ] Security review.
+
+### Bug Fixes
+
+- [ ] Resolve all critical bugs.
+- [ ] Resolve all major UX issues.
+- [ ] Resolve all known security issues.
+
+### Documentation
+
+- [ ] Update documentation.
+- [ ] Update changelog.
+- [ ] Review installation guide.
+- [ ] Review deployment guide.
+
+---
+
+# ☐ 31. Stable Launch
+
+> Prepare Reportary for the first stable public release.
+
+### Product
+
+- [ ] Demo project.
+- [ ] Demo reports.
+- [ ] Landing page improvements.
+- [ ] FAQ page.
+- [ ] Documentation.
+- [ ] Privacy Policy.
+- [ ] Terms of Service.
+- [ ] Contact page.
+
+### Deployment
+
+- [ ] Custom domain.
+- [ ] Production deployment.
+- [ ] Performance optimization.
+- [ ] Accessibility review.
+
+### Testing
+
+- [ ] Internal testing.
+- [ ] Beta testing (10–20 users).
+- [ ] Fix critical issues.
+- [ ] Production checklist.
+
+---
+
+# 🚀 Stable Release Checklist
+
+The product should have:
+
+- [ ] Fast page navigation.
+- [ ] Skeleton loading.
+- [ ] Loading indicators.
+- [ ] Smooth onboarding.
+- [ ] Notifications.
+- [ ] Emails.
+- [ ] Dashboard analytics.
+- [ ] Complete report workflow.
+- [ ] Public reporting links.
+- [ ] Anonymous reporting (basic).
+- [ ] Better attachments.
+- [ ] Powerful search.
+- [ ] Mobile-friendly UI.
+- [ ] Production deployment.
+- [ ] Custom domain.
+- [ ] Documentation.
+- [ ] Privacy Policy.
+- [ ] Terms of Service.
+- [ ] Demo project.
+- [ ] No known critical bugs.
+
+---
+
+# 🚀 Stable Launch
+
+Once everything above is complete:
+
+- Release `v1.0.0`
+- Publish GitHub Release
+- Publish LinkedIn announcement
+- Share on Reddit & Hacker News
+- Collect first user feedback
+- Begin roadmap for `v1.1.0`

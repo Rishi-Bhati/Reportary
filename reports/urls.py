@@ -1,5 +1,27 @@
 from django.urls import path
-from reports.views import *
+from reports.views import (
+    create_report,
+    get_components,
+    get_project_config,
+    report_list,
+    report_detail,
+    reassign_report,
+    change_report_status,
+    change_report_visibility,
+    change_report_impact,
+    edit_report,
+    delete_report,
+    toggle_bookmark,
+    toggle_watch,
+    ajax_check_duplicate,
+    bookmarks_and_watches,
+    save_search,
+    delete_saved_search,
+    delete_attachment,
+    my_report_list,
+    assigned_to_me,
+    needs_attention_view,
+)
 from comments.views import add_comment
 
 

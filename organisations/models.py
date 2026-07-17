@@ -26,6 +26,14 @@ class Organisation(models.Model):
     # verify_token = models.CharField(max_length=255, blank=True, null=True)
 
     members = models.ManyToManyField("accounts.User", related_name="organisation_members", blank=True)
+
+    # Anonymous reporting org-wide policy.
+    # If False, overrides all project-level and link-level settings.
+    anon_reporting_enabled = models.BooleanField(
+        default=True,
+        help_text="Organisation-wide toggle. If False, no project in this org can accept anonymous reports."
+    )
+
     # admins = models.ManyToManyField("accounts.User", related_name="admin_organisations", blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

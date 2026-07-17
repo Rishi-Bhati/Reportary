@@ -9,6 +9,17 @@ from notifications.models import Invitation
 
 @login_required
 def dashboard(request):
+    """
+    Renders the quick-loading dashboard skeleton shell immediately.
+    Data is loaded asynchronously via HTMX calls.
+    """
+    return render(request, "dashboard.html")
+
+@login_required
+def dashboard_overview(request):
+    """
+    Renders the overview tab content asynchronously.
+    """
     user = request.user
     
     # 1. FETCH OVERVIEW DATA
@@ -37,12 +48,11 @@ def dashboard(request):
             if uuid_str in reports_dict:
                 recently_viewed_reports.append(reports_dict[uuid_str])
                 
-    # Fetch pending invitations (pending actions)
+    # Fetch pending invitations
     pending_actions = Invitation.objects.filter(invited_user=user, status='pending').select_related('project', 'organisation', 'invited_by')
     pending_actions_count = pending_actions.count()
 
-    # 2. COMPUTE ANALYTICS DATA (filtered by user's visibility permissions)
-    # Get all projects the user is authorized to view
+    # Calculate average resolution time for overview metric
     accessible_projects = Project.objects.filter(
         Q(visibility='public') |
         Q(owner=user) |
@@ -52,21 +62,7 @@ def dashboard(request):
     ).distinct()
     
     accessible_reports = Report.objects.filter(project__in=accessible_projects).distinct()
-    total_reports_count = accessible_reports.count()
     
-    # Open vs Closed status counts
-    open_count = accessible_reports.filter(status__in=['open', 'in_progress']).count()
-    closed_count = accessible_reports.filter(status__in=['resolved', 'closed']).count()
-    
-    # Severity (impact) distribution
-    severity_counts = {
-        'critical': accessible_reports.filter(impact='critical').count(),
-        'high': accessible_reports.filter(impact='high').count(),
-        'medium': accessible_reports.filter(impact='medium').count(),
-        'low': accessible_reports.filter(impact='low').count()
-    }
-    
-    # Average resolution time
     resolved_reports = accessible_reports.filter(status='resolved', updated_at__gt=F('created_at'))
     resolved_count = resolved_reports.count()
     total_duration_seconds = 0
@@ -83,6 +79,57 @@ def dashboard(request):
     else:
         avg_resolution_time = "N/A"
 
+    # Fetch organisations
+    owned_organisations = user.organisations.all()
+    member_organisations = user.organisation_members.all()
+
+    context = {
+        'projects': projects,
+        'assigned_reports': assigned_reports_list,
+        'assigned_reports_count': assigned_reports_count,
+        'my_reports': reported_reports_list,
+        'my_reports_count': reported_reports_count,
+        'recently_viewed_reports': recently_viewed_reports,
+        'pending_actions': pending_actions,
+        'pending_actions_count': pending_actions_count,
+        'avg_resolution_time': avg_resolution_time,
+        'owned_organisations': owned_organisations,
+        'member_organisations': member_organisations,
+    }
+    
+    return render(request, "dashboard/partials/overview_partial.html", context)
+
+@login_required
+def dashboard_analytics(request):
+    """
+    Renders the analytics tab content and chart data asynchronously.
+    """
+    user = request.user
+    
+    # Get all projects the user is authorized to view
+    accessible_projects = Project.objects.filter(
+        Q(visibility='public') |
+        Q(owner=user) |
+        Q(project_head=user) |
+        Q(collaborators=user) |
+        Q(org__members=user)
+    ).distinct()
+    
+    accessible_reports = Report.objects.filter(project__in=accessible_projects).distinct()
+    total_reports_count = accessible_reports.count()
+    
+    # Open vs Closed status counts
+    open_count = accessible_reports.filter(status__in=['open', 'in_progress']).count()
+    closed_count = accessible_reports.filter(status__in=['resolved', 'closed']).count()
+    
+    # Severity distribution
+    severity_counts = {
+        'critical': accessible_reports.filter(impact='critical').count(),
+        'high': accessible_reports.filter(impact='high').count(),
+        'medium': accessible_reports.filter(impact='medium').count(),
+        'low': accessible_reports.filter(impact='low').count()
+    }
+    
     # Reports by component
     component_stats = accessible_reports.filter(component__isnull=False).values('component__name').annotate(count=Count('id')).order_by('-count')[:5]
     component_labels = [item['component__name'] for item in component_stats]
@@ -94,7 +141,7 @@ def dashboard(request):
     # Most active contributors
     active_contributors = accessible_reports.filter(assigned_to__isnull=False).values('assigned_to__username').annotate(count=Count('id')).order_by('-count')[:5]
     
-    # Reports over time (last 30 days, aggregated in python for db safety)
+    # Reports over time (last 30 days)
     thirty_days_ago = timezone.now() - datetime.timedelta(days=30)
     recent_reports = accessible_reports.filter(created_at__gte=thirty_days_ago).order_by('created_at')
     
@@ -113,35 +160,17 @@ def dashboard(request):
         time_data.append(time_map.get(date_str, 0))
         current_date += datetime.timedelta(days=1)
 
-    # Fetch organisations
-    owned_organisations = user.organisations.all()
-    member_organisations = user.organisation_members.all()
-
     context = {
-        'projects': projects,
-        'assigned_reports': assigned_reports_list,
-        'assigned_reports_count': assigned_reports_count,
-        'my_reports': reported_reports_list,
-        'my_reports_count': reported_reports_count,
-        'recently_viewed_reports': recently_viewed_reports,
-        'pending_actions': pending_actions,
-        'pending_actions_count': pending_actions_count,
-        
-        # Analytics tab variables
         'total_reports_count': total_reports_count,
         'open_count': open_count,
         'closed_count': closed_count,
         'severity_counts': severity_counts,
-        'avg_resolution_time': avg_resolution_time,
         'component_labels': component_labels,
         'component_data': component_data,
         'active_projects': active_projects,
         'active_contributors': active_contributors,
         'time_labels': time_labels,
         'time_data': time_data,
-        
-        'owned_organisations': owned_organisations,
-        'member_organisations': member_organisations,
     }
     
-    return render(request, "dashboard.html", context)
+    return render(request, "dashboard/partials/analytics_partial.html", context)

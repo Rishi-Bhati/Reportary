@@ -1,5 +1,11 @@
 from .models import AuditLog
 
+# M-12: Fields whose values must never appear in audit logs in plaintext
+_SENSITIVE_FIELDS = frozenset({
+    'password', 'secret_key', 'secret', 'token', 'api_key', 'api_secret',
+    'access_token', 'refresh_token', 'private_key', 'auth_token',
+})
+
 def get_entity_history(entity_type, entity_id):
     return AuditLog.objects.filter(
         entity_type=entity_type,
@@ -19,6 +25,11 @@ def log_action(
     old_value=None,
     new_value=None,
 ):
+    # M-12: Redact sensitive field values before persisting
+    if field_name and field_name.lower() in _SENSITIVE_FIELDS:
+        old_value = '[REDACTED]'
+        new_value = '[REDACTED]'
+
     AuditLog.objects.create(
         actor=actor,
         action=action,

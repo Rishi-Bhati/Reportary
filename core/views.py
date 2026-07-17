@@ -49,7 +49,10 @@ def global_search(request):
             Q(project__public=True) & (
                 Q(visibility=True) | Q(reported_by=request.user) | Q(project__collaborators=request.user) | Q(project__owner=request.user)
             ) |
-            Q(project__org__isnull=False, project__org__in=user_orgs) |
+            # C-06 fix: org-branch must also enforce visibility, else hidden reports leak to all org members
+            Q(project__org__isnull=False, project__org__in=user_orgs) & (
+                Q(visibility=True) | Q(reported_by=request.user) | Q(project__owner=request.user) | Q(project__project_head=request.user)
+            ) |
             Q(project__public=False, project__org__isnull=True) & (
                 Q(project__owner=request.user) | Q(project__collaborators=request.user) | Q(reported_by=request.user)
             )
@@ -59,7 +62,10 @@ def global_search(request):
             Q(report__project__public=True) & (
                 Q(report__visibility=True) | Q(report__reported_by=request.user) | Q(report__project__collaborators=request.user) | Q(report__project__owner=request.user)
             ) |
-            Q(report__project__org__isnull=False, report__project__org__in=user_orgs) |
+            # C-06 fix: same for comments in org projects
+            Q(report__project__org__isnull=False, report__project__org__in=user_orgs) & (
+                Q(report__visibility=True) | Q(report__reported_by=request.user) | Q(report__project__owner=request.user) | Q(report__project__project_head=request.user)
+            ) |
             Q(report__project__public=False, report__project__org__isnull=True) & (
                 Q(report__project__owner=request.user) | Q(report__project__collaborators=request.user) | Q(report__reported_by=request.user)
             )
@@ -218,7 +224,10 @@ def global_search_glimpse(request):
                 Q(project__public=True) & (
                     Q(visibility=True) | Q(reported_by=request.user) | Q(project__collaborators=request.user) | Q(project__owner=request.user)
                 ) |
-                Q(project__org__isnull=False, project__org__in=user_orgs) |
+                # C-06 fix: org-branch must also enforce visibility
+                Q(project__org__isnull=False, project__org__in=user_orgs) & (
+                    Q(visibility=True) | Q(reported_by=request.user) | Q(project__owner=request.user) | Q(project__project_head=request.user)
+                ) |
                 Q(project__public=False, project__org__isnull=True) & (
                     Q(project__owner=request.user) | Q(project__collaborators=request.user) | Q(reported_by=request.user)
                 )
@@ -228,7 +237,10 @@ def global_search_glimpse(request):
                 Q(report__project__public=True) & (
                     Q(report__visibility=True) | Q(report__reported_by=request.user) | Q(report__project__collaborators=request.user) | Q(report__project__owner=request.user)
                 ) |
-                Q(report__project__org__isnull=False, report__project__org__in=user_orgs) |
+                # C-06 fix: same for comments
+                Q(report__project__org__isnull=False, report__project__org__in=user_orgs) & (
+                    Q(report__visibility=True) | Q(report__reported_by=request.user) | Q(report__project__owner=request.user) | Q(report__project__project_head=request.user)
+                ) |
                 Q(report__project__public=False, report__project__org__isnull=True) & (
                     Q(report__project__owner=request.user) | Q(report__project__collaborators=request.user) | Q(report__reported_by=request.user)
                 )

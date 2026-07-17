@@ -201,13 +201,24 @@
                                         {{ report.title }}
                                     </a>
                                 </td>
-                                <td class="px-6 py-4 text-gray-600">{{ report.reported_by.username }}</td>
+                                <td class="px-6 py-4 text-gray-600">
+                                    {% if report.is_anonymous %}
+                                    <span class="inline-flex items-center gap-1 text-gray-400 italic">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                        </svg>
+                                        Anonymous
+                                    </span>
+                                    {% else %}
+                                    {{ report.reported_by.username }}
+                                    {% endif %}
+                                </td>
                                 <td class="px-6 py-4">
-                                    {% if report.severity == 'critical' %}
+                                    {% if report.impact|lower == 'critical' %}
                                     <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-red-50 text-red-600 border border-red-100">Critical</span>
-                                    {% elif report.severity == 'high' %}
+                                    {% elif report.impact|lower == 'high' %}
                                     <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-orange-50 text-orange-600 border border-orange-100">High</span>
-                                    {% elif report.severity == 'medium' %}
+                                    {% elif report.impact|lower == 'medium' %}
                                     <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-yellow-50 text-yellow-800 border border-yellow-100">Medium</span>
                                     {% else %}
                                     <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-blue-50 text-blue-600 border border-blue-100">Low</span>
@@ -257,35 +268,106 @@
                                 {{ log.actor.username|slice:":1"|upper }}
                             </div>
                         </div>
-                        <div class="flex-1 space-y-1">
-                            <div class="flex items-center justify-between gap-4">
-                                <p class="text-gray-900">
-                                    <span class="font-bold">{{ log.actor.username }}</span>
-                                    <span class="text-gray-500">
-                                        {% if log.entity_type == 'Project' %}
-                                            {% if log.action == 'create' %}created this project{% else %}updated the project metadata{% endif %}
-                                        {% elif log.entity_type == 'Report' %}
-                                            {% if log.action == 'create' %}reported a new issue{% else %}updated report field <span class="font-semibold text-gray-800">{{ log.field_name }}</span>{% endif %}
-                                        {% else %}
-                                            {{ log.action }}d {{ log.entity_type }}
-                                        {% endif %}
+                        <details class="group flex-1">
+                            <summary class="list-none cursor-pointer flex items-center justify-between gap-4 select-none">
+                                <div class="flex-1">
+                                    <p class="text-gray-900">
+                                        <span class="font-bold">{{ log.actor.username }}</span>
+                                        <span class="text-gray-500">
+                                            {% if log.entity_type == 'Project' %}
+                                                {% if log.action == 'create' %}
+                                                    created this project
+                                                {% else %}
+                                                    updated project
+                                                    {% if log.field_name == 'anon_reporting_enabled' %}
+                                                        anonymous reporting policy
+                                                    {% elif log.field_name == 'anon_attachments_enabled' %}
+                                                        anonymous attachments policy
+                                                    {% elif log.field_name == 'public_reporting_enabled' %}
+                                                        public reporting link status
+                                                    {% elif log.field_name == 'title' %}
+                                                        title
+                                                    {% elif log.field_name == 'description' %}
+                                                        description
+                                                    {% elif log.field_name == 'visibility' %}
+                                                        visibility
+                                                    {% elif log.field_name == 'org' %}
+                                                        organization affiliation
+                                                    {% elif log.field_name == 'project_head' %}
+                                                        project head
+                                                    {% else %}
+                                                        metadata (<span class="font-semibold text-gray-700 font-mono">{{ log.field_name }}</span>)
+                                                    {% endif %}
+                                                {% endif %}
+                                            {% elif log.entity_type == 'PublicReportingLink' %}
+                                                updated public reporting link
+                                                {% if log.field_name == 'is_active' %}
+                                                    active status
+                                                {% elif log.field_name == 'allow_anonymous' %}
+                                                    anonymous reporting setting
+                                                {% elif log.field_name == 'token' %}
+                                                    token key
+                                                {% else %}
+                                                    field (<span class="font-semibold text-gray-700 font-mono">{{ log.field_name }}</span>)
+                                                {% endif %}
+                                            {% elif log.entity_type == 'Report' %}
+                                                {% if log.action == 'create' %}
+                                                    reported a new issue
+                                                {% else %}
+                                                    updated report field <span class="font-semibold text-gray-800">{{ log.field_name }}</span>
+                                                {% endif %}
+                                            {% else %}
+                                                {{ log.action }}d {{ log.entity_type }}
+                                            {% endif %}
+                                        </span>
+                                    </p>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-[10px] text-gray-400 shrink-0">{{ log.created_at|timesince }} ago</span>
+                                    <span class="text-gray-400 group-open:rotate-180 transition-transform duration-200">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
+                                        </svg>
                                     </span>
-                                </p>
-                                <span class="text-[10px] text-gray-400 shrink-0">{{ log.created_at|timesince }} ago</span>
-                            </div>
+                                </div>
+                            </summary>
 
-                            {% if log.old_value or log.new_value %}
-                            <div class="bg-gray-50 p-2.5 rounded-lg border border-gray-100 font-mono text-gray-600 mt-1.5 flex items-center gap-1.5 flex-wrap">
-                                {% if log.old_value %}
-                                <span class="line-through text-gray-400">{{ log.old_value }}</span>
-                                <svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                                </svg>
+                            <!-- Expanded Details Panel -->
+                            <div class="mt-3 p-3 bg-gray-50 rounded-xl border border-gray-100/80 space-y-2 text-[11px] text-gray-500">
+                                <div class="grid grid-cols-2 gap-x-4 gap-y-1.5">
+                                    <div>
+                                        <span class="font-medium text-gray-400">Action performed by:</span>
+                                        <span class="text-gray-700 font-semibold block">{{ log.actor.username }}</span>
+                                        <span class="text-gray-400 block text-[10px]">{{ log.actor.email }}</span>
+                                    </div>
+                                    <div>
+                                        <span class="font-medium text-gray-400">Timestamp:</span>
+                                        <span class="text-gray-700 font-semibold block">{{ log.created_at|date:"M d, Y \a\t H:i" }}</span>
+                                    </div>
+                                    <div>
+                                        <span class="font-medium text-gray-400">Target resource:</span>
+                                        <span class="text-gray-700 font-semibold block">{{ log.entity_type }} ({{ log.entity_id|slice:":8" }}…)</span>
+                                    </div>
+                                    <div>
+                                        <span class="font-medium text-gray-400">Action type:</span>
+                                        <span class="text-gray-700 font-semibold block uppercase">{{ log.action }}</span>
+                                    </div>
+                                </div>
+
+                                {% if log.old_value or log.new_value %}
+                                <div class="border-t border-gray-200/60 pt-2 flex items-center gap-2 flex-wrap font-mono">
+                                    <span class="font-medium text-gray-400 font-sans text-[11px]">Changed:</span>
+                                    {% if log.old_value %}
+                                    <span class="line-through text-gray-400">{{ log.old_value }}</span>
+                                    <svg class="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                    </svg>
+                                    {% endif %}
+                                    <span class="text-[#226ce0] font-bold">{{ log.new_value }}</span>
+                                </div>
                                 {% endif %}
-                                <span class="text-[#226ce0] font-semibold">{{ log.new_value }}</span>
                             </div>
-                            {% endif %}
-                        </div>
+                        </details>
                     </div>
                     {% endwith %}
                     {% endfor %}
@@ -386,6 +468,11 @@
                     {% endfor %}
                 </div>
             </div>
+
+            <!-- Public Reporting Link Panel (owners only) -->
+            {% if is_owner %}
+            {% include "projects/partials/public_link_panel.html" with project=project link=public_link is_owner=is_owner %}
+            {% endif %}
 
         </div>
 

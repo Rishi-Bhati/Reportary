@@ -47,9 +47,13 @@ def landing_page(request):
     Renders the main landing page.
     Redirects authenticated users to the dashboard.
     """
+    from django.utils.http import url_has_allowed_host_and_scheme
+    next_url = request.GET.get('next')
     if request.user.is_authenticated:
+        if next_url and url_has_allowed_host_and_scheme(next_url, allowed_hosts={request.get_host()}):
+            return redirect(next_url)
         return redirect('dashboard:dashboard')
-    return render(request, "home/landing_page.html")
+    return render(request, "home/landing_page.html", {'next': next_url})
 
 def changelog_view(request):
     """
@@ -59,32 +63,44 @@ def changelog_view(request):
 
 def login_card(request):
     """Renders the HTMX partial for the login card."""
-    return render(request, "home/partials/login_card.html")
+    next_url = request.GET.get('next')
+    return render(request, "home/partials/login_card.html", {'next': next_url})
 
 def signup_card(request):
     """Renders the HTMX partial for the signup card."""
-    return render(request, "home/partials/signup_card.html")
+    next_url = request.GET.get('next')
+    return render(request, "home/partials/signup_card.html", {'next': next_url})
 
 def handle_login(request):
     """
     Handles the user login form submission.
     """
+    from django.utils.http import url_has_allowed_host_and_scheme
     if request.method == "POST":
         email = request.POST.get('email')
         password = request.POST.get('password')
+        next_url = request.GET.get('next')
+
+        # Validate next_url to prevent open redirect attacks
+        if next_url and not url_has_allowed_host_and_scheme(next_url, allowed_hosts={request.get_host()}):
+            next_url = None
 
         # Authenticate using the email address.
-        # Note: 'username' argument is the specific keyword argument for the backend, 
-        # even though we are passing the email.
         user = authenticate(request, username=email, password=password)
         
         if user is not None:
             login(request, user)
             response = HttpResponse(status=204)
-            response["HX-Redirect"] = reverse("dashboard:dashboard")
+            if next_url:
+                response["HX-Redirect"] = next_url
+            else:
+                response["HX-Redirect"] = reverse("dashboard:dashboard")
             return response
         else:
-            context = {'error': 'Invalid credentials. Please try again.'}
+            context = {
+                'error': 'Invalid credentials. Please try again.',
+                'next': next_url,
+            }
             return render(request, "home/partials/login_card.html", context)
 
     # If the login fails or if the request is not POST, redirect back to the landing page.
@@ -94,19 +110,34 @@ def handle_signup(request):
     """
     Handles the user signup form submission.
     """
+    from django.utils.http import url_has_allowed_host_and_scheme
+    from django.core.validators import validate_email as django_validate_email
+    from django.core.exceptions import ValidationError as DjangoValidationError
     if request.method == "POST":
-        email = request.POST.get('email')
+        email = request.POST.get('email', '').strip()
         password = request.POST.get('password')
         confirm_password = request.POST.get('confirm_password')
+        next_url = request.GET.get('next')
+
+        # Validate next_url to prevent open redirect
+        if next_url and not url_has_allowed_host_and_scheme(next_url, allowed_hosts={request.get_host()}):
+            next_url = None
+
+        # Validate email format server-side (M-09)
+        try:
+            django_validate_email(email)
+        except DjangoValidationError:
+            context = {'error': 'Please enter a valid email address.', 'next': next_url}
+            return render(request, "home/partials/signup_card.html", context)
 
         # Basic validation for passwords.
         if password != confirm_password:
-            context = {'error': 'Passwords do not match.'}
+            context = {'error': 'Passwords do not match.', 'next': next_url}
             return render(request, "home/partials/signup_card.html", context)
         
         # Check if a user with this email already exists.
         if User.objects.filter(email=email).exists():
-            context = {'error': 'Email already exists. Please try to log in.'}
+            context = {'error': 'Email already exists. Please try to log in.', 'next': next_url}
             return render(request, "home/partials/signup_card.html", context)
 
         # Validate password strength with custom rules and Django validators.
@@ -131,7 +162,7 @@ def handle_signup(request):
             errors.extend(list(e.messages))
 
         if errors:
-            context = {'error': errors}
+            context = {'error': errors, 'next': next_url}
             return render(request, "home/partials/signup_card.html", context)
 
         # Create the user.
@@ -146,15 +177,20 @@ def handle_signup(request):
             try:
                 send_verification_email(request, user)
             except Exception as e:
-                print(f"Failed to send verification email: {e}")
+                import logging
+                logging.getLogger(__name__).error(f"Failed to send verification email: {e}")
 
             login(request, user)
             response = HttpResponse(status=204)
-            response["HX-Redirect"] = reverse("accounts:onboarding_home")
+            if next_url:
+                response["HX-Redirect"] = next_url
+            else:
+                response["HX-Redirect"] = reverse("accounts:onboarding_home")
             return response
         except Exception as e:
-            print(f"Signup error: {e}")
-            context = {'error': 'An error occurred during account creation.'}
+            import logging
+            logging.getLogger(__name__).error(f"Signup error: {e}")
+            context = {'error': 'An error occurred during account creation.', 'next': next_url}
             return render(request, "home/partials/signup_card.html", context)
             
     # If signup fails or if the request is not POST, redirect back to the landing page.
@@ -234,8 +270,19 @@ def terms_page(request):
 
 
 def contact_page(request):
-    """Renders and handles the Contact form."""
+    """Renders and handles the Contact form with rate limiting (H-06)."""
     if request.method == "POST":
+        # Rate limiting: 5 submissions per hour per IP using Django's cache
+        from django.core.cache import cache
+        client_ip = request.META.get('HTTP_X_FORWARDED_FOR', request.META.get('REMOTE_ADDR', '0.0.0.0'))
+        # Take rightmost IP from X-Forwarded-For to avoid spoofing
+        client_ip = client_ip.split(',')[-1].strip()
+        rate_key = f'contact_rate_{client_ip}'
+        submission_count = cache.get(rate_key, 0)
+        if submission_count >= 5:
+            messages.error(request, "Too many messages sent. Please wait an hour before trying again.")
+            return render(request, "home/contact.html", {})
+        cache.set(rate_key, submission_count + 1, timeout=3600)  # 1-hour window
         name = request.POST.get("name", "").strip()
         email = request.POST.get("email", "").strip()
         subject = request.POST.get("subject", "").strip()

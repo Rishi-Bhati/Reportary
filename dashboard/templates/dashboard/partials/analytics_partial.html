@@ -1,0 +1,219 @@
+<div id="panel-analytics" class="space-y-6">
+    <!-- Top Metrics Row -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm space-y-1">
+            <div class="flex items-center gap-1.5">
+                <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Total Tracked Issues</p>
+                <div class="group/tooltip relative inline-block">
+                    <svg class="w-3.5 h-3.5 text-gray-300 hover:text-gray-500 cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 hidden group-hover/tooltip:block bg-gray-900 text-white text-[10px] font-semibold py-1 px-2 rounded shadow-lg whitespace-nowrap z-30 font-sans normal-case tracking-normal">
+                        Total issues reported across all projects you participate in
+                    </div>
+                </div>
+            </div>
+            <h3 class="text-3xl font-extrabold text-gray-900">{{ total_reports_count }}</h3>
+        </div>
+        <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm space-y-1">
+            <div class="flex items-center gap-1.5">
+                <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Open vs Closed</p>
+                <div class="group/tooltip relative inline-block">
+                    <svg class="w-3.5 h-3.5 text-gray-300 hover:text-gray-500 cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 hidden group-hover/tooltip:block bg-gray-900 text-white text-[10px] font-semibold py-1 px-2 rounded shadow-lg whitespace-nowrap z-30 font-sans normal-case tracking-normal">
+                        Number of open/in-progress reports vs resolved/closed reports
+                    </div>
+                </div>
+            </div>
+            <h3 class="text-3xl font-extrabold text-[#226ce0]">{{ open_count }} <span class="text-gray-300 font-light">/</span> <span class="text-gray-500">{{ closed_count }}</span></h3>
+        </div>
+        <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm space-y-1">
+            <div class="flex items-center gap-1.5">
+                <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Average Fix Time</p>
+                <div class="group/tooltip relative inline-block">
+                    <svg class="w-3.5 h-3.5 text-gray-300 hover:text-gray-500 cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 hidden group-hover/tooltip:block bg-gray-900 text-white text-[10px] font-semibold py-1 px-2 rounded shadow-lg whitespace-nowrap z-30 font-sans normal-case tracking-normal">
+                        Average time elapsed before issues are marked as resolved
+                    </div>
+                </div>
+            </div>
+            <h3 class="text-3xl font-extrabold text-emerald-600">{{ avg_resolution_time|default:"N/A" }}</h3>
+        </div>
+    </div>
+
+    <!-- Charts Grid Row 1 -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Open vs Closed Doughnut -->
+        <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between min-h-[300px]">
+            <h4 class="font-bold text-gray-900 text-sm mb-4">Status Allocation</h4>
+            <div class="relative w-full max-w-[180px] mx-auto flex-1 flex items-center justify-center">
+                <canvas id="chart-status"></canvas>
+            </div>
+        </div>
+
+        <!-- Severity Distribution Bar Chart -->
+        <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between min-h-[300px]">
+            <h4 class="font-bold text-gray-900 text-sm mb-4">Issues by Severity</h4>
+            <div class="w-full flex-1 flex items-center justify-center">
+                <canvas id="chart-severity"></canvas>
+            </div>
+        </div>
+
+        <!-- Component Distribution Chart -->
+        <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between min-h-[300px]">
+            <h4 class="font-bold text-gray-900 text-sm mb-4">Top Modules / Components</h4>
+            <div class="w-full flex-1 flex items-center justify-center">
+                {% if component_labels %}
+                <canvas id="chart-component"></canvas>
+                {% else %}
+                <div class="text-center text-xs text-gray-400 py-12">No components mapped. Add components to projects.</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Grid Row 2 -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Timeline Chart -->
+        <div class="lg:col-span-2 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between min-h-[350px]">
+            <h4 class="font-bold text-gray-900 text-sm mb-4">Issues Created Over Time (30d)</h4>
+            <div class="w-full flex-1 flex items-center">
+                <canvas id="chart-timeline" class="max-h-[250px]"></canvas>
+            </div>
+        </div>
+
+        <!-- Rankings Lists -->
+        <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-6">
+            <!-- Active Projects -->
+            <div class="space-y-3">
+                <h4 class="font-bold text-gray-900 text-xs uppercase tracking-wider">Most Active Projects</h4>
+                <div class="space-y-2">
+                    {% for item in active_projects %}
+                    <div class="flex items-center justify-between text-xs py-1">
+                        <span class="text-gray-700 font-semibold truncate max-w-[180px]">{{ item.project__title }}</span>
+                        <span class="px-2 py-0.5 bg-gray-100 text-gray-700 font-bold rounded">{{ item.count }} reports</span>
+                    </div>
+                    {% empty %}
+                    <div class="text-xs text-gray-400 py-2">No active projects.</div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Top Contributors -->
+            <div class="space-y-3 pt-4 border-t border-gray-100">
+                <h4 class="font-bold text-gray-900 text-xs uppercase tracking-wider">Top Assignees</h4>
+                <div class="space-y-2">
+                    {% for contributor in active_contributors %}
+                    <div class="flex items-center justify-between text-xs py-1">
+                        <span class="text-gray-700 font-semibold truncate">@{{ contributor.assigned_to__username }}</span>
+                        <span class="px-2 py-0.5 bg-blue-50 text-[#226ce0] font-bold rounded">{{ contributor.count }} active</span>
+                    </div>
+                    {% empty %}
+                    <div class="text-xs text-gray-400 py-2">No active assignees.</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts initialization script -->
+    <script>
+        (function() {
+            const ctxStatus = document.getElementById('chart-status').getContext('2d');
+            new Chart(ctxStatus, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Open', 'Closed'],
+                    datasets: [{
+                        data: [{{ open_count }}, {{ closed_count }}],
+                        backgroundColor: ['#226ce0', '#e5e7eb'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    cutout: '75%',
+                    plugins: {
+                        legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11, weight: '600' } } }
+                    }
+                }
+            });
+
+            const ctxSeverity = document.getElementById('chart-severity').getContext('2d');
+            new Chart(ctxSeverity, {
+                type: 'bar',
+                data: {
+                    labels: ['Critical', 'High', 'Medium', 'Low'],
+                    datasets: [{
+                        label: 'Issues Count',
+                        data: [
+                            {{ severity_counts.critical|default:0 }},
+                            {{ severity_counts.high|default:0 }},
+                            {{ severity_counts.medium|default:0 }},
+                            {{ severity_counts.low|default:0 }}
+                        ],
+                        backgroundColor: ['#ef4444', '#f59e0b', '#3b82f6', '#10b981'],
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { display: false } },
+                        y: { ticks: { precision: 0 } }
+                    }
+                }
+            });
+
+            {% if component_labels %}
+            const ctxComponent = document.getElementById('chart-component').getContext('2d');
+            new Chart(ctxComponent, {
+                type: 'doughnut',
+                data: {
+                    labels: {{ component_labels|safe }},
+                    datasets: [{
+                        data: {{ component_data|safe }},
+                        backgroundColor: ['#226ce0', '#4f46e5', '#9333ea', '#db2777', '#f59e0b'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    plugins: {
+                        legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } }
+                    }
+                }
+            });
+            {% endif %}
+
+            const ctxTimeline = document.getElementById('chart-timeline').getContext('2d');
+            new Chart(ctxTimeline, {
+                type: 'line',
+                data: {
+                    labels: {{ time_labels|safe }},
+                    datasets: [{
+                        label: 'New Reports',
+                        data: {{ time_data|safe }},
+                        borderColor: '#226ce0',
+                        backgroundColor: 'rgba(34, 108, 224, 0.05)',
+                        fill: true,
+                        tension: 0.3,
+                        borderWidth: 2,
+                        pointRadius: 3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { display: false }, ticks: { font: { size: 9 } } },
+                        y: { ticks: { precision: 0, font: { size: 9 } } }
+                    }
+                }
+            });
+        })();
+    </script>
+</div>

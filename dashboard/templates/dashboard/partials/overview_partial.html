@@ -1,0 +1,342 @@
+<div id="panel-overview" class="space-y-6">
+    <!-- Summary Cards Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- Metric 1 -->
+        <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex items-center justify-between group hover:border-[#226ce0]/20 transition-all duration-200">
+            <div class="space-y-1">
+                <div class="flex items-center gap-1.5">
+                    <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Assigned to Me</p>
+                    <div class="group/tooltip relative inline-block">
+                        <svg class="w-3.5 h-3.5 text-gray-300 hover:text-gray-500 cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 hidden group-hover/tooltip:block bg-gray-900 text-white text-[10px] font-semibold py-1 px-2 rounded shadow-lg whitespace-nowrap z-30">
+                            Open issues currently assigned to you for fixing
+                        </div>
+                    </div>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-900">{{ assigned_reports_count }}</h3>
+            </div>
+            <div class="p-3 bg-blue-50 text-[#226ce0] rounded-xl group-hover:bg-[#226ce0] group-hover:text-white transition-all duration-300">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+                </svg>
+            </div>
+        </div>
+
+        <!-- Metric 2 -->
+        <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex items-center justify-between group hover:border-[#226ce0]/20 transition-all duration-200">
+            <div class="space-y-1">
+                <div class="flex items-center gap-1.5">
+                    <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Reported Issues</p>
+                    <div class="group/tooltip relative inline-block">
+                        <svg class="w-3.5 h-3.5 text-gray-300 hover:text-gray-500 cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 hidden group-hover/tooltip:block bg-gray-900 text-white text-[10px] font-semibold py-1 px-2 rounded shadow-lg whitespace-nowrap z-30">
+                            Total issues you have reported across all projects
+                        </div>
+                    </div>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-900">{{ my_reports_count }}</h3>
+            </div>
+            <div class="p-3 bg-indigo-50 text-indigo-600 rounded-xl group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+            </div>
+        </div>
+
+        <!-- Metric 3 -->
+        <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex items-center justify-between group hover:border-[#226ce0]/20 transition-all duration-200">
+            <div class="space-y-1">
+                <div class="flex items-center gap-1.5">
+                    <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Pending Invites</p>
+                    <div class="group/tooltip relative inline-block">
+                        <svg class="w-3.5 h-3.5 text-gray-300 hover:text-gray-500 cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 hidden group-hover/tooltip:block bg-gray-900 text-white text-[10px] font-semibold py-1 px-2 rounded shadow-lg whitespace-nowrap z-30">
+                            Collaboration or role invites awaiting your response
+                        </div>
+                    </div>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-900">{{ pending_actions_count }}</h3>
+            </div>
+            <div class="p-3 bg-amber-50 text-amber-600 rounded-xl group-hover:bg-amber-600 group-hover:text-white transition-all duration-300">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                </svg>
+            </div>
+        </div>
+
+        <!-- Metric 4 -->
+        <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex items-center justify-between group hover:border-[#226ce0]/20 transition-all duration-200">
+            <div class="space-y-1">
+                <div class="flex items-center gap-1.5">
+                    <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Avg Resolution Time</p>
+                    <div class="group/tooltip relative inline-block">
+                        <svg class="w-3.5 h-3.5 text-gray-300 hover:text-gray-500 cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 hidden group-hover/tooltip:block bg-gray-900 text-white text-[10px] font-semibold py-1 px-2 rounded shadow-lg whitespace-nowrap z-30">
+                            Average time taken to resolve issue reports
+                        </div>
+                    </div>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-900">{{ avg_resolution_time }}</h3>
+            </div>
+            <div class="p-3 bg-emerald-50 text-emerald-600 rounded-xl group-hover:bg-emerald-600 group-hover:text-white transition-all duration-300">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Overview Content Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- Left Column: Tasks & Projects -->
+        <div class="lg:col-span-2 space-y-6">
+            
+            <!-- Assigned to Me List -->
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                <div class="px-6 py-5 border-b border-gray-100 flex justify-between items-center">
+                    <h3 class="font-bold text-gray-900 text-base">Assigned to Me</h3>
+                    <a href="{% url 'reports:assigned_to_me' %}" class="text-xs font-semibold text-[#226ce0] hover:underline">View All</a>
+                </div>
+                <div class="divide-y divide-gray-100">
+                    {% for report in assigned_reports %}
+                    <div class="p-5 flex items-start justify-between gap-4 hover:bg-gray-50/50 transition-colors cursor-pointer" 
+                         onclick="window.location='{% url 'projects:reports:report_detail' project_uuid=report.project.uuid report_uuid=report.uuid %}'">
+                        <div class="space-y-1">
+                            <h4 class="font-semibold text-gray-900 text-sm hover:text-[#226ce0] transition-colors">{{ report.title }}</h4>
+                            <p class="text-xs text-gray-400 font-medium">
+                                {{ report.project.title }} • Created {{ report.created_at|timesince }} ago
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <!-- Impact Badge -->
+                            {% if report.impact == 'critical' %}
+                            <span class="px-2 py-0.5 text-[10px] font-bold uppercase rounded bg-red-50 text-red-600 border border-red-100">Critical</span>
+                            {% elif report.impact == 'high' %}
+                            <span class="px-2 py-0.5 text-[10px] font-semibold uppercase rounded bg-orange-50 text-orange-600 border border-orange-100">High</span>
+                            {% else %}
+                            <span class="px-2 py-0.5 text-[10px] font-medium uppercase rounded bg-gray-50 text-gray-500 border border-gray-100">{{ report.get_impact_display }}</span>
+                            {% endif %}
+                            
+                            <!-- Status Badge -->
+                            {% if report.status == 'open' %}
+                            <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-blue-50 text-blue-600">Open</span>
+                            {% elif report.status == 'in_progress' %}
+                            <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-yellow-50 text-yellow-700">In Progress</span>
+                            {% elif report.status == 'resolved' %}
+                            <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-emerald-50 text-emerald-600">Resolved</span>
+                            {% else %}
+                            <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-gray-100 text-gray-600">{{ report.get_status_display }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="p-8 text-center text-gray-500 space-y-2">
+                        <div class="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center mx-auto text-gray-300">✓</div>
+                        <p class="text-sm font-semibold text-gray-700">All caught up!</p>
+                        <p class="text-xs text-gray-400">No open reports are currently assigned to you.</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Recently Viewed Section -->
+            {% if recently_viewed_reports %}
+            <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm space-y-4">
+                <h3 class="font-bold text-gray-900 text-base">Recently Viewed</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {% for report in recently_viewed_reports %}
+                    <a href="{% url 'projects:reports:report_detail' project_uuid=report.project.uuid report_uuid=report.uuid %}" 
+                       class="flex flex-col justify-between p-4 rounded-xl border border-gray-100 hover:border-[#226ce0]/30 hover:shadow-sm transition-all duration-200">
+                        <div>
+                            <span class="text-[10px] font-bold text-[#226ce0] uppercase tracking-wider">{{ report.project.title }}</span>
+                            <h4 class="font-semibold text-gray-900 text-sm mt-1 line-clamp-1">{{ report.title }}</h4>
+                        </div>
+                        <div class="flex justify-between items-center mt-3 pt-3 border-t border-gray-50 text-xs text-gray-400 font-medium">
+                            <span>Status: {{ report.get_status_display }}</span>
+                            <span>#{{ report.id }}</span>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Projects Grid -->
+            <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-bold text-gray-900 text-base">Projects</h3>
+                    <a href="{% url 'projects:my_projects' %}" class="text-xs font-semibold text-[#226ce0] hover:underline">View All</a>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {% for project in projects %}
+                    <a href="{% url 'projects:project_detail' project.uuid %}" 
+                       class="group bg-white rounded-2xl p-5 border border-gray-100 shadow-sm hover:shadow-md hover:border-[#226ce0]/20 transition-all flex flex-col h-full">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="w-10 h-10 rounded-xl bg-[#226ce0]/10 text-[#226ce0] flex items-center justify-center font-bold text-lg group-hover:bg-[#226ce0] group-hover:text-white transition-all duration-300">
+                                {{ project.title|slice:":1"|upper }}
+                            </div>
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-gray-50 text-gray-500 border border-gray-100 capitalize">
+                                {{ project.visibility }}
+                            </span>
+                        </div>
+                        <h4 class="font-bold text-gray-900 text-sm group-hover:text-[#226ce0] transition-colors mb-1">
+                            {{ project.title }}
+                        </h4>
+                        <p class="text-xs text-gray-500 line-clamp-2 mb-4 leading-normal flex-1">{{ project.description }}</p>
+                        <div class="pt-2 border-t border-gray-50 text-gray-400 mt-auto" style="font-size: 9px; font-weight: 400; opacity: 0.65; letter-spacing: 0.01em;">
+                            updated {{ project.updated_at|timesince }} ago
+                        </div>
+                    </a>
+                    {% endfor %}
+                    
+                    <!-- Empty project card creator -->
+                    <a href="{% url 'projects:new' %}" 
+                       class="group border border-dashed border-gray-200 hover:border-[#226ce0]/50 rounded-2xl p-5 flex flex-col items-center justify-center text-center hover:bg-blue-50/10 transition-all duration-200 min-h-[160px]">
+                        <div class="w-10 h-10 rounded-full bg-gray-50 text-gray-400 flex items-center justify-center mb-3 group-hover:bg-[#226ce0] group-hover:text-white transition-all duration-300">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                            </svg>
+                        </div>
+                        <span class="text-sm font-semibold text-gray-900 group-hover:text-[#226ce0] transition-colors">New Project</span>
+                        <span class="text-xs text-gray-400 mt-0.5">Setup a new issue tracker</span>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Right Column: Sidebar Widgets -->
+        <div class="space-y-6">
+            
+            <!-- Pending Actions (Invitations) -->
+            {% if pending_actions %}
+            <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-4">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-bold text-gray-900 text-sm uppercase tracking-wider">Pending Invites</h3>
+                    <span class="px-2 py-0.5 text-xs font-bold bg-amber-100 text-amber-800 rounded-full">{{ pending_actions_count }}</span>
+                </div>
+                <div class="space-y-3">
+                    {% for invite in pending_actions %}
+                    <div class="p-4 rounded-xl border border-gray-50 bg-gray-50/50 space-y-3">
+                        <div class="space-y-1">
+                            <p class="text-xs text-gray-800 leading-normal">
+                                <strong>@{{ invite.invited_by.username }}</strong> invited you as 
+                                {% if invite.invite_type == 'project_head' %}
+                                    <span class="font-bold text-indigo-600">Project Head</span>
+                                {% elif invite.invite_type == 'collaborator' %}
+                                    <span class="font-bold text-blue-600">Collaborator</span>
+                                {% else %}
+                                    <span class="font-bold text-purple-600">Organisation Member</span>
+                                {% endif %}
+                                for <strong>{% if invite.project %}{{ invite.project.title }}{% else %}{{ invite.organisation.name }}{% endif %}</strong>.
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <form action="{% url 'notifications:accept_invite' invite.uuid %}" method="post" class="flex-1">
+                                {% csrf_token %}
+                                <button type="submit" class="w-full btn btn-xs bg-emerald-600 hover:bg-emerald-700 text-white border-none rounded-lg font-semibold capitalize">
+                                    Accept
+                                </button>
+                            </form>
+                            <form action="{% url 'notifications:decline_invite' invite.uuid %}" method="post" class="flex-1">
+                                {% csrf_token %}
+                                <button type="submit" class="w-full btn btn-xs btn-outline border-gray-300 hover:bg-gray-100 text-gray-700 rounded-lg font-semibold capitalize">
+                                    Decline
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Organizations -->
+            <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-4">
+                <div class="flex justify-between items-center">
+                    <h3 class="font-bold text-gray-900 text-sm uppercase tracking-wider">Organisations</h3>
+                    <a href="{% url 'organisations:list' %}" class="text-xs font-semibold text-[#226ce0] hover:underline">Manage</a>
+                </div>
+                <div class="space-y-3">
+                    {% for org in owned_organisations %}
+                    <div class="flex items-center justify-between p-3 rounded-xl bg-gray-50 border border-gray-100">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-lg bg-[#226ce0]/10 text-[#226ce0] flex items-center justify-center font-bold text-sm">
+                                {{ org.name|slice:":1"|upper }}
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-900 text-xs">{{ org.name }}</h4>
+                                <span class="inline-block text-[#226ce0] bg-blue-50/70 border border-blue-100 rounded px-1" style="font-size: 8px; font-weight: 700; padding: 1px 4px; text-transform: uppercase; letter-spacing: 0.05em; line-height: 1;">Owner</span>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                    {% for org in member_organisations %}
+                    <div class="flex items-center justify-between p-3 rounded-xl bg-gray-50 border border-gray-100">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-lg bg-purple-100 text-purple-600 flex items-center justify-center font-bold text-sm">
+                                {{ org.name|slice:":1"|upper }}
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-900 text-xs">{{ org.name }}</h4>
+                                <span class="inline-block text-purple-600 bg-purple-50/70 border border-purple-100 rounded px-1" style="font-size: 8px; font-weight: 700; padding: 1px 4px; text-transform: uppercase; letter-spacing: 0.05em; line-height: 1;">Member</span>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                    {% if not owned_organisations and not member_organisations %}
+                    <div class="text-center py-4 text-gray-400 text-xs leading-normal">
+                        You are not part of any organisations yet.
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Recent Activity Widget -->
+            <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-4">
+                <h3 class="font-bold text-gray-900 text-sm uppercase tracking-wider">Your Activity</h3>
+                <div class="relative">
+                    <!-- Timeline Line -->
+                    <div class="absolute bg-gray-100" style="top: 0; bottom: 0; left: 6px; width: 1px;"></div>
+
+                    <ul style="list-style-type: none; margin: 0; padding: 0;">
+                        {% for report in my_reports|slice:":4" %}
+                        <li class="relative" style="padding-left: 24px; margin-bottom: 16px; list-style-type: none;">
+                            <!-- Timeline Dot -->
+                            <div class="absolute bg-white border border-gray-200 rounded-full flex items-center justify-center" style="left: 0; top: 3px; width: 13px; height: 13px;">
+                                <div class="rounded-full bg-[#226ce0]" style="width: 5px; height: 5px;"></div>
+                            </div>
+
+                            <div style="font-size: 12px; line-height: 1.4;">
+                                <p class="text-gray-800" style="margin: 0;">
+                                    You reported 
+                                    <a href="{% url 'projects:reports:report_detail' project_uuid=report.project.uuid report_uuid=report.uuid %}" class="text-[#226ce0] font-semibold hover:underline">
+                                        {{ report.title }}
+                                    </a>
+                                </p>
+                                <p class="text-gray-400" style="margin: 2px 0 0 0; font-size: 10px;">{{ report.created_at|timesince }} ago</p>
+                            </div>
+                        </li>
+                        {% empty %}
+                        <li style="font-size: 12px; color: #9ca3af; padding: 8px 0; list-style-type: none;">No recent reporting activity.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

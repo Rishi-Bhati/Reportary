@@ -4,7 +4,7 @@
 
 Reportary is an open-source project management and issue tracking platform. It provides structured workflows for reporting, triaging, and resolving bugs and tasks — with strong access controls, real-time collaboration, and a clean, fast interface.
 
-> **Current release: `v1.0.0-beta.1`** — The first public versioned release. Stable enough for real team use.
+> **Current release: `v1.0.0-beta.2`** — Security Hardening, Public Portals & Organisation updates.
 
 **Live demo:** [reportary.onrender.com](https://reportary.onrender.com)
 
@@ -12,9 +12,10 @@ Reportary is an open-source project management and issue tracking platform. It p
 
 ## What it does
 
+- **Anonymous Reporting & Public Portals** — Standalone feedback portal links (`/p/<token>/`) with honeypot fields, math CAPTCHAs, interactive drag-and-drop file uploaders, GDPR-compliant daily IP hashing, and customizable owner controls.
 - **Issue Reporting** — Rich markdown-powered reports with severity levels, impact, reproducibility, and file attachments.
 - **Project Management** — Create public or private projects, manage collaborators, and track progress in one place.
-- **Organization Support** — Group projects under an organization with role-based membership (Owner, Project Head, Member).
+- **Organization Support** — Group projects under an organization with role-based membership (Owner, Project Head, Member) and inline contact details verification.
 - **3-Level Visibility** — Scope projects, reports, and comments to `Public`, `Org-Only`, or `Private`.
 - **Project Dashboard** — Per-project overview with health score, open/resolved counts, recent activity, and an interactive task checklist.
 - **Audit Logs** — Immutable history of every status change, reassignment, and update on reports and projects.
@@ -22,7 +23,7 @@ Reportary is an open-source project management and issue tracking platform. It p
 - **Bookmarks & Watches** — Bookmark reports for quick access; watch reports to receive in-app notifications on changes.
 - **Notification Centre** — In-app notifications for assignments, comments, invitations, and status changes.
 - **Site Announcements** — Superusers can publish site-wide banners (info / warning / critical / success) with optional expiry.
-- **Account Management** — Email verification, soft-delete with 30-day reactivation window, profile management.
+- **Account Management** — Email verification, soft-delete with 30-day reactivation window, profile management, and worldwide onboarding country picker.
 
 ---
 
@@ -150,7 +151,7 @@ If you discover a security vulnerability, please report it through the [issue tr
 
 See [RELEASE_NOTES.md](RELEASE_NOTES.md) for the full version history.
 
-**Current version:** `v1.0.0-beta.1` — July 2026
+**Current version:** `v1.0.0-beta.2` — July 2026
 
 ---
 
@@ -158,7 +159,6 @@ See [RELEASE_NOTES.md](RELEASE_NOTES.md) for the full version history.
 
 Planned for future releases:
 
-- Anonymous reporting workflows
 - Enhanced RBAC (role-based access control)
 - Slack / Discord integrations
 - AI-powered report summaries and duplicate detection

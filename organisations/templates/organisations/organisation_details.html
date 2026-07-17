@@ -66,6 +66,25 @@ Settings
             {% endif %}
         </div>
 
+        <!-- Anonymous Reporting Toggle Field -->
+        <div class="flex items-start bg-gray-50 rounded-xl p-4 border border-gray-100">
+            <div class="flex items-center h-5">
+                <input id="anon_reporting_enabled" 
+                       name="anon_reporting_enabled" 
+                       type="checkbox" 
+                       {% if organisation.anon_reporting_enabled %}checked{% endif %}
+                       class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded">
+            </div>
+            <div class="ml-3 text-sm">
+                <label for="anon_reporting_enabled" class="font-semibold text-gray-900">
+                    Allow Anonymous Reporting
+                </label>
+                <p class="text-xs text-gray-500">
+                    If disabled, no project under this organisation will be allowed to receive anonymous reports.
+                </p>
+            </div>
+        </div>
+
         <!-- UUID (Read-only) -->
         <div>
             <label for="uuid" class="block text-sm font-semibold text-gray-900 mb-2">

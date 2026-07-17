@@ -39,7 +39,7 @@ def get_organisation_projects(organisation):
     return Project.objects.filter(org=organisation).order_by('-updated_at')
 
 
-def update_organisation_details(*, organisation, name, description, domain, actor):
+def update_organisation_details(*, organisation, name, description, domain, actor, anon_reporting_enabled=None):
     """
     Update organisation details and log the changes.
     
@@ -49,6 +49,7 @@ def update_organisation_details(*, organisation, name, description, domain, acto
         description: New organisation description
         domain: New organisation domain
         actor: User performing the update
+        anon_reporting_enabled: Optional boolean to set anonymous reporting policy
     
     Returns:
         Updated organisation instance
@@ -70,6 +71,10 @@ def update_organisation_details(*, organisation, name, description, domain, acto
     if domain and domain != organisation.domain:
         changes['domain'] = (organisation.domain, domain)
         organisation.domain = domain
+
+    if anon_reporting_enabled is not None and anon_reporting_enabled != organisation.anon_reporting_enabled:
+        changes['anon_reporting_enabled'] = (organisation.anon_reporting_enabled, anon_reporting_enabled)
+        organisation.anon_reporting_enabled = anon_reporting_enabled
     
     organisation.save()
     
@@ -86,6 +91,7 @@ def update_organisation_details(*, organisation, name, description, domain, acto
         )
     
     return organisation
+
 
 
 def add_organisation_member(*, organisation, member_email, actor):
@@ -126,13 +132,13 @@ def add_organisation_member(*, organisation, member_email, actor):
         return None, False, f"User with email {member_email} does not exist"
 
 
-def remove_organisation_member(*, organisation, member_id, actor):
+def remove_organisation_member(*, organisation, member_uuid, actor):
     """
     Remove a member from an organisation.
     
     Args:
         organisation: Organisation instance
-        member_id: ID of the member to remove
+        member_uuid: UUID of the member to remove (M-14: UUID prevents IDOR via sequential IDs)
         actor: User performing the action
     
     Returns:
@@ -142,7 +148,7 @@ def remove_organisation_member(*, organisation, member_id, actor):
         return False, "You are not authorized to manage organisation members"
     
     try:
-        user = User.objects.get(id=member_id)
+        user = User.objects.get(uuid=member_uuid)
         
         if user == organisation.owner:
             return False, "Cannot remove the organisation owner"
@@ -187,6 +193,8 @@ def create_organisation(*, name, description, owner, domain=None):
         owner=owner,
         domain=domain,
     )
+    organisation.members.add(owner)
+    organisation.save()
     
     log_action(
         actor=owner,

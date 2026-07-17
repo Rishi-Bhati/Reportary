@@ -84,8 +84,23 @@
     </div>
 
     <!-- Project Grid Wrapper (Target of HTMX Swapping) -->
-    <div id="projects-grid-wrapper">
-        {% include "projects/partials/projects_grid_partial.html" %}
+    <div id="projects-grid-wrapper" hx-get="" hx-trigger="load" hx-push-url="false">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-pulse">
+            {% for i in "123456" %}
+            <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-4">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="w-12 h-12 rounded-xl bg-gray-200"></div>
+                    <div class="h-4 bg-gray-200 rounded w-12"></div>
+                </div>
+                <div class="h-6 bg-gray-200 rounded w-3/4"></div>
+                <div class="h-4 bg-gray-200 rounded w-full"></div>
+                <div class="pt-4 border-t border-gray-100 flex justify-between">
+                    <div class="h-4 bg-gray-200 rounded w-1/4"></div>
+                    <div class="h-4 bg-gray-200 rounded w-1/4"></div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
     </div>
 </div>
 

@@ -1,8 +1,13 @@
 {% load static %}
 <header
     class="navbar bg-white/95 backdrop-blur-md border-b border-[#d0bcd5]/30 h-16 fixed top-0 left-0 right-0 z-50 px-4 md:px-6 shadow-sm">
-    <!-- Left: Logo -->
-    <div class="flex-1 flex items-center gap-4">
+    <!-- Left: Mobile Menu Toggle & Logo -->
+    <div class="flex-1 flex items-center gap-2 md:gap-4">
+        <button onclick="toggleMobileSidebar()" class="btn btn-ghost btn-circle btn-sm text-[#534b62] hover:bg-[#226ce0]/10 md:hidden" title="Toggle Sidebar">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+        </button>
         <a href="{% url 'dashboard:dashboard' %}" class="flex items-center gap-2.5 hover:opacity-90 transition">
             <div
                 class="w-9 h-9 rounded-xi bg-gradient-to-br from-[#226ce0] to-[#1b56b3] text-white flex items-center justify-center font-bold text-lg shadow-md">
@@ -37,7 +42,7 @@
         </div>
 
         <script>
-            document.addEventListener('DOMContentLoaded', () => {
+            (function initSearchGlimpse() {
                 const searchInput = document.getElementById('topbar-search-input');
                 const bubble = document.getElementById('search-glimpse-bubble');
                 const container = document.getElementById('topbar-search-container');
@@ -48,12 +53,14 @@
                     });
 
                     document.addEventListener('click', (e) => {
-                        if (!container.contains(e.target)) {
+                        if (container && !container.contains(e.target)) {
                             bubble.classList.add('hidden');
                         }
                     });
+                } else {
+                    document.addEventListener('DOMContentLoaded', initSearchGlimpse);
                 }
-            });
+            })();
 
             function selectGlimpseQuery(query) {
                 const searchInput = document.getElementById('topbar-search-input');
@@ -69,9 +76,21 @@
         <nav class="hidden lg:flex items-center gap-1">
             <a href="{% url 'projects:projects_view' %}"
                 class="px-3 py-2 text-sm font-medium text-[#534b62] hover:text-[#226ce0] hover:bg-[#226ce0]/10 rounded-lg transition-all">Explore</a>
-            <a href="{% url 'home:nota' %}"
+            <a href="{% url 'home:faq' %}"
                 class="px-3 py-2 text-sm font-medium text-[#534b62] hover:text-[#226ce0] hover:bg-[#226ce0]/10 rounded-lg transition-all">Help</a>
         </nav>
+
+        <!-- Theme Toggle Button -->
+        <button id="theme-toggle-btn" onclick="toggleTheme()" class="btn btn-ghost btn-circle btn-sm hover:bg-[#226ce0]/10 text-[#534b62] hover:text-[#226ce0] transition-colors" title="Toggle Light/Dark Mode">
+            <!-- Sun icon -->
+            <svg id="theme-sun-icon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m12.728 12.728l.707.707M12 8a4 4 0 100 8 4 4 0 000-8z"></path>
+            </svg>
+            <!-- Moon icon -->
+            <svg id="theme-moon-icon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+            </svg>
+        </button>
 
         <!-- Notifications -->
          <a href="{% url 'notifications:center' %}">
@@ -90,6 +109,36 @@
             {% endif %}
         </button>
         </a>
+
+        <script>
+            function updateThemeToggleIcons() {
+                const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+                const sunIcon = document.getElementById('theme-sun-icon');
+                const moonIcon = document.getElementById('theme-moon-icon');
+                if (currentTheme === 'dark') {
+                    if (sunIcon) sunIcon.classList.remove('hidden');
+                    if (moonIcon) moonIcon.classList.add('hidden');
+                } else {
+                    if (sunIcon) sunIcon.classList.add('hidden');
+                    if (moonIcon) moonIcon.classList.remove('hidden');
+                }
+            }
+
+            function toggleTheme() {
+                const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                document.documentElement.setAttribute('data-theme', newTheme);
+                document.documentElement.style.colorScheme = newTheme;
+                localStorage.setItem('theme', newTheme);
+                updateThemeToggleIcons();
+            }
+
+            (function initThemeToggle() {
+                updateThemeToggleIcons();
+                document.addEventListener('DOMContentLoaded', updateThemeToggleIcons);
+                document.addEventListener('htmx:afterSwap', updateThemeToggleIcons);
+            })();
+        </script>
         <!-- Profile Dropdown -->
         <div class="dropdown dropdown-end">
             <label tabindex="0" class="btn btn-ghost btn-circle avatar hover:bg-[#226ce0]/10">
@@ -102,6 +151,8 @@
                 class="mt-3 z-[1] p-2 shadow-lg menu menu-sm dropdown-content bg-white rounded-xl w-52 border border-[#d0bcd5]/30">
                 <li><a href="{% url 'home:profile' %}"
                         class="text-[#1b1725] hover:bg-[#226ce0]/10 hover:text-[#226ce0]">Profile</a></li>
+                <li><a href="{% url 'organisations:list' %}"
+                        class="text-[#1b1725] hover:bg-[#226ce0]/10 hover:text-[#226ce0]">Organisations</a></li>
                 <li><a href="{% url 'home:nota' %}"
                         class="text-[#1b1725] hover:bg-[#226ce0]/10 hover:text-[#226ce0]">Settings</a></li>
                 <li class="border-t border-[#d0bcd5]/30 mt-2 pt-2">
