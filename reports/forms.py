@@ -43,6 +43,12 @@ class ReportForm(forms.ModelForm):
         # Store the project as an instance variable so we can access it in clean() and save() methods
         # This is crucial because we need to know later if a project was pre-set from the URL
         self.project = project
+
+        if 'visibility' in self.fields:
+            self.fields['visibility'].label = "Public Visibility"
+        
+        if 'is_anonymous' in self.fields:
+            self.fields['is_anonymous'].widget.attrs.update({'class': 'form-checkbox h-5 w-5 text-blue-600 rounded'})
         
         if project:
             # SCENARIO 1: User accessed via /projects/<pk>/reports/new/

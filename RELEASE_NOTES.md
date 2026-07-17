@@ -1,3 +1,64 @@
+# Release Notes - v1.0.0-beta.2 (Security Hardening, Public Portals, & Organisation Upgrades)
+
+**Date**: July 17, 2026
+
+## Overview
+This release (**v1.0.0-beta.2**) introduces major new capabilities, led by **Public Portals & Anonymous Reporting** to allow feedback submission without authentication. It also incorporates a comprehensive security hardening sweep based on a production readiness audit, introduces UX upgrades to the Organisations flow, global onboarding enhancements, and structural code cleanup.
+
+## Key Features Shipped
+
+### 🌐 Public Portals & Anonymous Reporting
+A fully standalone reporting layout hosted at `/p/<token>/` that allows external users and visitors to submit issue reports anonymously.
+- **Owner Link Management Panel**: Project owners and managers see a dedicated "Public Reporting Link" card in their project sidebar to:
+  - Copy and share the URL.
+  - Enable / Disable public access toggles.
+  - Turn anonymous reporting or attachment uploads on/off.
+  - Instantly regenerate or invalidate active link tokens.
+  - View organization-level anonymous reporting policy warnings.
+- **Drag-and-Drop Attachment Zone**: An interactive file upload dropzone that updates dynamically on file drop or selection.
+- **Anti-Spam Protections**: Enforced server-side math CAPTCHAs, hidden honeypot fields to detect and reject bot scripts silently, and proxy-secure rate limits (hourly and daily caps per IP per link).
+- **GDPR Compliance**: Salted daily IP hashing using SHA-256 to ensure raw IP addresses are never recorded or stored.
+- **Thank-You Page & Tracking ID**: Upgraded the post-submission landing page with a modern UI layout, dashboard tracking status, and one-click Tracking ID clipboard copying.
+- **Org-Wide Policy Overrides**: Added organization-wide anonymous reporting controls that can block public portals for all projects under the organisation.
+
+## Security Hardening & Vulnerability Patches
+
+### 🔴 Access Control & Scope Isolation
+- **Role Separation (M-02 & H-01)**: Decoupled true project ownership from project manager/head roles. Allowed project managers to edit/delete reports.
+- **UUID Detail Protection (H-02)**: Enforced strict report access checks scoping details strictly to UUID identifiers.
+- **Reassign Scoping (H-04)**: Enforced validation in the `reassign_report` view so that assignees must be active project members.
+- **Duplicate Check Authorization (M-06)**: Added validation checks to `ajax_check_duplicate` preventing unauthorized users from triggering checks.
+- **Scoped Organisation & Project Views (H-03 & H-10)**: Restricted organisation listing filters to user's own organisations, and hid private projects inside org details from non-collaborators.
+- **User Search Enumeration Protection (H-07)**: Scoped the user search autocomplete endpoint to members of the user's organisations only, preventing global email database harvesting.
+
+### 🔴 Session & Request Hardening
+- **Secure Cookie Flags & Headers (C-03 & H-11 & L-07)**: Hardened settings with session age constraints, secure cookie attributes (`HTTPONLY`, `SAMESITE='Lax'`), and HTTP headers (`nosniff`, `referrer-policy`, `X-Frame-Options`).
+- **Open Redirect Protection (C-04 & M-04)**: Implemented host-matching validation on `?next` redirection parameters and `HTTP_REFERER` headers during logins, registrations, and token resends.
+- **Rate-Limiting (H-06 & C-07)**: Added Cache-based rate limits (max 5 submissions/hour/IP) to the public contact form and fixed IP spoofing bypasses by reading the rightmost proxy IP from `X-Forwarded-For`.
+- **Public Link Isolation (H-08)**: Hidden restricted project names from anonymous submitters on the public portal layout.
+
+### 🔴 Input & Account Security
+- **Tag Duplication Validation (M-03)**: Onboarding username/tag conflicts now prompt clean validation errors instead of silent discards.
+- **Business Email Change Security (M-13)**: Hardened email alteration verification links to enforce login check and token owner validation.
+- **UUID-based Member Removal (M-14)**: Migrated organisation member deletion from sequential integer IDs to UUIDs to prevent IDOR attacks.
+- **Audit Log Sanitisation (M-12)**: Programmatically redacts sensitive parameters (`password`, `token`, `secret`) from being saved in plaintext in the database logs.
+
+## New Features & UX Polish
+
+### 🏢 Organisation Creation & Flow Upgrades
+- **Sidebar & Profile Navigation**: Added a dedicated **Organisations** link to the sidebar menu drawer and profile topbar dropdown.
+- **Inline Contact Details Gathering**: If a normal or developer user creates a new organisation, the platform now prompts them with the profile onboarding fields (Name, Business Email, and Corporate Role) to correctly align their profile state to a contact person before creation.
+- **Automatic Owner Membership**: Owners are now automatically registered as active organization members upon creation.
+
+### 🗺️ Global Onboarding Country List
+- Expanded the country selection dropdown list from 3 options to all 195 countries worldwide via a modular shared include file.
+
+## Code Cleanup & Technical Details
+- **L-01**: Cleaned reports urls patterns to replace wildcard imports with explicit views.
+- **L-04**: Swapped standard stdout `print()` debuggers with structured Python `logging` captures.
+
+---
+
 # Release Notes - v1.0.0-beta.1 (Major Public Beta)
 
 **Date**: July 12, 2026

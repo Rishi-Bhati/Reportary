@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from reports.forms import ReportForm
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
 from django.http import JsonResponse, HttpResponseForbidden, HttpResponse
 from django.contrib import messages
 from projects.models import Project
@@ -11,8 +12,10 @@ from comments.forms import CommentForm
 from django.db.models import Q
 import rules.views as rules
 from accounts.models import User
-import rules.views as rules
 from reports.services import *
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 
@@ -89,6 +92,10 @@ def report_list(request, project_uuid=None):
     """
     Displays a list of all reports for a specific project.
     """
+    if project_uuid is None:
+        from django.shortcuts import redirect
+        return redirect('reports:my_reports')
+        
     project = get_object_or_404(Project, uuid=project_uuid)
     
     if not rules.can_access_project(request.user, project):
@@ -144,7 +151,8 @@ def report_detail(request, report_uuid, project_uuid=None):
     project = report.project
 
     if not rules.can_access_project(request.user, project):
-        return HttpResponseForbidden("You do not have permission to access this project.")
+        if not (request.user.is_authenticated and report.reported_by == request.user):
+            return HttpResponseForbidden("You do not have permission to access this project.")
 
     # Track recently viewed in session
     recently_viewed = request.session.get('recently_viewed_reports', [])
@@ -180,9 +188,8 @@ def report_detail(request, report_uuid, project_uuid=None):
     user_can_change_status = rules.can_change_status(request.user, report)
     
     is_report_hidden = report.visibility == False
-    is_commenter = False
-    for comment in comments:
-        is_commenter = rules.is_commenter(request.user, comment)
+    # Fix: use any() so is_commenter reflects if user has *any* comment, not just the last one
+    is_commenter = any(rules.is_commenter(request.user, c) for c in comments)
     
     # Check if report is bookmarked or followed
     is_bookmarked = False
@@ -217,6 +224,7 @@ def report_detail(request, report_uuid, project_uuid=None):
         'is_watching': is_watching,
         'can_edit': can_edit,
         'can_delete': can_delete,
+        'has_project_access': rules.can_access_project(request.user, project),
         })
 
 @login_required
@@ -233,8 +241,18 @@ def create_report(request, project_uuid=None):
     if project_uuid is not None:
         project = get_object_or_404(Project, uuid=project_uuid)
 
+    is_public_reporter = False
     if project and not rules.can_access_project(request.user, project):
-        return HttpResponseForbidden("You do not have permission to access this project.")
+        public_link = getattr(project, 'public_link', None)
+        if public_link and public_link.is_active and project.public_reporting_enabled:
+            is_public_reporter = True
+        else:
+            return HttpResponseForbidden("You do not have permission to access this project.")
+
+    anon_allowed = False
+    if project:
+        from public_portal.services import anon_reporting_allowed
+        anon_allowed, _ = anon_reporting_allowed(project)
 
     if request.method == 'POST':
         # Resolve project if scenario 2 (selected from select dropdown)
@@ -266,6 +284,12 @@ def create_report(request, project_uuid=None):
             report.reported_by = request.user
             if project:
                 report.project = project
+            # Recalculate dynamically on POST if project was selected from dropdown
+            if project and not anon_allowed:
+                from public_portal.services import anon_reporting_allowed
+                anon_allowed, _ = anon_reporting_allowed(project)
+            if not project or not anon_allowed:
+                report.is_anonymous = False
             report.assigned_to = report.project.owner
             report.save()
 
@@ -293,11 +317,19 @@ def create_report(request, project_uuid=None):
                         target_uuid=report.uuid
                     )
 
+            from django.contrib import messages
+            messages.success(request, f"Report submitted successfully! Tracking ID: {report.uuid}")
+
             return redirect('projects:reports:report_detail', project_uuid=report.project.uuid, report_uuid=report.uuid)
     else:
         form = ReportForm(project=project, user=request.user)
         
-    return render(request, 'create_report.html', {'form': form, 'project': project})
+    return render(request, 'create_report.html', {
+        'form': form,
+        'project': project,
+        'is_public_reporter': is_public_reporter,
+        'anon_reporting_allowed': anon_allowed
+    })
 
 
 @login_required
@@ -310,7 +342,9 @@ def get_components(request):
     except Project.DoesNotExist:
         return JsonResponse([], safe=False)
     if not rules.can_access_project(request.user, project):
-        return JsonResponse([], safe=False)
+        public_link = getattr(project, 'public_link', None)
+        if not (public_link and public_link.is_active and project.public_reporting_enabled):
+            return JsonResponse([], safe=False)
     components = list(Component.objects.filter(project_id=project_id).values('id', 'name'))
     return JsonResponse(components, safe=False)
 
@@ -325,7 +359,9 @@ def get_project_config(request):
     except Project.DoesNotExist:
         return JsonResponse({}, safe=False)
     if not rules.can_access_project(request.user, project):
-        return JsonResponse({}, safe=False)
+        public_link = getattr(project, 'public_link', None)
+        if not (public_link and public_link.is_active and project.public_reporting_enabled):
+            return JsonResponse({}, safe=False)
     return JsonResponse({
         'max_attachments': project.max_attachments,
         'allowed_attachment_types': project.allowed_attachment_types
@@ -451,6 +487,7 @@ def needs_attention_view(request):
 
 
 @login_required
+@require_POST
 def reassign_report(request, project_uuid, report_uuid):
     report = get_object_or_404(Report, uuid=report_uuid, project__uuid=project_uuid)
     project = report.project
@@ -458,48 +495,67 @@ def reassign_report(request, project_uuid, report_uuid):
     if not rules.is_project_owner(request.user, project):
         return HttpResponseForbidden("You are not authorized to perform this action.")
 
-    assign_report(request=request, report=report, assignee=request.user, actor=request.user)
+    assignee_uuid = request.POST.get('assignee')
+    if assignee_uuid:
+        try:
+            assignee = User.objects.get(uuid=assignee_uuid)
+            # Security: assignee must be a project member (H-04)
+            if not rules.is_project_member(assignee, project):
+                messages.error(request, "Assignee must be a project member.")
+                return redirect('projects:reports:report_detail', project_uuid=project.uuid, report_uuid=report.uuid)
+        except User.DoesNotExist:
+            messages.error(request, "User not found.")
+            return redirect('projects:reports:report_detail', project_uuid=project.uuid, report_uuid=report.uuid)
+    else:
+        assignee = request.user
+
+    assign_report(request=request, report=report, assignee=assignee, actor=request.user)
     
     return redirect('projects:reports:report_detail', project_uuid=project.uuid, report_uuid=report.uuid)
 
 
 @login_required
+@require_POST
 def change_report_status(request, project_uuid, report_uuid):
     report = get_object_or_404(Report, uuid=report_uuid, project__uuid=project_uuid)
 
     if not rules.can_change_status(request.user, report):
         return HttpResponseForbidden("You are not authorized to perform this action.")
     
-    if request.method == 'POST':
-        status = request.POST.get('status')
+    status = request.POST.get('status', '').strip()
+    valid_statuses = [c[0] for c in Report.STATUS_CHOICES]
+    if status not in valid_statuses:
+        return HttpResponse("Invalid status value.", status=400)
 
     update_report_status(request=request, report=report, new_status=status, actor=request.user)
 
     return redirect('projects:reports:report_detail', project_uuid=report.project.uuid, report_uuid=report.uuid)
 
 @login_required
+@require_POST
 def change_report_visibility(request, project_uuid, report_uuid):
     report = get_object_or_404(Report, uuid=report_uuid, project__uuid=project_uuid)
 
     if not rules.is_project_member(request.user, report.project):
         return HttpResponseForbidden("You are not authorized to perform this action.")
 
-    if request.method == 'POST':
-        visibility = request.POST.get('visibility')
-        
+    visibility = request.POST.get('visibility', '').strip()
     update_report_visibility(report=report, new_visibility=(visibility == 'true'), actor=request.user)
             
     return redirect('projects:reports:report_detail', project_uuid=report.project.uuid, report_uuid=report.uuid)
 
 @login_required
+@require_POST
 def change_report_impact(request, project_uuid, report_uuid):
     report = get_object_or_404(Report, uuid=report_uuid, project__uuid=project_uuid)
 
     if not rules.is_project_member(request.user, report.project):
         return HttpResponseForbidden("You are not authorized to perform this action.")
 
-    if request.method == 'POST':
-        impact = request.POST.get('impact')
+    impact = request.POST.get('impact', '').strip()
+    valid_impacts = [c[0] for c in Report.IMPACT_CHOICES]
+    if impact not in valid_impacts:
+        return HttpResponse("Invalid impact value.", status=400)
 
     update_report_impact(report=report, new_impact=impact, actor=request.user)
             
@@ -621,8 +677,18 @@ def ajax_check_duplicate(request):
     similar_reports = Report.objects.all()
     
     if project_uuid:
+        # M-06: Verify the requester can access this project before showing its reports
+        project = get_object_or_404(Project, uuid=project_uuid)
+        if not rules.can_access_project(request.user, project):
+            return HttpResponse("")  # Silently deny — don't reveal project existence
         similar_reports = similar_reports.filter(project__uuid=project_uuid)
     elif project_id:
+        try:
+            project = Project.objects.get(id=project_id)
+        except Project.DoesNotExist:
+            return HttpResponse("")
+        if not rules.can_access_project(request.user, project):
+            return HttpResponse("")
         similar_reports = similar_reports.filter(project__id=project_id)
     else:
         return HttpResponse("")

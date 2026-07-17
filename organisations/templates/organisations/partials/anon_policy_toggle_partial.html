@@ -1,0 +1,24 @@
+<div id="anon-policy-toggle-wrapper" class="flex items-center justify-between p-4 rounded-xl border border-gray-100 bg-[#f8f6fa]/30">
+    <div class="space-y-0.5">
+        <p class="text-sm font-bold text-gray-900">Anonymous Reporting Policy</p>
+        <p class="text-xs text-gray-500">
+            {% if organisation.anon_reporting_enabled %}
+            <span class="text-emerald-600 font-medium">Enabled</span> — Projects under this org can accept anonymous reports.
+            {% else %}
+            <span class="text-red-500 font-medium">Disabled</span> — Disables anonymous reports for all projects under this org.
+            {% endif %}
+        </p>
+    </div>
+    {% if is_owner %}
+    <form
+        hx-post="{% url 'organisations:toggle_anon' uuid=organisation.uuid %}"
+        hx-target="#anon-policy-toggle-wrapper"
+        hx-swap="outerHTML"
+    >
+        {% csrf_token %}
+        <button type="submit" class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 focus:outline-none {% if organisation.anon_reporting_enabled %}bg-[#226ce0]{% else %}bg-gray-200{% endif %}">
+            <span class="inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform duration-200 {% if organisation.anon_reporting_enabled %}translate-x-6{% else %}translate-x-1{% endif %}"></span>
+        </button>
+    </form>
+    {% endif %}
+</div>

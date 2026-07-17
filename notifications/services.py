@@ -6,6 +6,32 @@ from .email_service import send_notification_email
 
 def create_notification(*, recipient, actor, notification_type, title, message, target_content_type, target_uuid, requires_action=False):
     """Creates an in-app notification and sends an email notification."""
+    report = None
+    if target_content_type == 'report':
+        try:
+            from reports.models import Report
+            report = Report.objects.get(uuid=target_uuid)
+            if report.is_anonymous:
+                orig_username = actor.username if (actor and hasattr(actor, 'username')) else None
+                orig_email = actor.email if (actor and hasattr(actor, 'email')) else None
+
+                # Swap actor to anonymous system user
+                from accounts.models import User
+                anon_system_user = User.objects.filter(username='anonymous_system_user').first()
+                if anon_system_user:
+                    actor = anon_system_user
+
+                # Mask occurrences of the original actor's username & email
+                import re
+                if orig_username:
+                    message = re.sub(re.escape(orig_username), 'Anonymous', message, flags=re.IGNORECASE)
+                    title = re.sub(re.escape(orig_username), 'Anonymous', title, flags=re.IGNORECASE)
+                if orig_email:
+                    message = re.sub(re.escape(orig_email), 'Anonymous', message, flags=re.IGNORECASE)
+                    title = re.sub(re.escape(orig_email), 'Anonymous', title, flags=re.IGNORECASE)
+        except Exception:
+            pass
+
     # Prevent duplicate informational notifications for the same event
     # e.g., if a user gets notified about the same comment multiple times
     notification = Notification.objects.create(
@@ -26,10 +52,11 @@ def create_notification(*, recipient, actor, notification_type, title, message, 
     
     # We trigger the email sending asynchronously or synchronously depending on settings.
     # We will pass context down to the email service.
+    actor_name = 'Anonymous' if (report and report.is_anonymous) else actor.username
     context = {
         'title': title,
         'message': message,
-        'actor_username': actor.username,
+        'actor_username': actor_name,
         'recipient_username': recipient.username,
         'target_uuid': str(target_uuid),
         'target_type': target_content_type,
@@ -42,14 +69,15 @@ def create_notification(*, recipient, actor, notification_type, title, message, 
     # Let's get related object to populate CC
     if target_content_type == 'report':
         try:
-            from reports.models import Report
-            report = Report.objects.get(uuid=target_uuid)
+            if not report:
+                from reports.models import Report
+                report = Report.objects.get(uuid=target_uuid)
             context['report_title'] = report.title
             context['project_title'] = report.project.title
             
             # Add CCs: Collaborators + Reporter (excluding recipient and actor)
             cc_users = set()
-            if report.reported_by:
+            if report.reported_by and (not report.is_anonymous or recipient == report.reported_by):
                 cc_users.add(report.reported_by)
             for c in report.project.collaborators.all():
                 cc_users.add(c)
@@ -88,8 +116,9 @@ def create_notification(*, recipient, actor, notification_type, title, message, 
             cc_emails=cc_emails
         )
     except Exception as e:
-        # Log email sending failure but don't crash user request
-        print(f"Failed to send email notification: {e}")
+        # L-04: Use proper logger instead of print() so failures are captured in prod
+        import logging
+        logging.getLogger(__name__).error(f"Failed to send email notification: {e}")
 
     return notification
 

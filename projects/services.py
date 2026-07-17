@@ -138,14 +138,16 @@ def update_project(
 
     # Collaborator changes (log as grouped change)
     if old_collaborators != new_collaborators:
+        old_emails = sorted(list(User.objects.filter(id__in=old_collaborators).values_list("email", flat=True)))
+        new_emails = sorted(list(User.objects.filter(id__in=new_collaborators).values_list("email", flat=True)))
         log_action(
             actor=actor,
             action="update",
             entity_type="Project",
             entity_id=project.uuid,
             field_name="collaborators",
-            old_value=list(old_collaborators),
-            new_value=list(new_collaborators),
+            old_value=", ".join(old_emails),
+            new_value=", ".join(new_emails),
         )
 
     return project

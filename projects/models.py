@@ -33,6 +33,20 @@ class Project(models.Model):
     
     max_attachments = models.PositiveIntegerField(default=5)
     allowed_attachment_types = models.CharField(max_length=255, default=".jpg,.jpeg,.png,.pdf,.doc,.docx,.xls,.xlsx,.zip,.txt")
+
+    # Public Portal settings
+    public_reporting_enabled = models.BooleanField(
+        default=True,
+        help_text="Allow this project to receive reports via its public reporting link."
+    )
+    anon_reporting_enabled = models.BooleanField(
+        default=True,
+        help_text="Allow anonymous (unauthenticated) users to submit reports via the public link."
+    )
+    anon_attachments_enabled = models.BooleanField(
+        default=False,
+        help_text="Allow anonymous reporters to attach files. Disabled by default to prevent abuse."
+    )
     
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

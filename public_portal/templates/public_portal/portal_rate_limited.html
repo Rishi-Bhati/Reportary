@@ -1,0 +1,30 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Too Many Requests | Reportary</title>
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="stylesheet" href="{% static 'css/dist/styles.css' %}">
+</head>
+<body class="bg-[#f8f6fa] min-h-screen flex items-center justify-center px-4">
+    <div class="w-full max-w-md text-center space-y-5">
+        <div class="w-16 h-16 rounded-2xl bg-amber-50 border border-amber-100 flex items-center justify-center mx-auto">
+            <svg class="w-8 h-8 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+            </svg>
+        </div>
+        <div class="space-y-2">
+            <h1 class="text-lg font-bold text-gray-800">Slow down — too many submissions</h1>
+            <p class="text-sm text-gray-500">
+                You've submitted too many reports recently.
+                {% if retry_after_minutes %}
+                Please wait approximately <strong>{{ retry_after_minutes }} minute{{ retry_after_minutes|pluralize }}</strong> before trying again.
+                {% endif %}
+            </p>
+        </div>
+        <p class="text-xs text-gray-400">Rate limiting protects this project from spam.</p>
+    </div>
+</body>
+</html>

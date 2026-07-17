@@ -175,8 +175,73 @@ class OrganisationProjectAccessTests(TestCase):
         self.assertEqual(resp.status_code, 200)
         self.assertNotIn(project, resp.context['projects'])
         
-        # 3. Unrelated org member cannot see it on their dashboard
-        dashboard_url = reverse('dashboard:dashboard')
-        resp = self.client.get(dashboard_url)
+        # 3. Unrelated org member cannot see it on their dashboard overview
+        dashboard_overview_url = reverse('dashboard:overview')
+        resp = self.client.get(dashboard_overview_url)
         self.assertEqual(resp.status_code, 200)
         self.assertNotIn(project, resp.context['projects'])
+
+
+class OrganisationAnonPolicyTests(TestCase):
+    def setUp(self):
+        self.owner = User.objects.create_user(username='owner', email='owner@example.com', password='password')
+        self.member = User.objects.create_user(username='member', email='member@example.com', password='password')
+        self.org = Organisation.objects.create(name='Test Org', owner=self.owner)
+        self.org.members.add(self.member)
+        
+    def test_owner_can_toggle_anon_reporting_policy(self):
+        self.client.force_login(self.owner)
+        url = reverse('organisations:toggle_anon', kwargs={'uuid': self.org.uuid})
+        
+        # Initially enabled
+        self.assertTrue(self.org.anon_reporting_enabled)
+        
+        # Toggle it off
+        resp = self.client.post(url)
+        self.assertEqual(resp.status_code, 302)
+        
+        self.org.refresh_from_db()
+        self.assertFalse(self.org.anon_reporting_enabled)
+        
+        # Toggle it back on
+        resp = self.client.post(url)
+        self.assertEqual(resp.status_code, 302)
+        
+        self.org.refresh_from_db()
+        self.assertTrue(self.org.anon_reporting_enabled)
+
+    def test_non_owner_cannot_toggle_anon_reporting_policy(self):
+        self.client.force_login(self.member)
+        url = reverse('organisations:toggle_anon', kwargs={'uuid': self.org.uuid})
+        
+        resp = self.client.post(url)
+        self.assertEqual(resp.status_code, 403)
+        self.assertTrue(self.org.anon_reporting_enabled)
+
+    def test_details_page_updates_anon_reporting_policy(self):
+        self.client.force_login(self.owner)
+        url = reverse('organisations:details', kwargs={'uuid': self.org.uuid})
+        
+        # Update via details form - set it to False (checkbox not in POST)
+        resp = self.client.post(url, {
+            'name': 'Updated Org',
+            'description': 'desc',
+            'domain': 'domain.com',
+            # anon_reporting_enabled omitted -> False
+        })
+        self.assertEqual(resp.status_code, 302)
+        self.org.refresh_from_db()
+        self.assertEqual(self.org.name, 'Updated Org')
+        self.assertFalse(self.org.anon_reporting_enabled)
+        
+        # Update via details form - set it to True (on)
+        resp = self.client.post(url, {
+            'name': 'Updated Org',
+            'description': 'desc',
+            'domain': 'domain.com',
+            'anon_reporting_enabled': 'on'
+        })
+        self.assertEqual(resp.status_code, 302)
+        self.org.refresh_from_db()
+        self.assertTrue(self.org.anon_reporting_enabled)
+

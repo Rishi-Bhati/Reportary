@@ -60,6 +60,14 @@ class Report(models.Model):
     assigned_to = models.ForeignKey('accounts.User', on_delete=models.SET_NULL, null=True, blank=True, related_name='assigned_reports')
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='open')
 
+    # Anonymous reporting tracking
+    is_anonymous = models.BooleanField(default=False)
+    submitted_via_link = models.ForeignKey(
+        'public_portal.PublicReportingLink',
+        on_delete=models.SET_NULL,
+        null=True, blank=True,
+        related_name='submitted_reports'
+    )
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

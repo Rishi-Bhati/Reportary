@@ -4,9 +4,14 @@
 {% block title %}Report Issue | Reportary{% endblock %}
 {% block breadcrumb %}
 {% if project %}
-<a href="{% url 'projects:my_projects' %}" class="hover:text-[#226ce0]">Projects</a> /
-<a href="{% url 'projects:project_detail' project_uuid=project.uuid %}" class="hover:text-[#226ce0]">{{ project.title }}</a> /
-Report Issue
+  {% if is_public_reporter %}
+    <span class="text-[#226ce0] font-medium">{{ project.title }}</span> /
+    Report Issue
+  {% else %}
+    <a href="{% url 'projects:my_projects' %}" class="hover:text-[#226ce0]">Projects</a> /
+    <a href="{% url 'projects:project_detail' project_uuid=project.uuid %}" class="hover:text-[#226ce0]">{{ project.title }}</a> /
+    Report Issue
+  {% endif %}
 {% else %}
 Report Issue
 {% endif %}
@@ -26,7 +31,7 @@ Report Issue
     </div>
 
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-        <form method="post" enctype="multipart/form-data" class="divide-y divide-gray-100">
+        <form id="report-form" method="post" enctype="multipart/form-data" class="divide-y divide-gray-100" onsubmit="handleFormSubmit(event)">
             {% csrf_token %}
 
             <div class="p-8 space-y-6">
@@ -141,16 +146,33 @@ Report Issue
                     {% include "reports/partials/drag_drop_uploader.html" %}
                 </div>
 
-                <!-- Visibility -->
-                <div class="form-control">
-                    <label class="label cursor-pointer justify-start gap-4">
-                        {{ form.visibility }}
-                        <div>
-                            <span class="label-text font-semibold text-gray-900 block">{{ form.visibility.label }}</span>
-                            <span class="text-xs text-gray-500">Visible to all project members?</span>
+                <!-- Visibility & Anonymity -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6">
+                    <!-- Visibility -->
+                    <div class="flex items-start gap-3">
+                        <div class="flex items-center h-5 pt-0.5">
+                            {{ form.visibility }}
                         </div>
-                    </label>
-                    {{ form.visibility.errors }}
+                        <div class="text-sm">
+                            <label for="{{ form.visibility.id_for_label }}" class="font-semibold text-gray-900 cursor-pointer block leading-none">{{ form.visibility.label }}</label>
+                            <p class="text-xs text-gray-500 mt-1.5 leading-normal">Display this report to the public or restrict it to project members only.</p>
+                        </div>
+                        {{ form.visibility.errors }}
+                    </div>
+
+                    {% if anon_reporting_allowed %}
+                    <!-- Stay Anonymous -->
+                    <div class="flex items-start gap-3">
+                        <div class="flex items-center h-5 pt-0.5">
+                            {{ form.is_anonymous }}
+                        </div>
+                        <div class="text-sm">
+                            <label for="{{ form.is_anonymous.id_for_label }}" class="font-semibold text-gray-900 cursor-pointer block leading-none">Report Anonymously</label>
+                            <p class="text-xs text-gray-500 mt-1.5 leading-normal">Hide your user details on this report. Only project owners will see it.</p>
+                        </div>
+                        {{ form.is_anonymous.errors }}
+                    </div>
+                    {% endif %}
                 </div>
             </div>
 
@@ -255,5 +277,26 @@ Report Issue
             textarea.focus();
         }
     }
+
+    function handleFormSubmit(e) {
+        const form = e.target;
+        const submitBtn = form.querySelector('button[type="submit"]');
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `
+                <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" style="animation: spin 1s linear infinite;">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" style="opacity: 0.25;"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" style="opacity: 0.75;"></path>
+                </svg>
+                Submitting...
+            `;
+        }
+    }
 </script>
+<style>
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+</style>
 {% endblock %}

@@ -135,8 +135,12 @@ def projects_view(request):
     projects = Project.objects.filter(public=True).select_related('org', 'owner').annotate(num_components=Count('project_components'))
     projects = apply_project_filters_and_sorting(projects, request)
 
-    # Get filter choices context
-    filter_orgs = Organisation.objects.all().order_by('name')
+    # H-03: Scope org filter to user's own orgs only — don't expose all org names
+    if request.user.is_authenticated:
+        from organisations.services import get_user_organisations
+        filter_orgs = get_user_organisations(request.user).order_by('name')
+    else:
+        filter_orgs = Organisation.objects.none()
 
     context = {
         'projects': projects,
@@ -154,9 +158,16 @@ def projects_view(request):
 
 
 
+def _get_public_link(project):
+    """Lazily create and return the PublicReportingLink for a project."""
+    from public_portal.services import get_or_create_link
+    return get_or_create_link(project)
+
+
 def project_detail(request, project_uuid):
     user = request.user
-    project = Project.objects.select_related('org', 'owner', 'project_head').get(uuid=project_uuid)
+    # C-05: Use get_object_or_404 instead of .get() to return clean 404 on invalid UUID
+    project = get_object_or_404(Project.objects.select_related('org', 'owner', 'project_head'), uuid=project_uuid)
     
     # Enforce access scoping
     if not rules.can_access_project(user, project):
@@ -218,6 +229,96 @@ def project_detail(request, project_uuid):
     
     enriched_history = []
     for log in activities:
+        # If it's collaborators, format IDs/UUIDs into emails if they are list/UUID strings
+        if log.field_name == 'collaborators':
+            def parse_collaborator_string(val_str):
+                if not val_str:
+                    return ""
+                if '@' in val_str and '[' not in val_str:
+                    return val_str
+                
+                import ast
+                import re
+                try:
+                    cleaned = re.sub(r"UUID\('([^']+)'\)", r"'\1'", val_str)
+                    parsed = ast.literal_eval(cleaned)
+                    if isinstance(parsed, (list, tuple, set)):
+                        emails = []
+                        for item in parsed:
+                            user = None
+                            if isinstance(item, int):
+                                user = User.objects.filter(id=item).first()
+                            elif isinstance(item, str):
+                                if item.isdigit():
+                                    user = User.objects.filter(id=int(item)).first()
+                                else:
+                                    try:
+                                        user = User.objects.filter(uuid=item).first()
+                                    except Exception:
+                                        pass
+                            if user:
+                                emails.append(user.email)
+                            else:
+                                emails.append(str(item))
+                        return ", ".join(emails)
+                except Exception:
+                    pass
+                return val_str
+
+            log.old_value = parse_collaborator_string(log.old_value)
+            log.new_value = parse_collaborator_string(log.new_value)
+
+        elif log.field_name == 'visibility':
+            visibility_map = {
+                'public': 'Public',
+                'org': 'Organization Members Only',
+                'private': 'Private (Owner & Collaborators Only)'
+            }
+            if log.old_value in visibility_map:
+                log.old_value = visibility_map[log.old_value]
+            if log.new_value in visibility_map:
+                log.new_value = visibility_map[log.new_value]
+
+        elif log.field_name == 'org':
+            def resolve_org_name(val_str):
+                if not val_str or val_str == 'None':
+                    return "None"
+                if not val_str.isdigit():
+                    try:
+                        from uuid import UUID
+                        UUID(val_str)
+                        org = Organisation.objects.filter(uuid=val_str).first()
+                        if org:
+                            return org.name
+                    except Exception:
+                        return val_str
+                else:
+                    org = Organisation.objects.filter(id=int(val_str)).first()
+                    if org:
+                        return org.name
+                return val_str
+
+            log.old_value = resolve_org_name(log.old_value)
+            log.new_value = resolve_org_name(log.new_value)
+
+        elif log.field_name == 'project_head':
+            def resolve_user_email(val_str):
+                if not val_str or val_str == 'None':
+                    return "None"
+                if '@' in val_str:
+                    return val_str
+                if val_str.isdigit():
+                    user = User.objects.filter(id=int(val_str)).first()
+                else:
+                    try:
+                        user = User.objects.filter(uuid=val_str).first()
+                    except Exception:
+                        user = None
+                return user.email if user else val_str
+
+            log.old_value = resolve_user_email(log.old_value)
+            log.new_value = resolve_user_email(log.new_value)
+
         log_dict = {
             'log': log,
             'component_changes': None
@@ -242,6 +343,8 @@ def project_detail(request, project_uuid):
         'active_tasks': active_tasks,
         'completed_tasks': completed_tasks,
         'history': enriched_history,
+        # Public portal link (auto-created on first visit if owner)
+        'public_link': _get_public_link(project) if is_owner else None,
     })
 
 
