@@ -104,7 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // ─── Global Button Spinner on submits ───────────────────────────────
 function addSpinner(btn) {
-    if (btn.classList.contains('btn-loading') || btn.disabled) return;
+    if (btn.classList.contains('btn-loading') || btn.disabled || btn.classList.contains('no-spinner') || (btn.classList.contains('h-6') && btn.classList.contains('w-11'))) return;
 
     // Lock the current dimensions BEFORE touching the content so size doesn't shift
     const rect = btn.getBoundingClientRect();

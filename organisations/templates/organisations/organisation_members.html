@@ -23,6 +23,26 @@ Members
         </a>
     </div>
 
+    <!-- Member Statistics -->
+    <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
+        <h3 class="text-xs font-bold text-gray-900 uppercase tracking-wider text-gray-500 mb-4">Member Statistics</h3>
+
+        <div class="flex flex-col sm:flex-row gap-6">
+            <div class="flex-1">
+                <p class="text-2xl font-bold text-gray-900">{{ members|length }}</p>
+                <p class="text-xs text-gray-500 mt-1">Total Members</p>
+            </div>
+            <div class="flex-1">
+                <p class="text-2xl font-bold text-[#226ce0]">1</p>
+                <p class="text-xs text-gray-500 mt-1">Owner</p>
+            </div>
+            <div class="flex-1">
+                <p class="text-2xl font-bold text-gray-900">{{ members|length|add:"-1" }}</p>
+                <p class="text-xs text-gray-500 mt-1">Regular Members</p>
+            </div>
+        </div>
+    </div>
+
     <!-- Add Member Section -->
     {% if is_owner %}
     <div class="bg-blue-50/50 rounded-xl border border-blue-100 p-6">
@@ -133,26 +153,6 @@ Members
                     {% endfor %}
                 </tbody>
             </table>
-        </div>
-    </div>
-
-    <!-- Member Statistics -->
-    <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
-        <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wider text-gray-500 mb-4">Member Statistics</h3>
-
-        <div class="flex flex-col sm:flex-row gap-6">
-            <div class="flex-1">
-                <p class="text-2xl font-bold text-gray-900">{{ members|length }}</p>
-                <p class="text-xs text-gray-500 mt-1">Total Members</p>
-            </div>
-            <div class="flex-1">
-                <p class="text-2xl font-bold text-[#226ce0]">1</p>
-                <p class="text-xs text-gray-500 mt-1">Owner</p>
-            </div>
-            <div class="flex-1">
-                <p class="text-2xl font-bold text-gray-900">{{ members|length|add:"-1" }}</p>
-                <p class="text-xs text-gray-500 mt-1">Regular Members</p>
-            </div>
         </div>
     </div>
 </div>

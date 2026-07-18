@@ -2,143 +2,88 @@
 {% load static %}
 
 {% block title %}My Organisations | Reportary{% endblock %}
-{% block breadcrumb %}My Organisations{% endblock %}
+{% block breadcrumb %}
+My Organisations
+{% endblock %}
 
 {% block content %}
-<div class="space-y-8">
-
-    <!-- ── Page Header ────────────────────────────────────────────── -->
+<div class="space-y-6">
+    <!-- Header -->
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
             <h1 class="text-2xl font-bold text-gray-900 tracking-tight">My Organisations</h1>
-            <p class="text-sm text-gray-500 mt-1">
-                Manage your teams, projects, and collaboration settings.
-            </p>
+            <p class="text-gray-500 mt-1">Manage and view all your organisations.</p>
         </div>
+
         <a href="{% url 'organisations:create' %}"
-           class="btn btn-primary text-white gap-2 shadow-sm">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-            </svg>
-            New Organisation
-        </a>
-    </div>
-
-    <!-- ── Organisations Grid ─────────────────────────────────────── -->
-    {% if organisations %}
-    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-        {% for org in organisations %}
-        <div class="group bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:border-[#226ce0]/20 transition-all duration-200 flex flex-col overflow-hidden">
-
-            <div class="p-6 flex-1 flex flex-col gap-4">
-
-                <!-- Name + badge -->
-                <div class="flex items-start justify-between gap-3">
-                    <div class="flex items-center gap-3 min-w-0">
-                        <div class="w-10 h-10 rounded-xl bg-[#226ce0]/10 flex items-center justify-center flex-shrink-0">
-                            <svg class="w-5 h-5 text-[#226ce0]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
-                            </svg>
-                        </div>
-                        <h3 class="text-base font-semibold text-gray-900 truncate">{{ org.name }}</h3>
-                    </div>
-                    {% if org.owner.id == request.user.id %}
-                    <span class="flex-shrink-0 px-2.5 py-0.5 text-xs font-semibold bg-[#226ce0]/10 text-[#226ce0] rounded-full">
-                        Owner
-                    </span>
-                    {% else %}
-                    <span class="flex-shrink-0 px-2.5 py-0.5 text-xs font-medium bg-gray-100 text-gray-600 rounded-full">
-                        Member
-                    </span>
-                    {% endif %}
-                </div>
-
-                <!-- Description -->
-                {% if org.description %}
-                <p class="text-sm text-gray-500 leading-relaxed line-clamp-2">{{ org.description }}</p>
-                {% else %}
-                <p class="text-sm text-gray-400 italic">No description provided.</p>
-                {% endif %}
-
-                <!-- Stats row -->
-                <div class="flex items-center gap-5 py-3 border-t border-b border-gray-100">
-                    <div class="flex items-center gap-1.5 text-sm text-gray-600">
-                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0"/>
-                        </svg>
-                        <span class="font-semibold text-gray-900">{{ org.members.count }}</span>
-                        <span>member{{ org.members.count|pluralize }}</span>
-                    </div>
-                    <div class="flex items-center gap-1.5 text-sm text-gray-600">
-                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/>
-                        </svg>
-                        <span class="font-semibold text-gray-900">{{ org.project_set.count }}</span>
-                        <span>project{{ org.project_set.count|pluralize }}</span>
-                    </div>
-                    {% if org.domain %}
-                    <div class="flex items-center gap-1.5 text-sm ml-auto">
-                        {% if org.verified %}
-                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-green-50 text-green-700 text-xs font-medium">
-                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                            </svg>
-                            Verified
-                        </span>
-                        {% else %}
-                        <span class="px-2 py-0.5 rounded-full bg-yellow-50 text-yellow-700 text-xs font-medium">Unverified</span>
-                        {% endif %}
-                    </div>
-                    {% endif %}
-                </div>
-
-                <!-- Actions -->
-                <div class="flex items-center gap-2 mt-auto">
-                    <a href="{% url 'organisations:dashboard' uuid=org.uuid %}"
-                       class="flex-1 btn btn-primary btn-sm text-white text-center">
-                        Dashboard
-                    </a>
-                    <a href="{% url 'organisations:members' uuid=org.uuid %}"
-                       class="btn btn-outline border-gray-200 hover:bg-gray-50 text-gray-700 btn-sm text-center">
-                        Members
-                    </a>
-                    {% if org.owner.id == request.user.id %}
-                    <a href="{% url 'organisations:details' uuid=org.uuid %}"
-                       class="btn btn-outline border-gray-200 hover:bg-gray-50 text-gray-700 btn-sm text-center">
-                        Settings
-                    </a>
-                    {% endif %}
-                </div>
-
-            </div>
-        </div>
-        {% endfor %}
-    </div>
-
-    {% else %}
-    <!-- Empty state -->
-    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-16 text-center">
-        <div class="w-16 h-16 rounded-2xl bg-gray-100 flex items-center justify-center mx-auto mb-5">
-            <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                      d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
-            </svg>
-        </div>
-        <h3 class="text-lg font-semibold text-gray-900 mb-2">No organisations yet</h3>
-        <p class="text-gray-500 mb-6 max-w-sm mx-auto">
-            Create your first organisation to group projects and collaborate with your team.
-        </p>
-        <a href="{% url 'organisations:create' %}" class="btn btn-primary text-white gap-2">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+           class="btn btn-primary text-white shadow-sm hover:shadow-md transition-all gap-2 rounded-xl">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
             </svg>
             Create Organisation
         </a>
     </div>
-    {% endif %}
 
+    <!-- Organisations Grid -->
+    {% if organisations %}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for org in organisations %}
+        <a href="{% url 'organisations:dashboard' uuid=org.uuid %}"
+           class="group bg-white rounded-xl p-6 border border-gray-100 shadow-sm hover:shadow-md hover:border-[#a499b3] transition-all flex flex-col h-full relative overflow-hidden">
+            <!-- Hover highlight bar -->
+            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#226ce0] to-[#1b56b3] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+
+            <div class="flex justify-between items-start mb-4">
+                <div class="w-12 h-12 rounded-xl bg-[#226ce0]/10 text-[#226ce0] flex items-center justify-center font-bold text-xl group-hover:bg-[#226ce0] group-hover:text-white transition-all duration-300 shadow-sm">
+                    {{ org.name|slice:":1"|upper }}
+                </div>
+                <div class="flex flex-col items-end gap-1">
+                    {% if org.owner.id == request.user.id %}
+                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-[#226ce0]/10 text-[#226ce0] border border-[#226ce0]/20">Owner</span>
+                    {% else %}
+                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-600 border border-gray-100">Member</span>
+                    {% endif %}
+                    {% if org.domain %}
+                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-mono bg-purple-50 text-purple-600 border border-purple-100">{{ org.domain }}</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <h3 class="text-lg font-bold text-gray-900 mb-2 group-hover:text-[#226ce0] transition-colors">{{ org.name }}</h3>
+            <p class="text-sm text-gray-500 mb-6 flex-1 line-clamp-3 leading-relaxed">{{ org.description|default:"No description provided." }}</p>
+
+            <div class="pt-4 border-t border-gray-50">
+                <div class="flex items-center justify-between text-xs text-gray-400">
+                    <span class="flex items-center gap-1.5">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0"></path>
+                        </svg>
+                        {{ org.members.count }} Members
+                    </span>
+                    <span class="flex items-center gap-1.5">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path>
+                        </svg>
+                        {{ org.project_set.count }} Projects
+                    </span>
+                </div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-20 bg-white rounded-2xl border border-dashed border-[#d0bcd5]/60 max-w-lg mx-auto shadow-sm my-8 p-8">
+        <div class="w-16 h-16 bg-gradient-to-br from-[#226ce0]/10 to-[#534b62]/10 text-[#226ce0] rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-inner">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+            </svg>
+        </div>
+        <h3 class="text-xl font-bold text-gray-900 mb-2">No Organisations Found</h3>
+        <p class="text-sm text-gray-500 max-w-xs mx-auto mb-6 leading-relaxed">It looks like you are not a member of any organisations yet.</p>
+        <a href="{% url 'organisations:create' %}" class="btn btn-sm bg-[#226ce0] hover:bg-[#1b56b3] text-white border-none rounded-xl px-4 py-2 font-medium capitalize">
+            Create Organisation
+        </a>
+    </div>
+    {% endif %}
 </div>
 {% endblock %}
