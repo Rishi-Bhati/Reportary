@@ -76,8 +76,14 @@ def send_notification_email(*, notification_type, subject, context, to_emails, c
             )
 
     # Resolve recipients to plain lists of strings before entering the thread
-    to_list = list(to_emails) if to_emails else []
-    cc_list = list(cc_emails) if cc_emails else []
+    to_list = [e for e in (to_emails or []) if e]
+    cc_list = [e for e in (cc_emails or []) if e]
+
+    if not to_list:
+        logger.warning("send_notification_email skipped for '%s' — to_list is empty.", notification_type)
+        return
+
+    logger.debug("Queuing %s email → to=%s cc=%s", notification_type, to_list, cc_list)
 
     thread = threading.Thread(
         target=_send_via_api,
