@@ -16,7 +16,7 @@
         hx-swap="outerHTML"
     >
         {% csrf_token %}
-        <button type="submit" class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 focus:outline-none {% if organisation.anon_reporting_enabled %}bg-[#226ce0]{% else %}bg-gray-200{% endif %}">
+        <button type="submit" class="p-0 border-0 relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 focus:outline-none {% if organisation.anon_reporting_enabled %}bg-[#226ce0]{% else %}bg-gray-200{% endif %}">
             <span class="inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform duration-200 {% if organisation.anon_reporting_enabled %}translate-x-6{% else %}translate-x-1{% endif %}"></span>
         </button>
     </form>
