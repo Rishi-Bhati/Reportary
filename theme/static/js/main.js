@@ -105,30 +105,47 @@ document.addEventListener('DOMContentLoaded', () => {
 // ─── Global Button Spinner on submits ───────────────────────────────
 function addSpinner(btn) {
     if (btn.classList.contains('btn-loading') || btn.disabled) return;
-    btn.dataset.originalHtml = btn.innerHTML;
-    
-    // Prevent wrapping
-    btn.style.whiteSpace = 'nowrap';
-    
+
+    // Lock the current dimensions BEFORE touching the content so size doesn't shift
     const rect = btn.getBoundingClientRect();
-    // Add extra space for the spinner icon dynamically
-    btn.style.width = (rect.width + 28) + 'px';
+    btn.style.minWidth  = rect.width  + 'px';
+    btn.style.minHeight = rect.height + 'px';
+    btn.style.whiteSpace = 'nowrap';
+
+    // Snapshot original content
+    btn.dataset.originalHtml = btn.innerHTML;
     btn.classList.add('btn-loading');
-    
-    const spinnerSpan = document.createElement('span');
-    spinnerSpan.className = 'loading loading-spinner loading-xs mr-1.5';
-    btn.prepend(spinnerSpan);
+
+    // Replace content with a centred spinner + label
+    const originalText = btn.textContent.trim();
+    btn.innerHTML =
+        `<span class="loading loading-spinner loading-xs"></span>` +
+        `<span>${originalText}</span>`;
+
+    // Force flex centering so the spinner + text stay centred
+    btn.style.display         = 'inline-flex';
+    btn.style.alignItems      = 'center';
+    btn.style.justifyContent  = 'center';
+    btn.style.gap             = '6px';
+
     btn.disabled = true;
 }
 
 function removeSpinner(btn) {
     if (!btn || !btn.classList.contains('btn-loading')) return;
     btn.classList.remove('btn-loading');
-    const spinner = btn.querySelector('.loading-spinner');
-    if (spinner) spinner.remove();
+    if (btn.dataset.originalHtml) {
+        btn.innerHTML = btn.dataset.originalHtml;
+        delete btn.dataset.originalHtml;
+    }
     btn.disabled = false;
-    btn.style.width = '';
+    btn.style.minWidth  = '';
+    btn.style.minHeight = '';
     btn.style.whiteSpace = '';
+    btn.style.display = '';
+    btn.style.alignItems = '';
+    btn.style.justifyContent = '';
+    btn.style.gap = '';
 }
 
 document.addEventListener('submit', function(e) {
