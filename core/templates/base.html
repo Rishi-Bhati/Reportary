@@ -39,11 +39,13 @@
 <body class="bg-base-200 text-base-content font-sans antialiased min-h-screen">
     {% include "partials/topbar.html" %}
     <div class="flex pt-16">
+        {% block sidebar_container %}
         {% include "partials/sidebar.html" %}
         <!-- Sidebar Backdrop for Mobile view -->
         <div id="sidebar-backdrop" onclick="toggleMobileSidebar()" class="fixed inset-0 top-16 bg-black/40 backdrop-blur-sm z-30 hidden md:hidden"></div>
+        {% endblock %}
 
-        <main class="flex-1 md:ml-64 p-4 md:p-8 w-full min-h-[calc(100vh-4rem)] overflow-x-hidden">
+        <main class="flex-1 {% block main_margin %}md:ml-64{% endblock %} p-4 md:p-8 w-full min-h-[calc(100vh-4rem)] overflow-x-hidden">
 
             {# Site Announcements Banner (superuser-created) #}
             {% for announcement in site_announcements %}

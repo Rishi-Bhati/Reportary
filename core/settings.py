@@ -253,18 +253,23 @@ LOGGING = {
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Email Configuration (Gmail SMTP)
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.gmail.com')
-EMAIL_PORT = int(os.getenv('EMAIL_PORT', '587'))
-EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'True').lower() in ('true', '1', 'yes')
-EMAIL_USE_SSL = os.getenv('EMAIL_USE_SSL', 'False').lower() in ('true', '1', 'yes')
-EMAIL_HOST_USER = os.getenv('MAIL_ID', '')
-EMAIL_HOST_PASSWORD = os.getenv('MAIL_APP_PASSWORD', '')
-DEFAULT_FROM_EMAIL = os.getenv('MAIL_ID', 'anujkumar123.mp@gmail.com')
+# ── Email API (HTTP-based, replaces SMTP) ────────────────────────────────────
+MAIL_API_KEY = os.getenv('MAIL_API', '')
+MAIL_API_ENDPOINT = 'https://reportary-email-service.nagger.workers.dev/api/send'
 
 # Contact form submissions recipient
 CONTACT_EMAIL = os.getenv('CONTACT_EMAIL', 'anujkumar123.mp@gmail.com')
+
+# ── Legacy SMTP config (kept for future reference, currently unused) ──────────
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.gmail.com')
+# EMAIL_PORT = int(os.getenv('EMAIL_PORT', '587'))
+# EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'True').lower() in ('true', '1', 'yes')
+# EMAIL_USE_SSL = os.getenv('EMAIL_USE_SSL', 'False').lower() in ('true', '1', 'yes')
+# EMAIL_HOST_USER = os.getenv('MAIL_ID', '')
+# EMAIL_HOST_PASSWORD = os.getenv('MAIL_APP_PASSWORD', '')
+# DEFAULT_FROM_EMAIL = os.getenv('MAIL_ID', 'anujkumar123.mp@gmail.com')
+
 
 
 # ─── Public Portal Rate Limits ────────────────────────────────────────────────

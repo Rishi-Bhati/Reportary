@@ -295,45 +295,77 @@ def contact_page(request):
             })
 
         try:
-            from django.core.mail import send_mail
-            from django.conf import settings as django_settings
+            import json
             import threading
             import logging
-            
+            import requests
+            from django.conf import settings as django_settings
+
             logger = logging.getLogger(__name__)
 
-            full_message = (
-                f"Contact Form Submission\n"
-                f"{'=' * 40}\n"
-                f"From: {name} <{email}>\n"
-                f"Subject: {subject}\n\n"
-                f"{message_body}\n\n"
-                f"{'=' * 40}\n"
-                f"Sent via Reportary Contact Page"
+            html_body = (
+                f"<h2>Contact Form Submission</h2>"
+                f"<p><strong>From:</strong> {name} &lt;{email}&gt;</p>"
+                f"<p><strong>Subject:</strong> {subject}</p>"
+                f"<hr>"
+                f"<p>{message_body}</p>"
+                f"<hr>"
+                f"<p><em>Sent via Reportary Contact Page</em></p>"
             )
-            
+
+            # Snapshot all values as plain strings before entering the thread
+            _subject = f"[Reportary Contact] {subject}"
+            _body = html_body
+            _to = django_settings.CONTACT_EMAIL
+            _api_key = django_settings.MAIL_API_KEY
+            _endpoint = django_settings.MAIL_API_ENDPOINT
+
             def _send_contact_email():
-                from django.db import close_old_connections
                 try:
-                    send_mail(
-                        subject=f"[Reportary Contact] {subject}",
-                        message=full_message,
-                        from_email=django_settings.DEFAULT_FROM_EMAIL,
-                        recipient_list=[django_settings.CONTACT_EMAIL],
-                        fail_silently=False,
+                    response = requests.post(
+                        _endpoint,
+                        headers={
+                            "Authorization": f"Bearer {_api_key}",
+                            "Content-Type": "application/json",
+                        },
+                        data=json.dumps({
+                            "to": _to,
+                            "subject": _subject,
+                            "body": _body,
+                        }),
+                        timeout=15,
                     )
+                    response.raise_for_status()
                 except Exception:
                     logger.exception("Failed to send contact email in background thread")
-                finally:
-                    close_old_connections()
-                    
+
             thread = threading.Thread(target=_send_contact_email)
             thread.daemon = True
             thread.start()
-            
+
             messages.success(request, "Your message has been received! We'll get back to you soon.")
             return redirect("home:contact")
-        except Exception as e:
+
+            # ── Legacy SMTP contact email (kept for reference) ────────────────
+            # def _send_contact_email_smtp():
+            #     from django.core.mail import send_mail
+            #     from django.db import close_old_connections
+            #     try:
+            #         send_mail(
+            #             subject=f"[Reportary Contact] {subject}",
+            #             message=full_message,
+            #             from_email=django_settings.DEFAULT_FROM_EMAIL,
+            #             recipient_list=[django_settings.CONTACT_EMAIL],
+            #             fail_silently=False,
+            #         )
+            #     except Exception:
+            #         logger.exception("Failed to send contact email in background thread")
+            #     finally:
+            #         close_old_connections()
+            # ─────────────────────────────────────────────────────────────────
+
+        except Exception:
+            logger.exception("Contact form dispatch failed unexpectedly")
             messages.error(request, "Failed to submit form. Please try again later.")
 
     prefill = {}
