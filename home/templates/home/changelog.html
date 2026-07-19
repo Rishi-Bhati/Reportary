@@ -1,8 +1,8 @@
 {% extends base_template %}
-{% load static %}
+{% load static %}{% load i18n %}
 
-{% block title %}What's New | Reportary{% endblock %}
-{% block breadcrumb %}Changelog{% endblock %}
+{% block title %}{% trans "What's New" %} | Reportary{% endblock %}
+{% block breadcrumb %}{% trans "Changelog" %}{% endblock %}
 
 {% block content %}
 <div class="max-w-4xl mx-auto">
@@ -12,60 +12,90 @@
         <div class="flex items-center gap-3 mb-3">
             <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#226ce0]/10 text-[#226ce0] text-xs font-bold border border-[#226ce0]/20">
                 <span class="w-1.5 h-1.5 rounded-full bg-[#226ce0] animate-pulse"></span>
-                LIVE UPDATES
+                {% trans "LIVE UPDATES" %}
             </span>
         </div>
-        <h1 class="text-4xl font-bold text-gray-900 tracking-tight mb-2">What's New in Reportary</h1>
-        <p class="text-gray-500 text-base max-w-2xl">A running log of every improvement, security fix, and new feature shipped. Most recent first.</p>
+        <h1 class="text-4xl font-bold text-gray-900 tracking-tight mb-2">{% trans "What's New in Reportary" %}</h1>
+        <p class="text-gray-500 text-base max-w-2xl">{% trans "A running log of every improvement, security fix, and new feature shipped. Most recent first." %}</p>
     </div>
 
     <div class="space-y-6">
 
-        <!-- ── v1.0.0-beta.2 ─────────────────────────────────── -->
+        <!-- ── v1.0.0-rc ─────────────────────────────────────── -->
         <div class="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm">
             <!-- Release Header -->
             <div class="flex items-center gap-3 px-6 py-4 border-b border-gray-100 bg-[#226ce0]/5">
-                <span class="text-xs font-bold text-white bg-[#226ce0] px-3 py-1 rounded-full tracking-wide">v1.0.0-beta.2</span>
-                <span class="text-xs text-gray-500 font-medium">July 2026 · Security Hardening, Public Portals, & Organisation Upgrades</span>
-                <span class="ml-auto text-xs text-[#226ce0] font-semibold">Latest</span>
+                <span class="text-xs font-bold text-white bg-[#226ce0] px-3 py-1 rounded-full tracking-wide">v1.0.0-rc</span>
+                <span class="text-xs text-gray-500 font-medium">{% trans "July 2026 · Auto Language Selection, Multilingual UI, & Mobile Email Templates" %}</span>
+                <span class="ml-auto text-xs text-[#226ce0] font-semibold">{% trans "Latest" %}</span>
             </div>
             <!-- Items -->
             <div class="divide-y divide-gray-50">
 
                 <div class="px-6 py-5">
                     <div class="flex flex-wrap gap-1.5 mb-1.5">
-                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">New</span>
-                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">Feature</span>
+                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">{% trans "New" %}</span>
+                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">{% trans "Feature" %}</span>
                     </div>
-                    <h3 class="text-sm font-bold text-gray-900 mb-1">Public Portals & Anonymous Reporting</h3>
-                    <p class="text-xs text-gray-500 leading-relaxed">External users can now submit feedback anonymously through standalone project links at <code class="bg-gray-100 px-1 py-0.5 rounded font-mono">/p/&lt;token&gt;/</code>. Includes drag-and-drop attachment dropzones, math CAPTCHAs and honeypots to block spam, secure rate limits, and GDPR-safe salted IP hashing. Project owners can fully customize link states, attachments, and regeneration.</p>
+                    <h3 class="text-sm font-bold text-gray-900 mb-1">{% trans "Global Multilingual Support (English & Japanese)" %}</h3>
+                    <p class="text-xs text-gray-500 leading-relaxed">{% trans "Allows users to navigate the platform entirely in Japanese or English. Features location-based auto language selection using Geo-IP database and client browser headers to serve Japanese in Japan and English elsewhere without intrusive prompts. Includes a visual globe dropdown selector on the landing page and navbar for instant session-persistent language switching, and full UI translation across all dashboards, analytics, search, FAQ, and legal pages." %}</p>
                 </div>
 
                 <div class="px-6 py-5">
                     <div class="flex flex-wrap gap-1.5 mb-1.5">
-                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">Security</span>
-                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-red-50 text-red-700 border border-red-200">Fix</span>
+                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-sky-50 text-sky-700 border border-sky-200">{% trans "Improvement" %}</span>
                     </div>
-                    <h3 class="text-sm font-bold text-gray-900 mb-1">Production Readiness Security Hardening</h3>
-                    <p class="text-xs text-gray-500 leading-relaxed">Remediated multiple vulnerabilities identified in the production readiness audit. Enforced strict UUID access checks, decoupled project managers from direct ownership, secured user search endpoints against database email scraping, and hardened cookie attributes (Samesite, HttpOnly) and HTTP headers. Added Cache-based rate limits to contact form submissions and fixed IP spoofing vulnerabilities.</p>
+                    <h3 class="text-sm font-bold text-gray-900 mb-1">{% trans "Simplified Mobile-Responsive Notification Emails" %}</h3>
+                    <p class="text-xs text-gray-500 leading-relaxed">{% trans "Overhauled the email notification system to keep transactional layout styling simpler and professional. Fixed formatting constraints causing layouts to render poorly on mobile and phone screens, resulting in streamlined, clean email alerts for comments, status changes, assignments, and invitations." %}</p>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ── v1.0.0-beta.2 ─────────────────────────────────── -->
+        <div class="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm">
+            <!-- Release Header -->
+            <div class="flex items-center gap-3 px-6 py-4 border-b border-gray-100 bg-[#226ce0]/5">
+                <span class="text-xs font-bold text-white bg-[#226ce0] px-3 py-1 rounded-full tracking-wide">v1.0.0-beta.2</span>
+                <span class="text-xs text-gray-500 font-medium">{% trans "July 2026 · Security Hardening, Public Portals, & Organisation Upgrades" %}</span>
+            </div>
+            <!-- Items -->
+            <div class="divide-y divide-gray-50">
+
+                <div class="px-6 py-5">
+                    <div class="flex flex-wrap gap-1.5 mb-1.5">
+                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">{% trans "New" %}</span>
+                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">{% trans "Feature" %}</span>
+                    </div>
+                    <h3 class="text-sm font-bold text-gray-900 mb-1">{% trans "Public Portals & Anonymous Reporting" %}</h3>
+                    <p class="text-xs text-gray-500 leading-relaxed">{% blocktrans %}External users can now submit feedback anonymously through standalone project links at{% endblocktrans %} <code class="bg-gray-100 px-1 py-0.5 rounded font-mono">/p/&lt;token&gt;/</code>. {% blocktrans %}Includes drag-and-drop attachment dropzones, math CAPTCHAs and honeypots to block spam, secure rate limits, and GDPR-safe salted IP hashing. Project owners can fully customize link states, attachments, and regeneration.{% endblocktrans %}</p>
                 </div>
 
                 <div class="px-6 py-5">
                     <div class="flex flex-wrap gap-1.5 mb-1.5">
-                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">New</span>
-                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-violet-50 text-violet-700 border border-violet-200">UX</span>
+                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">{% trans "Security" %}</span>
+                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-red-50 text-red-700 border border-red-200">{% trans "Fix" %}</span>
                     </div>
-                    <h3 class="text-sm font-bold text-gray-900 mb-1">Organisation Management Polish & Creation Flow</h3>
-                    <p class="text-xs text-gray-500 leading-relaxed">Introduced a dedicated Organisations button in both the sidebar and topbar profile navigation. Added profile details validation (Full Name, Business Email, Corporate Role) during organisation creation for users who did not sign up as organisation contact persons during onboarding.</p>
+                    <h3 class="text-sm font-bold text-gray-900 mb-1">{% trans "Production Readiness Security Hardening" %}</h3>
+                    <p class="text-xs text-gray-500 leading-relaxed">{% trans "Remediated multiple vulnerabilities identified in the production readiness audit. Enforced strict UUID access checks, decoupled project managers from direct ownership, secured user search endpoints against database email scraping, and hardened cookie attributes (Samesite, HttpOnly) and HTTP headers. Added Cache-based rate limits to contact form submissions and fixed IP spoofing vulnerabilities." %}</p>
                 </div>
 
                 <div class="px-6 py-5">
                     <div class="flex flex-wrap gap-1.5 mb-1.5">
-                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-violet-50 text-violet-700 border border-violet-200">UX</span>
-                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">New</span>
+                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">{% trans "New" %}</span>
+                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-violet-50 text-violet-700 border border-violet-200">{% trans "UX" %}</span>
                     </div>
-                    <h3 class="text-sm font-bold text-gray-900 mb-1">Complete Worldwide Country Onboarding</h3>
-                    <p class="text-xs text-gray-500 leading-relaxed">Expanded the onboarding country dropdown menu from 3 placeholder options to a comprehensive list of all 195 countries globally via a unified, modular template include.</p>
+                    <h3 class="text-sm font-bold text-gray-900 mb-1">{% trans "Organisation Management Polish & Creation Flow" %}</h3>
+                    <p class="text-xs text-gray-500 leading-relaxed">{% trans "Introduced a dedicated Organisations button in both the sidebar and topbar profile navigation. Added profile details validation (Full Name, Business Email, Corporate Role) during organisation creation for users who did not sign up as organisation contact persons during onboarding." %}</p>
+                </div>
+
+                <div class="px-6 py-5">
+                    <div class="flex flex-wrap gap-1.5 mb-1.5">
+                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-violet-50 text-violet-700 border border-violet-200">{% trans "UX" %}</span>
+                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">{% trans "New" %}</span>
+                    </div>
+                    <h3 class="text-sm font-bold text-gray-900 mb-1">{% trans "Complete Worldwide Country Onboarding" %}</h3>
+                    <p class="text-xs text-gray-500 leading-relaxed">{% trans "Expanded the onboarding country dropdown menu from 3 placeholder options to a comprehensive list of all 195 countries globally via a unified, modular template include." %}</p>
                 </div>
 
             </div>
@@ -76,100 +106,100 @@
             <!-- Release Header -->
             <div class="flex items-center gap-3 px-6 py-4 border-b border-gray-100 bg-[#226ce0]/5">
                 <span class="text-xs font-bold text-white bg-[#226ce0] px-3 py-1 rounded-full tracking-wide">v1.0.0-beta.1</span>
-                <span class="text-xs text-gray-500 font-medium">July 2026 · Major public beta release</span>
+                <span class="text-xs text-gray-500 font-medium">{% trans "July 2026 · Major public beta release" %}</span>
             </div>
             <!-- Items -->
             <div class="divide-y divide-gray-50">
 
                 <div class="px-6 py-5">
                     <div class="flex flex-wrap gap-1.5 mb-1.5">
-                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">Security</span>
-                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-red-50 text-red-700 border border-red-200">Fix</span>
+                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">{% trans "Security" %}</span>
+                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-red-50 text-red-700 border border-red-200">{% trans "Fix" %}</span>
                     </div>
-                    <h3 class="text-sm font-bold text-gray-900 mb-1">Endpoint Security Hardening</h3>
-                    <p class="text-xs text-gray-500 leading-relaxed">Fixed multiple open endpoints accessible without authentication: <code class="bg-gray-100 px-1 py-0.5 rounded font-mono">/reports/get_components/</code>, <code class="bg-gray-100 px-1 py-0.5 rounded font-mono">/reports/get_project_config/</code>, <code class="bg-gray-100 px-1 py-0.5 rounded font-mono">/search/</code>, and the profile page. All now enforce <code class="bg-gray-100 px-1 py-0.5 rounded font-mono">@login_required</code> with project-level access scoping.</p>
+                    <h3 class="text-sm font-bold text-gray-900 mb-1">{% trans "Endpoint Security Hardening" %}</h3>
+                    <p class="text-xs text-gray-500 leading-relaxed">{% blocktrans %}Fixed multiple open endpoints accessible without authentication:{% endblocktrans %} <code class="bg-gray-100 px-1 py-0.5 rounded font-mono">/reports/get_components/</code>, <code class="bg-gray-100 px-1 py-0.5 rounded font-mono">/reports/get_project_config/</code>, <code class="bg-gray-100 px-1 py-0.5 rounded font-mono">/search/</code>, {% blocktrans %}and the profile page. All now enforce{% endblocktrans %} <code class="bg-gray-100 px-1 py-0.5 rounded font-mono">@login_required</code> {% blocktrans %}with project-level access scoping.{% endblocktrans %}</p>
                 </div>
 
                 <div class="px-6 py-5">
                     <div class="flex flex-wrap gap-1.5 mb-1.5">
-                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">Security</span>
-                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-red-50 text-red-700 border border-red-200">Fix</span>
+                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">{% trans "Security" %}</span>
+                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-red-50 text-red-700 border border-red-200">{% trans "Fix" %}</span>
                     </div>
-                    <h3 class="text-sm font-bold text-gray-900 mb-1">Global HTMX CSRF Token Fix</h3>
-                    <p class="text-xs text-gray-500 leading-relaxed">Fixed a critical issue where HTMX POST requests (task toggles, bookmarks, comment actions) were silently failing due to missing CSRF headers. All HTMX mutations now automatically include the CSRF token via a centralised <code class="bg-gray-100 px-1 py-0.5 rounded font-mono">htmx:configRequest</code> handler in the base template.</p>
+                    <h3 class="text-sm font-bold text-gray-900 mb-1">{% trans "Global HTMX CSRF Token Fix" %}</h3>
+                    <p class="text-xs text-gray-500 leading-relaxed">{% blocktrans %}Fixed a critical issue where HTMX POST requests (task toggles, bookmarks, comment actions) were silently failing due to missing CSRF headers. All HTMX mutations now automatically include the CSRF token via a centralised{% endblocktrans %} <code class="bg-gray-100 px-1 py-0.5 rounded font-mono">htmx:configRequest</code> {% blocktrans %}handler in the base template.{% endblocktrans %}</p>
                 </div>
 
                 <div class="px-6 py-5">
                     <div class="flex flex-wrap gap-1.5 mb-1.5">
-                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">New</span>
+                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">{% trans "New" %}</span>
                     </div>
-                    <h3 class="text-sm font-bold text-gray-900 mb-1">Project Dashboard</h3>
-                    <p class="text-xs text-gray-500 leading-relaxed">Every project now has a dedicated dashboard — real-time statistics, a dynamic health score, recent reports, active collaborators, and a fully interactive task checklist. Tasks persist, can be toggled, added, and deleted without page reloads.</p>
+                    <h3 class="text-sm font-bold text-gray-900 mb-1">{% trans "Project Dashboard" %}</h3>
+                    <p class="text-xs text-gray-500 leading-relaxed">{% trans "Every project now has a dedicated dashboard — real-time statistics, a dynamic health score, recent reports, active collaborators, and a fully interactive task checklist. Tasks persist, can be toggled, added, and deleted without page reloads." %}</p>
                 </div>
 
                 <div class="px-6 py-5">
                     <div class="flex flex-wrap gap-1.5 mb-1.5">
-                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">New</span>
+                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">{% trans "New" %}</span>
                     </div>
-                    <h3 class="text-sm font-bold text-gray-900 mb-1">Global Search — Real-time Popdown</h3>
-                    <p class="text-xs text-gray-500 leading-relaxed">Search shows a live result popdown as you type — no Enter required. Results span projects, reports, comments, and organisations. Recent searches appear on focus. Clicking a result navigates directly and highlights it on the results page. Contextual filters for status, severity, assignee, and date range also available.</p>
+                    <h3 class="text-sm font-bold text-gray-900 mb-1">{% trans "Global Search — Real-time Popdown" %}</h3>
+                    <p class="text-xs text-gray-500 leading-relaxed">{% trans "Search shows a live result popdown as you type — no Enter required. Results span projects, reports, comments, and organisations. Recent searches appear on focus. Clicking a result navigates directly and highlights it on the results page. Contextual filters for status, severity, assignee, and date range also available." %}</p>
                 </div>
 
                 <div class="px-6 py-5">
                     <div class="flex flex-wrap gap-1.5 mb-1.5">
-                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">New</span>
+                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">{% trans "New" %}</span>
                     </div>
-                    <h3 class="text-sm font-bold text-gray-900 mb-1">Filter & Sort on Every List View</h3>
-                    <p class="text-xs text-gray-500 leading-relaxed">Reports, projects, and organisation lists now feature contextual filters and sort controls. Report filters include status, severity, assignee, and date range. Project filters include visibility and creation date.</p>
+                    <h3 class="text-sm font-bold text-gray-900 mb-1">{% trans "Filter & Sort on Every List View" %}</h3>
+                    <p class="text-xs text-gray-500 leading-relaxed">{% trans "Reports, projects, and organisation lists now feature contextual filters and sort controls. Report filters include status, severity, assignee, and date range. Project filters include visibility and creation date." %}</p>
                 </div>
 
                 <div class="px-6 py-5">
                     <div class="flex flex-wrap gap-1.5 mb-1.5">
-                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">New</span>
+                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">{% trans "New" %}</span>
                     </div>
-                    <h3 class="text-sm font-bold text-gray-900 mb-1">Bookmark & Watch Reports</h3>
-                    <p class="text-xs text-gray-500 leading-relaxed">Bookmark any report for quick access. Watch a report to receive notifications on status, assignee, or severity changes. A dedicated Bookmarks & Watches view manages everything in one place.</p>
+                    <h3 class="text-sm font-bold text-gray-900 mb-1">{% trans "Bookmark & Watch Reports" %}</h3>
+                    <p class="text-xs text-gray-500 leading-relaxed">{% trans "Bookmark any report for quick access. Watch a report to receive notifications on status, assignee, or severity changes. A dedicated Bookmarks & Watches view manages everything in one place." %}</p>
                 </div>
 
                 <div class="px-6 py-5">
                     <div class="flex flex-wrap gap-1.5 mb-1.5">
-                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-violet-50 text-violet-700 border border-violet-200">Improvement</span>
+                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-violet-50 text-violet-700 border border-violet-200">{% trans "Improvement" %}</span>
                     </div>
-                    <h3 class="text-sm font-bold text-gray-900 mb-1">Notification Centre Redesign</h3>
-                    <p class="text-xs text-gray-500 leading-relaxed">Cleaner layout, improved empty state, and better invite action cards with inline accept/decline buttons. Unread badges now reflect accurate server-side counts.</p>
+                    <h3 class="text-sm font-bold text-gray-900 mb-1">{% trans "Notification Centre Redesign" %}</h3>
+                    <p class="text-xs text-gray-500 leading-relaxed">{% trans "Cleaner layout, improved empty state, and better invite action cards with inline accept/decline buttons. Unread badges now reflect accurate server-side counts." %}</p>
                 </div>
 
                 <div class="px-6 py-5">
                     <div class="flex flex-wrap gap-1.5 mb-1.5">
-                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-violet-50 text-violet-700 border border-violet-200">UX</span>
+                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-violet-50 text-violet-700 border border-violet-200">{% trans "UX" %}</span>
                     </div>
-                    <h3 class="text-sm font-bold text-gray-900 mb-1">Toast Notifications + HTMX Loading Bar</h3>
-                    <p class="text-xs text-gray-500 leading-relaxed">Replaced inline message banners with animated toast notifications — slide in from the top-right, auto-dismiss in 4 seconds, with a countdown progress bar. A thin blue loading bar tracks every HTMX request globally across all pages.</p>
+                    <h3 class="text-sm font-bold text-gray-900 mb-1">{% trans "Toast Notifications + HTMX Loading Bar" %}</h3>
+                    <p class="text-xs text-gray-500 leading-relaxed">{% trans "Replaced inline message banners with animated toast notifications — slide in from the top-right, auto-dismiss in 4 seconds, with a countdown progress bar. A thin blue loading bar tracks every HTMX request globally across all pages." %}</p>
                 </div>
 
                 <div class="px-6 py-5">
                     <div class="flex flex-wrap gap-1.5 mb-1.5">
-                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-red-50 text-red-700 border border-red-200">Admin</span>
-                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">New</span>
+                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-red-50 text-red-700 border border-red-200">{% trans "Admin" %}</span>
+                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">{% trans "New" %}</span>
                     </div>
-                    <h3 class="text-sm font-bold text-gray-900 mb-1">Site Announcements</h3>
-                    <p class="text-xs text-gray-500 leading-relaxed">Superusers can post site-wide announcement banners (info / warning / critical / success) visible to all logged-in users. Banners are dismissable and support optional auto-expiry.</p>
+                    <h3 class="text-sm font-bold text-gray-900 mb-1">{% trans "Site Announcements" %}</h3>
+                    <p class="text-xs text-gray-500 leading-relaxed">{% trans "Superusers can post site-wide announcement banners (info / warning / critical / success) visible to all logged-in users. Banners are dismissable and support optional auto-expiry." %}</p>
                 </div>
 
                 <div class="px-6 py-5">
                     <div class="flex flex-wrap gap-1.5 mb-1.5">
-                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">New</span>
+                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">{% trans "New" %}</span>
                     </div>
-                    <h3 class="text-sm font-bold text-gray-900 mb-1">Account Deletion (Soft-delete)</h3>
-                    <p class="text-xs text-gray-500 leading-relaxed">Users can now permanently delete their account from Edit Profile, with password confirmation. Account is soft-deleted immediately and hard-deleted after a <strong>30-day grace window</strong> — log back in anytime before then to reactivate.</p>
+                    <h3 class="text-sm font-bold text-gray-900 mb-1">{% trans "Account Deletion (Soft-delete)" %}</h3>
+                    <p class="text-xs text-gray-500 leading-relaxed">{% blocktrans %}Users can now permanently delete their account from Edit Profile, with password confirmation. Account is soft-deleted immediately and hard-deleted after a <strong>30-day grace window</strong> — log back in anytime before then to reactivate.{% endblocktrans %}</p>
                 </div>
 
                 <div class="px-6 py-5">
                     <div class="flex flex-wrap gap-1.5 mb-1.5">
-                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">New</span>
+                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">{% trans "New" %}</span>
                     </div>
-                    <h3 class="text-sm font-bold text-gray-900 mb-1">FAQ, Privacy Policy, Terms & Contact Pages</h3>
-                    <p class="text-xs text-gray-500 leading-relaxed">All essential public-facing pages are now live: a searchable <a href="{% url 'home:faq' %}" class="text-[#226ce0] hover:underline">FAQ</a>, detailed <a href="{% url 'home:privacy' %}" class="text-[#226ce0] hover:underline">Privacy Policy</a>, <a href="{% url 'home:terms' %}" class="text-[#226ce0] hover:underline">Terms of Service</a>, and a <a href="{% url 'home:contact' %}" class="text-[#226ce0] hover:underline">Contact</a> form that routes messages to the team.</p>
+                    <h3 class="text-sm font-bold text-gray-900 mb-1">{% trans "FAQ, Privacy Policy, Terms & Contact Pages" %}</h3>
+                    <p class="text-xs text-gray-500 leading-relaxed">{% blocktrans %}All essential public-facing pages are now live: a searchable{% endblocktrans %} <a href="{% url 'home:faq' %}" class="text-[#226ce0] hover:underline">{% trans "FAQ" %}</a>, {% blocktrans %}detailed{% endblocktrans %} <a href="{% url 'home:privacy' %}" class="text-[#226ce0] hover:underline">{% trans "Privacy Policy" %}</a>, <a href="{% url 'home:terms' %}" class="text-[#226ce0] hover:underline">{% trans "Terms of Service" %}</a>, {% blocktrans %}and a{% endblocktrans %} <a href="{% url 'home:contact' %}" class="text-[#226ce0] hover:underline">{% trans "Contact" %}</a> {% blocktrans %}form that routes messages to the team.{% endblocktrans %}</p>
                 </div>
 
             </div>
@@ -178,41 +208,41 @@
         <!-- ── Phase 2.0 ───────────────────────────────────────── -->
         <div class="bg-white border border-gray-200 rounded-2xl overflow-hidden">
             <div class="flex items-center gap-3 px-6 py-4 border-b border-gray-100 bg-gray-50">
-                <span class="text-xs font-bold text-gray-700 bg-gray-200 px-3 py-1 rounded-full">Phase 2.0</span>
-                <span class="text-xs text-gray-500 font-medium">Public Beta · July 4, 2026</span>
+                <span class="text-xs font-bold text-gray-700 bg-gray-200 px-3 py-1 rounded-full">{% trans "Phase 2.0" %}</span>
+                <span class="text-xs text-gray-500 font-medium">{% trans "Public Beta · July 4, 2026" %}</span>
             </div>
             <div class="divide-y divide-gray-50">
 
                 <div class="px-6 py-5">
                     <div class="flex flex-wrap gap-1.5 mb-1.5">
-                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">Feature</span>
+                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">{% trans "Feature" %}</span>
                     </div>
-                    <h3 class="text-sm font-bold text-gray-900 mb-1">Organisation Support</h3>
-                    <p class="text-xs text-gray-500 leading-relaxed">Create organisations, invite members, and scope projects to your org. Assign a dedicated <strong>Project Head</strong> with full administrative control over org-owned projects, while the organisation owner stays the top-level authority.</p>
+                    <h3 class="text-sm font-bold text-gray-900 mb-1">{% trans "Organisation Support" %}</h3>
+                    <p class="text-xs text-gray-500 leading-relaxed">{% blocktrans %}Create organisations, invite members, and scope projects to your org. Assign a dedicated <strong>Project Head</strong> with full administrative control over org-owned projects, while the organisation owner stays the top-level authority.{% endblocktrans %}</p>
                 </div>
 
                 <div class="px-6 py-5">
                     <div class="flex flex-wrap gap-1.5 mb-1.5">
-                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-purple-50 text-purple-700 border border-purple-200">Security</span>
+                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-purple-50 text-purple-700 border border-purple-200">{% trans "Security" %}</span>
                     </div>
-                    <h3 class="text-sm font-bold text-gray-900 mb-1">3-Level Access Scoping & UUIDv7</h3>
-                    <p class="text-xs text-gray-500 leading-relaxed">Granular permissions enforced across the board: <strong>Public</strong>, <strong>Org-Only</strong>, and <strong>Private</strong> visibility levels. All database records migrated from sequential integer IDs to time-ordered, non-enumerable <strong>UUIDv7</strong> identifiers — eliminating IDOR risk entirely.</p>
+                    <h3 class="text-sm font-bold text-gray-900 mb-1">{% trans "3-Level Access Scoping & UUIDv7" %}</h3>
+                    <p class="text-xs text-gray-500 leading-relaxed">{% blocktrans %}Granular permissions enforced across the board: <strong>Public</strong>, <strong>Org-Only</strong>, and <strong>Private</strong> visibility levels. All database records migrated from sequential integer IDs to time-ordered, non-enumerable <strong>UUIDv7</strong> identifiers — eliminating IDOR risk entirely.{% endblocktrans %}</p>
                 </div>
 
                 <div class="px-6 py-5">
                     <div class="flex flex-wrap gap-1.5 mb-1.5">
-                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-green-50 text-green-700 border border-green-200">Audit</span>
+                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-green-50 text-green-700 border border-green-200">{% trans "Audit" %}</span>
                     </div>
-                    <h3 class="text-sm font-bold text-gray-900 mb-1">Report History & Audit Logs</h3>
-                    <p class="text-xs text-gray-500 leading-relaxed">Full event logging for all project and report modifications — status changes, reassignments, severity updates, and collaborator actions. View a complete change timeline on every report detail page.</p>
+                    <h3 class="text-sm font-bold text-gray-900 mb-1">{% trans "Report History & Audit Logs" %}</h3>
+                    <p class="text-xs text-gray-500 leading-relaxed">{% trans "Full event logging for all project and report modifications — status changes, reassignments, severity updates, and collaborator actions. View a complete change timeline on every report detail page." %}</p>
                 </div>
 
                 <div class="px-6 py-5">
                     <div class="flex flex-wrap gap-1.5 mb-1.5">
-                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-violet-50 text-violet-700 border border-violet-200">UX</span>
+                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-violet-50 text-violet-700 border border-violet-200">{% trans "UX" %}</span>
                     </div>
-                    <h3 class="text-sm font-bold text-gray-900 mb-1">Navigation & UX Improvements</h3>
-                    <p class="text-xs text-gray-500 leading-relaxed">Activated Collaborating Projects and Needs Attention views. Integrated the What's New changelog. Unified search box with refresh in a clean widget. Strong password validation with inline feedback on the auth card.</p>
+                    <h3 class="text-sm font-bold text-gray-900 mb-1">{% trans "Navigation & UX Improvements" %}</h3>
+                    <p class="text-xs text-gray-500 leading-relaxed">{% trans "Activated Collaborating Projects and Needs Attention views. Integrated the What's New changelog. Unified search box with refresh in a clean widget. Strong password validation with inline feedback on the auth card." %}</p>
                 </div>
 
             </div>
@@ -221,18 +251,18 @@
         <!-- ── Phase 1.5 ───────────────────────────────────────── -->
         <div class="bg-white border border-gray-200 rounded-2xl overflow-hidden opacity-75">
             <div class="flex items-center gap-3 px-6 py-4 border-b border-gray-100 bg-gray-50">
-                <span class="text-xs font-bold text-gray-700 bg-gray-200 px-3 py-1 rounded-full">Phase 1.5</span>
-                <span class="text-xs text-gray-500 font-medium">Public Alpha · January 7, 2026</span>
-                <span class="ml-auto text-xs text-gray-400 italic">Development build</span>
+                <span class="text-xs font-bold text-gray-700 bg-gray-200 px-3 py-1 rounded-full">{% trans "Phase 1.5" %}</span>
+                <span class="text-xs text-gray-500 font-medium">{% trans "Public Alpha · January 7, 2026" %}</span>
+                <span class="ml-auto text-xs text-gray-400 italic">{% trans "Development build" %}</span>
             </div>
             <div class="divide-y divide-gray-50">
 
                 <div class="px-6 py-5">
                     <div class="flex flex-wrap gap-1.5 mb-1.5">
-                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">Foundation</span>
+                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">{% trans "Foundation" %}</span>
                     </div>
-                    <h3 class="text-sm font-bold text-gray-900 mb-1">Core Project & Issue Tracking</h3>
-                    <p class="text-xs text-gray-500 leading-relaxed">Initial release. Create and manage Public/Private projects. File issue reports with Severity, Impact, Reproducibility, and Attachments. Full status lifecycle (Open → In Progress → Resolved → Closed), comments, personalised dashboard with Assigned to Me / Reported by Me filters, and Global Search.</p>
+                    <h3 class="text-sm font-bold text-gray-900 mb-1">{% trans "Core Project & Issue Tracking" %}</h3>
+                    <p class="text-xs text-gray-500 leading-relaxed">{% trans "Initial release. Create and manage Public/Private projects. File issue reports with Severity, Impact, Reproducibility, and Attachments. Full status lifecycle (Open → In Progress → Resolved → Closed), comments, personalised dashboard with Assigned to Me / Reported by Me filters, and Global Search." %}</p>
                 </div>
 
             </div>
@@ -243,15 +273,15 @@
     <!-- Footer CTA -->
     <div class="mt-8 bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-200 rounded-2xl p-8 flex flex-col sm:flex-row items-center justify-between gap-5">
         <div>
-            <p class="text-sm font-semibold text-gray-800 mb-1">Have a feature request or found a bug?</p>
-            <p class="text-xs text-gray-500">We'd love to hear what would make Reportary better for your team.</p>
+            <p class="text-sm font-semibold text-gray-800 mb-1">{% trans "Have a feature request or found a bug?" %}</p>
+            <p class="text-xs text-gray-500">{% trans "We'd love to hear what would make Reportary better for your team." %}</p>
         </div>
         <div class="flex gap-3 shrink-0">
             <a href="/projects/019f2e92-7f0d-78e9-92b3-9431a1014882/reports/new/" class="px-5 py-2.5 bg-[#226ce0] text-white text-xs font-semibold rounded-xl hover:bg-[#1b56b3] transition-all hover:-translate-y-0.5 shadow-sm">
-                Send Feedback
+                {% trans "Send Feedback" %}
             </a>
             <a href="https://github.com/Rishi-Bhati/Reportary" target="_blank" class="px-5 py-2.5 bg-white border border-gray-200 text-gray-700 text-xs font-semibold rounded-xl hover:border-gray-300 transition-all">
-                View on GitHub
+                {% trans "View on GitHub" %}
             </a>
         </div>
     </div>

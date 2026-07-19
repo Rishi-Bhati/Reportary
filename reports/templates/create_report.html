@@ -1,19 +1,19 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static %}{% load i18n %}
 
-{% block title %}Report Issue | Reportary{% endblock %}
+{% block title %}{% trans "Report Issue" %} | Reportary{% endblock %}
 {% block breadcrumb %}
 {% if project %}
   {% if is_public_reporter %}
     <span class="text-[#226ce0] font-medium">{{ project.title }}</span> /
-    Report Issue
+    {% trans "Report Issue" %}
   {% else %}
-    <a href="{% url 'projects:my_projects' %}" class="hover:text-[#226ce0]">Projects</a> /
+    <a href="{% url 'projects:my_projects' %}" class="hover:text-[#226ce0]">{% trans "Projects" %}</a> /
     <a href="{% url 'projects:project_detail' project_uuid=project.uuid %}" class="hover:text-[#226ce0]">{{ project.title }}</a> /
-    Report Issue
+    {% trans "Report Issue" %}
   {% endif %}
 {% else %}
-Report Issue
+{% trans "Report Issue" %}
 {% endif %}
 {% endblock %}
 
@@ -21,12 +21,12 @@ Report Issue
 <div class="max-w-3xl mx-auto">
     <!-- Header -->
     <div class="mb-8">
-        <h1 class="text-2xl font-bold text-gray-900 tracking-tight">Report New Issue</h1>
+        <h1 class="text-2xl font-bold text-gray-900 tracking-tight">{% trans "Report New Issue" %}</h1>
         {% if project %}
-        <p class="text-gray-500 mt-1">Submit a new bug, feature request, or task for <span
+        <p class="text-gray-500 mt-1">{% trans "Submit a new bug, feature request, or task" %} for <span
                 class="font-bold text-gray-800">{{ project.title }}</span>.</p>
         {% else %}
-        <p class="text-gray-500 mt-1">Submit a new issue to get it tracked.</p>
+        <p class="text-gray-500 mt-1">{% trans "Submit a new issue to get it tracked." %}</p>
         {% endif %}
     </div>
 
@@ -52,7 +52,7 @@ Report Issue
                         hx-target="#duplicate-warnings"
                         hx-include="[name='project']"
                         class="input input-bordered w-full focus:border-[#226ce0] bg-gray-50 focus:bg-white transition-colors"
-                        placeholder="Brief summary of the issue" required>
+                        placeholder="{% trans "Brief summary of the issue" %}" required>
                     {{ form.title.errors }}
                     
                     <!-- Hidden field to include project uuid in warning check if pre-selected -->
@@ -67,7 +67,7 @@ Report Issue
                 <!-- Project Selection (if no project context) -->
                 {% if not project %}
                 <div class="form-control w-full">
-                    <label class="label text-sm font-semibold text-gray-700" for="id_project">Project</label>
+                    <label class="label text-sm font-semibold text-gray-700" for="id_project">{% trans "Project" %}</label>
                     {{ form.project }}
                     {{ form.project.errors }}
                 </div>
@@ -97,18 +97,18 @@ Report Issue
                     <div class="flex justify-between items-center mb-1">
                         <label class="label text-sm font-semibold text-gray-700 p-0" for="{{ form.description.id_for_label }}">{{ form.description.label }}</label>
                         <div class="tabs tabs-boxed bg-gray-100 p-0.5 rounded-lg text-xs" style="width: fit-content;">
-                            <button type="button" onclick="toggleMarkdownTab('write', 'description')" id="tab-description-write" class="px-3 py-1 font-semibold rounded-md bg-white text-gray-900 shadow-sm transition-all">Write</button>
-                            <button type="button" onclick="toggleMarkdownTab('preview', 'description')" id="tab-description-preview" class="px-3 py-1 font-semibold rounded-md text-gray-500 hover:text-gray-900 transition-all">Preview</button>
+                            <button type="button" onclick="toggleMarkdownTab('write', 'description')" id="tab-description-write" class="px-3 py-1 font-semibold rounded-md bg-white text-gray-900 shadow-sm transition-all">{% trans "Write" %}</button>
+                            <button type="button" onclick="toggleMarkdownTab('preview', 'description')" id="tab-description-preview" class="px-3 py-1 font-semibold rounded-md text-gray-500 hover:text-gray-900 transition-all">{% trans "Preview" %}</button>
                         </div>
                     </div>
                     
                     <div id="container-description-write">
                         <textarea name="{{ form.description.name }}" id="{{ form.description.id_for_label }}" rows="5"
                             class="textarea textarea-bordered w-full focus:border-[#226ce0] bg-gray-50 focus:bg-white transition-colors text-base"
-                            placeholder="Detailed explanation..."></textarea>
+                            placeholder="{% trans "Detailed explanation..." %}"></textarea>
                     </div>
                     <div id="container-description-preview" class="hidden min-h-[130px] p-4 bg-gray-50 border border-gray-200 rounded-xl prose max-w-none text-sm text-gray-800">
-                        <em class="text-gray-400">Nothing to preview</em>
+                        <em class="text-gray-400">{% trans "Nothing to preview" %}</em>
                     </div>
                     {{ form.description.errors }}
                 </div>
@@ -118,18 +118,18 @@ Report Issue
                     <div class="flex justify-between items-center mb-1">
                         <label class="label text-sm font-semibold text-gray-700 p-0" for="{{ form.steps.id_for_label }}">{{ form.steps.label }}</label>
                         <div class="tabs tabs-boxed bg-gray-100 p-0.5 rounded-lg text-xs" style="width: fit-content;">
-                            <button type="button" onclick="toggleMarkdownTab('write', 'steps')" id="tab-steps-write" class="px-3 py-1 font-semibold rounded-md bg-white text-gray-900 shadow-sm transition-all">Write</button>
-                            <button type="button" onclick="toggleMarkdownTab('preview', 'steps')" id="tab-steps-preview" class="px-3 py-1 font-semibold rounded-md text-gray-500 hover:text-gray-900 transition-all">Preview</button>
+                            <button type="button" onclick="toggleMarkdownTab('write', 'steps')" id="tab-steps-write" class="px-3 py-1 font-semibold rounded-md bg-white text-gray-900 shadow-sm transition-all">{% trans "Write" %}</button>
+                            <button type="button" onclick="toggleMarkdownTab('preview', 'steps')" id="tab-steps-preview" class="px-3 py-1 font-semibold rounded-md text-gray-500 hover:text-gray-900 transition-all">{% trans "Preview" %}</button>
                         </div>
                     </div>
                     
                     <div id="container-steps-write">
                         <textarea name="{{ form.steps.name }}" id="{{ form.steps.id_for_label }}" rows="5"
                             class="textarea textarea-bordered w-full focus:border-[#226ce0] bg-gray-50 focus:bg-white transition-colors text-base font-mono text-sm"
-                            placeholder="1. Go to...&#10;2. Click on..."></textarea>
+                            placeholder="{% trans "1. Go to...\n2. Click on..." %}"></textarea>
                     </div>
                     <div id="container-steps-preview" class="hidden min-h-[130px] p-4 bg-gray-50 border border-gray-200 rounded-xl prose max-w-none text-sm text-gray-800">
-                        <em class="text-gray-400">Nothing to preview</em>
+                        <em class="text-gray-400">{% trans "Nothing to preview" %}</em>
                     </div>
                     {{ form.steps.errors }}
                 </div>
@@ -155,7 +155,7 @@ Report Issue
                         </div>
                         <div class="text-sm">
                             <label for="{{ form.visibility.id_for_label }}" class="font-semibold text-gray-900 cursor-pointer block leading-none">{{ form.visibility.label }}</label>
-                            <p class="text-xs text-gray-500 mt-1.5 leading-normal">Display this report to the public or restrict it to project members only.</p>
+                            <p class="text-xs text-gray-500 mt-1.5 leading-normal">{% trans "Display this report to the public or restrict it to project members only." %}</p>
                         </div>
                         {{ form.visibility.errors }}
                     </div>
@@ -167,8 +167,8 @@ Report Issue
                             {{ form.is_anonymous }}
                         </div>
                         <div class="text-sm">
-                            <label for="{{ form.is_anonymous.id_for_label }}" class="font-semibold text-gray-900 cursor-pointer block leading-none">Report Anonymously</label>
-                            <p class="text-xs text-gray-500 mt-1.5 leading-normal">Hide your user details on this report. Only project owners will see it.</p>
+                            <label for="{{ form.is_anonymous.id_for_label }}" class="font-semibold text-gray-900 cursor-pointer block leading-none">{% trans "Report Anonymously" %}</label>
+                            <p class="text-xs text-gray-500 mt-1.5 leading-normal">{% trans "Hide your user details on this report. Only project owners will see it." %}</p>
                         </div>
                         {{ form.is_anonymous.errors }}
                     </div>
@@ -180,7 +180,7 @@ Report Issue
             <div class="p-8 bg-gray-50 border-t border-gray-100 flex justify-end">
                 <button type="submit"
                     class="btn btn-primary text-white px-8 font-semibold shadow-md hover:shadow-lg transition-all capitalize">
-                    Submit Issue
+                    {% trans "Submit Issue" %}
                 </button>
             </div>
         </form>
@@ -265,7 +265,7 @@ Report Issue
             if (rawVal) {
                 previewContainer.innerHTML = marked.parse(rawVal);
             } else {
-                previewContainer.innerHTML = '<em class="text-gray-400">Nothing to preview</em>';
+                previewContainer.innerHTML = '<em class="text-gray-400">{% trans "Nothing to preview" %}</em>';
             }
         } else {
             writeContainer.classList.remove('hidden');
@@ -288,7 +288,7 @@ Report Issue
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" style="opacity: 0.25;"></circle>
                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" style="opacity: 0.75;"></path>
                 </svg>
-                Submitting...
+                {% trans "Submitting..." %}
             `;
         }
     }

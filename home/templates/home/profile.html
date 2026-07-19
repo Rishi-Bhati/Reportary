@@ -1,7 +1,8 @@
 {% extends "base.html" %}
+{% load i18n %}
 
 {% block title %}
-User Profile - {{ user.username|default:'Guest' }}
+User {% trans "Profile" %} - {{ user.username|default:'Guest' }}
 {% endblock %}
 
 {% block content %}
@@ -37,7 +38,7 @@ User Profile - {{ user.username|default:'Guest' }}
                     </div>
                     <div class="flex items-center space-x-2">
                         <a href="{% url 'accounts:edit_profile' %}"
-                            class="btn btn-outline h-10 min-h-[2.5rem] px-4 rounded-lg text-sm">Edit Profile</a>
+                            class="btn btn-outline h-10 min-h-[2.5rem] px-4 rounded-lg text-sm">{% trans "Edit Profile" %}</a>
                         <form action="{% url 'logout' %}" method="post">
                             {% csrf_token %}
                             <button type="submit"

@@ -3,6 +3,7 @@ from django.core.exceptions import ValidationError
 from django.http import HttpResponse
 from django.urls import reverse
 from django.shortcuts import render, redirect
+from django.utils.translation import gettext as _
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
@@ -217,56 +218,56 @@ def faq_page(request):
     """Renders the FAQ page."""
     faqs = [
         {
-            "question": "What is Reportary?",
-            "answer": "Reportary is a modern, collaborative bug and issue tracking platform designed for development teams. It helps you capture, organize, and resolve software issues efficiently.",
+            "question": _("What is Reportary?"),
+            "answer": _("Reportary is a modern, collaborative bug and issue tracking platform designed for development teams. It helps you capture, organize, and resolve software issues efficiently."),
         },
         {
-            "question": "What is the difference between Watching (Following) and Bookmarking a report?",
-            "answer": "<strong>Watching (Following)</strong> subscribes you to real-time updates. You will receive in-app notifications and email alerts whenever the status changes, details are updated, or new comments are added.<br><strong>Bookmarking</strong> acts as a personal shortcut for quick reference in your library. Bookmarking a report does not trigger any notification emails.",
+            "question": _("What is the difference between Watching (Following) and Bookmarking a report?"),
+            "answer": _("<strong>Watching (Following)</strong> subscribes you to real-time updates. You will receive in-app notifications and email alerts whenever the status changes, details are updated, or new comments are added.<br><strong>Bookmarking</strong> acts as a personal shortcut for quick reference in your library. Bookmarking a report does not trigger any notification emails."),
         },
         {
-            "question": "How do I collect issues from external users?",
-            "answer": "You can activate a <strong>Public Reporting Portal</strong> link for your project. This generates a unique URL that you can share with clients or stakeholders, allowing them to submit reports directly into your tracker.",
+            "question": _("How do I collect issues from external users?"),
+            "answer": _("You can activate a <strong>Public Reporting Portal</strong> link for your project. This generates a unique URL that you can share with clients or stakeholders, allowing them to submit reports directly into your tracker."),
         },
         {
-            "question": "How do Organisation Policies override project portal settings?",
-            "answer": "If an Organisation disables anonymous reporting, it acts as a global policy. All projects belonging to that organisation will automatically require users to log in before filing a report, even if an individual project's settings allow anonymous reporting.",
+            "question": _("How do Organisation Policies override project portal settings?"),
+            "answer": _("If an Organisation disables anonymous reporting, it acts as a global policy. All projects belonging to that organisation will automatically require users to log in before filing a report, even if an individual project's settings allow anonymous reporting."),
         },
         {
-            "question": "Who can create a project?",
-            "answer": "Any registered and email-verified user can create a project. Projects can be public (visible to anyone) or private (restricted to team members only).",
+            "question": _("Who can create a project?"),
+            "answer": _("Any registered and email-verified user can create a project. Projects can be public (visible to anyone) or private (restricted to team members only)."),
         },
         {
-            "question": "How do I invite team members to my project?",
-            "answer": "Open your project's dashboard and use the 'Invite Collaborator' option. Invited users will receive an in-app notification and can accept or decline the invitation.",
+            "question": _("How do I invite team members to my project?"),
+            "answer": _("Open your project's dashboard and use the 'Invite Collaborator' option. Invited users will receive an in-app notification and can accept or decline the invitation."),
         },
         {
-            "question": "What is the difference between Severity and Impact?",
-            "answer": "Severity describes how technically bad the bug is (e.g., Critical, High, Medium, Low). Impact describes how many users or systems are affected. Both help prioritize issues effectively.",
+            "question": _("What is the difference between Severity and Impact?"),
+            "answer": _("Severity describes how technically bad the bug is (e.g., Critical, High, Medium, Low). Impact describes how many users or systems are affected. Both help prioritize issues effectively."),
         },
         {
-            "question": "Can I make a report private?",
-            "answer": "Yes. When creating or editing a report, you can toggle its visibility to private. Private reports are only visible to project members and the reporter.",
+            "question": _("Can I make a report private?"),
+            "answer": _("Yes. When creating or editing a report, you can toggle its visibility to private. Private reports are only visible to project members and the reporter."),
         },
         {
-            "question": "What happens when I delete my account?",
-            "answer": "Your account is deactivated immediately and permanently deleted after 30 days. During this window, you can reactivate it by logging back in. Your reports and project history are preserved.",
+            "question": _("What happens when I delete my account?"),
+            "answer": _("Your account is deactivated immediately and permanently deleted after 30 days. During this window, you can reactivate it by logging back in. Your reports and project history are preserved."),
         },
         {
-            "question": "Is my data secure?",
-            "answer": "Yes. We use industry-standard encryption for all data in transit and at rest. Access to projects is strictly enforced via our permissions system — users can only access what they are explicitly authorized for.",
+            "question": _("Is my data secure?"),
+            "answer": _("Yes. We use industry-standard encryption for all data in transit and at rest. Access to projects is strictly enforced via our permissions system — users can only access what they are explicitly authorized for."),
         },
         {
-            "question": "How do I report a bug in Reportary itself?",
-            "answer": "You can report bugs or request features directly on our tracking project. Just click <a href='/projects/019f2e92-7f0d-78e9-92b3-9431a1014882/reports/new/' class='text-[#226ce0] underline underline-offset-2'>here</a> to file a report.",
+            "question": _("How do I report a bug in Reportary itself?"),
+            "answer": _("You can report bugs or request features directly on our tracking project. Just click <a href='/projects/019f2e92-7f0d-78e9-92b3-9431a1014882/reports/new/' class='text-[#226ce0] underline underline-offset-2'>here</a> to file a report."),
         },
         {
-            "question": "Is Reportary free?",
-            "answer": "Yes, Reportary is free during its current beta phase. We plan to introduce subscription tiers in the future, but the core functionality will always remain accessible.",
+            "question": _("Is Reportary free?"),
+            "answer": _("Yes, Reportary is free during its current beta phase. We plan to introduce subscription tiers in the future, but the core functionality will always remain accessible."),
         },
         {
-            "question": "How do I reset my password?",
-            "answer": "Click 'Forgot Password' on the login page. You will receive an email with a secure link to set a new password.",
+            "question": _("How do I reset my password?"),
+            "answer": _("Click 'Forgot Password' on the login page. You will receive an email with a secure link to set a new password."),
         },
     ]
     return render(request, "home/faq.html", {"faqs": faqs})

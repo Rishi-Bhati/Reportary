@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static %}{% load i18n %}
 
 {% block title %}{{ report.title }} | Reports{% endblock %}
 
@@ -30,11 +30,11 @@
                     
                     <!-- Status Badge -->
                     {% if report.status == 'open' %}
-                    <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-600">Open</span>
+                    <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-600">{% trans "Open" %}</span>
                     {% elif report.status == 'in_progress' %}
-                    <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-yellow-50 text-yellow-700">In Progress</span>
+                    <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-yellow-50 text-yellow-700">{% trans "In Progress" %}</span>
                     {% elif report.status == 'resolved' %}
-                    <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-600">Resolved</span>
+                    <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-600">{% trans "Resolved" %}</span>
                     {% else %}
                     <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-gray-100 text-gray-600">{{ report.get_status_display }}</span>
                     {% endif %}
@@ -194,7 +194,7 @@
                     <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#226ce0]/10 text-[#226ce0]">{{ comments.count|default:"0" }} comments</span>
                 </div>
 
-                <!-- Comments List -->
+                <!-- {% trans "Comments" %} List -->
                 <div id="comments-section" class="p-6 space-y-0 divide-y divide-gray-100">
                     {% for comment in comments %}
                     {% include 'comments/partials/comment.html' %}

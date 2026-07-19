@@ -1,3 +1,23 @@
+# Release Notes - v1.0.0-rc (Global Multilingual Support & Mobile Email Templates)
+
+**Date**: July 20, 2026
+
+## Overview
+This Release Candidate (**v1.0.0-rc**) introduces full multilingual support (English & Japanese) across the entire Reportary platform, alongside an overhauled, mobile-friendly notification email system.
+
+## Key Features Shipped
+
+### 🌐 Global Multilingual Support (English & Japanese)
+- **Seamless Detection**: The server automatically detects the user's location via IP address geo-location and evaluates browser preferred languages, routing Japanese users to the Japanese UI transparently without intrusive prompts.
+- **Visual Globe selector**: Added a customizable globe toggle (🌐) to the top navigation bar and public landing page for instant session-persistent language switching.
+- **100% Translated Interface**: Translated the entire dashboard, analytics charts, status labels, tooltips, search results, FAQ, and legal pages.
+
+### ✉️ Simplified Mobile-Responsive Notification Emails
+- **Professional Design**: Overhauled transactional, assignment, comment, status change, and invitation templates to use clean, simple layouts.
+- **Mobile Optimized**: Addressed formatting bugs that caused email notifications to render poorly on phone and mobile screens.
+
+---
+
 # Release Notes - v1.0.0-beta.2 (Security Hardening, Public Portals, & Organisation Upgrades)
 
 **Date**: July 17, 2026

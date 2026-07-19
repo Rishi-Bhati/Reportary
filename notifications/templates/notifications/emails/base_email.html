@@ -1,39 +1,100 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ subject }}</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>{{ subject }}</title>
+  <!--[if mso]>
+  <noscript>
+    <xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml>
+  </noscript>
+  <![endif]-->
+  <style>
+    /* Reset */
+    * { box-sizing: border-box; }
+    body, table, td, p, a, li, blockquote { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+    table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
+    img { -ms-interpolation-mode: bicubic; border: 0; outline: none; text-decoration: none; }
+
+    /* Mobile */
+    @media only screen and (max-width: 600px) {
+      .wrapper { width: 100% !important; padding: 16px !important; }
+      .card { border-radius: 12px !important; }
+      .header-td { padding: 24px 20px !important; }
+      .body-td { padding: 28px 20px !important; }
+      .footer-td { padding: 20px !important; }
+      .cta-btn { display: block !important; width: 100% !important; text-align: center !important; padding: 14px 20px !important; }
+      .info-table td { display: block !important; width: 100% !important; padding: 4px 0 !important; }
+      .fallback-url { font-size: 11px !important; word-break: break-all !important; }
+      h1 { font-size: 20px !important; }
+      h2 { font-size: 17px !important; }
+      p, li { font-size: 14px !important; }
+    }
+  </style>
 </head>
-<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f6f8fb; color: #1b1725;">
-    <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; margin: 40px auto; background-color: #ffffff; border-radius: 16px; border: 1px border-[#d0bcd5]/30; box-shadow: 0 4px 12px rgba(0,0,0,0.03); overflow: hidden;">
-        <!-- Header -->
-        <tr>
-            <td style="background: linear-gradient(135deg, #226ce0 0%, #1b56b3 100%); padding: 32px; text-align: center;">
-                <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: 800; letter-spacing: -0.5px;">Reportary</h1>
-                <p style="color: rgba(255,255,255,0.8); margin: 4px 0 0 0; font-size: 14px; font-weight: 500;">Developer Collaboration & Issue Tracking</p>
+<body style="margin:0; padding:0; background-color:#f4f6f9; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+
+  <!-- Outer wrapper -->
+  <table border="0" cellpadding="0" cellspacing="0" width="100%"
+         style="background-color:#f4f6f9;">
+    <tr>
+      <td align="center" style="padding:32px 16px;" class="wrapper">
+
+        <!-- Card -->
+        <table border="0" cellpadding="0" cellspacing="0" width="100%"
+               style="max-width:580px; background-color:#ffffff; border-radius:16px; border:1px solid #e4e8ef; overflow:hidden;"
+               class="card">
+
+          <!-- Header -->
+          <tr>
+            <td align="center" style="background-color:#226ce0; padding:28px 32px;" class="header-td">
+              <table border="0" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td align="center">
+                    <p style="margin:0; font-size:22px; font-weight:800; color:#ffffff; letter-spacing:-0.3px;">Reportary</p>
+                    <p style="margin:4px 0 0 0; font-size:12px; color:rgba(255,255,255,0.75); font-weight:400;">Issue Tracking &amp; Collaboration</p>
+                  </td>
+                </tr>
+              </table>
             </td>
-        </tr>
-        <!-- Content -->
-        <tr>
-            <td style="padding: 40px 32px 32px 32px;">
-                {% block email_content %}
-                <h2 style="margin-top: 0; font-size: 20px; font-weight: 700; color: #1b1725;">{{ title }}</h2>
-                <p style="font-size: 16px; line-height: 1.6; color: #534b62;">{{ message }}</p>
-                {% endblock %}
+          </tr>
+
+          <!-- Body -->
+          <tr>
+            <td style="padding:36px 32px 28px;" class="body-td">
+              {% block email_content %}
+              <h2 style="margin:0 0 12px 0; font-size:18px; font-weight:700; color:#1a1a2e;">{{ title }}</h2>
+              <p style="margin:0; font-size:15px; line-height:1.65; color:#4a5568;">{{ message }}</p>
+              {% endblock %}
             </td>
-        </tr>
-        <!-- Footer -->
-        <tr>
-            <td style="padding: 24px 32px; background-color: #fbf9fc; border-top: 1px solid #f3eff5; text-align: center;">
-                <p style="margin: 0; font-size: 12px; color: #a499b3;">
-                    This is an automated email from your Reportary account.
-                </p>
-                <p style="margin: 8px 0 0 0; font-size: 12px; color: #a499b3;">
-                    Reportary &copy; 2026. All rights reserved.
-                </p>
+          </tr>
+
+          <!-- Divider -->
+          <tr>
+            <td style="padding:0 32px;">
+              <div style="height:1px; background-color:#edf2f7;"></div>
             </td>
-        </tr>
-    </table>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td align="center" style="padding:20px 32px;" class="footer-td">
+              <p style="margin:0; font-size:12px; color:#a0aec0; line-height:1.6;">
+                This is an automated email from Reportary. Please do not reply.
+              </p>
+              <p style="margin:6px 0 0 0; font-size:11px; color:#c4c9d4;">
+                &copy; 2026 Reportary. All rights reserved.
+              </p>
+            </td>
+          </tr>
+
+        </table>
+        <!-- /Card -->
+
+      </td>
+    </tr>
+  </table>
+
 </body>
 </html>

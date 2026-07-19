@@ -1,20 +1,20 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static %}{% load i18n %}
 
-{% block title %}Edit Issue: {{ report.title }} | Reportary{% endblock %}
+{% block title %}{% trans "Edit Issue" %}: {{ report.title }} | Reportary{% endblock %}
 {% block breadcrumb %}
-<a href="{% url 'projects:my_projects' %}" class="hover:text-[#226ce0]">Projects</a> /
+<a href="{% url 'projects:my_projects' %}" class="hover:text-[#226ce0]">{% trans "Projects" %}</a> /
 <a href="{% url 'projects:project_detail' project_uuid=project.uuid %}" class="hover:text-[#226ce0]">{{ project.title }}</a> /
 <a href="{% url 'projects:reports:report_detail' project_uuid=project.uuid report_uuid=report.uuid %}" class="hover:text-[#226ce0]">#{{ report.id }}</a> /
-Edit Issue
+{% trans "Edit Issue" %}
 {% endblock %}
 
 {% block content %}
 <div class="max-w-3xl mx-auto">
     <!-- Header -->
     <div class="mb-8">
-        <h1 class="text-2xl font-bold text-gray-900 tracking-tight">Edit Issue</h1>
-        <p class="text-gray-500 mt-1">Update details for issue <span class="font-bold text-gray-800">#{{ report.id }}</span>.</p>
+        <h1 class="text-2xl font-bold text-gray-900 tracking-tight">{% trans "Edit Issue" %}</h1>
+        <p class="text-gray-500 mt-1">{% trans "Update details for issue" %} <span class="font-bold text-gray-800">#{{ report.id }}</span>.</p>
     </div>
 
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
@@ -40,7 +40,7 @@ Edit Issue
                         hx-target="#duplicate-warnings"
                         hx-include="[name='project_uuid'], [name='report_uuid']"
                         class="input input-bordered w-full focus:border-[#226ce0] bg-gray-50 focus:bg-white transition-colors"
-                        placeholder="Brief summary of the issue" required>
+                        placeholder="{% trans "Brief summary of the issue" %}" required>
                     {{ form.title.errors }}
                     
                     <!-- Hidden fields to include in duplicate warning search -->
@@ -73,18 +73,18 @@ Edit Issue
                     <div class="flex justify-between items-center mb-1">
                         <label class="label text-sm font-semibold text-gray-700 p-0" for="{{ form.description.id_for_label }}">{{ form.description.label }}</label>
                         <div class="tabs tabs-boxed bg-gray-100 p-0.5 rounded-lg text-xs" style="width: fit-content;">
-                            <button type="button" onclick="toggleMarkdownTab('write', 'description')" id="tab-description-write" class="px-3 py-1 font-semibold rounded-md bg-white text-gray-900 shadow-sm transition-all">Write</button>
-                            <button type="button" onclick="toggleMarkdownTab('preview', 'description')" id="tab-description-preview" class="px-3 py-1 font-semibold rounded-md text-gray-500 hover:text-gray-900 transition-all">Preview</button>
+                            <button type="button" onclick="toggleMarkdownTab('write', 'description')" id="tab-description-write" class="px-3 py-1 font-semibold rounded-md bg-white text-gray-900 shadow-sm transition-all">{% trans "Write" %}</button>
+                            <button type="button" onclick="toggleMarkdownTab('preview', 'description')" id="tab-description-preview" class="px-3 py-1 font-semibold rounded-md text-gray-500 hover:text-gray-900 transition-all">{% trans "Preview" %}</button>
                         </div>
                     </div>
                     
                     <div id="container-description-write">
                         <textarea name="{{ form.description.name }}" id="{{ form.description.id_for_label }}" rows="5"
                             class="textarea textarea-bordered w-full focus:border-[#226ce0] bg-gray-50 focus:bg-white transition-colors text-base"
-                            placeholder="Detailed explanation...">{{ report.description }}</textarea>
+                            placeholder="{% trans "Detailed explanation..." %}">{{ report.description }}</textarea>
                     </div>
                     <div id="container-description-preview" class="hidden min-h-[130px] p-4 bg-gray-50 border border-gray-200 rounded-xl prose max-w-none text-sm text-gray-800">
-                        <em class="text-gray-400">Nothing to preview</em>
+                        <em class="text-gray-400">{% trans "Nothing to preview" %}</em>
                     </div>
                     {{ form.description.errors }}
                 </div>
@@ -94,18 +94,18 @@ Edit Issue
                     <div class="flex justify-between items-center mb-1">
                         <label class="label text-sm font-semibold text-gray-700 p-0" for="{{ form.steps.id_for_label }}">{{ form.steps.label }}</label>
                         <div class="tabs tabs-boxed bg-gray-100 p-0.5 rounded-lg text-xs" style="width: fit-content;">
-                            <button type="button" onclick="toggleMarkdownTab('write', 'steps')" id="tab-steps-write" class="px-3 py-1 font-semibold rounded-md bg-white text-gray-900 shadow-sm transition-all">Write</button>
-                            <button type="button" onclick="toggleMarkdownTab('preview', 'steps')" id="tab-steps-preview" class="px-3 py-1 font-semibold rounded-md text-gray-500 hover:text-gray-900 transition-all">Preview</button>
+                            <button type="button" onclick="toggleMarkdownTab('write', 'steps')" id="tab-steps-write" class="px-3 py-1 font-semibold rounded-md bg-white text-gray-900 shadow-sm transition-all">{% trans "Write" %}</button>
+                            <button type="button" onclick="toggleMarkdownTab('preview', 'steps')" id="tab-steps-preview" class="px-3 py-1 font-semibold rounded-md text-gray-500 hover:text-gray-900 transition-all">{% trans "Preview" %}</button>
                         </div>
                     </div>
                     
                     <div id="container-steps-write">
                         <textarea name="{{ form.steps.name }}" id="{{ form.steps.id_for_label }}" rows="5"
                             class="textarea textarea-bordered w-full focus:border-[#226ce0] bg-gray-50 focus:bg-white transition-colors text-base font-mono text-sm"
-                            placeholder="1. Go to...&#10;2. Click on...">{{ report.steps }}</textarea>
+                            placeholder="{% trans "1. Go to...\n2. Click on..." %}">{{ report.steps }}</textarea>
                     </div>
                     <div id="container-steps-preview" class="hidden min-h-[130px] p-4 bg-gray-50 border border-gray-200 rounded-xl prose max-w-none text-sm text-gray-800">
-                        <em class="text-gray-400">Nothing to preview</em>
+                        <em class="text-gray-400">{% trans "Nothing to preview" %}</em>
                     </div>
                     {{ form.steps.errors }}
                 </div>
@@ -128,7 +128,7 @@ Edit Issue
                         {{ form.visibility }}
                         <div class="flex-1 min-w-0">
                             <span class="label-text font-semibold text-gray-900 block">{{ form.visibility.label }}</span>
-                            <span class="text-xs text-gray-500 block break-words">Display this report to the public or restrict it to project members only.</span>
+                            <span class="text-xs text-gray-500 block break-words">{% trans "Display this report to the public or restrict it to project members only." %}</span>
                         </div>
                     </label>
                     {{ form.visibility.errors }}
@@ -138,11 +138,11 @@ Edit Issue
             <!-- Submit Buttons -->
             <div class="p-8 bg-gray-50 border-t border-gray-100 flex justify-between items-center">
                 <a href="{% url 'projects:reports:report_detail' project_uuid=project.uuid report_uuid=report.uuid %}" class="btn btn-ghost rounded-xl capitalize">
-                    Cancel
+                    {% trans "Cancel" %}
                 </a>
                 <button type="submit"
                     class="btn btn-primary text-white px-8 font-semibold shadow-md hover:shadow-lg transition-all capitalize">
-                    Save Changes
+                    {% trans "Save Changes" %}
                 </button>
             </div>
         </form>
@@ -182,7 +182,7 @@ Edit Issue
             if (rawVal) {
                 previewContainer.innerHTML = marked.parse(rawVal);
             } else {
-                previewContainer.innerHTML = '<em class="text-gray-400">Nothing to preview</em>';
+                previewContainer.innerHTML = '<em class="text-gray-400">{% trans "Nothing to preview" %}</em>';
             }
         } else {
             writeContainer.classList.remove('hidden');

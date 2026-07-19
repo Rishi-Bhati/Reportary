@@ -1,3 +1,4 @@
+{% load i18n %}
 <div id="panel-overview" class="space-y-6">
     <!-- Summary Cards Grid -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -5,13 +6,13 @@
         <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex items-center justify-between group hover:border-[#226ce0]/20 transition-all duration-200">
             <div class="space-y-1">
                 <div class="flex items-center gap-1.5">
-                    <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Assigned to Me</p>
+                    <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">{% trans "Assigned to Me" %}</p>
                     <div class="group/tooltip relative inline-block">
                         <svg class="w-3.5 h-3.5 text-gray-300 hover:text-gray-500 cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
                         <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 hidden group-hover/tooltip:block bg-gray-900 text-white text-[10px] font-semibold py-1 px-2 rounded shadow-lg whitespace-nowrap z-30">
-                            Open issues currently assigned to you for fixing
+                            {% trans "Open issues currently assigned to you for fixing" %}
                         </div>
                     </div>
                 </div>
@@ -28,13 +29,13 @@
         <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex items-center justify-between group hover:border-[#226ce0]/20 transition-all duration-200">
             <div class="space-y-1">
                 <div class="flex items-center gap-1.5">
-                    <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Reported Issues</p>
+                    <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">{% trans "Reported Issues" %}</p>
                     <div class="group/tooltip relative inline-block">
                         <svg class="w-3.5 h-3.5 text-gray-300 hover:text-gray-500 cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
                         <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 hidden group-hover/tooltip:block bg-gray-900 text-white text-[10px] font-semibold py-1 px-2 rounded shadow-lg whitespace-nowrap z-30">
-                            Total issues you have reported across all projects
+                            {% trans "Total issues you have reported across all projects" %}
                         </div>
                     </div>
                 </div>
@@ -51,13 +52,13 @@
         <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex items-center justify-between group hover:border-[#226ce0]/20 transition-all duration-200">
             <div class="space-y-1">
                 <div class="flex items-center gap-1.5">
-                    <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Pending Invites</p>
+                    <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">{% trans "Pending Invites" %}</p>
                     <div class="group/tooltip relative inline-block">
                         <svg class="w-3.5 h-3.5 text-gray-300 hover:text-gray-500 cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
                         <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 hidden group-hover/tooltip:block bg-gray-900 text-white text-[10px] font-semibold py-1 px-2 rounded shadow-lg whitespace-nowrap z-30">
-                            Collaboration or role invites awaiting your response
+                            {% trans "Collaboration or role invites awaiting your response" %}
                         </div>
                     </div>
                 </div>
@@ -74,13 +75,13 @@
         <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex items-center justify-between group hover:border-[#226ce0]/20 transition-all duration-200">
             <div class="space-y-1">
                 <div class="flex items-center gap-1.5">
-                    <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Avg Resolution Time</p>
+                    <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">{% trans "Avg Resolution Time" %}</p>
                     <div class="group/tooltip relative inline-block">
                         <svg class="w-3.5 h-3.5 text-gray-300 hover:text-gray-500 cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
                         <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 hidden group-hover/tooltip:block bg-gray-900 text-white text-[10px] font-semibold py-1 px-2 rounded shadow-lg whitespace-nowrap z-30">
-                            Average time taken to resolve issue reports
+                            {% trans "Average time taken to resolve issue reports" %}
                         </div>
                     </div>
                 </div>
@@ -103,8 +104,8 @@
             <!-- Assigned to Me List -->
             <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
                 <div class="px-6 py-5 border-b border-gray-100 flex justify-between items-center">
-                    <h3 class="font-bold text-gray-900 text-base">Assigned to Me</h3>
-                    <a href="{% url 'reports:assigned_to_me' %}" class="text-xs font-semibold text-[#226ce0] hover:underline">View All</a>
+                    <h3 class="font-bold text-gray-900 text-base">{% trans "Assigned to Me" %}</h3>
+                    <a href="{% url 'reports:assigned_to_me' %}" class="text-xs font-semibold text-[#226ce0] hover:underline">{% trans "View All" %}</a>
                 </div>
                 <div class="divide-y divide-gray-100">
                     {% for report in assigned_reports %}
@@ -113,7 +114,7 @@
                         <div class="space-y-1">
                             <h4 class="font-semibold text-gray-900 text-sm hover:text-[#226ce0] transition-colors">{{ report.title }}</h4>
                             <p class="text-xs text-gray-400 font-medium">
-                                {{ report.project.title }} • Created {{ report.created_at|timesince }} ago
+                                {{ report.project.title }} • {% blocktrans with time=report.created_at|timesince %}Created {{ time }} ago{% endblocktrans %}
                             </p>
                         </div>
                         <div class="flex items-center gap-2">
@@ -151,7 +152,7 @@
             <!-- Recently Viewed Section -->
             {% if recently_viewed_reports %}
             <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm space-y-4">
-                <h3 class="font-bold text-gray-900 text-base">Recently Viewed</h3>
+                <h3 class="font-bold text-gray-900 text-base">{% trans "Recently Viewed" %}</h3>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {% for report in recently_viewed_reports %}
                     <a href="{% url 'projects:reports:report_detail' project_uuid=report.project.uuid report_uuid=report.uuid %}" 
@@ -173,8 +174,8 @@
             <!-- Projects Grid -->
             <div class="space-y-4">
                 <div class="flex items-center justify-between">
-                    <h3 class="font-bold text-gray-900 text-base">Projects</h3>
-                    <a href="{% url 'projects:my_projects' %}" class="text-xs font-semibold text-[#226ce0] hover:underline">View All</a>
+                    <h3 class="font-bold text-gray-900 text-base">{% trans "Projects" %}</h3>
+                    <a href="{% url 'projects:my_projects' %}" class="text-xs font-semibold text-[#226ce0] hover:underline">{% trans "View All" %}</a>
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {% for project in projects %}
@@ -193,7 +194,7 @@
                         </h4>
                         <p class="text-xs text-gray-500 line-clamp-2 mb-4 leading-normal flex-1">{{ project.description }}</p>
                         <div class="pt-2 border-t border-gray-50 text-gray-400 mt-auto" style="font-size: 9px; font-weight: 400; opacity: 0.65; letter-spacing: 0.01em;">
-                            updated {{ project.updated_at|timesince }} ago
+                            {% blocktrans with time=project.updated_at|timesince %}updated {{ time }} ago{% endblocktrans %}
                         </div>
                     </a>
                     {% endfor %}
@@ -206,8 +207,8 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                             </svg>
                         </div>
-                        <span class="text-sm font-semibold text-gray-900 group-hover:text-[#226ce0] transition-colors">New Project</span>
-                        <span class="text-xs text-gray-400 mt-0.5">Setup a new issue tracker</span>
+                        <span class="text-sm font-semibold text-gray-900 group-hover:text-[#226ce0] transition-colors">{% trans "New Project" %}</span>
+                        <span class="text-xs text-gray-400 mt-0.5">{% blocktrans %}Setup a new issue tracker{% endblocktrans %}</span>
                     </a>
                 </div>
             </div>
@@ -221,7 +222,7 @@
             {% if pending_actions %}
             <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-4">
                 <div class="flex items-center justify-between">
-                    <h3 class="font-bold text-gray-900 text-sm uppercase tracking-wider">Pending Invites</h3>
+                    <h3 class="font-bold text-gray-900 text-sm uppercase tracking-wider">{% trans "Pending Invites" %}</h3>
                     <span class="px-2 py-0.5 text-xs font-bold bg-amber-100 text-amber-800 rounded-full">{{ pending_actions_count }}</span>
                 </div>
                 <div class="space-y-3">
@@ -231,11 +232,11 @@
                             <p class="text-xs text-gray-800 leading-normal">
                                 <strong>@{{ invite.invited_by.username }}</strong> invited you as 
                                 {% if invite.invite_type == 'project_head' %}
-                                    <span class="font-bold text-indigo-600">Project Head</span>
+                                    <span class="font-bold text-indigo-600">{% trans "Project Head" %}</span>
                                 {% elif invite.invite_type == 'collaborator' %}
-                                    <span class="font-bold text-blue-600">Collaborator</span>
+                                    <span class="font-bold text-blue-600">{% trans "Collaborator" %}</span>
                                 {% else %}
-                                    <span class="font-bold text-purple-600">Organisation Member</span>
+                                    <span class="font-bold text-purple-600">{% trans "Organisation Member" %}</span>
                                 {% endif %}
                                 for <strong>{% if invite.project %}{{ invite.project.title }}{% else %}{{ invite.organisation.name }}{% endif %}</strong>.
                             </p>
@@ -244,13 +245,13 @@
                             <form action="{% url 'notifications:accept_invite' invite.uuid %}" method="post" class="flex-1">
                                 {% csrf_token %}
                                 <button type="submit" class="w-full btn btn-xs bg-emerald-600 hover:bg-emerald-700 text-white border-none rounded-lg font-semibold capitalize">
-                                    Accept
+                                    {% trans "Accept" %}
                                 </button>
                             </form>
                             <form action="{% url 'notifications:decline_invite' invite.uuid %}" method="post" class="flex-1">
                                 {% csrf_token %}
                                 <button type="submit" class="w-full btn btn-xs btn-outline border-gray-300 hover:bg-gray-100 text-gray-700 rounded-lg font-semibold capitalize">
-                                    Decline
+                                    {% trans "Decline" %}
                                 </button>
                             </form>
                         </div>
@@ -263,8 +264,8 @@
             <!-- Organizations -->
             <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-4">
                 <div class="flex justify-between items-center">
-                    <h3 class="font-bold text-gray-900 text-sm uppercase tracking-wider">Organisations</h3>
-                    <a href="{% url 'organisations:list' %}" class="text-xs font-semibold text-[#226ce0] hover:underline">Manage</a>
+                    <h3 class="font-bold text-gray-900 text-sm uppercase tracking-wider">{% trans "Organisations" %}</h3>
+                    <a href="{% url 'organisations:list' %}" class="text-xs font-semibold text-[#226ce0] hover:underline">{% trans "Manage" %}</a>
                 </div>
                 <div class="space-y-3">
                     {% for org in owned_organisations %}
@@ -275,7 +276,7 @@
                             </div>
                             <div>
                                 <h4 class="font-semibold text-gray-900 text-xs">{{ org.name }}</h4>
-                                <span class="inline-block text-[#226ce0] bg-blue-50/70 border border-blue-100 rounded px-1" style="font-size: 8px; font-weight: 700; padding: 1px 4px; text-transform: uppercase; letter-spacing: 0.05em; line-height: 1;">Owner</span>
+                                <span class="inline-block text-[#226ce0] bg-blue-50/70 border border-blue-100 rounded px-1" style="font-size: 8px; font-weight: 700; padding: 1px 4px; text-transform: uppercase; letter-spacing: 0.05em; line-height: 1;">{% trans "Owner" %}</span>
                             </div>
                         </div>
                     </div>
@@ -289,7 +290,7 @@
                             </div>
                             <div>
                                 <h4 class="font-semibold text-gray-900 text-xs">{{ org.name }}</h4>
-                                <span class="inline-block text-purple-600 bg-purple-50/70 border border-purple-100 rounded px-1" style="font-size: 8px; font-weight: 700; padding: 1px 4px; text-transform: uppercase; letter-spacing: 0.05em; line-height: 1;">Member</span>
+                                <span class="inline-block text-purple-600 bg-purple-50/70 border border-purple-100 rounded px-1" style="font-size: 8px; font-weight: 700; padding: 1px 4px; text-transform: uppercase; letter-spacing: 0.05em; line-height: 1;">{% trans "Member" %}</span>
                             </div>
                         </div>
                     </div>
@@ -297,7 +298,7 @@
 
                     {% if not owned_organisations and not member_organisations %}
                     <div class="text-center py-4 text-gray-400 text-xs leading-normal">
-                        You are not part of any organisations yet.
+                        {% trans "You are not part of any organisations yet." %}
                     </div>
                     {% endif %}
                 </div>
@@ -305,7 +306,7 @@
 
             <!-- Recent Activity Widget -->
             <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-4">
-                <h3 class="font-bold text-gray-900 text-sm uppercase tracking-wider">Your Activity</h3>
+                <h3 class="font-bold text-gray-900 text-sm uppercase tracking-wider">{% trans "Your Activity" %}</h3>
                 <div class="relative">
                     <!-- Timeline Line -->
                     <div class="absolute bg-gray-100" style="top: 0; bottom: 0; left: 6px; width: 1px;"></div>
@@ -320,16 +321,16 @@
 
                             <div style="font-size: 12px; line-height: 1.4;">
                                 <p class="text-gray-800" style="margin: 0;">
-                                    You reported 
+                                    {% trans "You reported" %} 
                                     <a href="{% url 'projects:reports:report_detail' project_uuid=report.project.uuid report_uuid=report.uuid %}" class="text-[#226ce0] font-semibold hover:underline">
                                         {{ report.title }}
                                     </a>
                                 </p>
-                                <p class="text-gray-400" style="margin: 2px 0 0 0; font-size: 10px;">{{ report.created_at|timesince }} ago</p>
+                                <p class="text-gray-400" style="margin: 2px 0 0 0; font-size: 10px;">{% blocktrans with time=report.created_at|timesince %}{{ time }} ago{% endblocktrans %}</p>
                             </div>
                         </li>
                         {% empty %}
-                        <li style="font-size: 12px; color: #9ca3af; padding: 8px 0; list-style-type: none;">No recent reporting activity.</li>
+                        <li style="font-size: 12px; color: #9ca3af; padding: 8px 0; list-style-type: none;">{% trans "No recent reporting activity." %}</li>
                         {% endfor %}
                     </ul>
                 </div>

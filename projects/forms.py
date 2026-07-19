@@ -1,16 +1,21 @@
 from django import forms
 from django.forms import inlineformset_factory
 from .models import Project, Component
+from django.utils.translation import gettext_lazy as _
 
 class ProjectForm(forms.ModelForm):
-    title = forms.CharField(widget=forms.TextInput(attrs={'class': 'shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'}))
-    link = forms.URLField(widget=forms.URLInput(attrs={'class': 'shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'}))
-    description = forms.CharField(widget=forms.Textarea(attrs={'rows': 4, 'class': 'shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'}))
+    title = forms.CharField(widget=forms.TextInput(attrs={'class': 'shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline', 'placeholder': _("Title")}), label=_("Title"))
+    link = forms.URLField(widget=forms.URLInput(attrs={'class': 'shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline', 'placeholder': _("Link")}), label=_("Link"))
+    description = forms.CharField(widget=forms.Textarea(attrs={'rows': 4, 'class': 'shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline', 'placeholder': _("Description...")}), label=_("Description"))
     visibility = forms.ChoiceField(
-        choices=Project.VISIBILITY_CHOICES,
+        choices=[
+            ('public', _('Public')),
+            ('org', _('Organization Members Only')),
+            ('private', _('Private (Owner & Collaborators Only)')),
+        ],
         widget=forms.RadioSelect(attrs={'class': 'radio radio-primary'}),
         initial='public',
-        label="Visibility Scope"
+        label=_("Visibility Scope")
     )
 
     max_attachments = forms.IntegerField(
@@ -19,15 +24,16 @@ class ProjectForm(forms.ModelForm):
         initial=5,
         required=False,
         widget=forms.NumberInput(attrs={'class': 'shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'}),
-        label="Max Attachments per Report"
+        label=_("Max Attachments per Report")
     )
     allowed_attachment_types = forms.CharField(
         initial=".jpg,.jpeg,.png,.pdf,.doc,.docx,.xls,.xlsx,.zip,.txt",
         required=False,
         widget=forms.TextInput(attrs={'class': 'shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'}),
-        help_text="Comma-separated file extensions (e.g. .jpg,.png,.pdf)",
-        label="Allowed Attachment Extensions"
+        help_text=_("Comma-separated file extensions (e.g. .jpg,.png,.pdf)"),
+        label=_("Allowed Attachment Extensions")
     )
+
 
     class Meta:
         model = Project
@@ -71,13 +77,13 @@ class ProjectForm(forms.ModelForm):
             'class': 'shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
         })
         self.fields['org'].required = False
-        self.fields['org'].empty_label = "None (Personal Project)"
+        self.fields['org'].empty_label = _("None (Personal Project)")
 
         self.fields['project_head'].widget.attrs.update({
             'class': 'shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
         })
         self.fields['project_head'].required = False
-        self.fields['project_head'].label = "Project Head"
+        self.fields['project_head'].label = _("Project Head")
 
     def clean(self):
         cleaned_data = super().clean()
@@ -159,8 +165,8 @@ class ProjectForm(forms.ModelForm):
             )
 
 class ComponentForm(forms.ModelForm):
-    name = forms.CharField(widget=forms.TextInput(attrs={'class': 'input input-sm input-bordered w-full focus:border-[#226ce0]', 'placeholder': 'Name'}))
-    description = forms.CharField(widget=forms.Textarea(attrs={'rows': 2, 'class': 'textarea textarea-sm textarea-bordered w-full focus:border-[#226ce0]', 'placeholder': 'Description'}))
+    name = forms.CharField(widget=forms.TextInput(attrs={'class': 'input input-sm input-bordered w-full focus:border-[#226ce0]', 'placeholder': _("Name")}), label=_("Name"))
+    description = forms.CharField(widget=forms.Textarea(attrs={'rows': 2, 'class': 'textarea textarea-sm textarea-bordered w-full focus:border-[#226ce0]', 'placeholder': _("Description")}), label=_("Description"))
 
     class Meta:
         model = Component

@@ -2,6 +2,7 @@ from django import forms
 from reports.models import Report
 from components.models import Component
 from projects.models import Project
+from django.utils.translation import gettext as _
 
 
 class ReportForm(forms.ModelForm):
@@ -44,11 +45,43 @@ class ReportForm(forms.ModelForm):
         # This is crucial because we need to know later if a project was pre-set from the URL
         self.project = project
 
+        # Set translated labels and placeholders
+        self.fields['title'].label = _("Title")
+        self.fields['title'].widget.attrs['placeholder'] = _("Brief summary of the issue")
+        
+        self.fields['description'].label = _("Description")
+        self.fields['description'].widget.attrs['placeholder'] = _("Detailed explanation...")
+        
+        self.fields['steps'].label = _("Steps")
+        self.fields['steps'].widget.attrs['placeholder'] = _("1. Go to...\n2. Click on...")
+        
+        self.fields['frequency'].label = _("Frequency")
+        self.fields['frequency'].choices = [
+            ('once', _('Once')),
+            ('daily', _('Daily')),
+            ('weekly', _('Weekly')),
+            ('monthly', _('Monthly')),
+        ]
+        
+        self.fields['impact'].label = _("Impact")
+        self.fields['impact'].choices = [
+            ('low', _('Low')),
+            ('medium', _('Medium')),
+            ('high', _('High')),
+            ('critical', _('Critical')),
+        ]
+        
+        self.fields['component'].label = _("Component")
+        
+        if 'project' in self.fields:
+            self.fields['project'].label = _("Project")
+
         if 'visibility' in self.fields:
-            self.fields['visibility'].label = "Public Visibility"
+            self.fields['visibility'].label = _("Public Visibility")
         
         if 'is_anonymous' in self.fields:
             self.fields['is_anonymous'].widget.attrs.update({'class': 'form-checkbox h-5 w-5 text-blue-600 rounded'})
+
         
         if project:
             # SCENARIO 1: User accessed via /projects/<pk>/reports/new/

@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static %}{% load i18n %}
 
 {% block title %}Manage Members - {{ organisation.name }} | Reportary{% endblock %}
 {% block breadcrumb %}
@@ -34,7 +34,7 @@ Members
             </div>
             <div class="flex-1">
                 <p class="text-2xl font-bold text-[#226ce0]">1</p>
-                <p class="text-xs text-gray-500 mt-1">Owner</p>
+                <p class="text-xs text-gray-500 mt-1">{% trans "Owner" %}</p>
             </div>
             <div class="flex-1">
                 <p class="text-2xl font-bold text-gray-900">{{ members|length|add:"-1" }}</p>
@@ -77,7 +77,7 @@ Members
             <table class="w-full text-left text-sm">
                 <thead class="bg-gray-50 border-b border-gray-100">
                     <tr>
-                        <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Member</th>
+                        <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">{% trans "Member" %}</th>
                         <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Role</th>
                         <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Joined</th>
                         {% if is_owner %}

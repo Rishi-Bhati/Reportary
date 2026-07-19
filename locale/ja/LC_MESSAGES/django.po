@@ -1,0 +1,2176 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-07-19 20:50+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: accounts/templates/accounts/password_reset_complete.html:4
+msgid "Password Reset Complete"
+msgstr "パスワードリセット完了"
+
+#: accounts/templates/accounts/password_reset_confirm.html:4
+msgid "Confirm Password"
+msgstr "パスワード確認"
+
+#: accounts/templates/accounts/password_reset_confirm.html:10
+msgid "Set New Password"
+msgstr "新しいパスワードを設定"
+
+#: accounts/templates/accounts/password_reset_confirm.html:49
+msgid "Change Password"
+msgstr "パスワード変更"
+
+#: accounts/templates/accounts/password_reset_form.html:4
+msgid "Reset Password"
+msgstr "パスワードリセット"
+
+#: accounts/templates/accounts/password_reset_form.html:12
+msgid "Enter your email address"
+msgstr "メールアドレスを入力"
+
+#: core/settings.py:220
+msgid "English"
+msgstr "English"
+
+#: core/settings.py:221
+msgid "日本語"
+msgstr "日本語"
+
+#: core/templates/404.html:4
+msgid "Page Not Found"
+msgstr "ページが見つかりません"
+
+#: core/templates/404.html:71
+msgid "Go Back"
+msgstr "戻る"
+
+#: core/templates/base.html:73
+msgid ""
+"Verify your email to unlock reporting, commenting, project creation, and "
+"collaboration."
+msgstr "レポート、コメント、プロジェクト作成、コラボレーションを有効にするためメールを確認してください。"
+
+#: core/templates/base.html:79
+msgid "Resend verification"
+msgstr "確認メールを再送"
+
+#: core/templates/base.html:101
+msgid "Search this page"
+msgstr "このページを検索"
+
+#: core/templates/partials/sidebar.html:13
+msgid "New Report"
+msgstr "新しいレポート"
+
+#: core/templates/partials/sidebar.html:22
+#: dashboard/templates/dashboard/partials/overview_partial.html:210
+#: projects/templates/register_project.html:5
+msgid "New Project"
+msgstr "新しいプロジェクト"
+
+#: core/templates/partials/sidebar.html:28
+msgid "Navigation"
+msgstr "ナビゲーション"
+
+#: core/templates/partials/sidebar.html:40
+msgid "Home"
+msgstr "ホーム"
+
+#: core/templates/partials/sidebar.html:52 home/templates/home/changelog.html:4
+#: home/templates/home/landing_page.html:236
+msgid "What's New"
+msgstr "新着情報"
+
+#: core/templates/partials/sidebar.html:64
+msgid "My Projects"
+msgstr "マイプロジェクト"
+
+#: core/templates/partials/sidebar.html:76
+#: core/templates/partials/topbar.html:207
+#: dashboard/templates/dashboard/partials/overview_partial.html:267
+#: organisations/templates/organisations/organisation_projects.html:6
+msgid "Organisations"
+msgstr "組織"
+
+#: core/templates/partials/sidebar.html:88
+msgid "Reported By Me"
+msgstr "自分のレポート"
+
+#: core/templates/partials/sidebar.html:100
+msgid "Assigned To Me"
+msgstr "自分に割り当て"
+
+#: core/templates/partials/sidebar.html:107
+#: core/templates/search_results.html:59
+msgid "Filters"
+msgstr "フィルター"
+
+#: core/templates/partials/sidebar.html:119
+#: reports/templates/reports/bookmarks_and_watches.html:4
+#: reports/templates/reports/bookmarks_and_watches.html:5
+msgid "Bookmarks & Watching"
+msgstr "ブックマーク・監視中"
+
+#: core/templates/partials/sidebar.html:131
+msgid "Collaborating"
+msgstr "コラボレーション中"
+
+#: core/templates/partials/sidebar.html:143
+msgid "Needs Attention"
+msgstr "要注意"
+
+#: core/templates/partials/sidebar.html:150
+#: core/templates/partials/topbar.html:80
+msgid "Help"
+msgstr "ヘルプ"
+
+#: core/templates/partials/sidebar.html:158
+#: home/templates/home/base_public.html:25
+#: home/templates/home/changelog.html:202 home/templates/home/faq.html:4
+#: home/templates/home/faq.html:12 home/templates/home/landing_page.html:244
+msgid "FAQ"
+msgstr "よくある質問"
+
+#: core/templates/partials/sidebar.html:167 home/templates/home/contact.html:4
+#: home/templates/home/landing_page.html:245
+msgid "Contact Us"
+msgstr "お問い合わせ"
+
+#: core/templates/partials/sidebar.html:176
+#: home/templates/home/landing_page.html:238
+msgid "Report an issue?"
+msgstr "問題を報告する？"
+
+#: core/templates/partials/topbar.html:6
+msgid "Toggle Sidebar"
+msgstr "サイドバー切替"
+
+#: core/templates/partials/topbar.html:26
+msgid "Search..."
+msgstr "検索..."
+
+#: core/templates/partials/topbar.html:78
+msgid "Explore"
+msgstr "探索"
+
+#: core/templates/partials/topbar.html:84
+msgid "Toggle Light/Dark Mode"
+msgstr "ライト/ダークモード切替"
+
+#: core/templates/partials/topbar.html:99
+#: home/templates/home/base_public.html:33
+#: home/templates/home/landing_page.html:46
+msgid "Change Language"
+msgstr "言語を変更"
+
+#: core/templates/partials/topbar.html:205 home/templates/home/profile.html:5
+msgid "Profile"
+msgstr "プロフィール"
+
+#: core/templates/partials/topbar.html:209
+#: organisations/templates/organisations/organisation_dashboard.html:255
+msgid "Settings"
+msgstr "設定"
+
+#: core/templates/partials/topbar.html:213
+msgid "Logout"
+msgstr "ログアウト"
+
+#: core/templates/search_results.html:4
+msgid "Search & Filters"
+msgstr "検索とフィルター"
+
+#: core/templates/search_results.html:5
+msgid "Search"
+msgstr "検索"
+
+#: core/templates/search_results.html:12
+msgid "Global Search & Filters"
+msgstr "グローバル検索とフィルター"
+
+#: core/templates/search_results.html:13
+msgid "Search reports, projects, comments, and organizations in real time."
+msgstr "レポート、プロジェクト、コメント、組織をリアルタイムで検索します。"
+
+#: core/templates/search_results.html:31
+msgid "Keyword Search"
+msgstr "キーワード検索"
+
+#: core/templates/search_results.html:33
+msgid "Type keywords..."
+msgstr "キーワードを入力..."
+
+#: core/templates/search_results.html:44
+msgid "Recent Searches"
+msgstr "最近の検索"
+
+#: core/templates/search_results.html:60
+msgid "Clear All"
+msgstr "すべてクリア"
+
+#: core/templates/search_results.html:66
+#: reports/templates/reports/partials/reports_list_partial.html:12
+msgid "Status"
+msgstr "ステータス"
+
+#: core/templates/search_results.html:68
+msgid "All Statuses"
+msgstr "すべてのステータス"
+
+#: core/templates/search_results.html:69
+#: core/templates/search_results_partial.html:158
+#: core/templates/search_results_partial.html:188
+#: dashboard/templates/dashboard/partials/analytics_partial.html:135
+#: reports/templates/report_detail.html:33
+#: reports/templates/reports/partials/reports_list_partial.html:51
+msgid "Open"
+msgstr "オープン"
+
+#: core/templates/search_results.html:70
+#: core/templates/search_results_partial.html:160
+#: core/templates/search_results_partial.html:190
+#: reports/templates/report_detail.html:35
+#: reports/templates/reports/partials/reports_list_partial.html:54
+msgid "In Progress"
+msgstr "進行中"
+
+#: core/templates/search_results.html:71
+#: core/templates/search_results_partial.html:162
+#: core/templates/search_results_partial.html:192
+#: reports/templates/report_detail.html:37
+#: reports/templates/reports/partials/reports_list_partial.html:57
+msgid "Resolved"
+msgstr "解決済み"
+
+#: core/templates/search_results.html:72
+#: dashboard/templates/dashboard/partials/analytics_partial.html:135
+#: reports/templates/reports/partials/reports_list_partial.html:60
+msgid "Closed"
+msgstr "クローズ済み"
+
+#: core/templates/search_results.html:78
+msgid "Severity"
+msgstr "重大度"
+
+#: core/templates/search_results.html:80
+msgid "All Severities"
+msgstr "すべての重大度"
+
+#: core/templates/search_results.html:81
+#: dashboard/templates/dashboard/partials/analytics_partial.html:154
+#: reports/forms.py:68
+msgid "Low"
+msgstr "低"
+
+#: core/templates/search_results.html:82
+#: dashboard/templates/dashboard/partials/analytics_partial.html:154
+#: reports/forms.py:69
+msgid "Medium"
+msgstr "中"
+
+#: core/templates/search_results.html:83
+#: dashboard/templates/dashboard/partials/analytics_partial.html:154
+#: reports/forms.py:70
+msgid "High"
+msgstr "高"
+
+#: core/templates/search_results.html:84
+#: dashboard/templates/dashboard/partials/analytics_partial.html:154
+#: reports/forms.py:71
+msgid "Critical"
+msgstr "致命的"
+
+#: core/templates/search_results.html:90
+msgid "Assignee"
+msgstr "担当者"
+
+#: core/templates/search_results.html:92
+msgid "All Assignees"
+msgstr "すべての担当者"
+
+#: core/templates/search_results.html:101
+msgid "Reporter"
+msgstr "報告者"
+
+#: core/templates/search_results.html:103
+msgid "All Reporters"
+msgstr "すべての報告者"
+
+#: core/templates/search_results.html:112
+#: projects/templates/projects_view.html:56
+msgid "Organization"
+msgstr "組織"
+
+#: core/templates/search_results.html:114
+#: projects/templates/projects_view.html:65
+msgid "All Organizations"
+msgstr "すべての組織"
+
+#: core/templates/search_results.html:123 reports/forms.py:74
+msgid "Component"
+msgstr "コンポーネント"
+
+#: core/templates/search_results.html:125
+msgid "All Components"
+msgstr "すべてのコンポーネント"
+
+#: core/templates/search_results.html:134
+#: reports/templates/report_list.html:130
+msgid "From Date"
+msgstr "開始日"
+
+#: core/templates/search_results.html:139
+#: reports/templates/report_list.html:136
+msgid "To Date"
+msgstr "終了日"
+
+#: core/templates/search_results.html:159
+msgid "Save This Filtered Search"
+msgstr "このフィルターされた検索を保存"
+
+#: core/templates/search_results.html:161
+msgid "Search name (e.g. Critical reports)"
+msgstr "検索名 (例: 致命的なレポート)"
+
+#: core/templates/search_results.html:162
+msgid "Save"
+msgstr "保存"
+
+#: core/templates/search_results.html:170
+msgid "Saved Searches"
+msgstr "保存された検索"
+
+#: core/templates/search_results_partial.html:17
+#: dashboard/templates/dashboard/partials/overview_partial.html:177
+#: organisations/templates/organisations/organisation_dashboard.html:101
+#: organisations/templates/organisations/organisation_projects.html:8
+#: organisations/templates/organisations/organisation_projects.html:16
+#: reports/templates/create_report.html:11 reports/templates/edit_report.html:6
+msgid "Projects"
+msgstr "プロジェクト"
+
+#: core/templates/search_results_partial.html:28
+#: core/templates/search_results_partial.html:93
+#: core/templates/search_results_partial.html:150
+#: core/templates/search_results_partial.html:225
+msgid "Selected"
+msgstr "選択済み"
+
+#: core/templates/search_results_partial.html:41
+#: core/templates/search_results_partial.html:67
+#: organisations/templates/organisations/organisation_projects.html:70
+#, python-format
+msgid "Updated %(time)s ago"
+msgstr "%(time)s前に更新"
+
+#: core/templates/search_results_partial.html:82
+msgid "Organizations"
+msgstr "組織"
+
+#: core/templates/search_results_partial.html:95
+#: core/templates/search_results_partial.html:117
+#: organisations/templates/organisations/organisation_list.html:53
+#: organisations/templates/organisations/organisation_projects.html:59
+#: projects/templates/projects/partials/projects_grid_partial.html:33
+msgid "No description provided."
+msgstr "説明は登録されていません。"
+
+#: core/templates/search_results_partial.html:139
+msgid "Reports"
+msgstr "レポート"
+
+#: core/templates/search_results_partial.html:153
+#: core/templates/search_results_partial.html:183
+msgid "Project:"
+msgstr "プロジェクト:"
+
+#: core/templates/search_results_partial.html:167
+#: core/templates/search_results_partial.html:197
+#: dashboard/templates/dashboard/partials/overview_partial.html:329
+#, python-format
+msgid "%(time)s ago"
+msgstr "%(time)s前"
+
+#: core/templates/search_results_partial.html:212
+#: reports/templates/report_detail.html:197
+msgid "Comments"
+msgstr "コメント"
+
+#: core/templates/search_results_partial.html:226
+#: core/templates/search_results_partial.html:244
+#, python-format
+msgid "• in \"%(title)s\""
+msgstr "・ 「%(title)s」内"
+
+#: dashboard/templates/dashboard.html:11
+msgid "Workspace"
+msgstr "ワークスペース"
+
+#: dashboard/templates/dashboard.html:12
+msgid "Welcome back"
+msgstr "おかえりなさい"
+
+#: dashboard/templates/dashboard.html:18
+msgid "Overview"
+msgstr "概要"
+
+#: dashboard/templates/dashboard.html:22
+msgid "Analytics"
+msgstr "分析"
+
+#: dashboard/templates/dashboard.html:27
+msgid "New Issue"
+msgstr "新しいイシュー"
+
+#: dashboard/templates/dashboard/partials/analytics_partial.html:7
+msgid "Total Tracked Issues"
+msgstr "追跡中のイシュー合計"
+
+#: dashboard/templates/dashboard/partials/analytics_partial.html:13
+msgid "Total issues reported across all projects you participate in"
+msgstr "参加しているすべてのプロジェクトで報告されたイシューの総数"
+
+#: dashboard/templates/dashboard/partials/analytics_partial.html:21
+msgid "Open vs Closed"
+msgstr "オープン vs クローズ"
+
+#: dashboard/templates/dashboard/partials/analytics_partial.html:27
+msgid "Number of open/in-progress reports vs resolved/closed reports"
+msgstr "オープン・進行中のレポート数と解決済み・クローズ済みのレポート数"
+
+#: dashboard/templates/dashboard/partials/analytics_partial.html:35
+msgid "Average Fix Time"
+msgstr "平均修正時間"
+
+#: dashboard/templates/dashboard/partials/analytics_partial.html:41
+msgid "Average time elapsed before issues are marked as resolved"
+msgstr "イシューが解決済みとマークされるまでの平均経過時間"
+
+#: dashboard/templates/dashboard/partials/analytics_partial.html:53
+msgid "Status Allocation"
+msgstr "ステータス配分"
+
+#: dashboard/templates/dashboard/partials/analytics_partial.html:61
+msgid "Issues by Severity"
+msgstr "重大度別のイシュー"
+
+#: dashboard/templates/dashboard/partials/analytics_partial.html:69
+msgid "Top Modules / Components"
+msgstr "主要モジュール / コンポーネント"
+
+#: dashboard/templates/dashboard/partials/analytics_partial.html:74
+msgid "No components mapped. Add components to projects."
+msgstr "マッピングされたコンポーネントはありません。プロジェクトにコンポーネントを追加してください。"
+
+#: dashboard/templates/dashboard/partials/analytics_partial.html:84
+msgid "Issues Created Over Time (30d)"
+msgstr "期間中のイシュー作成推移 (30日)"
+
+#: dashboard/templates/dashboard/partials/analytics_partial.html:94
+msgid "Most Active Projects"
+msgstr "最もアクティブなプロジェクト"
+
+#: dashboard/templates/dashboard/partials/analytics_partial.html:100
+#, python-format
+msgid "%(count)s reports"
+msgstr "%(count)s件のレポート"
+
+#: dashboard/templates/dashboard/partials/analytics_partial.html:104
+msgid "No active projects."
+msgstr "アクティブなプロジェクトはありません。"
+
+#: dashboard/templates/dashboard/partials/analytics_partial.html:111
+msgid "Top Assignees"
+msgstr "主な担当者"
+
+#: dashboard/templates/dashboard/partials/analytics_partial.html:117
+#, python-format
+msgid "%(count)s active"
+msgstr "%(count)s件のアクティブ"
+
+#: dashboard/templates/dashboard/partials/analytics_partial.html:121
+msgid "No active assignees."
+msgstr "アクティブな担当者はいません。"
+
+#: dashboard/templates/dashboard/partials/analytics_partial.html:156
+msgid "Issues Count"
+msgstr "イシュー数"
+
+#: dashboard/templates/dashboard/partials/analytics_partial.html:203
+msgid "New Reports"
+msgstr "新規レポート"
+
+#: dashboard/templates/dashboard/partials/overview_partial.html:9
+#: dashboard/templates/dashboard/partials/overview_partial.html:107
+msgid "Assigned to Me"
+msgstr "自分に割り当て"
+
+#: dashboard/templates/dashboard/partials/overview_partial.html:15
+msgid "Open issues currently assigned to you for fixing"
+msgstr "現在あなたに割り当てられているオープンなイシュー"
+
+#: dashboard/templates/dashboard/partials/overview_partial.html:32
+msgid "Reported Issues"
+msgstr "報告したイシュー"
+
+#: dashboard/templates/dashboard/partials/overview_partial.html:38
+msgid "Total issues you have reported across all projects"
+msgstr "全プロジェクトで報告したイシューの合計"
+
+#: dashboard/templates/dashboard/partials/overview_partial.html:55
+#: dashboard/templates/dashboard/partials/overview_partial.html:225
+msgid "Pending Invites"
+msgstr "保留中の招待"
+
+#: dashboard/templates/dashboard/partials/overview_partial.html:61
+msgid "Collaboration or role invites awaiting your response"
+msgstr "返答待ちのコラボレーション・役割招待"
+
+#: dashboard/templates/dashboard/partials/overview_partial.html:78
+msgid "Avg Resolution Time"
+msgstr "平均解決時間"
+
+#: dashboard/templates/dashboard/partials/overview_partial.html:84
+msgid "Average time taken to resolve issue reports"
+msgstr "イシューレポートの解決に要した平均時間"
+
+#: dashboard/templates/dashboard/partials/overview_partial.html:108
+#: dashboard/templates/dashboard/partials/overview_partial.html:178
+msgid "View All"
+msgstr "すべて見る"
+
+#: dashboard/templates/dashboard/partials/overview_partial.html:117
+#, python-format
+msgid "Created %(time)s ago"
+msgstr "作成：%(time)s前"
+
+#: dashboard/templates/dashboard/partials/overview_partial.html:155
+msgid "Recently Viewed"
+msgstr "最近見たイシュー"
+
+#: dashboard/templates/dashboard/partials/overview_partial.html:197
+#, python-format
+msgid "updated %(time)s ago"
+msgstr "%(time)s前に更新"
+
+#: dashboard/templates/dashboard/partials/overview_partial.html:211
+msgid "Setup a new issue tracker"
+msgstr "イシュートラッカーを新規セットアップ"
+
+#: dashboard/templates/dashboard/partials/overview_partial.html:235
+#: projects/forms.py:86
+msgid "Project Head"
+msgstr "プロジェクトリーダー"
+
+#: dashboard/templates/dashboard/partials/overview_partial.html:237
+msgid "Collaborator"
+msgstr "コラボレーター"
+
+#: dashboard/templates/dashboard/partials/overview_partial.html:239
+msgid "Organisation Member"
+msgstr "組織メンバー"
+
+#: dashboard/templates/dashboard/partials/overview_partial.html:248
+msgid "Accept"
+msgstr "承諾"
+
+#: dashboard/templates/dashboard/partials/overview_partial.html:254
+msgid "Decline"
+msgstr "辞退"
+
+#: dashboard/templates/dashboard/partials/overview_partial.html:268
+msgid "Manage"
+msgstr "管理"
+
+#: dashboard/templates/dashboard/partials/overview_partial.html:279
+#: organisations/templates/organisations/organisation_list.html:42
+#: organisations/templates/organisations/organisation_members.html:37
+msgid "Owner"
+msgstr "オーナー"
+
+#: dashboard/templates/dashboard/partials/overview_partial.html:293
+#: organisations/templates/organisations/organisation_list.html:44
+#: organisations/templates/organisations/organisation_members.html:80
+msgid "Member"
+msgstr "メンバー"
+
+#: dashboard/templates/dashboard/partials/overview_partial.html:301
+msgid "You are not part of any organisations yet."
+msgstr "まだ組織に参加していません。"
+
+#: dashboard/templates/dashboard/partials/overview_partial.html:309
+msgid "Your Activity"
+msgstr "あなたのアクティビティ"
+
+#: dashboard/templates/dashboard/partials/overview_partial.html:324
+msgid "You reported"
+msgstr "あなたが報告しました"
+
+#: dashboard/templates/dashboard/partials/overview_partial.html:333
+msgid "No recent reporting activity."
+msgstr "最近の報告アクティビティはありません。"
+
+#: home/templates/home/base_public.html:26
+#: home/templates/home/base_public.html:101
+#: home/templates/home/changelog.html:202
+msgid "Contact"
+msgstr "お問い合わせ"
+
+#: home/templates/home/base_public.html:27
+msgid "Privacy"
+msgstr "プライバシー"
+
+#: home/templates/home/base_public.html:81
+#: home/templates/home/landing_page.html:95
+msgid "Dashboard"
+msgstr "ダッシュボード"
+
+#: home/templates/home/base_public.html:83
+#: home/templates/home/landing_page.html:97
+#: home/templates/home/landing_page.html:102
+#: home/templates/home/landing_page.html:235
+msgid "Get Started"
+msgstr "始める"
+
+#: home/templates/home/base_public.html:97
+#: home/templates/home/landing_page.html:257
+msgid "All rights reserved."
+msgstr "All rights reserved."
+
+#: home/templates/home/base_public.html:99
+#: home/templates/home/changelog.html:202
+#: home/templates/home/landing_page.html:251 home/templates/home/privacy.html:4
+#: home/templates/home/privacy.html:11 home/templates/home/terms.html:61
+msgid "Privacy Policy"
+msgstr "プライバシーポリシー"
+
+#: home/templates/home/base_public.html:100
+#: home/templates/home/changelog.html:202
+#: home/templates/home/landing_page.html:252 home/templates/home/terms.html:4
+#: home/templates/home/terms.html:11
+msgid "Terms of Service"
+msgstr "利用規約"
+
+#: home/templates/home/changelog.html:5
+msgid "Changelog"
+msgstr "変更履歴"
+
+#: home/templates/home/changelog.html:15
+msgid "LIVE UPDATES"
+msgstr "ライブアップデート"
+
+#: home/templates/home/changelog.html:18
+msgid "What's New in Reportary"
+msgstr "Reportaryの新着情報"
+
+#: home/templates/home/changelog.html:19
+msgid ""
+"A running log of every improvement, security fix, and new feature shipped. "
+"Most recent first."
+msgstr "実装されたすべての改善点、セキュリティ修正、新機能の履歴ログ。新しい順。"
+
+#: home/templates/home/changelog.html:29
+msgid ""
+"July 2026 · Auto Language Selection, Multilingual UI, & Mobile Email "
+"Templates"
+msgstr "2026年7月 · 自動言語選択、多言語UI、およびモバイルメールテンプレート"
+
+#: home/templates/home/changelog.html:30
+msgid "Latest"
+msgstr "最新"
+
+#: home/templates/home/changelog.html:37 home/templates/home/changelog.html:67
+#: home/templates/home/changelog.html:85 home/templates/home/changelog.html:95
+#: home/templates/home/changelog.html:134
+#: home/templates/home/changelog.html:142
+#: home/templates/home/changelog.html:150
+#: home/templates/home/changelog.html:158
+#: home/templates/home/changelog.html:183
+#: home/templates/home/changelog.html:191
+#: home/templates/home/changelog.html:199
+msgid "New"
+msgstr "新規"
+
+#: home/templates/home/changelog.html:38 home/templates/home/changelog.html:68
+#: home/templates/home/changelog.html:218
+msgid "Feature"
+msgstr "機能"
+
+#: home/templates/home/changelog.html:40
+msgid "Global Multilingual Support (English & Japanese)"
+msgstr "グローバル多言語サポート（英語・日本語）"
+
+#: home/templates/home/changelog.html:41
+msgid ""
+"Allows users to navigate the platform entirely in Japanese or English. "
+"Features location-based auto language selection using Geo-IP database and "
+"client browser headers to serve Japanese in Japan and English elsewhere "
+"without intrusive prompts. Includes a visual globe dropdown selector on the "
+"landing page and navbar for instant session-persistent language switching, "
+"and full UI translation across all dashboards, analytics, search, FAQ, and "
+"legal pages."
+msgstr "ユーザーがプラットフォーム全体を日本語または英語で完全にナビゲートできるようになります。Geo-IPデータベースとクライアントブラウザヘッダーを使用した位置情報ベースの自動言語選択機能を備え、煩わしいプロンプトを表示することなく、日本国内のユーザーには日本語を、それ以外の地域のユーザーには英語を提供します。瞬時にセッション永続的な言語切り替えを行うための、ランディングページとナビゲーションバー上の地球儀ドロップダウンセレクター、およびすべてのダッシュボード、アナリティクス、検索、FAQ、法的ページにわたる完全なUI翻訳が含まれています。"
+
+#: home/templates/home/changelog.html:46 home/templates/home/changelog.html:166
+msgid "Improvement"
+msgstr "改善"
+
+#: home/templates/home/changelog.html:48
+msgid "Simplified Mobile-Responsive Notification Emails"
+msgstr "簡素化されたモバイル対応の通知メール"
+
+#: home/templates/home/changelog.html:49
+msgid ""
+"Overhauled the email notification system to keep transactional layout "
+"styling simpler and professional. Fixed formatting constraints causing "
+"layouts to render poorly on mobile and phone screens, resulting in "
+"streamlined, clean email alerts for comments, status changes, assignments, "
+"and invitations."
+msgstr "トランザクションレイアウトのスタイルをよりシンプルかつプロフェッショナルに維持するために、メール通知システムを刷新しました。モバイルやスマートフォンの画面でレイアウトが崩れて表示される原因となっていたフォーマットの制約を修正し、コメント、ステータス変更、アサイン、招待に関する合理化されたクリーンなメールアラートを実現しました。"
+
+#: home/templates/home/changelog.html:60
+msgid "July 2026 · Security Hardening, Public Portals, & Organisation Upgrades"
+msgstr "2026年7月 · セキュリティ強化、公開ポータル、組織機能のアップグレード"
+
+#: home/templates/home/changelog.html:70
+msgid "Public Portals & Anonymous Reporting"
+msgstr "公開ポータルと匿名レポート"
+
+#: home/templates/home/changelog.html:71
+msgid ""
+"External users can now submit feedback anonymously through standalone "
+"project links at"
+msgstr "外部ユーザーは以下にあるスタンドアロンのプロジェクトリンクを介して匿名でフィードバックを送信できるようになりました："
+
+#: home/templates/home/changelog.html:71
+msgid ""
+"Includes drag-and-drop attachment dropzones, math CAPTCHAs and honeypots to "
+"block spam, secure rate limits, and GDPR-safe salted IP hashing. Project "
+"owners can fully customize link states, attachments, and regeneration."
+msgstr "スパムをブロックするためのドラッグ＆ドロップ添付ドロップゾーン、計算CAPTCHA、ハニーポット、安全なレート制限、GDPRに準拠したソルト付きIPハッシュが含まれます。プロジェクトオーナーは、リンク状態、添付ファイル、再生成を完全にカスタマイズできます。"
+
+#: home/templates/home/changelog.html:76 home/templates/home/changelog.html:116
+#: home/templates/home/changelog.html:125
+#: home/templates/home/changelog.html:226
+msgid "Security"
+msgstr "セキュリティ"
+
+#: home/templates/home/changelog.html:77 home/templates/home/changelog.html:117
+#: home/templates/home/changelog.html:126
+msgid "Fix"
+msgstr "修正"
+
+#: home/templates/home/changelog.html:79
+msgid "Production Readiness Security Hardening"
+msgstr "本番環境運用のためのセキュリティ強化"
+
+#: home/templates/home/changelog.html:80
+msgid ""
+"Remediated multiple vulnerabilities identified in the production readiness "
+"audit. Enforced strict UUID access checks, decoupled project managers from "
+"direct ownership, secured user search endpoints against database email "
+"scraping, and hardened cookie attributes (Samesite, HttpOnly) and HTTP "
+"headers. Added Cache-based rate limits to contact form submissions and fixed "
+"IP spoofing vulnerabilities."
+msgstr "本番運用監査で特定された複数の脆弱性を修正しました。厳格なUUIDアクセスチェックの適用、プロジェクトマネージャーの直接所有権からの分離、データベースのメールスクレイピングに対するユーザー検索エンドポイントの保護、Cookie属性（SameSite、HttpOnly）およびHTTPヘッダーの強化を実施。お問い合わせフォーム送信へのキャッシュベースのレート制限追加、IPスプーフィングの脆弱性修正を行いました。"
+
+#: home/templates/home/changelog.html:86 home/templates/home/changelog.html:94
+#: home/templates/home/changelog.html:174
+#: home/templates/home/changelog.html:242
+msgid "UX"
+msgstr "UX"
+
+#: home/templates/home/changelog.html:88
+msgid "Organisation Management Polish & Creation Flow"
+msgstr "組織管理と作成フローのブラッシュアップ"
+
+#: home/templates/home/changelog.html:89
+msgid ""
+"Introduced a dedicated Organisations button in both the sidebar and topbar "
+"profile navigation. Added profile details validation (Full Name, Business "
+"Email, Corporate Role) during organisation creation for users who did not "
+"sign up as organisation contact persons during onboarding."
+msgstr "サイドバーとトップバーのプロフィールナビゲーションの両方に専用の「組織」ボタンを導入しました。オンボーディング中に組織の連絡先担当者として登録しなかったユーザー向けに、組織作成時のプロフィール詳細（氏名、ビジネスメール、会社役職）の検証を追加しました。"
+
+#: home/templates/home/changelog.html:97
+msgid "Complete Worldwide Country Onboarding"
+msgstr "全世界の国に対応したオンボーディング"
+
+#: home/templates/home/changelog.html:98
+msgid ""
+"Expanded the onboarding country dropdown menu from 3 placeholder options to "
+"a comprehensive list of all 195 countries globally via a unified, modular "
+"template include."
+msgstr "オンボーディングの国選択ドロップダウンメニューを、3つのプレースホルダーオプションから、統一されたモジュール式テンプレートによる全世界195カ国の包括的なリストへ拡張しました。"
+
+#: home/templates/home/changelog.html:109
+msgid "July 2026 · Major public beta release"
+msgstr "2026年7月 · メジャーパブリックベータリリース"
+
+#: home/templates/home/changelog.html:119
+msgid "Endpoint Security Hardening"
+msgstr "エンドポイントセキュリティの強化"
+
+#: home/templates/home/changelog.html:120
+msgid "Fixed multiple open endpoints accessible without authentication:"
+msgstr "認証なしでアクセス可能だった複数のオープンエンドポイントを修正しました："
+
+#: home/templates/home/changelog.html:120
+msgid "and the profile page. All now enforce"
+msgstr "およびプロフィールページ。すべてにおいて"
+
+#: home/templates/home/changelog.html:120
+msgid "with project-level access scoping."
+msgstr "によるプロジェクトレベルのアクセス制限を強制するようになりました。"
+
+#: home/templates/home/changelog.html:128
+msgid "Global HTMX CSRF Token Fix"
+msgstr "グローバルHTMX CSRFトークン修正"
+
+#: home/templates/home/changelog.html:129
+msgid ""
+"Fixed a critical issue where HTMX POST requests (task toggles, bookmarks, "
+"comment actions) were silently failing due to missing CSRF headers. All HTMX "
+"mutations now automatically include the CSRF token via a centralised"
+msgstr "CSRFヘッダーの欠落によりHTMXのPOSTリクエスト（タスク切り替え、ブックマーク、コメント操作）がサイレントに失敗していた重大な問題を修正しました。すべてのHTMXミューテーションは、ベーステンプレートに集中配置された"
+
+#: home/templates/home/changelog.html:129
+msgid "handler in the base template."
+msgstr "ハンドラーを介して自動的にCSRFトークンを含むようになります。"
+
+#: home/templates/home/changelog.html:136
+msgid "Project Dashboard"
+msgstr "プロジェクトダッシュボード"
+
+#: home/templates/home/changelog.html:137
+msgid ""
+"Every project now has a dedicated dashboard — real-time statistics, a "
+"dynamic health score, recent reports, active collaborators, and a fully "
+"interactive task checklist. Tasks persist, can be toggled, added, and "
+"deleted without page reloads."
+msgstr "各プロジェクトに専用ダッシュボードが追加されました。リアルタイムの統計情報、動的なヘルススコア、最近のレポート、アクティブな共同作業者、そして完全にインタラクティブなタスクチェックリストを提供します。タスクは保存され、ページの再読み込みなしで切り替え、追加、削除が可能です。"
+
+#: home/templates/home/changelog.html:144
+msgid "Global Search — Real-time Popdown"
+msgstr "グローバル検索 — リアルタイムポップダウン"
+
+#: home/templates/home/changelog.html:145
+msgid ""
+"Search shows a live result popdown as you type — no Enter required. Results "
+"span projects, reports, comments, and organisations. Recent searches appear "
+"on focus. Clicking a result navigates directly and highlights it on the "
+"results page. Contextual filters for status, severity, assignee, and date "
+"range also available."
+msgstr "入力中にリアルタイムで結果ポップダウンを表示するようになりました。Enterキーを押す必要はありません。検索範囲はプロジェクト、レポート、コメント、組織に及びます。フォーカス時に最近の検索が表示されます。結果をクリックすると直接遷移し、結果ページでハイライトされます。ステータス、重大度、担当者、日付範囲によるコンテキストフィルターも利用可能です。"
+
+#: home/templates/home/changelog.html:152
+msgid "Filter & Sort on Every List View"
+msgstr "すべてのリストビューでフィルターとソートに対応"
+
+#: home/templates/home/changelog.html:153
+msgid ""
+"Reports, projects, and organisation lists now feature contextual filters and "
+"sort controls. Report filters include status, severity, assignee, and date "
+"range. Project filters include visibility and creation date."
+msgstr "レポート、プロジェクト、および組織リストに、コンテキストに応じたフィルターとソートコントロールが追加されました。レポートのフィルターにはステータス、重大度、担当者、日付範囲が含まれます。プロジェクトのフィルターには公開範囲と作成日が含まれます。"
+
+#: home/templates/home/changelog.html:160
+msgid "Bookmark & Watch Reports"
+msgstr "レポートのブックマークと監視"
+
+#: home/templates/home/changelog.html:161
+msgid ""
+"Bookmark any report for quick access. Watch a report to receive "
+"notifications on status, assignee, or severity changes. A dedicated "
+"Bookmarks & Watches view manages everything in one place."
+msgstr "すばやくアクセスできるように任意のレポートをブックマークできます。レポートを監視すると、ステータス、担当者、または重大度の変更に関する通知を受け取ることができます。専用のブックマーク＆監視ビューで、すべてを1か所で管理できます。"
+
+#: home/templates/home/changelog.html:168
+msgid "Notification Centre Redesign"
+msgstr "通知センターの再設計"
+
+#: home/templates/home/changelog.html:169
+msgid ""
+"Cleaner layout, improved empty state, and better invite action cards with "
+"inline accept/decline buttons. Unread badges now reflect accurate server-"
+"side counts."
+msgstr "レイアウトをクリーンにし、空の状態の表示を改善、インラインで承諾/辞退ができる招待カードを導入しました。未読バッジにはサーバー側の正確なカウントが反映されるようになりました。"
+
+#: home/templates/home/changelog.html:176
+msgid "Toast Notifications + HTMX Loading Bar"
+msgstr "トースト通知 + HTMXローディングバー"
+
+#: home/templates/home/changelog.html:177
+msgid ""
+"Replaced inline message banners with animated toast notifications — slide in "
+"from the top-right, auto-dismiss in 4 seconds, with a countdown progress "
+"bar. A thin blue loading bar tracks every HTMX request globally across all "
+"pages."
+msgstr "インラインのメッセージバナーを、画面右上からスライドインし4秒で自動消去されるアニメーション付きトースト通知（カウントダウンバー付き）に置き換えました。すべてのページでHTMXリクエストをグローバルに追跡する細いブルーのローディングバーが導入されました。"
+
+#: home/templates/home/changelog.html:182
+msgid "Admin"
+msgstr "管理者"
+
+#: home/templates/home/changelog.html:185
+msgid "Site Announcements"
+msgstr "サイトからのお知らせ"
+
+#: home/templates/home/changelog.html:186
+msgid ""
+"Superusers can post site-wide announcement banners (info / warning / "
+"critical / success) visible to all logged-in users. Banners are dismissable "
+"and support optional auto-expiry."
+msgstr "管理者（スーパーユーザー）は、ログインしているすべてのユーザーに表示されるサイト全体のお知らせバナー（info / warning / critical / success）を投稿できるようになりました。バナーは非表示にでき、オプションで自動有効期限の設定もサポートしています。"
+
+#: home/templates/home/changelog.html:193
+msgid "Account Deletion (Soft-delete)"
+msgstr "アカウント削除 (論理削除)"
+
+#: home/templates/home/changelog.html:194
+msgid ""
+"Users can now permanently delete their account from Edit Profile, with "
+"password confirmation. Account is soft-deleted immediately and hard-deleted "
+"after a <strong>30-day grace window</strong> — log back in anytime before "
+"then to reactivate."
+msgstr "ユーザーはパスワードの確認を経て、プロフィール編集からアカウントを完全に削除できるようになりました。アカウントは即座に論理削除され、<strong>30日間の猶予期間</strong>の後に物理削除されます。期間内であればいつでも再ログインしてアカウントを再有効化できます。"
+
+#: home/templates/home/changelog.html:201
+msgid "FAQ, Privacy Policy, Terms & Contact Pages"
+msgstr "FAQ、プライバシーポリシー、利用規約、お問い合わせページ"
+
+#: home/templates/home/changelog.html:202
+msgid "All essential public-facing pages are now live: a searchable"
+msgstr "必須のすべての一般公開ページが公開されました：検索可能な"
+
+#: home/templates/home/changelog.html:202
+msgid "detailed"
+msgstr "、詳細な"
+
+#: home/templates/home/changelog.html:202
+msgid "and a"
+msgstr "、およびチームにメッセージを届ける"
+
+#: home/templates/home/changelog.html:202
+msgid "form that routes messages to the team."
+msgstr "フォームです。"
+
+#: home/templates/home/changelog.html:211
+msgid "Phase 2.0"
+msgstr "フェーズ 2.0"
+
+#: home/templates/home/changelog.html:212
+msgid "Public Beta · July 4, 2026"
+msgstr "パブリックベータ版 · 2026年7月4日"
+
+#: home/templates/home/changelog.html:220
+msgid "Organisation Support"
+msgstr "組織のサポート"
+
+#: home/templates/home/changelog.html:221
+msgid ""
+"Create organisations, invite members, and scope projects to your org. Assign "
+"a dedicated <strong>Project Head</strong> with full administrative control "
+"over org-owned projects, while the organisation owner stays the top-level "
+"authority."
+msgstr "組織を作成し、メンバーを招待し、プロジェクトを組織スコープに設定できます。組織が所有するプロジェクトの完全な管理権限を持つ専用の<strong>プロジェクトリーダー</strong>を割り当てることができ、一方で組織オーナーは最上位の権限を保持します。"
+
+#: home/templates/home/changelog.html:228
+msgid "3-Level Access Scoping & UUIDv7"
+msgstr "3レベルのアクセススコープ＆UUIDv7"
+
+#: home/templates/home/changelog.html:229
+msgid ""
+"Granular permissions enforced across the board: <strong>Public</strong>, "
+"<strong>Org-Only</strong>, and <strong>Private</strong> visibility levels. "
+"All database records migrated from sequential integer IDs to time-ordered, "
+"non-enumerable <strong>UUIDv7</strong> identifiers — eliminating IDOR risk "
+"entirely."
+msgstr "全面的な段階的権限管理：<strong>公開</strong>、<strong>組織のみ</strong>、および<strong>非公開</strong>の表示設定。すべてのデータベースレコードを連続した整数IDから時間順で推測不可能な<strong>UUIDv7</strong>識別子に移行し、IDOR（安全でない直接オブジェクト参照）リスクを完全に排除しました。"
+
+#: home/templates/home/changelog.html:234
+msgid "Audit"
+msgstr "監査"
+
+#: home/templates/home/changelog.html:236
+msgid "Report History & Audit Logs"
+msgstr "レポート履歴＆操作ログ"
+
+#: home/templates/home/changelog.html:237
+msgid ""
+"Full event logging for all project and report modifications — status "
+"changes, reassignments, severity updates, and collaborator actions. View a "
+"complete change timeline on every report detail page."
+msgstr "すべてのプロジェクトとレポートの変更（ステータス変更、再割り当て、重大度の更新、コラボレーターのアクション）に対する完全なイベントロギング。すべてのレポート詳細ページで完全な変更タイムラインを表示可能。"
+
+#: home/templates/home/changelog.html:244
+msgid "Navigation & UX Improvements"
+msgstr "ナビゲーションとUXの改善"
+
+#: home/templates/home/changelog.html:245
+msgid ""
+"Activated Collaborating Projects and Needs Attention views. Integrated the "
+"What's New changelog. Unified search box with refresh in a clean widget. "
+"Strong password validation with inline feedback on the auth card."
+msgstr "コラボレーション中のプロジェクトおよび「要対応」ビューを有効化。「新着情報」変更履歴の統合。クリーンなウィジェットに更新機能を備えた検索ボックスを統合。認証カードでのインラインフィードバックを伴う強力なパスワード検証を追加。"
+
+#: home/templates/home/changelog.html:254
+msgid "Phase 1.5"
+msgstr "フェーズ 1.5"
+
+#: home/templates/home/changelog.html:255
+msgid "Public Alpha · January 7, 2026"
+msgstr "パブリックアルファ版 · 2026年1月7日"
+
+#: home/templates/home/changelog.html:256
+msgid "Development build"
+msgstr "開発ビルド"
+
+#: home/templates/home/changelog.html:262
+msgid "Foundation"
+msgstr "基盤"
+
+#: home/templates/home/changelog.html:264
+msgid "Core Project & Issue Tracking"
+msgstr "コアプロジェクト＆イシュートラッキング"
+
+#: home/templates/home/changelog.html:265
+msgid ""
+"Initial release. Create and manage Public/Private projects. File issue "
+"reports with Severity, Impact, Reproducibility, and Attachments. Full status "
+"lifecycle (Open → In Progress → Resolved → Closed), comments, personalised "
+"dashboard with Assigned to Me / Reported by Me filters, and Global Search."
+msgstr "初期リリース。公開/非公開プロジェクトの作成と管理。重大度、影響度、再現性、および添付ファイルを含むイシューレポートの作成。ステータスライフサイクル（オープン → 進行中 → 解決済み → クローズ）、コメント、自分に割り当てられたイシュー/自分が報告したイシューのフィルター付きのパーソナライズされたダッシュボード、グローバル検索。"
+
+#: home/templates/home/changelog.html:276
+msgid "Have a feature request or found a bug?"
+msgstr "機能リクエストがありますか？それともバグを発見しましたか？"
+
+#: home/templates/home/changelog.html:277
+msgid "We'd love to hear what would make Reportary better for your team."
+msgstr "Reportaryをより良いチーム開発ツールにするためのご意見をお待ちしております。"
+
+#: home/templates/home/changelog.html:281
+msgid "Send Feedback"
+msgstr "フィードバックを送信"
+
+#: home/templates/home/changelog.html:284
+msgid "View on GitHub"
+msgstr "GitHubで表示"
+
+#: home/templates/home/contact.html:12
+msgid "We respond within 48 hours"
+msgstr "48時間以内に返信いたします"
+
+#: home/templates/home/contact.html:14
+msgid "Get in touch"
+msgstr "お問い合わせ"
+
+#: home/templates/home/contact.html:15
+msgid ""
+"Have a question, found a bug, or just want to say hi? We'd love to hear from "
+"you."
+msgstr "ご質問、バグの報告、またはご意見など、お気軽にお問い合わせください。"
+
+#: home/templates/home/contact.html:29
+#: home/templates/home/partials/login_card.html:25
+msgid "Email"
+msgstr "メールアドレス"
+
+#: home/templates/home/contact.html:30
+msgid "Send us a message anytime and we'll get back to you within 48 hours."
+msgstr "いつでもメッセージをお送りください。48時間以内に返信いたします。"
+
+#: home/templates/home/contact.html:39
+msgid "Found a bug? Open an issue on our public GitHub repository."
+msgstr "バグを発見しましたか？公式GitHubリポジトリでイシューを作成してください。"
+
+#: home/templates/home/contact.html:47
+msgid "Check FAQ first"
+msgstr "まずよくある質問を確認"
+
+#: home/templates/home/contact.html:48
+msgid "Your question might already be answered."
+msgstr "すでに回答されている質問があるかもしれません。"
+
+#: home/templates/home/contact.html:49
+msgid "Browse FAQ →"
+msgstr "よくある質問を見る →"
+
+#: home/templates/home/contact.html:56
+msgid "Send us a message"
+msgstr "メッセージを送る"
+
+#: home/templates/home/contact.html:72
+msgid "Your Name"
+msgstr "お名前"
+
+#: home/templates/home/contact.html:79
+msgid "Your Email"
+msgstr "メールアドレス"
+
+#: home/templates/home/contact.html:88
+msgid "Subject"
+msgstr "件名"
+
+#: home/templates/home/contact.html:91
+msgid "Select a topic"
+msgstr "トピックを選択"
+
+#: home/templates/home/contact.html:92
+msgid "Bug Report"
+msgstr "バグ報告"
+
+#: home/templates/home/contact.html:93
+msgid "Feature Request"
+msgstr "機能リクエスト"
+
+#: home/templates/home/contact.html:94
+msgid "Account Issue"
+msgstr "アカウント関連の問題"
+
+#: home/templates/home/contact.html:95
+msgid "Privacy / Data Request"
+msgstr "プライバシー/データ要求"
+
+#: home/templates/home/contact.html:96
+msgid "General Question"
+msgstr "一般的な質問"
+
+#: home/templates/home/contact.html:97
+msgid "Other"
+msgstr "その他"
+
+#: home/templates/home/contact.html:102
+msgid "Message"
+msgstr "メッセージ"
+
+#: home/templates/home/contact.html:104
+msgid "Tell us what's on your mind..."
+msgstr "ご質問内容をご記入ください..."
+
+#: home/templates/home/contact.html:110
+msgid "Send Message"
+msgstr "メッセージを送信"
+
+#: home/templates/home/faq.html:4 home/templates/home/faq.html:14
+msgid "Frequently Asked Questions"
+msgstr "よくある質問"
+
+#: home/templates/home/faq.html:16
+msgid "Everything you need to know about Reportary. Can't find your answer?"
+msgstr "Reportaryに関するよくある質問と回答を掲載しています。解決しない場合は、"
+
+#: home/templates/home/faq.html:17
+msgid "Contact us"
+msgstr "お問い合わせください"
+
+#: home/templates/home/faq.html:40
+msgid "Still have questions?"
+msgstr "解決しない場合は？"
+
+#: home/templates/home/faq.html:41
+msgid "Our team is happy to help you get started."
+msgstr "サポートチームが喜んでお手伝いいたします。"
+
+#: home/templates/home/faq.html:43
+msgid "Contact Support"
+msgstr "サポートに問い合わせる"
+
+#: home/templates/home/landing_page.html:8
+msgid "Streamline Your Reporting"
+msgstr "レポートを効率化"
+
+#: home/templates/home/landing_page.html:32
+#: home/templates/home/landing_page.html:233
+msgid "Product"
+msgstr "プロダクト"
+
+#: home/templates/home/landing_page.html:34
+msgid "Solutions"
+msgstr "ソリューション"
+
+#: home/templates/home/landing_page.html:36
+msgid "Pricing"
+msgstr "料金"
+
+#: home/templates/home/landing_page.html:100
+#: home/templates/home/partials/login_card.html:5
+#: home/templates/home/partials/login_card.html:56
+msgid "Sign In"
+msgstr "ログイン"
+
+#: home/templates/home/landing_page.html:127
+msgid "Issue tracking,"
+msgstr "イシュートラッキングを、"
+
+#: home/templates/home/landing_page.html:129
+msgid "simplified."
+msgstr "シンプルに。"
+
+#: home/templates/home/landing_page.html:135
+msgid ""
+"The modern standard for engineering teams. Unified data, real-time "
+"collaboration, and workflows that actually make sense."
+msgstr "エンジニアリングチームのためのモダンスタンダード。統合されたデータ、リアルタイムのコラボレーション、エンジニアに愛されるワークフロー。"
+
+#: home/templates/home/landing_page.html:143
+#: home/templates/home/landing_page.html:152
+msgid "Start Building Free"
+msgstr "無料で始める"
+
+#: home/templates/home/landing_page.html:147
+#: home/templates/home/landing_page.html:156
+msgid "View Live Demo"
+msgstr "デモを見る"
+
+#: home/templates/home/landing_page.html:169
+msgid "Free for small teams"
+msgstr "小規模チームは無料"
+
+#: home/templates/home/landing_page.html:176
+msgid "No credit card required"
+msgstr "クレジットカード不要"
+
+#: home/templates/home/landing_page.html:183
+msgid "Open Source"
+msgstr "オープンソース"
+
+#: home/templates/home/landing_page.html:230
+msgid "Modern issue tracking for engineering teams. Built in the open."
+msgstr "エンジニアリングチームのためのモダンなイシュートラッキング。オープンに構築されています。"
+
+#: home/templates/home/landing_page.html:242
+msgid "Support"
+msgstr "サポート"
+
+#: home/templates/home/landing_page.html:249
+#: home/templates/home/privacy.html:10 home/templates/home/terms.html:10
+msgid "Legal"
+msgstr "法的情報"
+
+#: home/templates/home/partials/login_card.html:6
+msgid "Welcome back to Reportary"
+msgstr "Reportaryへようこそ"
+
+#: home/templates/home/partials/login_card.html:34
+msgid "Password"
+msgstr "パスワード"
+
+#: home/templates/home/partials/login_card.html:51
+msgid "Forgot password?"
+msgstr "パスワードをお忘れですか？"
+
+#: home/templates/home/partials/login_card.html:75
+msgid "Coming Soon"
+msgstr "近日公開"
+
+#: home/templates/home/partials/login_card.html:81
+msgid "New to Reportary?"
+msgstr "Reportaryは初めてですか？"
+
+#: home/templates/home/partials/login_card.html:85
+msgid "Create account"
+msgstr "アカウント作成"
+
+#: home/templates/home/partials/signup_card.html:5
+msgid "Create Account"
+msgstr "アカウント作成"
+
+#: home/templates/home/partials/signup_card.html:6
+msgid "Get started with Reportary"
+msgstr "Reportaryを始める"
+
+#: home/templates/home/privacy.html:12
+msgid "Last updated: July 2025"
+msgstr "最終更新日：2025年7月"
+
+#: home/templates/home/privacy.html:21
+msgid "1. Information We Collect"
+msgstr "1. 収集する情報"
+
+#: home/templates/home/privacy.html:22
+msgid ""
+"When you register for Reportary, we collect your email address, chosen "
+"username, and any profile information you optionally provide (such as your "
+"name, GitHub link, or organisation affiliation)."
+msgstr "ユーザーがReportaryに登録する際、メールアドレス、選択したユーザー名、および必要に応じて任意で提供されるプロフィール情報（お名前、GitHubリンク、所属組織など）を収集します。"
+
+#: home/templates/home/privacy.html:23
+msgid ""
+"When you use the platform, we collect usage data including reports you "
+"create, comments you post, projects you join, and actions you take (audit "
+"logs). This data is essential for core functionality."
+msgstr "プラットフォームのご利用時、作成したレポート、投稿したコメント、参加したプロジェクト、および実行したアクション（操作ログ）を含む利用データを収集します。これらのデータはコア機能の提供に不可欠です。"
+
+#: home/templates/home/privacy.html:27
+msgid "2. How We Use Your Information"
+msgstr "2. 情報の利用目的"
+
+#: home/templates/home/privacy.html:29
+msgid "To provide, maintain, and improve the Reportary platform"
+msgstr "Reportaryプラットフォームの提供、維持、向上"
+
+#: home/templates/home/privacy.html:30
+msgid ""
+"To send transactional emails (email verification, password resets, "
+"invitation notifications)"
+msgstr "トランザクションメール（メール確認、パスワードリセット、招待通知など）の送信"
+
+#: home/templates/home/privacy.html:31
+msgid "To support collaboration features (project invitations, @mentions)"
+msgstr "コラボレーション機能（プロジェクトへの招待、@メンションなど）のサポート"
+
+#: home/templates/home/privacy.html:32
+msgid "To maintain audit trails for security and accountability"
+msgstr "セキュリティと説明責任のための監査証跡の維持"
+
+#: home/templates/home/privacy.html:33
+msgid "To respond to support requests submitted via our contact form"
+msgstr "お問い合わせフォームから送信されたサポートリクエストへの対応"
+
+#: home/templates/home/privacy.html:35
+msgid "We do not sell, rent, or trade your personal data to third parties."
+msgstr "当社はお客様の個人データを第三者に販売、レンタル、または取引することはありません。"
+
+#: home/templates/home/privacy.html:39
+msgid "3. Data Storage & Security"
+msgstr "3. データの保存とセキュリティ"
+
+#: home/templates/home/privacy.html:40
+msgid ""
+"Your data is stored on secure servers. We use industry-standard HTTPS/TLS "
+"encryption for all data in transit. Passwords are hashed using Django's "
+"PBKDF2 algorithm and are never stored in plaintext."
+msgstr "お客様のデータは安全なサーバーに保存されます。すべての通信において業界標準のHTTPS/TLS暗号化を使用しています。パスワードはDjangoのPBKDF2アルゴリズムを使用してハッシュ化され、平文で保存されることはありません。"
+
+#: home/templates/home/privacy.html:41
+msgid ""
+"Access to project data is strictly controlled: users can only access "
+"projects they own, are members of, or that are explicitly marked as public."
+msgstr "プロジェクトデータへのアクセスは厳格に制御されます。ユーザーは、自身が所有するプロジェクト、メンバーであるプロジェクト、または明示的に公開とマークされたプロジェクトにのみアクセスできます。"
+
+#: home/templates/home/privacy.html:45
+msgid "4. File Uploads & Attachments"
+msgstr "4. ファイルのアップロードと添付ファイル"
+
+#: home/templates/home/privacy.html:46
+msgid ""
+"Report attachments you upload are stored via Cloudinary, our cloud media "
+"provider. Files are served over HTTPS. You may delete attachments at any "
+"time from within the platform."
+msgstr "アップロードされた添付ファイルは、当社のクラウドメディアプロバイダーであるCloudinaryを介して保存されます。ファイルはHTTPS経由で提供されます。添付ファイルは、プラットフォーム内からいつでも削除できます。"
+
+#: home/templates/home/privacy.html:50
+msgid "5. Cookies & Sessions"
+msgstr "5. クッキーとセッション"
+
+#: home/templates/home/privacy.html:51
+msgid ""
+"Reportary uses session cookies strictly for authentication (keeping you "
+"logged in) and for transient state such as recent search history and "
+"recently viewed reports. We do not use third-party advertising or tracking "
+"cookies."
+msgstr "Reportaryは、認証（ログイン状態の維持）および最近の検索履歴や最近表示したレポートなどの一時的な状態の保持にのみセッションクッキーを使用します。サードパーティの広告または追跡用クッキーは使用しません。"
+
+#: home/templates/home/privacy.html:55
+msgid "6. Account Deletion & Data Retention"
+msgstr "6. アカウントの削除とデータ保持"
+
+#: home/templates/home/privacy.html:56
+msgid ""
+"You may request deletion of your account at any time from your Edit Profile "
+"page. Upon deletion:"
+msgstr "プロフィール編集ページからいつでもアカウントの削除をリクエストできます。削除すると："
+
+#: home/templates/home/privacy.html:58
+msgid "Your account is immediately deactivated"
+msgstr "アカウントはすぐに無効化されます"
+
+#: home/templates/home/privacy.html:59
+msgid "It is permanently and irreversibly deleted after 30 days"
+msgstr "30日後に完全に、かつ元に戻せない方法で削除されます"
+
+#: home/templates/home/privacy.html:60
+msgid "You may reactivate it by logging in before the 30-day window expires"
+msgstr "30日間の猶予期間が満了する前にログインすることで、アカウントを再有効化できます"
+
+#: home/templates/home/privacy.html:61
+msgid ""
+"Anonymised audit log entries may be retained to preserve project integrity"
+msgstr "プロジェクトの整合性を維持するため、匿名化された操作ログエントリーが保持される場合があります"
+
+#: home/templates/home/privacy.html:66
+msgid "7. Third-Party Services"
+msgstr "7. サードパーティサービス"
+
+#: home/templates/home/privacy.html:67
+msgid "We use the following third-party services to operate Reportary:"
+msgstr "Reportaryの運営のために以下のサードパーティサービスを使用しています："
+
+#: home/templates/home/privacy.html:69
+msgid "Cloudinary — file and media storage"
+msgstr "Cloudinary — ファイルおよびメディアストレージ"
+
+#: home/templates/home/privacy.html:70
+msgid "Gmail SMTP — transactional email delivery"
+msgstr "Gmail SMTP — トランザクションメール配信"
+
+#: home/templates/home/privacy.html:72
+msgid ""
+"These providers have their own privacy policies and are used solely to "
+"support the platform's operation."
+msgstr "これらのプロバイダーはそれぞれ独自のプライバシーポリシーを有しており、プラットフォームの運営サポートのみを目的として使用されます。"
+
+#: home/templates/home/privacy.html:76
+msgid "8. Contact"
+msgstr "8. お問い合わせ"
+
+#: home/templates/home/privacy.html:78
+msgid "For any privacy-related questions or requests, please"
+msgstr "プライバシーに関するご質問やご要望は、"
+
+#: home/templates/home/privacy.html:79 home/templates/home/terms.html:81
+msgid "contact us"
+msgstr "お問い合わせください"
+
+#: home/templates/home/privacy.html:80
+msgid "We will respond within 5 business days."
+msgstr "5営業日以内に返答いたします。"
+
+#: home/templates/home/profile.html:41
+msgid "Edit Profile"
+msgstr "プロフィール編集"
+
+#: home/templates/home/terms.html:12
+msgid "Last updated: July 2025 · Effective immediately upon account creation"
+msgstr "最終更新日：2025年7月 · アカウント作成と同時に発効"
+
+#: home/templates/home/terms.html:21
+msgid "1. Acceptance of Terms"
+msgstr "1. 規約への同意"
+
+#: home/templates/home/terms.html:22
+msgid ""
+"By creating an account or using Reportary (\"the Service\"), you agree to be "
+"bound by these Terms of Service. If you do not agree, you must not use the "
+"Service."
+msgstr "アカウントを作成するか、Reportary（以下「本サービス」）を使用することにより、お客様は本利用規約に同意したものとみなされます。同意しない場合は、本サービスを使用しないでください。"
+
+#: home/templates/home/terms.html:26
+msgid "2. Eligibility"
+msgstr "2. 利用資格"
+
+#: home/templates/home/terms.html:27
+msgid ""
+"You must be at least 13 years of age to use Reportary. By using the Service, "
+"you represent that you meet this requirement. If you are using the Service "
+"on behalf of an organisation, you represent that you have the authority to "
+"bind that organisation to these terms."
+msgstr "本サービスを利用するには13歳以上である必要があります。本サービスを利用することにより、お客様はこの要件を満たしていることを表明したものとみなされます。組織を代表してサービスを利用する場合、その組織を本規約に拘束する権限を有していることを表明するものとします。"
+
+#: home/templates/home/terms.html:31
+msgid "3. Acceptable Use"
+msgstr "3. 許容される利用方法"
+
+#: home/templates/home/terms.html:32
+msgid "You agree not to use Reportary to:"
+msgstr "お客様は以下を行わないことに同意するものとします："
+
+#: home/templates/home/terms.html:34
+msgid "Post false, misleading, or fraudulent content"
+msgstr "虚偽、誤解を招く、または詐欺的なコンテンツの投稿"
+
+#: home/templates/home/terms.html:35
+msgid "Harass, threaten, or harm other users"
+msgstr "他のユーザーに対する嫌がらせ、脅迫、または危害の加害"
+
+#: home/templates/home/terms.html:36
+msgid "Upload malicious files, spam, or unauthorised advertising"
+msgstr "悪意のあるファイル、スパム、または未承諾の広告のアップロード"
+
+#: home/templates/home/terms.html:37
+msgid "Attempt to gain unauthorised access to other users' data"
+msgstr "他のユーザーのデータへの不正アクセスの試み"
+
+#: home/templates/home/terms.html:38
+msgid "Circumvent our security or permission systems"
+msgstr "セキュリティまたは権限管理システムの回避"
+
+#: home/templates/home/terms.html:39
+msgid "Use automated scrapers or bots without prior written consent"
+msgstr "事前の書面による同意なしに自動スクレイパーやボットを使用すること"
+
+#: home/templates/home/terms.html:44
+msgid "4. Content Ownership"
+msgstr "4. コンテンツの所有権"
+
+#: home/templates/home/terms.html:45
+msgid ""
+"You retain ownership of any content you submit (reports, comments, "
+"attachments). By submitting content, you grant Reportary a limited, non-"
+"exclusive licence to store and display it as necessary to provide the "
+"Service."
+msgstr "提出されたコンテンツ（レポート、コメント、添付ファイル）の所有権は、お客様に留保されます。コンテンツを提出することにより、お客様はReportaryに対して、本サービスを提供するために必要な範囲でコンテンツを保存および表示するための制限付き、非独占的なライセンスを付与するものとします。"
+
+#: home/templates/home/terms.html:46
+msgid ""
+"You are solely responsible for the content you submit. Reportary reserves "
+"the right to remove content that violates these terms or applicable law."
+msgstr "提出したコンテンツの全責任はお客様が負うものとします。Reportaryは、本規約または適用法に違反するコンテンツを削除する権利を留保します。"
+
+#: home/templates/home/terms.html:50
+msgid "5. Account Responsibility"
+msgstr "5. アカウントの責任"
+
+#: home/templates/home/terms.html:51
+msgid ""
+"You are responsible for maintaining the confidentiality of your account "
+"credentials. Notify us immediately if you suspect unauthorised access to "
+"your account. Reportary is not liable for any loss resulting from "
+"unauthorised use of your account."
+msgstr "アカウントのログイン情報の機密性を維持する責任はお客様にあります。アカウントへの不正アクセスが疑われる場合は、ただちにお知らせください。不正利用によって生じた損失について、Reportaryは一切の責任を負いません。"
+
+#: home/templates/home/terms.html:55
+msgid "6. Service Availability"
+msgstr "6. サービスの可用性"
+
+#: home/templates/home/terms.html:56
+msgid ""
+"Reportary is provided \"as is\" and \"as available.\" We do not guarantee "
+"uninterrupted or error-free operation. We may modify, suspend, or "
+"discontinue features with or without notice, particularly during the beta "
+"phase."
+msgstr "本サービスは「現状有姿」かつ「利用可能な範囲」で提供されます。中断のない、またはエラーのない運営を保証するものではありません。特にベータフェーズにおいては、予告なしに機能を変更、一時停止、または廃止する場合があります。"
+
+#: home/templates/home/terms.html:60
+msgid "7. Privacy"
+msgstr "7. プライバシー"
+
+#: home/templates/home/terms.html:61
+msgid "Your use of Reportary is also governed by our"
+msgstr "本サービスのご利用には、参照することにより本規約の一部となる当社の"
+
+#: home/templates/home/terms.html:61
+msgid "which is incorporated into these Terms by reference."
+msgstr "も適用されます。"
+
+#: home/templates/home/terms.html:65
+msgid "8. Limitation of Liability"
+msgstr "8. 免責事項"
+
+#: home/templates/home/terms.html:66
+msgid ""
+"To the maximum extent permitted by law, Reportary and its creators shall not "
+"be liable for any indirect, incidental, special, or consequential damages "
+"arising from your use of the Service."
+msgstr "法律で認められる最大限の範囲において、Reportaryおよびその開発者は、本サービスの使用に起因する間接的、付随的、特別、または結果的な損害について一切の責任を負いません。"
+
+#: home/templates/home/terms.html:70
+msgid "9. Termination"
+msgstr "9. 契約解除とアカウントの終了"
+
+#: home/templates/home/terms.html:71
+msgid ""
+"We reserve the right to suspend or terminate your account if you violate "
+"these Terms or engage in conduct harmful to other users or the platform. You "
+"may terminate your account at any time via your"
+msgstr "利用規約に違反した場合や、他のユーザーまたはプラットフォームに有害な行為を行った場合、当社はアカウントを停止または終了する権利を留保します。アカウントはいつでも自身の"
+
+#: home/templates/home/terms.html:71
+msgid "profile settings"
+msgstr "プロフィール設定"
+
+#: home/templates/home/terms.html:75
+msgid "10. Changes to Terms"
+msgstr "10. 規約の変更"
+
+#: home/templates/home/terms.html:76
+msgid ""
+"We may update these Terms from time to time. Continued use of the Service "
+"after changes are posted constitutes acceptance. We will notify users of "
+"significant changes via in-app announcements."
+msgstr "本規約は随時更新される場合があります。変更の掲載後も本サービスの利用を継続することにより、変更に同意したものとみなされます。重要な変更については、アプリ内のお知らせを通じて通知します。"
+
+#: home/templates/home/terms.html:80
+msgid "11. Contact"
+msgstr "11. お問い合わせ"
+
+#: home/templates/home/terms.html:81
+msgid "For questions about these Terms, please"
+msgstr "規約に関するご質問は、"
+
+#: home/views.py:221
+msgid "What is Reportary?"
+msgstr "Reportaryとは何ですか？"
+
+#: home/views.py:222
+msgid ""
+"Reportary is a modern, collaborative bug and issue tracking platform "
+"designed for development teams. It helps you capture, organize, and resolve "
+"software issues efficiently."
+msgstr "Reportaryは、開発チーム向けに設計されたモダンでコラボレーティブなバグおよびイシュートラッキングプラットフォームです。ソフトウェアの問題を効率的にキャプチャ、整理、解決するのに役立ちます。"
+
+#: home/views.py:225
+msgid ""
+"What is the difference between Watching (Following) and Bookmarking a report?"
+msgstr "レポートの「監視（フォロー）」と「ブックマーク」の違いは何ですか？"
+
+#: home/views.py:226
+msgid ""
+"<strong>Watching (Following)</strong> subscribes you to real-time updates. "
+"You will receive in-app notifications and email alerts whenever the status "
+"changes, details are updated, or new comments are added."
+"<br><strong>Bookmarking</strong> acts as a personal shortcut for quick "
+"reference in your library. Bookmarking a report does not trigger any "
+"notification emails."
+msgstr "<strong>「監視（フォロー）」</strong>はリアルタイムアップデートを購読します。ステータスの変更、詳細の更新、または新しいコメントの追加のたびに、アプリ内通知とメールアラートが送信されます。<br><strong>「ブックマーク」</strong>はライブラリ内のクイック参照用の個人用ショートカットとして機能します。ブックマークしても通知メールはトリガーされません。"
+
+#: home/views.py:229
+msgid "How do I collect issues from external users?"
+msgstr "外部ユーザーからイシューを収集するにはどうすればよいですか？"
+
+#: home/views.py:230
+msgid ""
+"You can activate a <strong>Public Reporting Portal</strong> link for your "
+"project. This generates a unique URL that you can share with clients or "
+"stakeholders, allowing them to submit reports directly into your tracker."
+msgstr "プロジェクトの<strong>「公開報告ポータル」</strong>リンクを有効にできます。これにより、クライアントや関係者と共有できる一意のURLが生成され、トラッカーに直接レポートを送信できるようになります。"
+
+#: home/views.py:233
+msgid "How do Organisation Policies override project portal settings?"
+msgstr "組織ポリシーはプロジェクトポータル設定をどのようにオーバーライドしますか？"
+
+#: home/views.py:234
+msgid ""
+"If an Organisation disables anonymous reporting, it acts as a global policy. "
+"All projects belonging to that organisation will automatically require users "
+"to log in before filing a report, even if an individual project's settings "
+"allow anonymous reporting."
+msgstr "組織が匿名報告を無効にした場合、それはグローバルポリシーとして機能します。個々のプロジェクトの設定で匿名報告が許可されていても、その組織に属するすべてのプロジェクトは、レポートを提出する前にユーザーにログインを要求します。"
+
+#: home/views.py:237
+msgid "Who can create a project?"
+msgstr "誰がプロジェクトを作成できますか？"
+
+#: home/views.py:238
+msgid ""
+"Any registered and email-verified user can create a project. Projects can be "
+"public (visible to anyone) or private (restricted to team members only)."
+msgstr "登録およびメール認証済みのすべてのユーザーがプロジェクトを作成できます。プロジェクトは、公開（誰でも表示可能）または非公開（チームメンバーのみに制限）に設定できます。"
+
+#: home/views.py:241
+msgid "How do I invite team members to my project?"
+msgstr "チームメンバーをプロジェクトに招待するにはどうすればよいですか？"
+
+#: home/views.py:242
+msgid ""
+"Open your project's dashboard and use the 'Invite Collaborator' option. "
+"Invited users will receive an in-app notification and can accept or decline "
+"the invitation."
+msgstr "プロジェクトのダッシュボードを開き、「コラボレーターを招待」オプションを使用します。招待されたユーザーはアプリ内通知を受け取り、招待を承諾または辞退できます。"
+
+#: home/views.py:245
+msgid "What is the difference between Severity and Impact?"
+msgstr "「重大度」と「影響度」の違いは何ですか？"
+
+#: home/views.py:246
+msgid ""
+"Severity describes how technically bad the bug is (e.g., Critical, High, "
+"Medium, Low). Impact describes how many users or systems are affected. Both "
+"help prioritize issues effectively."
+msgstr "「重大度」はバグの技術的な深刻度（Critical、High、Medium、Lowなど）を示します。「影響度」は影響を受けるユーザーやシステムの数を示します。両方を使用してイシューの優先順位を効果的に決定できます。"
+
+#: home/views.py:249
+msgid "Can I make a report private?"
+msgstr "レポートを非公開にできますか？"
+
+#: home/views.py:250
+msgid ""
+"Yes. When creating or editing a report, you can toggle its visibility to "
+"private. Private reports are only visible to project members and the "
+"reporter."
+msgstr "はい。レポートの作成または編集時に、表示範囲を非公開に切り替えることができます。非公開レポートは、プロジェクトメンバーと報告者にのみ表示されます。"
+
+#: home/views.py:253
+msgid "What happens when I delete my account?"
+msgstr "アカウントを削除するとどうなりますか？"
+
+#: home/views.py:254
+msgid ""
+"Your account is deactivated immediately and permanently deleted after 30 "
+"days. During this window, you can reactivate it by logging back in. Your "
+"reports and project history are preserved."
+msgstr "アカウントはすぐに無効化され、30日後に完全に削除されます。この期間内であれば、再度ログインすることでアカウントを再有効化できます。レポートとプロジェクトの履歴は保持されます。"
+
+#: home/views.py:257
+msgid "Is my data secure?"
+msgstr "データは安全ですか？"
+
+#: home/views.py:258
+msgid ""
+"Yes. We use industry-standard encryption for all data in transit and at "
+"rest. Access to projects is strictly enforced via our permissions system — "
+"users can only access what they are explicitly authorized for."
+msgstr "はい。すべての通信中および保存データに対して業界標準の暗号化を使用しています。プロジェクトへのアクセスはパーミッションシステムによって厳密に制御されており、明示的に権限を与えられたユーザーのみがアクセスできます。"
+
+#: home/views.py:261
+msgid "How do I report a bug in Reportary itself?"
+msgstr "Reportary自体のバグを報告するにはどうすればよいですか？"
+
+#: home/views.py:262
+msgid ""
+"You can report bugs or request features directly on our tracking project. "
+"Just click <a href='/projects/019f2e92-7f0d-78e9-92b3-9431a1014882/reports/"
+"new/' class='text-[#226ce0] underline underline-offset-2'>here</a> to file a "
+"report."
+msgstr "バグの報告や機能のリクエストは、当社のトラッキングプロジェクトで直接行うことができます。レポートを作成するには、<a href='/projects/019f2e92-7f0d-78e9-92b3-9431a1014882/reports/new/' class='text-[#226ce0] underline underline-offset-2'>こちら</a>をクリックしてください。"
+
+#: home/views.py:265
+msgid "Is Reportary free?"
+msgstr "Reportaryは無料ですか？"
+
+#: home/views.py:266
+msgid ""
+"Yes, Reportary is free during its current beta phase. We plan to introduce "
+"subscription tiers in the future, but the core functionality will always "
+"remain accessible."
+msgstr "はい、Reportaryは現在のベータフェーズ中は無料です。将来的には有料プランの導入を予定していますが、コア機能は常に無料でご利用いただけます。"
+
+#: home/views.py:269
+msgid "How do I reset my password?"
+msgstr "パスワードをリセットするにはどうすればよいですか？"
+
+#: home/views.py:270
+msgid ""
+"Click 'Forgot Password' on the login page. You will receive an email with a "
+"secure link to set a new password."
+msgstr "ログインページの「パスワードをお忘れですか？」をクリックしてください。新しいパスワードを設定するための安全なリンクが記載されたメールが届きます。"
+
+#: notifications/templates/notifications/notification_center.html:19
+msgid "Mark All as Read"
+msgstr "すべて既読にする"
+
+#: organisations/templates/organisations/organisation_dashboard.html:81
+msgid "Members"
+msgstr "メンバー"
+
+#: organisations/templates/organisations/organisation_list.html:4
+msgid "My Organisations"
+msgstr "マイ組織"
+
+#: organisations/templates/organisations/organisation_projects.html:19
+#, python-format
+msgid "%(count)s projects in %(name)s"
+msgstr "%(name)s内の%(count)s件のプロジェクト"
+
+#: organisations/templates/organisations/organisation_projects.html:21
+msgid "No projects in this organisation yet."
+msgstr "この組織にはまだプロジェクトがありません。"
+
+#: organisations/templates/organisations/organisation_projects.html:31
+#: organisations/templates/organisations/organisation_projects.html:87
+#: projects/templates/register_project.html:171
+msgid "Create Project"
+msgstr "プロジェクト作成"
+
+#: organisations/templates/organisations/organisation_projects.html:51
+#: projects/forms.py:12 projects/templates/project_details.html:28
+#: projects/templates/projects_view.html:55
+msgid "Public"
+msgstr "公開"
+
+#: organisations/templates/organisations/organisation_projects.html:53
+#: projects/templates/project_details.html:30
+#: projects/templates/projects_view.html:57
+msgid "Private"
+msgstr "非公開"
+
+#: organisations/templates/organisations/organisation_projects.html:68
+#, python-format
+msgid "%(count)s Components"
+msgstr "%(count)s個のコンポーネント"
+
+#: organisations/templates/organisations/organisation_projects.html:83
+msgid "No Projects Found"
+msgstr "プロジェクトが見つかりません"
+
+#: organisations/templates/organisations/organisation_projects.html:84
+msgid "It looks like there are no projects in this organisation yet."
+msgstr "この組織にはまだプロジェクトが登録されていないようです。"
+
+#: projects/forms.py:7 reports/forms.py:49
+msgid "Title"
+msgstr "タイトル"
+
+#: projects/forms.py:8
+msgid "Link"
+msgstr "リンク"
+
+#: projects/forms.py:9
+msgid "Description..."
+msgstr "説明..."
+
+#: projects/forms.py:9 projects/forms.py:169
+#: projects/templates/register_project.html:223
+#: projects/templates/register_project.html:225 reports/forms.py:52
+msgid "Description"
+msgstr "説明"
+
+#: projects/forms.py:13
+msgid "Organization Members Only"
+msgstr "組織メンバーのみ"
+
+#: projects/forms.py:14
+msgid "Private (Owner & Collaborators Only)"
+msgstr "非公開 (オーナーとコラボレーターのみ)"
+
+#: projects/forms.py:18 projects/templates/projects_view.html:52
+msgid "Visibility Scope"
+msgstr "表示スコープ"
+
+#: projects/forms.py:27
+msgid "Max Attachments per Report"
+msgstr "レポートごとの最大添付ファイル数"
+
+#: projects/forms.py:33
+msgid "Comma-separated file extensions (e.g. .jpg,.png,.pdf)"
+msgstr "カンマ区切りのファイル拡張子（例：.jpg,.png,.pdf）"
+
+#: projects/forms.py:34
+msgid "Allowed Attachment Extensions"
+msgstr "許可される添付ファイル拡張子"
+
+#: projects/forms.py:80
+msgid "None (Personal Project)"
+msgstr "なし (個人プロジェクト)"
+
+#: projects/forms.py:168 projects/templates/register_project.html:217
+#: projects/templates/register_project.html:219
+msgid "Name"
+msgstr "名前"
+
+#: projects/templates/edit_project.html:16
+msgid "Edit Project"
+msgstr "プロジェクトを編集"
+
+#: projects/templates/project_details.html:39
+msgid "No description provided for this project."
+msgstr "このプロジェクトの説明はありません。"
+
+#: projects/templates/projects_view.html:34
+msgid "Search projects in this list..."
+msgstr "このリストでプロジェクトを検索..."
+
+#: projects/templates/projects_view.html:54
+msgid "All Scopes"
+msgstr "すべての範囲"
+
+#: projects/templates/projects_view.html:76
+msgid "Recently Updated"
+msgstr "最近更新"
+
+#: projects/templates/projects_view.html:77
+msgid "Newest Created"
+msgstr "新しい順"
+
+#: projects/templates/register_project.html:4
+#: projects/templates/register_project.html:12
+msgid "Register New Project"
+msgstr "新しいプロジェクトを登録"
+
+#: projects/templates/register_project.html:13
+msgid "Create a new project to start tracking issues and collaborating."
+msgstr "イシューの追跡と共同作業を開始するために、新しいプロジェクトを作成します。"
+
+#: projects/templates/register_project.html:86
+msgid "Collaborators"
+msgstr "コラボレーター"
+
+#: projects/templates/register_project.html:91
+msgid "Search and add team members to this project."
+msgstr "このプロジェクトにチームメンバーを検索して追加します。"
+
+#: projects/templates/register_project.html:100
+msgid "Components"
+msgstr "コンポーネント"
+
+#: projects/templates/register_project.html:101
+msgid ""
+"Define the main components of your project (e.g., Backend, Frontend, API)."
+msgstr "プロジェクトの主要コンポーネント（例：バックエンド、フロントエンド、API）を定義します。"
+
+#: projects/templates/register_project.html:149
+#: projects/templates/register_project.html:230
+msgid "Remove Component"
+msgstr "コンポーネントを削除"
+
+#: projects/templates/register_project.html:163
+msgid "Add Another Component"
+msgstr "別のコンポーネントを追加"
+
+#: projects/templates/register_project.html:247
+msgid "Enter collaborator emails"
+msgstr "コラボレーターのメールアドレスを入力"
+
+#: reports/forms.py:50 reports/templates/create_report.html:55
+#: reports/templates/edit_report.html:43
+msgid "Brief summary of the issue"
+msgstr "イシューの簡単な概要"
+
+#: reports/forms.py:53 reports/templates/create_report.html:108
+#: reports/templates/edit_report.html:84
+msgid "Detailed explanation..."
+msgstr "詳細な説明..."
+
+#: reports/forms.py:55
+msgid "Steps"
+msgstr "手順"
+
+#: reports/forms.py:56
+msgid ""
+"1. Go to...\n"
+"2. Click on..."
+msgstr "1. ...に移動する\n2. ...をクリックする"
+
+#: reports/forms.py:58
+msgid "Frequency"
+msgstr "頻度"
+
+#: reports/forms.py:60
+msgid "Once"
+msgstr "1回"
+
+#: reports/forms.py:61
+msgid "Daily"
+msgstr "毎日"
+
+#: reports/forms.py:62
+msgid "Weekly"
+msgstr "毎週"
+
+#: reports/forms.py:63
+msgid "Monthly"
+msgstr "毎月"
+
+#: reports/forms.py:66
+msgid "Impact"
+msgstr "影響度"
+
+#: reports/forms.py:77 reports/templates/create_report.html:70
+#: reports/templates/reports/partials/reports_list_partial.html:9
+msgid "Project"
+msgstr "プロジェクト"
+
+#: reports/forms.py:80
+msgid "Public Visibility"
+msgstr "公開設定"
+
+#: reports/templates/create_report.html:4
+#: reports/templates/create_report.html:9
+#: reports/templates/create_report.html:13
+#: reports/templates/create_report.html:16
+msgid "Report Issue"
+msgstr "イシューを報告"
+
+#: reports/templates/create_report.html:24
+#: reports/templates/report_list.html:40
+msgid "Report New Issue"
+msgstr "新しいイシューを報告"
+
+#: reports/templates/create_report.html:26
+msgid "Submit a new bug, feature request, or task"
+msgstr "バグ、機能リクエスト、またはタスクを送信する"
+
+#: reports/templates/create_report.html:29
+msgid "Submit a new issue to get it tracked."
+msgstr "新しいイシューを送信してトラッキングを開始します。"
+
+#: reports/templates/create_report.html:100
+#: reports/templates/create_report.html:121
+#: reports/templates/edit_report.html:76 reports/templates/edit_report.html:97
+msgid "Write"
+msgstr "書く"
+
+#: reports/templates/create_report.html:101
+#: reports/templates/create_report.html:122
+#: reports/templates/edit_report.html:77 reports/templates/edit_report.html:98
+msgid "Preview"
+msgstr "プレビュー"
+
+#: reports/templates/create_report.html:111
+#: reports/templates/create_report.html:132
+#: reports/templates/create_report.html:268
+#: reports/templates/edit_report.html:87 reports/templates/edit_report.html:108
+#: reports/templates/edit_report.html:185
+msgid "Nothing to preview"
+msgstr "プレビューする内容がありません"
+
+#: reports/templates/create_report.html:129
+#: reports/templates/edit_report.html:105
+msgid "1. Go to...\\n2. Click on..."
+msgstr "1. ...に移動する\\n2. ...をクリックする"
+
+#: reports/templates/create_report.html:158
+#: reports/templates/edit_report.html:131
+msgid ""
+"Display this report to the public or restrict it to project members only."
+msgstr "このレポートを公開するか、プロジェクトメンバーのみに制限します。"
+
+#: reports/templates/create_report.html:170
+msgid "Report Anonymously"
+msgstr "匿名で報告"
+
+#: reports/templates/create_report.html:171
+msgid "Hide your user details on this report. Only project owners will see it."
+msgstr "このレポートのユーザー詳細を非表示にします。プロジェクトオーナーのみが表示できます。"
+
+#: reports/templates/create_report.html:183
+msgid "Submit Issue"
+msgstr "イシューを送信"
+
+#: reports/templates/create_report.html:291
+msgid "Submitting..."
+msgstr "送信中..."
+
+#: reports/templates/edit_report.html:4 reports/templates/edit_report.html:9
+#: reports/templates/edit_report.html:16
+msgid "Edit Issue"
+msgstr "イシューを編集"
+
+#: reports/templates/edit_report.html:17
+msgid "Update details for issue"
+msgstr "イシューの詳細を更新"
+
+#: reports/templates/edit_report.html:141
+msgid "Cancel"
+msgstr "キャンセル"
+
+#: reports/templates/edit_report.html:145
+msgid "Save Changes"
+msgstr "変更を保存"
+
+#: reports/templates/report_list.html:52
+msgid "Filters & Sorting"
+msgstr "フィルター＆並び替え"
+
+#: reports/templates/report_list.html:55
+msgid "Search reports in this list..."
+msgstr "このリストでレポートを検索..."
+
+#: reports/templates/report_list.html:142
+msgid "Sort By"
+msgstr "並び替え"
+
+#: reports/templates/report_list.html:144
+msgid "Newest Updated"
+msgstr "最近更新"
+
+#: reports/templates/report_list.html:145
+msgid "Oldest Created"
+msgstr "古い順"
+
+#: reports/templates/report_list.html:146
+msgid "Title (A-Z)"
+msgstr "タイトル (A-Z)"
+
+#: reports/templates/report_list.html:147
+msgid "Title (Z-A)"
+msgstr "タイトル (Z-A)"
+
+#: reports/templates/report_list.html:148
+msgid "Severity (High to Low)"
+msgstr "重大度 (高→低)"
+
+#: reports/templates/report_list.html:149
+msgid "Status Group"
+msgstr "ステータスグループ"
+
+#: reports/templates/reports/partials/drag_drop_uploader.html:4
+msgid "Attachments"
+msgstr "添付ファイル"
+
+#: reports/templates/reports/partials/drag_drop_uploader.html:6
+#: reports/templates/reports/partials/drag_drop_uploader.html:95
+msgid "Max:"
+msgstr "最大:"
+
+#: reports/templates/reports/partials/drag_drop_uploader.html:6
+#: reports/templates/reports/partials/drag_drop_uploader.html:95
+msgid "files"
+msgstr "ファイル"
+
+#: reports/templates/reports/partials/drag_drop_uploader.html:6
+#: reports/templates/reports/partials/drag_drop_uploader.html:95
+msgid "Allowed:"
+msgstr "許可:"
+
+#: reports/templates/reports/partials/drag_drop_uploader.html:14
+msgid "Drag & drop files here, or"
+msgstr "ここにファイルをドラッグ＆ドロップ、または"
+
+#: reports/templates/reports/partials/drag_drop_uploader.html:14
+msgid "browse"
+msgstr "参照"
+
+#: reports/templates/reports/partials/drag_drop_uploader.html:15
+msgid "Image, PDF, Document, Zip"
+msgstr "画像、PDF、ドキュメント、Zip"
+
+#: reports/templates/reports/partials/drag_drop_uploader.html:25
+msgid "Selected Files"
+msgstr "選択されたファイル"
+
+#: reports/templates/reports/partials/drag_drop_uploader.html:32
+msgid "Current Attachments"
+msgstr "現在の添付ファイル"
+
+#: reports/templates/reports/partials/drag_drop_uploader.html:152
+#: reports/templates/reports/partials/drag_drop_uploader.html:158
+msgid "File"
+msgstr "ファイル"
+
+#: reports/templates/reports/partials/drag_drop_uploader.html:152
+msgid "has an invalid type"
+msgstr "は無効なファイルタイプです"
+
+#: reports/templates/reports/partials/drag_drop_uploader.html:158
+msgid "exceeds the 15MB size limit."
+msgstr "は15MB ofサイズ制限を超えています。"
+
+#: reports/templates/reports/partials/drag_drop_uploader.html:169
+msgid "A maximum of"
+msgstr "最大で"
+
+#: reports/templates/reports/partials/drag_drop_uploader.html:169
+msgid "attachments can be uploaded. Slots exhausted."
+msgstr "個の添付ファイルをアップロードできます。空きスロットがありません。"
+
+#: reports/templates/reports/partials/reports_list_partial.html:7
+msgid "Issue"
+msgstr "イシュー"
+
+#: reports/templates/reports/partials/reports_list_partial.html:11
+msgid "Reported By"
+msgstr "報告者"
+
+#: reports/templates/reports/partials/reports_list_partial.html:13
+msgid "Date"
+msgstr "日付"
+
+#: reports/templates/reports/partials/reports_list_partial.html:38
+msgid "Anonymous"
+msgstr "匿名"

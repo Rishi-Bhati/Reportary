@@ -1,25 +1,41 @@
 {% extends "notifications/emails/base_email.html" %}
-
 {% block email_content %}
-<h2 style="margin-top: 0; font-size: 20px; font-weight: 700; color: #1b1725; margin-bottom: 16px;">Hello @{{ username }},</h2>
-<p style="font-size: 16px; line-height: 1.6; color: #534b62; margin-bottom: 24px;">
-    Welcome to Reportary! We are thrilled to have you join our developer collaboration platform.
-</p>
-<p style="font-size: 16px; line-height: 1.6; color: #534b62; margin-bottom: 24px;">
-    Your email address has been successfully verified. You can now unlock the full power of Reportary:
-</p>
-<ul style="font-size: 15px; color: #534b62; line-height: 1.8; margin-bottom: 32px; padding-left: 20px;">
-    <li>Create projects and add your team members</li>
-    <li>File detailed issues and track their progress</li>
-    <li>Collaborate on code comments and task boards</li>
-    <li>Organize work under shared Organisations</li>
-</ul>
 
-<div style="text-align: center; margin-bottom: 32px;">
-    <a href="{{ site_url|default:'http://127.0.0.1:8000/' }}dashboard/" style="background-color: #226ce0; color: #ffffff; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 16px; display: inline-block;">Go to Dashboard</a>
-</div>
+<h2 style="margin:0 0 16px 0; font-size:18px; font-weight:700; color:#1a1a2e;">Welcome to Reportary, @{{ username }}!</h2>
 
-<p style="font-size: 14px; color: #a499b3; line-height: 1.5; margin: 0;">
-    If you have any questions, feel free to reach out to our team at any time. Happy tracking!
+<p style="margin:0 0 20px 0; font-size:15px; line-height:1.65; color:#4a5568;">
+  Your email has been verified. You're all set to start using Reportary.
 </p>
+
+<!-- Feature list -->
+<table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom:28px;">
+  <tr>
+    <td style="padding:4px 0 4px 0;">
+      <p style="margin:0; font-size:14px; color:#4a5568; line-height:1.6;">
+        ✦ &nbsp;Create projects and add team members<br>
+        ✦ &nbsp;File and track issues across projects<br>
+        ✦ &nbsp;Collaborate with comments and assignments<br>
+        ✦ &nbsp;Organise work under shared organisations
+      </p>
+    </td>
+  </tr>
+</table>
+
+<!-- CTA Button -->
+<table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom:20px;">
+  <tr>
+    <td align="center">
+      <a href="{{ site_url|default:'http://127.0.0.1:8000/' }}dashboard/"
+         class="cta-btn"
+         style="background-color:#226ce0; color:#ffffff; padding:13px 32px; border-radius:8px; text-decoration:none; font-weight:600; font-size:15px; display:inline-block;">
+        Go to Dashboard
+      </a>
+    </td>
+  </tr>
+</table>
+
+<p style="margin:0; font-size:12px; color:#a0aec0; line-height:1.5;">
+  If you have questions, reach out via the Help section in your dashboard.
+</p>
+
 {% endblock %}

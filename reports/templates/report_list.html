@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static %}{% load i18n %}
 
 {% block title %}{{ title|default:"Reports" }} | Reportary{% endblock %}
 {% block breadcrumb %}
@@ -37,7 +37,7 @@ My Reports
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
             </svg>
-            Report New Issue
+            {% trans "Report New Issue" %}
         </a>
         {% endif %}
     </div>
@@ -49,10 +49,10 @@ My Reports
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
                 </svg>
-                Filters & Sorting
+                {% trans "Filters & Sorting" %}
             </button>
             <div class="relative flex-1">
-                <input type="text" name="q" id="local-search-input" value="{{ q }}" placeholder="Search reports in this list..."
+                <input type="text" name="q" id="local-search-input" value="{{ q }}" placeholder="{% trans "Search reports in this list..." %}"
                        hx-get="" hx-trigger="keyup changed delay:300ms, search" hx-target="#reports-table-wrapper" hx-include="#local-filters-form" hx-push-url="true"
                        class="input input-sm h-9 w-full bg-gray-50 border border-gray-200 focus:bg-white focus:border-[#226ce0] rounded-xl pl-9 text-xs">
                 <svg class="w-3.5 h-3.5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -127,26 +127,26 @@ My Reports
 
             <!-- From Date Filter -->
             <div class="form-control">
-                <label class="label text-[10px] font-bold text-gray-400 uppercase tracking-wider p-0 mb-1">From Date</label>
+                <label class="label text-[10px] font-bold text-gray-400 uppercase tracking-wider p-0 mb-1">{% trans "From Date" %}</label>
                 <input type="date" name="date_start" value="{{ selected_date_start }}" class="input input-bordered input-sm w-full bg-gray-50 rounded-xl text-xs">
             </div>
 
             <!-- To Date Filter -->
             <div class="form-control">
-                <label class="label text-[10px] font-bold text-gray-400 uppercase tracking-wider p-0 mb-1">To Date</label>
+                <label class="label text-[10px] font-bold text-gray-400 uppercase tracking-wider p-0 mb-1">{% trans "To Date" %}</label>
                 <input type="date" name="date_end" value="{{ selected_date_end }}" class="input input-bordered input-sm w-full bg-gray-50 rounded-xl text-xs">
             </div>
 
             <!-- Sorting Choices -->
             <div class="form-control">
-                <label class="label text-[10px] font-bold text-gray-400 uppercase tracking-wider p-0 mb-1">Sort By</label>
+                <label class="label text-[10px] font-bold text-gray-400 uppercase tracking-wider p-0 mb-1">{% trans "Sort By" %}</label>
                 <select name="sort_by" class="select select-bordered select-sm w-full bg-gray-50 rounded-xl text-xs">
-                    <option value="">Newest Updated</option>
-                    <option value="oldest" {% if selected_sort_by == 'oldest' %}selected{% endif %}>Oldest Created</option>
-                    <option value="title_asc" {% if selected_sort_by == 'title_asc' %}selected{% endif %}>Title (A-Z)</option>
-                    <option value="title_desc" {% if selected_sort_by == 'title_desc' %}selected{% endif %}>Title (Z-A)</option>
-                    <option value="severity_desc" {% if selected_sort_by == 'severity_desc' %}selected{% endif %}>Severity (High to Low)</option>
-                    <option value="status" {% if selected_sort_by == 'status' %}selected{% endif %}>Status Group</option>
+                    <option value="">{% trans "Newest Updated" %}</option>
+                    <option value="oldest" {% if selected_sort_by == 'oldest' %}selected{% endif %}>{% trans "Oldest Created" %}</option>
+                    <option value="title_asc" {% if selected_sort_by == 'title_asc' %}selected{% endif %}>{% trans "Title (A-Z)" %}</option>
+                    <option value="title_desc" {% if selected_sort_by == 'title_desc' %}selected{% endif %}>{% trans "Title (Z-A)" %}</option>
+                    <option value="severity_desc" {% if selected_sort_by == 'severity_desc' %}selected{% endif %}>{% trans "Severity (High to Low)" %}</option>
+                    <option value="status" {% if selected_sort_by == 'status' %}selected{% endif %}>{% trans "Status Group" %}</option>
                 </select>
             </div>
         </form>

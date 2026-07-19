@@ -1,8 +1,9 @@
+{% load i18n %}
 <div class="form-control w-full">
     <div class="flex justify-between items-center mb-1">
-        <label class="label text-sm font-semibold text-gray-700 p-0" for="id_attachments">Attachments</label>
+        <label class="label text-sm font-semibold text-gray-700 p-0" for="id_attachments">{% trans "Attachments" %}</label>
         <span class="text-xs text-gray-500 font-medium" id="attachment-limits-info">
-            Max: {{ project.max_attachments|default:5 }} files • Allowed: {{ project.allowed_attachment_types|default:".jpg,.jpeg,.png,.pdf,.zip,.txt" }}
+            {% trans "Max:" %} {{ project.max_attachments|default:5 }} {% trans "files" %} • {% trans "Allowed:" %} {{ project.allowed_attachment_types|default:".jpg,.jpeg,.png,.pdf,.zip,.txt" }}
         </span>
     </div>
     
@@ -10,8 +11,8 @@
         <svg class="w-8 h-8 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
         </svg>
-        <span class="text-sm font-semibold text-gray-800">Drag & drop files here, or <span class="text-[#226ce0] hover:underline">browse</span></span>
-        <span class="text-xs text-gray-400 mt-1" id="drop-zone-help">Image, PDF, Document, Zip</span>
+        <span class="text-sm font-semibold text-gray-800">{% trans "Drag & drop files here, or" %} <span class="text-[#226ce0] hover:underline">{% trans "browse" %}</span></span>
+        <span class="text-xs text-gray-400 mt-1" id="drop-zone-help">{% trans "Image, PDF, Document, Zip" %}</span>
         
         <input type="file" name="attachments" id="id_attachments" class="hidden" multiple>
     </div>
@@ -21,14 +22,14 @@
     
     <!-- Selected Files Queue Display -->
     <div id="files-queue-container" class="hidden mt-3 space-y-2">
-        <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Selected Files</p>
+        <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">{% trans "Selected Files" %}</p>
         <div id="files-queue-list" class="space-y-2"></div>
     </div>
     
     <!-- Existing Attachments (For Edit Mode) -->
     {% if existing_attachments %}
     <div class="mt-4 space-y-2">
-        <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Current Attachments</p>
+        <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">{% trans "Current Attachments" %}</p>
         <div class="space-y-2">
             {% for attachment in existing_attachments %}
             <div id="existing-attachment-{{ attachment.id }}" class="p-3 bg-gray-50 border border-gray-100 rounded-xl flex items-center justify-between">
@@ -91,7 +92,7 @@
                             if (data.max_attachments) {
                                 maxAttachments = parseInt(data.max_attachments);
                                 allowedTypes = data.allowed_attachment_types.toLowerCase().split(',').map(ext => ext.trim());
-                                document.getElementById('attachment-limits-info').textContent = `Max: ${maxAttachments} files • Allowed: ${data.allowed_attachment_types}`;
+                                document.getElementById('attachment-limits-info').textContent = `{% trans "Max:" %} ${maxAttachments} {% trans "files" %} • {% trans "Allowed:" %} ${data.allowed_attachment_types}`;
                                 document.getElementById('drop-zone-help').textContent = data.allowed_attachment_types.split(',').slice(0, 4).join(', ') + '...';
                                 // Re-validate existing queue
                                 validateAndRefreshQueue([]);
@@ -148,13 +149,13 @@
                 
                 // 1. File Type Check
                 if (!allowedTypes.includes(ext) && !allowedTypes.includes('*')) {
-                    rejectedReasons.push(`File "${file.name}" has an invalid type (${ext}).`);
+                    rejectedReasons.push(`{% trans "File" %} "${file.name}" {% trans "has an invalid type" %} (${ext}).`);
                     continue;
                 }
 
                 // 2. File Size Check (Max 15MB)
                 if (file.size > 15 * 1024 * 1024) {
-                    rejectedReasons.push(`File "${file.name}" exceeds the 15MB size limit.`);
+                    rejectedReasons.push(`{% trans "File" %} "${file.name}" {% trans "exceeds the 15MB size limit." %}`);
                     continue;
                 }
 
@@ -165,7 +166,7 @@
 
                 // Check slots
                 if (selectedFiles.length >= availableSlots) {
-                    rejectedReasons.push(`A maximum of ${maxAttachments} attachments can be uploaded. Slots exhausted.`);
+                    rejectedReasons.push(`{% trans "A maximum of" %} ${maxAttachments} {% trans "attachments can be uploaded. Slots exhausted." %}`);
                     break;
                 }
 

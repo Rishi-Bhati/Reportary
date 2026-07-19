@@ -1,4 +1,10 @@
 from django.utils import timezone
+from django.utils.translation import get_language
+
+
+def language_context(request):
+    """Injects the current active language code into every template."""
+    return {'current_language': get_language() or 'en'}
 
 
 def announcements(request):

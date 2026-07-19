@@ -17,6 +17,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.urls import include
+from django.conf.urls.i18n import i18n_patterns
+import django.conf.urls.i18n as i18n_urls
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth.urls import views as auth_views
@@ -24,6 +26,9 @@ from django.contrib.auth.urls import views as auth_views
 from core import views as core_views
 
 urlpatterns = [
+    # i18n language switching endpoint (POST /i18n/set_language/)
+    path('i18n/', include('django.conf.urls.i18n')),
+
     # The Django admin interface
     path('admin/', admin.site.urls),
     # Global search

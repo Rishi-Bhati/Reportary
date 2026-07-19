@@ -1,3 +1,4 @@
+{% load i18n %}
 {% if not projects and not organisations and not reports and not comments and not highlighted_project and not highlighted_org and not highlighted_report and not highlighted_comment %}
 <div class="py-16 text-center text-gray-400 bg-white rounded-2xl border border-gray-100 shadow-sm space-y-3">
     <svg class="w-12 h-12 mx-auto text-gray-300 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -13,7 +14,7 @@
     <div class="bg-white rounded-2xl border border-[#d0bcd5]/30 shadow-sm overflow-hidden">
         <div class="px-6 py-4 border-b border-[#d0bcd5]/30 bg-[#f8f6fa]/50">
             <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wider flex items-center gap-2">
-                📁 Projects
+                📁 {% trans "Projects" %}
             </h3>
         </div>
         <div class="divide-y divide-gray-100">
@@ -24,7 +25,7 @@
                     <div class="flex items-start justify-between gap-4">
                         <div class="min-w-0">
                             <span class="text-sm font-bold text-[#226ce0] block">
-                                🌟 {{ highlighted_project.title }} <span class="ml-2 px-1.5 py-0.5 text-[9px] bg-[#226ce0] text-white rounded font-medium tracking-wide uppercase">Selected</span>
+                                🌟 {{ highlighted_project.title }} <span class="ml-2 px-1.5 py-0.5 text-[9px] bg-[#226ce0] text-white rounded font-medium tracking-wide uppercase">{% trans "Selected" %}</span>
                             </span>
                             <p class="text-xs text-gray-600 mt-1 line-clamp-2 leading-relaxed">
                                 {{ highlighted_project.description }}
@@ -37,7 +38,7 @@
                             </span>
                             {% endif %}
                             <span class="text-[10px] text-gray-400">
-                                Updated {{ highlighted_project.updated_at|timesince }} ago
+                                {% blocktrans with time=highlighted_project.updated_at|timesince %}Updated {{ time }} ago{% endblocktrans %}
                             </span>
                         </div>
                     </div>
@@ -63,7 +64,7 @@
                         </span>
                         {% endif %}
                         <span class="text-[10px] text-gray-400">
-                            Updated {{ project.updated_at|timesince }} ago
+                            {% blocktrans with time=project.updated_at|timesince %}Updated {{ time }} ago{% endblocktrans %}
                         </span>
                     </div>
                 </div>
@@ -78,7 +79,7 @@
     <div class="bg-white rounded-2xl border border-[#d0bcd5]/30 shadow-sm overflow-hidden">
         <div class="px-6 py-4 border-b border-[#d0bcd5]/30 bg-[#f8f6fa]/50">
             <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wider flex items-center gap-2">
-                🏢 Organizations
+                🏢 {% trans "Organizations" %}
             </h3>
         </div>
         <div class="divide-y divide-gray-100">
@@ -89,10 +90,11 @@
                     <div class="flex items-start justify-between gap-4">
                         <div class="min-w-0">
                             <span class="text-sm font-bold text-[#226ce0] block">
-                                🌟 {{ highlighted_org.name }} <span class="ml-2 px-1.5 py-0.5 text-[9px] bg-[#226ce0] text-white rounded font-medium tracking-wide uppercase">Selected</span>
+                                🌟 {{ highlighted_org.name }} <span class="ml-2 px-1.5 py-0.5 text-[9px] bg-[#226ce0] text-white rounded font-medium tracking-wide uppercase">{% trans "Selected" %}</span>
                             </span>
+                            {% trans "No description provided." as no_desc %}
                             <p class="text-xs text-gray-600 mt-1 line-clamp-2 leading-relaxed">
-                                {{ highlighted_org.description|default:"No description provided." }}
+                                {{ highlighted_org.description|default:no_desc }}
                             </p>
                         </div>
                         {% if highlighted_org.domain %}
@@ -112,8 +114,9 @@
                         <span class="text-sm font-bold text-gray-900 group-hover:text-[#226ce0] transition-colors block">
                             {{ org.name }}
                         </span>
+                        {% trans "No description provided." as no_desc %}
                         <p class="text-xs text-gray-500 mt-1 line-clamp-2 leading-relaxed">
-                            {{ org.description|default:"No description provided." }}
+                            {{ org.description|default:no_desc }}
                         </p>
                     </div>
                     {% if org.domain %}
@@ -133,7 +136,7 @@
     <div class="bg-white rounded-2xl border border-[#d0bcd5]/30 shadow-sm overflow-hidden">
         <div class="px-6 py-4 border-b border-[#d0bcd5]/30 bg-[#f8f6fa]/50">
             <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wider flex items-center gap-2">
-                📋 Reports
+                📋 {% trans "Reports" %}
             </h3>
         </div>
         <div class="divide-y divide-gray-100">
@@ -144,24 +147,24 @@
                     <div class="flex items-start justify-between gap-4">
                         <div class="min-w-0">
                             <span class="text-sm font-bold text-[#226ce0] block">
-                                🌟 {{ highlighted_report.title }} <span class="ml-2 px-1.5 py-0.5 text-[9px] bg-[#226ce0] text-white rounded font-medium tracking-wide uppercase">Selected</span>
+                                🌟 {{ highlighted_report.title }} <span class="ml-2 px-1.5 py-0.5 text-[9px] bg-[#226ce0] text-white rounded font-medium tracking-wide uppercase">{% trans "Selected" %}</span>
                             </span>
                             <p class="text-xs text-gray-500 mt-1">
-                                #{{ highlighted_report.id }} • {{ highlighted_report.component.name|default:"General" }} • Project: <span class="font-semibold text-gray-600">{{ highlighted_report.project.title }}</span>
+                                #{{ highlighted_report.id }} • {{ highlighted_report.component.name|default:"General" }} • {% trans "Project:" %} <span class="font-semibold text-gray-600">{{ highlighted_report.project.title }}</span>
                             </p>
                         </div>
                         <div class="flex flex-col items-end gap-1.5 shrink-0">
                             {% if highlighted_report.status == 'open' %}
-                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-blue-50 text-blue-600 border border-blue-100">Open</span>
+                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-blue-50 text-blue-600 border border-blue-100">{% trans "Open" %}</span>
                             {% elif highlighted_report.status == 'in_progress' %}
-                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-yellow-50 text-yellow-800 border border-yellow-100">In Progress</span>
+                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-yellow-50 text-yellow-800 border border-yellow-100">{% trans "In Progress" %}</span>
                             {% elif highlighted_report.status == 'resolved' %}
-                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-600 border border-emerald-100">Resolved</span>
+                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-600 border border-emerald-100">{% trans "Resolved" %}</span>
                             {% else %}
                             <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-gray-50 text-gray-500 border border-gray-100">{{ highlighted_report.status|capfirst }}</span>
                             {% endif %}
                             <span class="text-[10px] text-gray-400">
-                                {{ highlighted_report.created_at|timesince }} ago
+                                {% blocktrans with time=highlighted_report.created_at|timesince %}{{ time }} ago{% endblocktrans %}
                             </span>
                         </div>
                     </div>
@@ -177,21 +180,21 @@
                             {{ report.title }}
                         </span>
                         <p class="text-xs text-gray-400 mt-1">
-                            #{{ report.id }} • {{ report.component.name|default:"General" }} • Project: <span class="font-semibold text-gray-600">{{ report.project.title }}</span>
+                            #{{ report.id }} • {{ report.component.name|default:"General" }} • {% trans "Project:" %} <span class="font-semibold text-gray-600">{{ report.project.title }}</span>
                         </p>
                     </div>
                     <div class="flex flex-col items-end gap-1.5 shrink-0">
                         {% if report.status == 'open' %}
-                        <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-blue-50 text-blue-600 border border-blue-100">Open</span>
+                        <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-blue-50 text-blue-600 border border-blue-100">{% trans "Open" %}</span>
                         {% elif report.status == 'in_progress' %}
-                        <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-yellow-50 text-yellow-800 border border-yellow-100">In Progress</span>
+                        <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-yellow-50 text-yellow-800 border border-yellow-100">{% trans "In Progress" %}</span>
                         {% elif report.status == 'resolved' %}
-                        <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-600 border border-emerald-100">Resolved</span>
+                        <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-600 border border-emerald-100">{% trans "Resolved" %}</span>
                         {% else %}
                         <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-gray-50 text-gray-500 border border-gray-100">{{ report.status|capfirst }}</span>
                         {% endif %}
                         <span class="text-[10px] text-gray-400">
-                            {{ report.created_at|timesince }} ago
+                            {% blocktrans with time=report.created_at|timesince %}{{ time }} ago{% endblocktrans %}
                         </span>
                     </div>
                 </div>
@@ -206,7 +209,7 @@
     <div class="bg-white rounded-2xl border border-[#d0bcd5]/30 shadow-sm overflow-hidden">
         <div class="px-6 py-4 border-b border-[#d0bcd5]/30 bg-[#f8f6fa]/50">
             <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wider flex items-center gap-2">
-                💬 Comments
+                💬 {% trans "Comments" %}
             </h3>
         </div>
         <div class="divide-y divide-gray-100">
@@ -219,8 +222,8 @@
                             <div class="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center text-[10px] font-bold text-gray-500">
                                 {{ highlighted_comment.commented_by.username|slice:":1"|upper }}
                             </div>
-                            <span class="text-xs font-semibold text-[#226ce0]">{{ highlighted_comment.commented_by.username }} <span class="ml-2 px-1.5 py-0.5 text-[9px] bg-[#226ce0] text-white rounded font-medium tracking-wide uppercase">Selected</span></span>
-                            <span class="text-[10px] text-gray-400">• in "{{ highlighted_comment.report.title }}"</span>
+                            <span class="text-xs font-semibold text-[#226ce0]">{{ highlighted_comment.commented_by.username }} <span class="ml-2 px-1.5 py-0.5 text-[9px] bg-[#226ce0] text-white rounded font-medium tracking-wide uppercase">{% trans "Selected" %}</span></span>
+                            <span class="text-[10px] text-gray-400">{% blocktrans with title=highlighted_comment.report.title %}• in "{{ title }}"{% endblocktrans %}</span>
                         </div>
                         <p class="text-xs text-gray-600 line-clamp-2 leading-relaxed bg-white/80 p-2.5 rounded-lg border border-gray-100 italic font-semibold">
                             "{{ highlighted_comment.text|truncatechars:200 }}"
@@ -238,7 +241,7 @@
                             {{ comment.commented_by.username|slice:":1"|upper }}
                         </div>
                         <span class="text-xs font-semibold text-gray-700">{{ comment.commented_by.username }}</span>
-                        <span class="text-[10px] text-gray-400">• in "{{ comment.report.title }}"</span>
+                        <span class="text-[10px] text-gray-400">{% blocktrans with title=comment.report.title %}• in "{{ title }}"{% endblocktrans %}</span>
                     </div>
                     <p class="text-xs text-gray-600 line-clamp-2 leading-relaxed bg-gray-50 p-2.5 rounded-lg border border-gray-100 italic">
                         "{{ comment.text|truncatechars:200 }}"

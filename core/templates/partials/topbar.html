@@ -1,9 +1,9 @@
-{% load static %}
+{% load static %}{% load i18n %}
 <header
     class="navbar bg-white/95 backdrop-blur-md border-b border-[#d0bcd5]/30 h-16 fixed top-0 left-0 right-0 z-50 px-4 md:px-6 shadow-sm">
     <!-- Left: Mobile Menu Toggle & Logo -->
     <div class="flex-1 flex items-center gap-2 md:gap-4">
-        <button onclick="toggleMobileSidebar()" class="btn btn-ghost btn-circle btn-sm text-[#534b62] hover:bg-[#226ce0]/10 md:hidden" title="Toggle Sidebar">
+        <button onclick="toggleMobileSidebar()" class="btn btn-ghost btn-circle btn-sm text-[#534b62] hover:bg-[#226ce0]/10 md:hidden" title="{% trans 'Toggle Sidebar' %}">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
             </svg>
@@ -23,7 +23,7 @@
         <div class="relative hidden md:block" id="topbar-search-container">
             <form action="{% url 'global_search' %}" method="get" class="relative" id="topbar-search-form">
                 <input type="text" name="q" id="topbar-search-input" autocomplete="off"
-                    value="{{ request.GET.q|default:'' }}" placeholder="Search..."
+                    value="{{ request.GET.q|default:'' }}" placeholder="{% trans 'Search...' %}"
                     hx-get="{% url 'global_search_glimpse' %}"
                     hx-trigger="keyup changed delay:200ms, focus"
                     hx-target="#search-glimpse-bubble"
@@ -75,13 +75,13 @@
         <!-- Nav Links -->
         <nav class="hidden lg:flex items-center gap-1">
             <a href="{% url 'projects:projects_view' %}"
-                class="px-3 py-2 text-sm font-medium text-[#534b62] hover:text-[#226ce0] hover:bg-[#226ce0]/10 rounded-lg transition-all">Explore</a>
+                class="px-3 py-2 text-sm font-medium text-[#534b62] hover:text-[#226ce0] hover:bg-[#226ce0]/10 rounded-lg transition-all">{% trans "Explore" %}</a>
             <a href="{% url 'home:faq' %}"
-                class="px-3 py-2 text-sm font-medium text-[#534b62] hover:text-[#226ce0] hover:bg-[#226ce0]/10 rounded-lg transition-all">Help</a>
+                class="px-3 py-2 text-sm font-medium text-[#534b62] hover:text-[#226ce0] hover:bg-[#226ce0]/10 rounded-lg transition-all">{% trans "Help" %}</a>
         </nav>
 
         <!-- Theme Toggle Button -->
-        <button id="theme-toggle-btn" onclick="toggleTheme()" class="btn btn-ghost btn-circle btn-sm hover:bg-[#226ce0]/10 text-[#534b62] hover:text-[#226ce0] transition-colors" title="Toggle Light/Dark Mode">
+        <button id="theme-toggle-btn" onclick="toggleTheme()" class="btn btn-ghost btn-circle btn-sm hover:bg-[#226ce0]/10 text-[#534b62] hover:text-[#226ce0] transition-colors" title="{% trans 'Toggle Light/Dark Mode' %}">
             <!-- Sun icon -->
             <svg id="theme-sun-icon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m12.728 12.728l.707.707M12 8a4 4 0 100 8 4 4 0 000-8z"></path>
@@ -91,6 +91,58 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
             </svg>
         </button>
+
+        <!-- Language Toggle (Globe Icon) -->
+        <div class="dropdown dropdown-end" id="lang-toggle-dropdown">
+            <button tabindex="0" id="lang-toggle-btn"
+                class="btn btn-ghost btn-circle btn-sm hover:bg-[#226ce0]/10 text-[#534b62] hover:text-[#226ce0] transition-colors"
+                title="{% trans 'Change Language' %}">
+                <!-- Globe SVG -->
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                </svg>
+            </button>
+            <ul tabindex="0"
+                class="dropdown-content menu menu-sm bg-white rounded-xl shadow-xl border border-[#d0bcd5]/30 z-[100] mt-2 p-1.5 min-w-[140px]">
+                <li>
+                    <form action="{% url 'set_language' %}" method="post" class="p-0 m-0">
+                        {% csrf_token %}
+                        <input type="hidden" name="language" value="en">
+                        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                        <button type="submit"
+                            class="w-full flex items-center gap-2.5 px-3 py-2 text-sm rounded-lg transition-all
+                            {% if current_language == 'en' %}bg-[#226ce0]/10 text-[#226ce0] font-semibold{% else %}text-[#534b62] hover:bg-[#226ce0]/10 hover:text-[#226ce0]{% endif %}">
+                            <span class="text-base leading-none">🇬🇧</span>
+                            <span>English</span>
+                            {% if current_language == 'en' %}
+                            <svg class="w-3.5 h-3.5 ml-auto text-[#226ce0]" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                            </svg>
+                            {% endif %}
+                        </button>
+                    </form>
+                </li>
+                <li>
+                    <form action="{% url 'set_language' %}" method="post" class="p-0 m-0">
+                        {% csrf_token %}
+                        <input type="hidden" name="language" value="ja">
+                        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                        <button type="submit"
+                            class="w-full flex items-center gap-2.5 px-3 py-2 text-sm rounded-lg transition-all
+                            {% if current_language == 'ja' %}bg-[#226ce0]/10 text-[#226ce0] font-semibold{% else %}text-[#534b62] hover:bg-[#226ce0]/10 hover:text-[#226ce0]{% endif %}">
+                            <span class="text-base leading-none">🇯🇵</span>
+                            <span>日本語</span>
+                            {% if current_language == 'ja' %}
+                            <svg class="w-3.5 h-3.5 ml-auto text-[#226ce0]" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                            </svg>
+                            {% endif %}
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </div>
 
         <!-- Notifications -->
          <a href="{% url 'notifications:center' %}">
@@ -150,15 +202,15 @@
             <ul tabindex="0"
                 class="mt-3 z-[1] p-2 shadow-lg menu menu-sm dropdown-content bg-white rounded-xl w-52 border border-[#d0bcd5]/30">
                 <li><a href="{% url 'home:profile' %}"
-                        class="text-[#1b1725] hover:bg-[#226ce0]/10 hover:text-[#226ce0]">Profile</a></li>
+                        class="text-[#1b1725] hover:bg-[#226ce0]/10 hover:text-[#226ce0]">{% trans "Profile" %}</a></li>
                 <li><a href="{% url 'organisations:list' %}"
-                        class="text-[#1b1725] hover:bg-[#226ce0]/10 hover:text-[#226ce0]">Organisations</a></li>
+                        class="text-[#1b1725] hover:bg-[#226ce0]/10 hover:text-[#226ce0]">{% trans "Organisations" %}</a></li>
                 <li><a href="{% url 'home:nota' %}"
-                        class="text-[#1b1725] hover:bg-[#226ce0]/10 hover:text-[#226ce0]">Settings</a></li>
+                        class="text-[#1b1725] hover:bg-[#226ce0]/10 hover:text-[#226ce0]">{% trans "Settings" %}</a></li>
                 <li class="border-t border-[#d0bcd5]/30 mt-2 pt-2">
                     <form action="{% url 'logout' %}" method="post">
                         {% csrf_token %}
-                        <button type="submit" class="w-full text-left text-[#ef4444] hover:bg-red-50 px-4 py-2 rounded-lg">Logout</button>
+                        <button type="submit" class="w-full text-left text-[#ef4444] hover:bg-red-50 px-4 py-2 rounded-lg">{% trans "Logout" %}</button>
                     </form>
                 </li> 
             </ul>

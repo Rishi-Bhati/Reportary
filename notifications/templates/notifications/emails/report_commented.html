@@ -1,12 +1,24 @@
 {% extends "notifications/emails/base_email.html" %}
 {% block email_content %}
-<h2 style="margin-top: 0; font-size: 20px; font-weight: 700; color: #1b1725;">{{ title }}</h2>
-<p style="font-size: 16px; line-height: 1.6; color: #534b62;">
-    A new comment was added by <strong>{{ actor_username }}</strong>:
+
+<h2 style="margin:0 0 12px 0; font-size:18px; font-weight:700; color:#1a1a2e;">New comment on an issue</h2>
+
+<p style="margin:0 0 20px 0; font-size:15px; line-height:1.65; color:#4a5568;">
+  <strong>{{ actor_username }}</strong> commented on the following issue.
 </p>
-<div style="background-color: #f8f6fa; border-left: 4px solid #10b981; padding: 16px; margin: 20px 0; border-radius: 4px;">
-    <h3 style="margin: 0; font-size: 16px; color: #1b1725;">{{ report_title }}</h3>
-    <p style="margin: 8px 0 0 0; font-size: 14px; color: #534b62;">Project: {{ project_title }}</p>
-</div>
-<p style="font-size: 16px; line-height: 1.6; color: #534b62;">{{ message }}</p>
+
+<!-- Issue card -->
+<table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom:20px;">
+  <tr>
+    <td style="background-color:#f7f9fc; border-left:3px solid #10b981; border-radius:6px; padding:14px 16px;">
+      <p style="margin:0 0 4px 0; font-size:14px; font-weight:600; color:#1a1a2e;">{{ report_title }}</p>
+      <p style="margin:0; font-size:12px; color:#718096;">{{ project_title }}</p>
+    </td>
+  </tr>
+</table>
+
+{% if message %}
+<p style="margin:0; font-size:14px; line-height:1.65; color:#4a5568; font-style:italic;">"{{ message }}"</p>
+{% endif %}
+
 {% endblock %}

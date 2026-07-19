@@ -1,6 +1,6 @@
-{% load static %}
+{% load static %}{% load i18n %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ current_language|default:'en' }}">
 
 <head>
     <meta charset="UTF-8">
@@ -70,13 +70,13 @@
             {% if request.user.is_authenticated and not request.user.is_email_verified %}
             <div id="verification-banner" class="mb-6 flex flex-col sm:flex-row justify-between items-center gap-4 bg-yellow-50 border border-yellow-100 text-yellow-800 p-4 rounded-xl shadow-sm text-sm">
                 <div class="flex items-center gap-2">
-                    <span>📧 Verify your email to unlock reporting, commenting, project creation, and collaboration.</span>
+            <span>📧 {% trans "Verify your email to unlock reporting, commenting, project creation, and collaboration." %}</span>
                 </div>
                 <div class="flex items-center gap-3">
                     <form method="post" action="{% url 'accounts:resend_verification' %}" class="inline-block">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-xs bg-[#226ce0] hover:bg-[#1b56b3] text-white border-none rounded-lg px-3 py-1 font-semibold text-xs transition-all uppercase">
-                            Resend verification
+                            {% trans "Resend verification" %}
                         </button>
                     </form>
                     <button type="button" onclick="document.getElementById('verification-banner').remove()" class="text-yellow-600 hover:text-yellow-900 font-bold px-2 focus:outline-none">
@@ -98,7 +98,7 @@
             <div class="flex items-center gap-4 mb-8 max-w-6xl">
                 <form method="get" action="" class="input input-bordered flex items-center gap-2.5 w-full bg-white text-gray-900 border-gray-300 focus-within:border-[#226ce0] focus-within:outline focus-within:outline-offset-0">
                     <input type="text" name="q" class="grow bg-white placeholder-gray-500 font-medium text-base focus:outline-none"
-                        placeholder="Search this page" value="{{ request.GET.q|default:'' }}" />
+                    placeholder="{% trans 'Search this page' %}" value="{{ request.GET.q|default:'' }}" />
                     
                     <!-- Search Trigger Button -->
                     <button type="submit" class="focus:outline-none hover:text-[#226ce0] text-gray-400 transition-colors" title="Search">

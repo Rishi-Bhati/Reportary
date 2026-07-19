@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static %}{% load i18n %}
 
 {% block title %}Dashboard | {{ project.title }} | Reportary{% endblock %}
 {% block breadcrumb %}
@@ -25,9 +25,9 @@
                             <h1 class="text-2xl font-bold text-gray-900 tracking-tight">{{ project.title }}</h1>
                             <div class="flex items-center gap-2 mt-1">
                                 {% if project.public %}
-                                <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-[#226ce0]/10 text-[#226ce0] border border-[#226ce0]/20">Public</span>
+                                <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-[#226ce0]/10 text-[#226ce0] border border-[#226ce0]/20">{% trans "Public" %}</span>
                                 {% else %}
-                                <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-gray-50 text-gray-600 border border-gray-100">Private</span>
+                                <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-gray-50 text-gray-600 border border-gray-100">{% trans "Private" %}</span>
                                 {% endif %}
                                 {% if project.org %}
                                 <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-purple-50 text-purple-600 border border-purple-100">{{ project.org.name }}</span>
@@ -36,7 +36,8 @@
                             </div>
                         </div>
                     </div>
-                    <p class="text-xs text-gray-500 max-w-2xl leading-relaxed">{{ project.description|default:"No description provided for this project." }}</p>
+                    {% trans "No description provided for this project." as no_desc %}
+                    <p class="text-xs text-gray-500 max-w-2xl leading-relaxed">{{ project.description|default:no_desc }}</p>
                 </div>
 
                 <!-- Right: Action Buttons -->

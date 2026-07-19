@@ -1,7 +1,7 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static %}{% load i18n %}
 
-{% block title %}My Organisations | Reportary{% endblock %}
+{% block title %}{% trans "My Organisations" %} | Reportary{% endblock %}
 {% block breadcrumb %}
 My Organisations
 {% endblock %}
@@ -39,9 +39,9 @@ My Organisations
                 </div>
                 <div class="flex flex-col items-end gap-1">
                     {% if org.owner.id == request.user.id %}
-                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-[#226ce0]/10 text-[#226ce0] border border-[#226ce0]/20">Owner</span>
+                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-[#226ce0]/10 text-[#226ce0] border border-[#226ce0]/20">{% trans "Owner" %}</span>
                     {% else %}
-                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-600 border border-gray-100">Member</span>
+                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-600 border border-gray-100">{% trans "Member" %}</span>
                     {% endif %}
                     {% if org.domain %}
                     <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-mono bg-purple-50 text-purple-600 border border-purple-100">{{ org.domain }}</span>
@@ -50,7 +50,8 @@ My Organisations
             </div>
 
             <h3 class="text-lg font-bold text-gray-900 mb-2 group-hover:text-[#226ce0] transition-colors">{{ org.name }}</h3>
-            <p class="text-sm text-gray-500 mb-6 flex-1 line-clamp-3 leading-relaxed">{{ org.description|default:"No description provided." }}</p>
+            {% trans "No description provided." as no_desc %}
+            <p class="text-sm text-gray-500 mb-6 flex-1 line-clamp-3 leading-relaxed">{{ org.description|default:no_desc }}</p>
 
             <div class="pt-4 border-t border-gray-50">
                 <div class="flex items-center justify-between text-xs text-gray-400">

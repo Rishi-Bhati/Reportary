@@ -96,6 +96,8 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',  # i18n: reads Accept-Language header
+    'core.middleware.GeoLanguageMiddleware',      # i18n: IP geolocation fallback (after Locale)
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -118,6 +120,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'notifications.context_processors.notification_context',
                 'core.context_processors.announcements',
+                'core.context_processors.language_context',
             ],
         },
     },
@@ -164,6 +167,17 @@ DATABASES = {
     }
 }
 
+# ─── Cache — used by GeoLanguageMiddleware to store IP→country lookups ────────
+# LocMemCache is per-process in-memory, zero setup required.
+# Upgrade to a Redis/Memcached CACHES config in production if you want
+# the cache to be shared across Gunicorn workers.
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'reportary-geo-cache',
+    }
+}
+
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': os.getenv('CLOUD_NAME'),
     'API_KEY': os.getenv('CLOUDINARY_API_KEY'),
@@ -199,7 +213,17 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'en'
+
+from django.utils.translation import gettext_lazy as _
+LANGUAGES = [
+    ('en', _('English')),
+    ('ja', _('日本語')),
+]
+
+LOCALE_PATHS = [
+    BASE_DIR / 'locale',
+]
 
 TIME_ZONE = 'UTC'
 

@@ -1,16 +1,16 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static %}{% load i18n %}
 
-{% block title %}Search & Filters | Reportary{% endblock %}
-{% block breadcrumb %}Search{% endblock %}
+{% block title %}{% trans "Search & Filters" %} | Reportary{% endblock %}
+{% block breadcrumb %}{% trans "Search" %}{% endblock %}
 
 {% block content %}
 <div class="max-w-7xl mx-auto space-y-6">
     <!-- Header -->
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-            <h1 class="text-2xl font-bold text-gray-900 tracking-tight">Global Search & Filters</h1>
-            <p class="text-gray-500 mt-1">Search reports, projects, comments, and organizations in real time.</p>
+            <h1 class="text-2xl font-bold text-gray-900 tracking-tight">{% trans "Global Search & Filters" %}</h1>
+            <p class="text-gray-500 mt-1">{% trans "Search reports, projects, comments, and organizations in real time." %}</p>
         </div>
     </div>
 
@@ -28,9 +28,9 @@
                 <input type="hidden" name="hx_request" value="true">
 
                 <div>
-                    <label class="label text-xs font-bold text-gray-400 uppercase tracking-wider p-0 mb-1" for="search-input">Keyword Search</label>
+                    <label class="label text-xs font-bold text-gray-400 uppercase tracking-wider p-0 mb-1" for="search-input">{% trans "Keyword Search" %}</label>
                     <div class="relative">
-                        <input type="text" name="q" id="search-input" value="{{ q }}" placeholder="Type keywords..." 
+                        <input type="text" name="q" id="search-input" value="{{ q }}" placeholder="{% trans "Type keywords..." %}" 
                                class="input input-bordered w-full focus:border-[#226ce0] bg-gray-50 focus:bg-white transition-all text-sm rounded-xl pl-10" />
                         <svg class="w-4 h-4 absolute left-3.5 top-1/2 transform -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
@@ -41,7 +41,7 @@
                 <!-- Recent Searches Chips -->
                 {% if recent_searches %}
                 <div class="space-y-2">
-                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Recent Searches</p>
+                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">{% trans "Recent Searches" %}</p>
                     <div class="flex flex-wrap gap-1.5">
                         {% for query in recent_searches %}
                         <button type="button" 
@@ -56,40 +56,40 @@
 
                 <!-- Filters Header -->
                 <div class="border-t border-gray-100 pt-4 flex items-center justify-between">
-                    <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Filters</span>
-                    <button type="button" onclick="clearFilters()" class="text-xs text-gray-400 hover:text-[#226ce0] font-semibold transition-colors">Clear All</button>
+                    <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">{% trans "Filters" %}</span>
+                    <button type="button" onclick="clearFilters()" class="text-xs text-gray-400 hover:text-[#226ce0] font-semibold transition-colors">{% trans "Clear All" %}</button>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-4">
                     <!-- Status Filter -->
                     <div class="form-control">
-                        <label class="label text-xs font-bold text-gray-500 p-0 mb-1">Status</label>
+                        <label class="label text-xs font-bold text-gray-500 p-0 mb-1">{% trans "Status" %}</label>
                         <select name="status" class="select select-bordered select-sm w-full bg-gray-50 rounded-xl">
-                            <option value="">All Statuses</option>
-                            <option value="open" {% if selected_status == 'open' %}selected{% endif %}>Open</option>
-                            <option value="in_progress" {% if selected_status == 'in_progress' %}selected{% endif %}>In Progress</option>
-                            <option value="resolved" {% if selected_status == 'resolved' %}selected{% endif %}>Resolved</option>
-                            <option value="closed" {% if selected_status == 'closed' %}selected{% endif %}>Closed</option>
+                            <option value="">{% trans "All Statuses" %}</option>
+                            <option value="open" {% if selected_status == 'open' %}selected{% endif %}>{% trans "Open" %}</option>
+                            <option value="in_progress" {% if selected_status == 'in_progress' %}selected{% endif %}>{% trans "In Progress" %}</option>
+                            <option value="resolved" {% if selected_status == 'resolved' %}selected{% endif %}>{% trans "Resolved" %}</option>
+                            <option value="closed" {% if selected_status == 'closed' %}selected{% endif %}>{% trans "Closed" %}</option>
                         </select>
                     </div>
 
                     <!-- Severity Filter -->
                     <div class="form-control">
-                        <label class="label text-xs font-bold text-gray-500 p-0 mb-1">Severity</label>
+                        <label class="label text-xs font-bold text-gray-500 p-0 mb-1">{% trans "Severity" %}</label>
                         <select name="impact" class="select select-bordered select-sm w-full bg-gray-50 rounded-xl">
-                            <option value="">All Severities</option>
-                            <option value="low" {% if selected_impact == 'low' %}selected{% endif %}>Low</option>
-                            <option value="medium" {% if selected_impact == 'medium' %}selected{% endif %}>Medium</option>
-                            <option value="high" {% if selected_impact == 'high' %}selected{% endif %}>High</option>
-                            <option value="critical" {% if selected_impact == 'critical' %}selected{% endif %}>Critical</option>
+                            <option value="">{% trans "All Severities" %}</option>
+                            <option value="low" {% if selected_impact == 'low' %}selected{% endif %}>{% trans "Low" %}</option>
+                            <option value="medium" {% if selected_impact == 'medium' %}selected{% endif %}>{% trans "Medium" %}</option>
+                            <option value="high" {% if selected_impact == 'high' %}selected{% endif %}>{% trans "High" %}</option>
+                            <option value="critical" {% if selected_impact == 'critical' %}selected{% endif %}>{% trans "Critical" %}</option>
                         </select>
                     </div>
 
                     <!-- Assignee Filter -->
                     <div class="form-control">
-                        <label class="label text-xs font-bold text-gray-500 p-0 mb-1">Assignee</label>
+                        <label class="label text-xs font-bold text-gray-500 p-0 mb-1">{% trans "Assignee" %}</label>
                         <select name="assignee_id" class="select select-bordered select-sm w-full bg-gray-50 rounded-xl">
-                            <option value="">All Assignees</option>
+                            <option value="">{% trans "All Assignees" %}</option>
                             {% for u in filter_users %}
                             <option value="{{ u.id }}" {% if selected_assignee_id == u.id %}selected{% endif %}>{{ u.username }}</option>
                             {% endfor %}
@@ -98,9 +98,9 @@
 
                     <!-- Reporter Filter -->
                     <div class="form-control">
-                        <label class="label text-xs font-bold text-gray-500 p-0 mb-1">Reporter</label>
+                        <label class="label text-xs font-bold text-gray-500 p-0 mb-1">{% trans "Reporter" %}</label>
                         <select name="reporter_id" class="select select-bordered select-sm w-full bg-gray-50 rounded-xl">
-                            <option value="">All Reporters</option>
+                            <option value="">{% trans "All Reporters" %}</option>
                             {% for u in filter_users %}
                             <option value="{{ u.id }}" {% if selected_reporter_id == u.id %}selected{% endif %}>{{ u.username }}</option>
                             {% endfor %}
@@ -109,9 +109,9 @@
 
                     <!-- Organization Filter -->
                     <div class="form-control">
-                        <label class="label text-xs font-bold text-gray-500 p-0 mb-1">Organization</label>
+                        <label class="label text-xs font-bold text-gray-500 p-0 mb-1">{% trans "Organization" %}</label>
                         <select name="org_id" class="select select-bordered select-sm w-full bg-gray-50 rounded-xl">
-                            <option value="">All Organizations</option>
+                            <option value="">{% trans "All Organizations" %}</option>
                             {% for o in filter_orgs %}
                             <option value="{{ o.id }}" {% if selected_org_id == o.id %}selected{% endif %}>{{ o.name }}</option>
                             {% endfor %}
@@ -120,9 +120,9 @@
 
                     <!-- Component Filter -->
                     <div class="form-control">
-                        <label class="label text-xs font-bold text-gray-500 p-0 mb-1">Component</label>
+                        <label class="label text-xs font-bold text-gray-500 p-0 mb-1">{% trans "Component" %}</label>
                         <select name="component_id" class="select select-bordered select-sm w-full bg-gray-50 rounded-xl">
-                            <option value="">All Components</option>
+                            <option value="">{% trans "All Components" %}</option>
                             {% for c in filter_components %}
                             <option value="{{ c.id }}" {% if selected_component_id == c.id %}selected{% endif %}>{{ c.name }}</option>
                             {% endfor %}
@@ -131,12 +131,12 @@
 
                     <!-- Date Range Filter -->
                     <div class="form-control">
-                        <label class="label text-xs font-bold text-gray-500 p-0 mb-1">From Date</label>
+                        <label class="label text-xs font-bold text-gray-500 p-0 mb-1">{% trans "From Date" %}</label>
                         <input type="date" name="date_start" value="{{ selected_date_start }}" class="input input-bordered input-sm w-full bg-gray-50 rounded-xl">
                     </div>
 
                     <div class="form-control">
-                        <label class="label text-xs font-bold text-gray-500 p-0 mb-1">To Date</label>
+                        <label class="label text-xs font-bold text-gray-500 p-0 mb-1">{% trans "To Date" %}</label>
                         <input type="date" name="date_end" value="{{ selected_date_end }}" class="input input-bordered input-sm w-full bg-gray-50 rounded-xl">
                     </div>
                 </div>
@@ -156,10 +156,10 @@
                 <input type="hidden" name="date_start" value="{{ selected_date_start }}">
                 <input type="hidden" name="date_end" value="{{ selected_date_end }}">
                 
-                <p class="text-[10px] font-bold text-gray-500 uppercase tracking-wider p-0 m-0">Save This Filtered Search</p>
+                <p class="text-[10px] font-bold text-gray-500 uppercase tracking-wider p-0 m-0">{% trans "Save This Filtered Search" %}</p>
                 <div class="flex gap-2">
-                    <input type="text" name="name" placeholder="Search name (e.g. Critical reports)" class="input input-xs input-bordered flex-1 rounded-lg text-xs bg-white focus:border-[#226ce0]" required>
-                    <button type="submit" class="btn btn-xs btn-primary text-white font-medium rounded-lg">Save</button>
+                    <input type="text" name="name" placeholder="{% trans "Search name (e.g. Critical reports)" %}" class="input input-xs input-bordered flex-1 rounded-lg text-xs bg-white focus:border-[#226ce0]" required>
+                    <button type="submit" class="btn btn-xs btn-primary text-white font-medium rounded-lg">{% trans "Save" %}</button>
                 </div>
             </form>
             {% endif %}
@@ -167,7 +167,7 @@
             <!-- Saved Searches List -->
             {% if saved_searches %}
             <div class="border-t border-gray-100 pt-4 space-y-2">
-                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Saved Searches</p>
+                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">{% trans "Saved Searches" %}</p>
                 <div class="space-y-1.5">
                     {% for saved in saved_searches %}
                     <div class="flex items-center justify-between p-2.5 bg-gray-50 hover:bg-gray-100/70 border border-gray-100 rounded-xl transition-all">

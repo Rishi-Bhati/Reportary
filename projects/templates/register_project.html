@@ -1,16 +1,16 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static %}{% load i18n %}
 
-{% block title %}Register New Project{% endblock %}
-{% block breadcrumb %}New Project{% endblock %}
+{% block title %}{% trans "Register New Project" %}{% endblock %}
+{% block breadcrumb %}{% trans "New Project" %}{% endblock %}
 
 {% block content %}
 
 <div class="max-w-3xl mx-auto">
     <!-- Header -->
     <div class="mb-8">
-        <h1 class="text-2xl font-bold text-gray-900 tracking-tight">Register New Project</h1>
-        <p class="text-gray-500 mt-1">Create a new project to start tracking issues and collaborating.</p>
+        <h1 class="text-2xl font-bold text-gray-900 tracking-tight">{% trans "Register New Project" %}</h1>
+        <p class="text-gray-500 mt-1">{% trans "Create a new project to start tracking issues and collaborating." %}</p>
     </div>
 
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
@@ -83,12 +83,12 @@
                 <!-- Collaborators -->
                 <div class="form-control w-full">
                     <label for="id_collaborators_select2" class="label">
-                        <span class="label-text font-semibold text-gray-700">Collaborators</span>
+                        <span class="label-text font-semibold text-gray-700">{% trans "Collaborators" %}</span>
                     </label>
                     <select id="id_collaborators_select2" class="w-full" multiple="multiple"></select>
                     <input type="hidden" name="collaborators" id="id_collaborators" value="{{ collaborator_emails|default:'' }}">
                     <label class="label">
-                        <span class="label-text-alt text-gray-500">Search and add team members to this project.</span>
+                        <span class="label-text-alt text-gray-500">{% trans "Search and add team members to this project." %}</span>
                     </label>
                 </div>
             </div>
@@ -97,9 +97,8 @@
             <div class="p-8 bg-gray-50/50">
                 <div class="flex items-center justify-between mb-6">
                     <div>
-                        <h3 class="text-lg font-bold text-gray-900">Components</h3>
-                        <p class="text-sm text-gray-500">Define the main components of your project (e.g., Backend,
-                            Frontend, API).</p>
+                        <h3 class="text-lg font-bold text-gray-900">{% trans "Components" %}</h3>
+                        <p class="text-sm text-gray-500">{% trans "Define the main components of your project (e.g., Backend, Frontend, API)." %}</p>
                     </div>
                 </div>
 
@@ -147,8 +146,7 @@
                             -->
                         <div class="mt-4 flex items-center justify-end">
                             <label class="cursor-pointer label p-0 gap-2">
-                                <span class="label-text text-red-500 text-sm font-medium group-hover:underline">Remove
-                                    Component</span>
+                                <span class="label-text text-red-500 text-sm font-medium group-hover:underline">{% trans "Remove Component" %}</span>
                                 <input type="checkbox" name="{{ component_form.prefix }}-DELETE"
                                     class="checkbox checkbox-error checkbox-xs">
                             </label>
@@ -162,7 +160,7 @@
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                     </svg>
-                    Add Another Component
+                    {% trans "Add Another Component" %}
                 </button>
             </div>
 
@@ -170,7 +168,7 @@
             <div class="p-8 bg-gray-50 border-t border-gray-100 flex justify-end">
                 <button type="submit"
                     class="btn btn-primary text-white px-8 font-semibold shadow-md hover:shadow-lg transition-all">
-                    Create Project
+                    {% trans "Create Project" %}
                 </button>
             </div>
         </form>
@@ -216,20 +214,20 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="form-control">
                         <label for="id_components_${currentFormCount}_name" class="label pt-0">
-                            <span class="label-text font-medium text-gray-600">Name</span>
+                            <span class="label-text font-medium text-gray-600">{% trans "Name" %}</span>
                         </label>
-                        <input type="text" name="components-${currentFormCount}-name" id="id_components_${currentFormCount}_name" class="input input-sm input-bordered w-full focus:border-[#226ce0]" placeholder="Name">
+                        <input type="text" name="components-${currentFormCount}-name" id="id_components_${currentFormCount}_name" class="input input-sm input-bordered w-full focus:border-[#226ce0]" placeholder="{% trans "Name" %}">
                     </div>
                     <div class="form-control">
                         <label for="id_components_${currentFormCount}_description" class="label pt-0">
-                            <span class="label-text font-medium text-gray-600">Description</span>
+                            <span class="label-text font-medium text-gray-600">{% trans "Description" %}</span>
                         </label>
-                        <input type="text" name="components-${currentFormCount}-description" id="id_components_${currentFormCount}_description" class="input input-sm input-bordered w-full focus:border-[#226ce0]" placeholder="Description">
+                        <input type="text" name="components-${currentFormCount}-description" id="id_components_${currentFormCount}_description" class="input input-sm input-bordered w-full focus:border-[#226ce0]" placeholder="{% trans "Description" %}">
                     </div>
                 </div>
                 <div class="mt-4 flex items-center justify-end">
                     <label class="cursor-pointer label p-0 gap-2">
-                        <span class="label-text text-red-500 text-sm font-medium group-hover:underline">Remove Component</span>
+                        <span class="label-text text-red-500 text-sm font-medium group-hover:underline">{% trans "Remove Component" %}</span>
                         <input type="checkbox" name="components-${currentFormCount}-DELETE" class="checkbox checkbox-error checkbox-xs">
                     </label>
                 </div>
@@ -246,7 +244,7 @@
         var $select2 = $('#id_collaborators_select2').select2({
             tags: true,
             tokenSeparators: [',', ' '],
-            placeholder: "Enter collaborator emails",
+            placeholder: "{% trans "Enter collaborator emails" %}",
             ajax: {
                 url: "{% url 'accounts:user_search' %}",
                 dataType: 'json',

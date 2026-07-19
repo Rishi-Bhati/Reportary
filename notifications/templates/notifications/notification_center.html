@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static %}{% load i18n %}
 
 {% block title %}Notifications | Reportary{% endblock %}
 
@@ -16,7 +16,7 @@
         <form method="post" action="{% url 'notifications:mark_all_read' %}">
             {% csrf_token %}
             <button type="submit" class="btn btn-sm btn-outline text-[#226ce0] border-[#226ce0] hover:bg-[#226ce0] hover:text-white transition-all rounded-xl font-semibold">
-                Mark All as Read
+                {% trans "Mark All as Read" %}
             </button>
         </form>
         {% endif %}

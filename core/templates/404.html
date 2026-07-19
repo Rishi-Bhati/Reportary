@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
+{% load i18n %}
 
-{% block title %}Page Not Found | Reportary{% endblock %}
+{% block title %}{% trans "Page Not Found" %} | Reportary{% endblock %}
 
 {% block sidebar_container %}{% endblock %}
 {% block main_margin %}{% endblock %}
@@ -67,7 +68,7 @@
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                 <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
             </svg>
-            Go Back
+            {% trans "Go Back" %}
         </button>
         {% if request.user.is_authenticated %}
         <a href="{% url 'dashboard:dashboard_home' %}" class="px-6 py-3 rounded-xl bg-[#226ce0] text-white font-medium hover:bg-[#1b56b3] shadow-md shadow-blue-500/20 transition-all hover:-translate-y-0.5 flex items-center justify-center gap-2">

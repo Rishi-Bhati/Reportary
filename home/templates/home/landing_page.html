@@ -1,11 +1,11 @@
-{% load static %}
+{% load static %}{% load i18n %}
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="{{ current_language|default:'en' }}" data-theme="light">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Streamline Your Reporting | Reportary</title>
+    <title>{% trans "Streamline Your Reporting" %} | Reportary</title>
     <link rel="stylesheet" href="{% static 'css/dist/styles.css' %}">
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
@@ -29,27 +29,77 @@
                 <!-- Links -->
                 <div class="hidden md:flex space-x-10">
                     <a href="{% url 'home:landing_page'%}"
-                        class="text-gray-600 hover:text-[#226ce0] font-medium transition-colors duration-200 text-sm relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#226ce0] hover:after:w-full after:transition-all after:duration-300">Product</a>
+                        class="text-gray-600 hover:text-[#226ce0] font-medium transition-colors duration-200 text-sm relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#226ce0] hover:after:w-full after:transition-all after:duration-300">{% trans "Product" %}</a>
                     <a href="{% url 'home:nota' %}"
-                        class="text-gray-600 hover:text-[#226ce0] font-medium transition-colors duration-200 text-sm relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#226ce0] hover:after:w-full after:transition-all after:duration-300">Solutions</a>
+                        class="text-gray-600 hover:text-[#226ce0] font-medium transition-colors duration-200 text-sm relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#226ce0] hover:after:w-full after:transition-all after:duration-300">{% trans "Solutions" %}</a>
                     <a href="{% url 'home:nota' %}"
-                        class="text-gray-600 hover:text-[#226ce0] font-medium transition-colors duration-200 text-sm relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#226ce0] hover:after:w-full after:transition-all after:duration-300">Pricing</a>
+                        class="text-gray-600 hover:text-[#226ce0] font-medium transition-colors duration-200 text-sm relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#226ce0] hover:after:w-full after:transition-all after:duration-300">{% trans "Pricing" %}</a>
                 </div>
 
-                <!-- CTA -->
-                <div class="flex items-center space-x-4">
+                <!-- CTA + Globe -->
+                <div class="flex items-center gap-3">
+
+                    <!-- Globe Language Toggle -->
+                    <div class="dropdown dropdown-end" id="landing-lang-dropdown">
+                        <button tabindex="0" id="landing-lang-btn"
+                            class="btn btn-ghost btn-circle btn-sm text-gray-500 hover:text-[#226ce0] hover:bg-[#226ce0]/10 transition-colors"
+                            title="{% trans 'Change Language' %}">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                            </svg>
+                        </button>
+                        <ul tabindex="0"
+                            class="dropdown-content menu menu-sm bg-white rounded-xl shadow-xl border border-gray-100 z-[100] mt-2 p-1.5 min-w-[140px]">
+                            <li>
+                                <form action="{% url 'set_language' %}" method="post" class="p-0 m-0">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="language" value="en">
+                                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                    <button type="submit"
+                                        class="w-full flex items-center gap-2.5 px-3 py-2 text-sm rounded-lg transition-all
+                                        {% if current_language == 'en' %}bg-[#226ce0]/10 text-[#226ce0] font-semibold{% else %}text-gray-600 hover:bg-[#226ce0]/10 hover:text-[#226ce0]{% endif %}">
+                                        <span class="text-base leading-none">🇬🇧</span>
+                                        <span>English</span>
+                                        {% if current_language == 'en' %}
+                                        <svg class="w-3.5 h-3.5 ml-auto text-[#226ce0]" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                        </svg>
+                                        {% endif %}
+                                    </button>
+                                </form>
+                            </li>
+                            <li>
+                                <form action="{% url 'set_language' %}" method="post" class="p-0 m-0">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="language" value="ja">
+                                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                    <button type="submit"
+                                        class="w-full flex items-center gap-2.5 px-3 py-2 text-sm rounded-lg transition-all
+                                        {% if current_language == 'ja' %}bg-[#226ce0]/10 text-[#226ce0] font-semibold{% else %}text-gray-600 hover:bg-[#226ce0]/10 hover:text-[#226ce0]{% endif %}">
+                                        <span class="text-base leading-none">🇯🇵</span>
+                                        <span>日本語</span>
+                                        {% if current_language == 'ja' %}
+                                        <svg class="w-3.5 h-3.5 ml-auto text-[#226ce0]" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                        </svg>
+                                        {% endif %}
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+
                     {% if user.is_authenticated %}
                     <a href="{% url 'dashboard:dashboard' %}"
-                        class="hidden md:block text-sm font-semibold text-gray-700 hover:text-[#226ce0] transition-colors duration-200">Dashboard</a>
+                        class="hidden md:block text-sm font-semibold text-gray-700 hover:text-[#226ce0] transition-colors duration-200">{% trans "Dashboard" %}</a>
                     <a href="{% url 'dashboard:dashboard' %}"
-                        class="btn btn-primary h-10 min-h-[2.5rem] px-6 text-white rounded-lg font-semibold border-none shadow-lg shadow-[#226ce0]/25 hover:shadow-xl hover:shadow-[#226ce0]/35 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 text-sm uppercase tracking-wide">Get
-                        Started</a>
+                        class="btn btn-primary h-10 min-h-[2.5rem] px-6 text-white rounded-lg font-semibold border-none shadow-lg shadow-[#226ce0]/25 hover:shadow-xl hover:shadow-[#226ce0]/35 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 text-sm uppercase tracking-wide">{% trans "Get Started" %}</a>
                     {% else %}
                     <a href="#auth-section"
-                        class="hidden md:block text-sm font-semibold text-gray-700 hover:text-[#226ce0] transition-colors duration-200">Dashboard</a>
+                        class="hidden md:block text-sm font-semibold text-gray-700 hover:text-[#226ce0] transition-colors duration-200">{% trans "Sign In" %}</a>
                     <a href="#auth-section"
-                        class="btn btn-primary h-10 min-h-[2.5rem] px-6 text-white rounded-lg font-semibold border-none shadow-lg shadow-[#226ce0]/25 hover:shadow-xl hover:shadow-[#226ce0]/35 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 text-sm uppercase tracking-wide">Get
-                        Started</a>
+                        class="btn btn-primary h-10 min-h-[2.5rem] px-6 text-white rounded-lg font-semibold border-none shadow-lg shadow-[#226ce0]/25 hover:shadow-xl hover:shadow-[#226ce0]/35 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 text-sm uppercase tracking-wide">{% trans "Get Started" %}</a>
                     {% endif %}
                 </div>
             </div>
@@ -68,22 +118,21 @@
                 <div
                     class="inline-flex items-center rounded-full px-4 py-1.5 text-xs font-bold text-[#226ce0] bg-[#226ce0]/10 mb-8 border border-[#226ce0]/20 animate-fade-in-up">
                     <span class="flex h-2 w-2 rounded-full bg-[#226ce0] mr-2 animate-pulse"></span>
-                    REPORTARY v1.0.0-beta.2
+                    REPORTARY v1.0.0-rc
                 </div>
 
                 <!-- Headline -->
                 <h1
                     class="text-5xl md:text-6xl lg:text-7xl font-bold text-[#1b1725] tracking-tight leading-[1.1] mb-8 animate-fade-in-up delay-100">
-                    Issue tracking, <br>
+                    {% trans "Issue tracking," %} <br>
                     <span
-                        class="text-transparent bg-clip-text bg-gradient-to-r from-[#226ce0] to-[#1b56b3]">simplified.</span>
+                        class="text-transparent bg-clip-text bg-gradient-to-r from-[#226ce0] to-[#1b56b3]">{% trans "simplified." %}</span>
                 </h1>
 
                 <!-- Subtext -->
                 <p
                     class="text-lg md:text-xl text-[#534b62] leading-relaxed mb-10 max-w-lg font-light animate-fade-in-up delay-200">
-                    The modern standard for engineering teams. Unified data, real-time collaboration, and workflows that
-                    actually make sense.
+                    {% trans "The modern standard for engineering teams. Unified data, real-time collaboration, and workflows that actually make sense." %}
                 </p>
 
                 <!-- CTA Buttons -->
@@ -91,20 +140,20 @@
                     {% if user.is_authenticated %}
                     <a href="{% url 'dashboard:dashboard' %}"
                         class="btn btn-primary h-12 px-8 text-white rounded-xl font-bold border-none shadow-xl shadow-[#226ce0]/25 hover:shadow-2xl hover:shadow-[#226ce0]/35 hover:-translate-y-1 active:translate-y-0 active:scale-[0.98] transition-all duration-300 text-base">
-                        Start Building Free
+                        {% trans "Start Building Free" %}
                     </a>
                     <a href="{% url 'dashboard:dashboard' %}"
                         class="btn h-12 px-8 bg-white text-[#534b62] hover:bg-[#f8f6fa] hover:text-[#1b1725] rounded-xl font-semibold text-base border-2 border-[#d0bcd5] hover:border-[#a499b3] transition-all duration-300">
-                        View Live Demo
+                        {% trans "View Live Demo" %}
                     </a>
                     {% else %}
                     <a href="#auth-section"
                         class="btn btn-primary h-12 px-8 text-white rounded-xl font-bold border-none shadow-xl shadow-[#226ce0]/25 hover:shadow-2xl hover:shadow-[#226ce0]/35 hover:-translate-y-1 active:translate-y-0 active:scale-[0.98] transition-all duration-300 text-base">
-                        Start Building Free
+                        {% trans "Start Building Free" %}
                     </a>
                     <a href="#auth-section"
                         class="btn h-12 px-8 bg-white text-[#534b62] hover:bg-[#f8f6fa] hover:text-[#1b1725] rounded-xl font-semibold text-base border-2 border-[#d0bcd5] hover:border-[#a499b3] transition-all duration-300">
-                        View Live Demo
+                        {% trans "View Live Demo" %}
                     </a>
                     {% endif %}
                 </div>
@@ -117,28 +166,28 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
-                        Free for small teams
+                        {% trans "Free for small teams" %}
                     </div>
                     <div class="flex items-center gap-2">
                         <svg class="w-5 h-5 text-[#226ce0]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
-                        No credit card required
+                        {% trans "No credit card required" %}
                     </div>
                     <div class="flex items-center gap-2">
                         <svg class="w-5 h-5 text-[#226ce0]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
-                        Open Source
+                        {% trans "Open Source" %}
                     </div>
                 </div>
             </div>
 
             <!-- Right: Auth Card Wrapper -->
             <div id="auth-section" class="relative lg:ml-auto w-full max-w-md mx-auto animate-fade-in-up delay-300">
-                <!-- Decorative Elements behind card -->
+                <!-- Decorative blobs -->
                 <div
                     class="absolute -top-20 -right-20 w-80 h-80 bg-[#a499b3] rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-blob">
                 </div>
@@ -178,34 +227,34 @@
                         <div class="w-7 h-7 rounded-lg bg-[#226ce0] text-white flex items-center justify-center font-bold text-sm">R</div>
                         <span class="font-bold text-gray-900">Reportary</span>
                     </div>
-                    <p class="text-xs text-[#534b62] leading-relaxed">Modern issue tracking for engineering teams. Built in the open.</p>
+                    <p class="text-xs text-[#534b62] leading-relaxed">{% trans "Modern issue tracking for engineering teams. Built in the open." %}</p>
                 </div>
                 <div>
-                    <h4 class="text-xs font-semibold text-gray-900 uppercase tracking-widest mb-4">Product</h4>
+                    <h4 class="text-xs font-semibold text-gray-900 uppercase tracking-widest mb-4">{% trans "Product" %}</h4>
                     <ul class="space-y-2.5 text-xs text-[#534b62]">
-                        <li><a href="#auth-section" class="hover:text-[#226ce0] transition-colors">Get Started</a></li>
-                        <li><a href="{% url 'home:changelog' %}" class="hover:text-[#226ce0] transition-colors">What's New</a></li>
+                        <li><a href="#auth-section" class="hover:text-[#226ce0] transition-colors">{% trans "Get Started" %}</a></li>
+                        <li><a href="{% url 'home:changelog' %}" class="hover:text-[#226ce0] transition-colors">{% trans "What's New" %}</a></li>
                         <li><a href="https://github.com/Rishi-Bhati/Reportary" target="_blank" class="hover:text-[#226ce0] transition-colors">GitHub</a></li>
-                        <li><a href="/projects/019f2e92-7f0d-78e9-92b3-9431a1014882/reports/new/" class="hover:text-[#226ce0] transition-colors">Report an issue?</a></li>
+                        <li><a href="/projects/019f2e92-7f0d-78e9-92b3-9431a1014882/reports/new/" class="hover:text-[#226ce0] transition-colors">{% trans "Report an issue?" %}</a></li>
                     </ul>
                 </div>
                 <div>
-                    <h4 class="text-xs font-semibold text-gray-900 uppercase tracking-widest mb-4">Support</h4>
+                    <h4 class="text-xs font-semibold text-gray-900 uppercase tracking-widest mb-4">{% trans "Support" %}</h4>
                     <ul class="space-y-2.5 text-xs text-[#534b62]">
-                        <li><a href="{% url 'home:faq' %}" class="hover:text-[#226ce0] transition-colors">FAQ</a></li>
-                        <li><a href="{% url 'home:contact' %}" class="hover:text-[#226ce0] transition-colors">Contact Us</a></li>
+                        <li><a href="{% url 'home:faq' %}" class="hover:text-[#226ce0] transition-colors">{% trans "FAQ" %}</a></li>
+                        <li><a href="{% url 'home:contact' %}" class="hover:text-[#226ce0] transition-colors">{% trans "Contact Us" %}</a></li>
                     </ul>
                 </div>
                 <div>
-                    <h4 class="text-xs font-semibold text-gray-900 uppercase tracking-widest mb-4">Legal</h4>
+                    <h4 class="text-xs font-semibold text-gray-900 uppercase tracking-widest mb-4">{% trans "Legal" %}</h4>
                     <ul class="space-y-2.5 text-xs text-[#534b62]">
-                        <li><a href="{% url 'home:privacy' %}" class="hover:text-[#226ce0] transition-colors">Privacy Policy</a></li>
-                        <li><a href="{% url 'home:terms' %}" class="hover:text-[#226ce0] transition-colors">Terms of Service</a></li>
+                        <li><a href="{% url 'home:privacy' %}" class="hover:text-[#226ce0] transition-colors">{% trans "Privacy Policy" %}</a></li>
+                        <li><a href="{% url 'home:terms' %}" class="hover:text-[#226ce0] transition-colors">{% trans "Terms of Service" %}</a></li>
                     </ul>
                 </div>
             </div>
             <div class="border-t border-[#d0bcd5] pt-6 flex flex-col md:flex-row justify-between items-center gap-4">
-                <p class="text-xs text-[#534b62]">© 2025 Reportary. All rights reserved.</p>
+                <p class="text-xs text-[#534b62]">© 2026 Reportary. {% trans "All rights reserved." %}</p>
                 <a href="https://github.com/Rishi-Bhati/Reportary" target="_blank" class="text-[#a499b3] hover:text-[#226ce0] transition-colors">
                     <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd" /></svg>
                 </a>

@@ -1,11 +1,11 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static %}{% load i18n %}
 
 {% block title %}Projects - {{ organisation.name }} | Reportary{% endblock %}
 {% block breadcrumb %}
-<a href="{% url 'organisations:list' %}" class="hover:text-[#226ce0]">Organisations</a> /
+<a href="{% url 'organisations:list' %}" class="hover:text-[#226ce0]">{% trans "Organisations" %}</a> /
 <a href="{% url 'organisations:dashboard' uuid=organisation.uuid %}" class="hover:text-[#226ce0]">{{ organisation.name }}</a> /
-Projects
+{% trans "Projects" %}
 {% endblock %}
 
 {% block content %}
@@ -13,9 +13,13 @@ Projects
     <!-- Header -->
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-            <h1 class="text-2xl font-bold text-gray-900 tracking-tight">Projects</h1>
+            <h1 class="text-2xl font-bold text-gray-900 tracking-tight">{% trans "Projects" %}</h1>
             <p class="text-gray-500 mt-1">
-                {% if projects %}{{ projects|length }} project{{ projects|length|pluralize }} in {{ organisation.name }}{% else %}No projects in this organisation yet.{% endif %}
+                {% if projects %}
+                    {% blocktrans with count=projects|length name=organisation.name %}{{ count }} projects in {{ name }}{% endblocktrans %}
+                {% else %}
+                    {% trans "No projects in this organisation yet." %}
+                {% endif %}
             </p>
         </div>
         {% if is_owner %}
@@ -24,7 +28,7 @@ Projects
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
             </svg>
-            Create Project
+            {% trans "Create Project" %}
         </a>
         {% endif %}
     </div>
@@ -44,15 +48,16 @@ Projects
                 </div>
                 <div class="flex flex-col items-end gap-1">
                     {% if project.public %}
-                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-[#226ce0]/10 text-[#226ce0] border border-[#226ce0]/20">Public</span>
+                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-[#226ce0]/10 text-[#226ce0] border border-[#226ce0]/20">{% trans "Public" %}</span>
                     {% else %}
-                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-50 text-gray-600 border border-gray-100">Private</span>
+                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-50 text-gray-600 border border-gray-100">{% trans "Private" %}</span>
                     {% endif %}
                 </div>
             </div>
 
             <h3 class="text-lg font-bold text-gray-900 mb-2 group-hover:text-[#226ce0] transition-colors">{{ project.title }}</h3>
-            <p class="text-sm text-gray-500 mb-6 flex-1 line-clamp-3 leading-relaxed">{{ project.description|default:"No description provided." }}</p>
+            {% trans "No description provided." as no_desc %}
+            <p class="text-sm text-gray-500 mb-6 flex-1 line-clamp-3 leading-relaxed">{{ project.description|default:no_desc }}</p>
 
             <div class="pt-4 border-t border-gray-50">
                 <div class="flex items-center justify-between text-xs text-gray-400">
@@ -60,9 +65,9 @@ Projects
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
                         </svg>
-                        {{ project.num_components|default:project.components.count }} Components
+                        {% blocktrans with count=project.num_components|default:project.components.count %}{{ count }} Components{% endblocktrans %}
                     </span>
-                    <span>Updated {{ project.updated_at|timesince }} ago</span>
+                    <span>{% blocktrans with time=project.updated_at|timesince %}Updated {{ time }} ago{% endblocktrans %}</span>
                 </div>
             </div>
         </a>
@@ -75,11 +80,11 @@ Projects
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path>
             </svg>
         </div>
-        <h3 class="text-xl font-bold text-gray-900 mb-2">No Projects Found</h3>
-        <p class="text-sm text-gray-500 max-w-xs mx-auto mb-6 leading-relaxed">It looks like there are no projects in this organisation yet.</p>
+        <h3 class="text-xl font-bold text-gray-900 mb-2">{% trans "No Projects Found" %}</h3>
+        <p class="text-sm text-gray-500 max-w-xs mx-auto mb-6 leading-relaxed">{% trans "It looks like there are no projects in this organisation yet." %}</p>
         {% if is_owner %}
         <a href="{% url 'projects:new' %}?org={{ organisation.uuid }}" class="btn btn-sm bg-[#226ce0] hover:bg-[#1b56b3] text-white border-none rounded-xl px-4 py-2 font-medium capitalize">
-            Create Project
+            {% trans "Create Project" %}
         </a>
         {% endif %}
     </div>

@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static %}{% load i18n %}
 
 {% block title %}Explore Projects | Reportary{% endblock %}
 {% block breadcrumb %}Projects{% endblock %}
@@ -31,7 +31,7 @@
                 Filters & Sorting
             </button>
             <div class="relative flex-1">
-                <input type="text" name="q" id="local-search-input" value="{{ q }}" placeholder="Search projects in this list..."
+                <input type="text" name="q" id="local-search-input" value="{{ q }}" placeholder="{% trans "Search projects in this list..." %}"
                        hx-get="" hx-trigger="keyup changed delay:300ms, search" hx-target="#projects-grid-wrapper" hx-include="#local-filters-form" hx-push-url="true"
                        class="input input-sm h-9 w-full bg-gray-50 border border-gray-200 focus:bg-white focus:border-[#226ce0] rounded-xl pl-9 text-xs">
                 <svg class="w-3.5 h-3.5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -49,12 +49,12 @@
 
             <!-- Visibility Filter -->
             <div class="form-control">
-                <label class="label text-[10px] font-bold text-gray-400 uppercase tracking-wider p-0 mb-1">Visibility Scope</label>
+                <label class="label text-[10px] font-bold text-gray-400 uppercase tracking-wider p-0 mb-1">{% trans "Visibility Scope" %}</label>
                 <select name="visibility" class="select select-bordered select-sm w-full bg-gray-50 rounded-xl text-xs">
-                    <option value="">All Scopes</option>
-                    <option value="public" {% if selected_visibility == 'public' %}selected{% endif %}>Public</option>
-                    <option value="org" {% if selected_visibility == 'org' %}selected{% endif %}>Organization</option>
-                    <option value="private" {% if selected_visibility == 'private' %}selected{% endif %}>Private</option>
+                    <option value="">{% trans "All Scopes" %}</option>
+                    <option value="public" {% if selected_visibility == 'public' %}selected{% endif %}>{% trans "Public" %}</option>
+                    <option value="org" {% if selected_visibility == 'org' %}selected{% endif %}>{% trans "Organization" %}</option>
+                    <option value="private" {% if selected_visibility == 'private' %}selected{% endif %}>{% trans "Private" %}</option>
                 </select>
             </div>
 
@@ -62,7 +62,7 @@
             <div class="form-control">
                 <label class="label text-[10px] font-bold text-gray-400 uppercase tracking-wider p-0 mb-1">Organization</label>
                 <select name="org_id" class="select select-bordered select-sm w-full bg-gray-50 rounded-xl text-xs">
-                    <option value="">All Organizations</option>
+                    <option value="">{% trans "All Organizations" %}</option>
                     {% for o in filter_orgs %}
                     <option value="{{ o.id }}" {% if selected_org_id == o.id %}selected{% endif %}>{{ o.name }}</option>
                     {% endfor %}
@@ -73,8 +73,8 @@
             <div class="form-control">
                 <label class="label text-[10px] font-bold text-gray-400 uppercase tracking-wider p-0 mb-1">Sort By</label>
                 <select name="sort_by" class="select select-bordered select-sm w-full bg-gray-50 rounded-xl text-xs">
-                    <option value="">Recently Updated</option>
-                    <option value="newest" {% if selected_sort_by == 'newest' %}selected{% endif %}>Newest Created</option>
+                    <option value="">{% trans "Recently Updated" %}</option>
+                    <option value="newest" {% if selected_sort_by == 'newest' %}selected{% endif %}>{% trans "Newest Created" %}</option>
                     <option value="oldest" {% if selected_sort_by == 'oldest' %}selected{% endif %}>Oldest Created</option>
                     <option value="title_asc" {% if selected_sort_by == 'title_asc' %}selected{% endif %}>Title (A-Z)</option>
                     <option value="title_desc" {% if selected_sort_by == 'title_desc' %}selected{% endif %}>Title (Z-A)</option>

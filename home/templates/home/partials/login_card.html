@@ -1,8 +1,9 @@
+{% load static %}{% load i18n %}
 <div class="card bg-white rounded-2xl shadow-xl border-0 w-full max-w-sm mx-auto">
     <div class="card-body p-8">
         <div class="text-center mb-6">
-            <h2 class="text-2xl font-bold text-gray-900">Sign In</h2>
-            <p class="text-sm text-gray-500 mt-1">Welcome back to Reportary</p>
+            <h2 class="text-2xl font-bold text-gray-900">{% trans "Sign In" %}</h2>
+            <p class="text-sm text-gray-500 mt-1">{% trans "Welcome back to Reportary" %}</p>
         </div>
 
         {% if error %}
@@ -21,7 +22,7 @@
 
             <div class="form-control w-full">
                 <label class="label">
-                    <span class="label-text font-medium text-gray-700">Email</span>
+                    <span class="label-text font-medium text-gray-700">{% trans "Email" %}</span>
                 </label>
                 <input type="email" name="email" placeholder="name@company.com"
                     class="input input-bordered w-full focus:border-[#226ce0] bg-gray-50 focus:bg-white transition-colors"
@@ -30,7 +31,7 @@
 
             <div class="form-control w-full">
                 <label class="label">
-                    <span class="label-text font-medium text-gray-700">Password</span>
+                    <span class="label-text font-medium text-gray-700">{% trans "Password" %}</span>
                 </label>
                 <div style="position: relative; width: 100%; display: block;">
                     <input type="password" name="password" placeholder="••••••••"
@@ -47,13 +48,12 @@
                     </button>
                 </div>
                 <label class="label">
-                    <a href="{% url 'accounts:password_reset' %}" class="label-text-alt hover:underline text-[#226ce0]">Forgot
-                        password?</a>
+                    <a href="{% url 'accounts:password_reset' %}" class="label-text-alt hover:underline text-[#226ce0]">{% trans "Forgot password?" %}</a>
                 </label>
             </div>
 
             <button type="submit" class="btn btn-primary btn-block text-white font-semibold mt-2 normal-case text-base">
-                Sign In
+                {% trans "Sign In" %}
             </button>
         </form>
 
@@ -72,17 +72,17 @@
                     class="btn btn-sm btn-outline border-gray-300 hover:bg-gray-50 hover:text-gray-900 font-normal">A</button>
             </div>
             <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(1px); -webkit-backdrop-filter: blur(1px); display: flex; align-items: center; justify-content: center; pointer-events: none; border-radius: 8px;">
-                <span style="background: rgba(15, 23, 42, 0.95); color: #ffffff; font-size: 9px; font-weight: bold; letter-spacing: 0.05em; text-transform: uppercase; padding: 3px 8px; border-radius: 4px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); border: 1px solid rgba(255,255,255,0.15);">Coming Soon</span>
+                <span style="background: rgba(15, 23, 42, 0.95); color: #ffffff; font-size: 9px; font-weight: bold; letter-spacing: 0.05em; text-transform: uppercase; padding: 3px 8px; border-radius: 4px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); border: 1px solid rgba(255,255,255,0.15);">{% trans "Coming Soon" %}</span>
             </div>
         </div>
 
         <!-- Toggle to Signup -->
         <div class="text-center mt-6 text-sm">
-            <span class="text-gray-500">New to Reportary? </span>
+            <span class="text-gray-500">{% trans "New to Reportary?" %} </span>
             <button
                 class="text-[#226ce0] hover:text-[#1b56b3] font-medium no-underline hover:underline transition-colors"
                 hx-get="{% url 'home:signup_card' %}{% if next %}?next={{ next }}{% endif %}" hx-target="#auth-card-container" hx-swap="innerHTML">
-                Create account
+                {% trans "Create account" %}
             </button>
         </div>
     </div>
