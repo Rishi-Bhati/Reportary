@@ -81,7 +81,7 @@ def dashboard_overview(request):
 
     # Fetch organisations
     owned_organisations = user.organisations.all()
-    member_organisations = user.organisation_members.all()
+    member_organisations = user.organisation_members.exclude(owner=user)
 
     context = {
         'projects': projects,

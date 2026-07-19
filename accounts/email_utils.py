@@ -29,8 +29,9 @@ def send_verification_email(request, user):
 
 def send_welcome_email(request, user):
     """Sends a welcome email to the user after successful email verification."""
+    display_name = user.username.split('@')[0] if '@' in user.username else user.username
     context = {
-        'username': user.username,
+        'username': display_name,
         'message': "Welcome to Reportary! Your email has been verified. You can now create projects, file reports, collaborate with others, and manage your organisations."
     }
     

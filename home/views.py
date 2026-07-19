@@ -59,7 +59,8 @@ def changelog_view(request):
     """
     Renders the changelog/what's new page.
     """
-    return render(request, "home/changelog.html")
+    base_template = "base.html" if request.user.is_authenticated else "home/base_public.html"
+    return render(request, "home/changelog.html", {"base_template": base_template})
 
 def login_card(request):
     """Renders the HTMX partial for the login card."""
@@ -218,6 +219,18 @@ def faq_page(request):
         {
             "question": "What is Reportary?",
             "answer": "Reportary is a modern, collaborative bug and issue tracking platform designed for development teams. It helps you capture, organize, and resolve software issues efficiently.",
+        },
+        {
+            "question": "What is the difference between Watching (Following) and Bookmarking a report?",
+            "answer": "<strong>Watching (Following)</strong> subscribes you to real-time updates. You will receive in-app notifications and email alerts whenever the status changes, details are updated, or new comments are added.<br><strong>Bookmarking</strong> acts as a personal shortcut for quick reference in your library. Bookmarking a report does not trigger any notification emails.",
+        },
+        {
+            "question": "How do I collect issues from external users?",
+            "answer": "You can activate a <strong>Public Reporting Portal</strong> link for your project. This generates a unique URL that you can share with clients or stakeholders, allowing them to submit reports directly into your tracker.",
+        },
+        {
+            "question": "How do Organisation Policies override project portal settings?",
+            "answer": "If an Organisation disables anonymous reporting, it acts as a global policy. All projects belonging to that organisation will automatically require users to log in before filing a report, even if an individual project's settings allow anonymous reporting.",
         },
         {
             "question": "Who can create a project?",

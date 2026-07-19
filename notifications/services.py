@@ -4,7 +4,7 @@ from .models import Notification, Invitation
 from .constants import AUTO_READ_TYPES
 from .email_service import send_notification_email
 
-def create_notification(*, recipient, actor, notification_type, title, message, target_content_type, target_uuid, requires_action=False):
+def create_notification(*, recipient, actor, notification_type, title, message, target_content_type, target_uuid, requires_action=False, extra_context=None):
     """Creates an in-app notification and sends an email notification."""
     report = None
     if target_content_type == 'report':
@@ -61,6 +61,8 @@ def create_notification(*, recipient, actor, notification_type, title, message, 
         'target_uuid': str(target_uuid),
         'target_type': target_content_type,
     }
+    if extra_context:
+        context.update(extra_context)
     
     # Determine recipients and send
     to_emails = [recipient.email]
@@ -74,6 +76,7 @@ def create_notification(*, recipient, actor, notification_type, title, message, 
                 report = Report.objects.get(uuid=target_uuid)
             context['report_title'] = report.title
             context['project_title'] = report.project.title
+            context['report'] = report
             
             # Add CCs: Collaborators + Reporter (excluding recipient and actor)
             cc_users = set()

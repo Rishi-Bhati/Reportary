@@ -75,7 +75,11 @@ def update_report_status(*, request, report, new_status, actor):
                 title="Report Status Changed",
                 message=f"Report '{report.title}' status was changed from '{old_status}' to '{new_status}' by {actor.username}.",
                 target_content_type='report',
-                target_uuid=report.uuid
+                target_uuid=report.uuid,
+                extra_context={
+                    'old_status': old_status,
+                    'new_status': new_status,
+                }
             )
 
     return report

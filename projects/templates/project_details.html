@@ -417,7 +417,7 @@
                     {% endif %}
 
                     <!-- Collaborators list -->
-                    {% for col in project.collaborators.all %}
+                    {% for col in collaborators %}
                     <div class="flex items-center justify-between">
                         <div class="flex items-center gap-3">
                             <div class="w-8 h-8 rounded-full bg-gray-100 border border-gray-200 text-gray-600 flex items-center justify-center font-bold text-xs">
@@ -430,9 +430,7 @@
                         </div>
                     </div>
                     {% empty %}
-                    {% if not project.project_head %}
                     <p class="text-xs text-gray-400 italic">No additional collaborators assigned.</p>
-                    {% endif %}
                     {% endfor %}
                 </div>
             </div>

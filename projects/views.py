@@ -327,10 +327,17 @@ def project_detail(request, project_uuid):
             log_dict['component_changes'] = get_component_changes_for_project_log(project.id, log)
         enriched_history.append(log_dict)
     
+    # Filtered collaborators to avoid listing owner/project_head twice
+    exclude_ids = [project.owner.id]
+    if project.project_head:
+        exclude_ids.append(project.project_head.id)
+    collaborators_list = project.collaborators.exclude(id__in=exclude_ids)
+
     return render(request, 'project_details.html', {
         'project': project,
         'is_owner': is_owner,
         'is_member': is_member,
+        'collaborators': collaborators_list,
         'total_reports': total_reports,
         'open_reports': open_reports,
         'resolved_reports': resolved_reports,
@@ -419,7 +426,11 @@ def my_projects_view(request):
 
 @login_required
 def collaborating_projects_view(request):
-    projects = Project.objects.filter(collaborators=request.user).annotate(num_components=Count('project_components'))
+    projects = Project.objects.filter(collaborators=request.user).exclude(
+        Q(org__isnull=True, owner=request.user) |
+        Q(org__isnull=False, org__owner=request.user) |
+        Q(org__isnull=False, project_head=request.user)
+    ).annotate(num_components=Count('project_components')).distinct()
     
     projects = apply_project_filters_and_sorting(projects, request)
     filter_orgs = Organisation.objects.all().order_by('name')

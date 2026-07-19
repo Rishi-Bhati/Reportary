@@ -1,16 +1,26 @@
-<button hx-post="{% url 'reports:toggle_bookmark' report_uuid=report.uuid %}"
-        hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
-        hx-swap="outerHTML"
-        class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border transition-colors shadow-sm focus:outline-none {% if is_bookmarked %}bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100{% else %}bg-white text-gray-700 border-gray-200 hover:bg-gray-50{% endif %}">
-    {% if is_bookmarked %}
-    <svg class="w-4 h-4 text-amber-500 fill-current" viewBox="0 0 20 20" fill="currentColor">
-        <path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z" />
-    </svg>
-    Bookmarked
-    {% else %}
-    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
-    </svg>
-    Bookmark
-    {% endif %}
-</button>
+<div class="relative group inline-block" id="bookmark-wrapper-{{ report.id }}">
+    <button hx-post="{% url 'reports:toggle_bookmark' report_uuid=report.uuid %}"
+            hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+            hx-target="#bookmark-wrapper-{{ report.id }}"
+            hx-swap="outerHTML"
+            class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border transition-colors shadow-sm focus:outline-none {% if is_bookmarked %}bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100{% else %}bg-white text-gray-700 border-gray-200 hover:bg-gray-50{% endif %}">
+        {% if is_bookmarked %}
+        <svg class="w-4 h-4 text-amber-500 fill-current" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z" />
+        </svg>
+        Bookmarked
+        {% else %}
+        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+        </svg>
+        Bookmark
+        {% endif %}
+    </button>
+    <!-- Tooltip Card -->
+    <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block w-52 p-3 bg-gray-900 text-white text-[11px] leading-normal font-normal rounded-xl shadow-xl z-50 border border-gray-800 transition-all duration-150 text-center">
+        <strong>Bookmark</strong><br>
+        Saves this report to your personal library for quick reference. <span class="text-amber-300">Does not trigger notifications or email alerts.</span>
+        <!-- Arrow -->
+        <span class="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-900"></span>
+    </div>
+</div>

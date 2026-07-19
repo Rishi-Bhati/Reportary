@@ -36,9 +36,9 @@ def can_access_project(user, project):
     if project.visibility == 'org':
         if project.org:
             return is_organisation_member(user, project.org)
-        return is_project_owner(user, project) or project.collaborators.filter(id=user.id).exists()
+        return is_project_manager(user, project) or project.collaborators.filter(id=user.id).exists()
     if project.visibility == 'private':
-        return is_project_owner(user, project) or project.collaborators.filter(id=user.id).exists()
+        return is_project_manager(user, project) or project.collaborators.filter(id=user.id).exists()
     
     # Backwards compatibility fallback
     if project.public:
