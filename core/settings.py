@@ -283,7 +283,7 @@ MAIL_API_SECRET = os.getenv('MAIL_API_SECRET', '')
 MAIL_API_ENDPOINT = 'https://reportary-email-service.nagger.workers.dev/api/send'
 
 # Contact form submissions recipient
-CONTACT_EMAIL = os.getenv('CONTACT_EMAIL', 'anujkumar123.mp@gmail.com')
+CONTACT_EMAIL = os.getenv('CONTACT_EMAIL', 'support.reportary@gmail.com')
 
 # ── Legacy SMTP config (kept for future reference, currently unused) ──────────
 # EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -293,7 +293,7 @@ CONTACT_EMAIL = os.getenv('CONTACT_EMAIL', 'anujkumar123.mp@gmail.com')
 # EMAIL_USE_SSL = os.getenv('EMAIL_USE_SSL', 'False').lower() in ('true', '1', 'yes')
 # EMAIL_HOST_USER = os.getenv('MAIL_ID', '')
 # EMAIL_HOST_PASSWORD = os.getenv('MAIL_APP_PASSWORD', '')
-# DEFAULT_FROM_EMAIL = os.getenv('MAIL_ID', 'anujkumar123.mp@gmail.com')
+# DEFAULT_FROM_EMAIL = os.getenv('MAIL_ID', 'support.reportary@gmail.com')
 
 
 

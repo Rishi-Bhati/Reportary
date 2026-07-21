@@ -24,10 +24,15 @@ from django.conf.urls.static import static
 from django.contrib.auth.urls import views as auth_views
 # from dashboard.views import home
 from core import views as core_views
+from django.views.generic.base import RedirectView
+from django.contrib.staticfiles.storage import staticfiles_storage
 
 urlpatterns = [
     # i18n language switching endpoint (POST /i18n/set_language/)
     path('i18n/', include('django.conf.urls.i18n')),
+
+    # Favicon redirect view
+    path('favicon.ico', RedirectView.as_view(url=staticfiles_storage.url('favicon.ico')), name='favicon'),
 
     # The Django admin interface
     path('admin/', admin.site.urls),
