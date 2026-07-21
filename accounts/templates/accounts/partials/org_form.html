@@ -4,6 +4,13 @@
         <p class="text-gray-500">We need Some more Info for the Organisation</p>
     </div>
 
+    {% if error %}
+    <div class="alert alert-error shadow-sm mb-6 text-xs font-semibold text-red-600 bg-red-50 border border-red-200 rounded-xl p-3">
+        <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-4 w-4 inline mr-1" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+        <span>{{ error }}</span>
+    </div>
+    {% endif %}
+
     <form method="POST" action="{% url 'accounts:onboarding_org_form' %}">
         {% csrf_token %}
 
@@ -12,18 +19,18 @@
                 <div class="form-control">
                     <label class="label"><span class="label-text font-semibold text-gray-700">Organisation
                             Name</span></label>
-                    <input type="text" name="org_name" class="input input-bordered bg-white text-gray-900" required />
+                    <input type="text" name="org_name" value="{{ prefill.org_name }}" class="input input-bordered bg-white text-gray-900" required />
                 </div>
 
                 <div class="form-control">
                     <label class="label"><span class="label-text font-semibold text-gray-700">Organisation Domain</span></label>
-                    <input type="text" name="org_domain" placeholder="example.com"
+                    <input type="text" name="org_domain" placeholder="example.com" value="{{ prefill.org_domain }}"
                         class="input input-bordered bg-white text-gray-900" required />
                 </div>
 
                 <div class="form-control">
                     <label class="label"><span class="label-text font-semibold text-gray-700">Organisation Description</span></label>
-                    <textarea name="org_description" rows="4" class="textarea textarea-bordered bg-white text-gray-900" placeholder="A short description about your organisation"></textarea>
+                    <textarea name="org_description" rows="4" class="textarea textarea-bordered bg-white text-gray-900" placeholder="A short description about your organisation">{{ prefill.org_description }}</textarea>
                 </div>
 
             </div>
@@ -32,19 +39,25 @@
                 <div class="form-control">
                     <label class="label"><span class="label-text font-semibold text-gray-700">What Should we Call
                             you?</span></label>
-                    <input type="text" name="call_name" class="input input-bordered bg-white text-gray-900" required />
+                    <input type="text" name="call_name" value="{{ prefill.call_name }}" class="input input-bordered bg-white text-gray-900" required />
+                </div>
+
+                <div class="form-control">
+                    <label class="label"><span class="label-text font-semibold text-gray-700">What's Your Tag?</span></label>
+                    <input type="text" name="tag" placeholder="e.g. rishi_dev" value="{{ prefill.tag }}"
+                        class="input input-bordered bg-white text-gray-900" required />
                 </div>
 
                 <div class="form-control">
                     <label class="label"><span class="label-text font-semibold text-gray-700">Your Role in
                             Company?</span></label>
-                    <input type="text" name="cp_role" class="input input-bordered bg-white text-gray-900" />
+                    <input type="text" name="cp_role" value="{{ prefill.cp_role }}" class="input input-bordered bg-white text-gray-900" />
                 </div>
 
                 <div class="form-control">
                     <label class="label"><span class="label-text font-semibold text-gray-700">Your Business
                             Email</span></label>
-                    <input type="email" name="biz_email" class="input input-bordered bg-white text-gray-900" />
+                    <input type="email" name="biz_email" value="{{ prefill.biz_email }}" class="input input-bordered bg-white text-gray-900" />
                 </div>
             </div>
         </div>

@@ -89,9 +89,27 @@ def onboarding_org_form(request):
         cp_role = request.POST.get('cp_role')
         biz_email = request.POST.get('biz_email')
         call_name = request.POST.get('call_name')
+        tag = request.POST.get('tag')
 
         user = request.user
         
+        if tag:
+            if User.objects.filter(username=tag).exclude(pk=user.pk).exists():
+                return render(request, "accounts/partials/org_form.html", {
+                    'error': f'The tag \"@{tag}\" is already taken. Please choose a different one.',
+                    'prefill': {
+                        'org_name': org_name,
+                        'org_domain': org_domain,
+                        'org_description': org_description,
+                        'cp_role': cp_role,
+                        'biz_email': biz_email,
+                        'call_name': call_name,
+                        'tag': tag
+                    }
+                })
+            else:
+                user.username = tag
+
         # 2. Update User Details
         if call_name:
             user.name = call_name

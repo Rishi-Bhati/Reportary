@@ -281,6 +281,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 MAIL_API_KEY = os.getenv('MAIL_API', '')
 MAIL_API_SECRET = os.getenv('MAIL_API_SECRET', '')
 MAIL_API_ENDPOINT = 'https://reportary-email-service.nagger.workers.dev/api/send'
+SITE_URL = os.getenv('SITE_URL', 'https://reportary.onrender.com')
 
 # Contact form submissions recipient
 CONTACT_EMAIL = os.getenv('CONTACT_EMAIL', 'support.reportary@gmail.com')

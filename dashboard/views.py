@@ -54,7 +54,6 @@ def dashboard_overview(request):
 
     # Calculate average resolution time for overview metric
     accessible_projects = Project.objects.filter(
-        Q(visibility='public') |
         Q(owner=user) |
         Q(project_head=user) |
         Q(collaborators=user) |
@@ -111,7 +110,6 @@ def dashboard_analytics(request):
     
     # Get all projects the user is authorized to view
     accessible_projects = Project.objects.filter(
-        Q(visibility='public') |
         Q(owner=user) |
         Q(project_head=user) |
         Q(collaborators=user) |

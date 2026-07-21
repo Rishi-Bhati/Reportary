@@ -52,6 +52,8 @@ def create_notification(*, recipient, actor, notification_type, title, message, 
     
     # We trigger the email sending asynchronously or synchronously depending on settings.
     # We will pass context down to the email service.
+    from django.conf import settings
+    from django.urls import reverse
     actor_name = 'Anonymous' if (report and report.is_anonymous) else actor.username
     context = {
         'title': title,
@@ -60,6 +62,7 @@ def create_notification(*, recipient, actor, notification_type, title, message, 
         'recipient_username': recipient.username,
         'target_uuid': str(target_uuid),
         'target_type': target_content_type,
+        'notifications_url': f"{settings.SITE_URL.rstrip('/')}{reverse('notifications:center')}"
     }
     if extra_context:
         context.update(extra_context)
@@ -77,6 +80,11 @@ def create_notification(*, recipient, actor, notification_type, title, message, 
             context['report_title'] = report.title
             context['project_title'] = report.project.title
             context['report'] = report
+            
+            # Construct the absolute URL to the specific report page
+            from django.conf import settings
+            from django.urls import reverse
+            context['report_url'] = f"{settings.SITE_URL.rstrip('/')}{reverse('projects:reports:report_detail', kwargs={'project_uuid': report.project.uuid, 'report_uuid': report.uuid})}"
             
             # Add CCs: Collaborators + Reporter (excluding recipient and actor)
             cc_users = set()

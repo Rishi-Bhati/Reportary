@@ -174,6 +174,8 @@ def handle_signup(request):
             user.is_email_verified = False
             user.save()
 
+            login(request, user)
+
             # Trigger email verification email
             from accounts.email_utils import send_verification_email
             try:
@@ -182,7 +184,6 @@ def handle_signup(request):
                 import logging
                 logging.getLogger(__name__).error(f"Failed to send verification email: {e}")
 
-            login(request, user)
             response = HttpResponse(status=204)
             if next_url:
                 response["HX-Redirect"] = next_url

@@ -7,8 +7,16 @@
   <strong>{{ actor_username }}</strong> has invited you to collaborate on <strong>{{ project_title }}</strong>.
 </p>
 
-<p style="margin:0; font-size:14px; line-height:1.65; color:#718096;">
+<p style="margin:0 0 24px 0; font-size:14px; line-height:1.65; color:#718096;">
   Log in to Reportary and check your Notification Center to accept or decline this invitation.
 </p>
+
+{% if notifications_url %}
+<div style="margin-top:28px; text-align:center;">
+  <a href="{{ notifications_url }}" style="display:inline-block; padding:10px 20px; font-size:14px; font-weight:600; color:#ffffff; background-color:#226ce0; border-radius:6px; text-decoration:none;">
+    Go to Notification Center
+  </a>
+</div>
+{% endif %}
 
 {% endblock %}

@@ -103,9 +103,8 @@ def send_notification_email(*, notification_type, subject, context, to_emails, c
     Renders an HTML email template and dispatches it asynchronously via the
     HTTP mail API (replaces SMTP).
 
-    Email routing:
-    - to_emails: primary recipients (owner / assignee)
-    - cc_emails: CC list (collaborators + reporter)
+    To protect user privacy, we send separate individual emails to each recipient
+    (both primary and CC'd) so that no recipient can see any other recipient's email address.
     """
     # Add default context variables needed by templates
     context["subject"] = subject
@@ -126,7 +125,20 @@ def send_notification_email(*, notification_type, subject, context, to_emails, c
                 f"<p>Check details on your Reportary dashboard.</p>"
             )
 
-    send_api_email(subject, html_content, to_emails, cc_emails)
+    # Collect all unique recipients
+    recipients = set()
+    if to_emails:
+        for email in to_emails:
+            if email:
+                recipients.add(email.strip())
+    if cc_emails:
+        for email in cc_emails:
+            if email:
+                recipients.add(email.strip())
+
+    # Send individual concurrent email requests
+    for email in recipients:
+        send_api_email(subject, html_content, [email], cc_emails=None)
 
 
 # ─── Legacy SMTP implementation (kept for future reference) ───────────────────

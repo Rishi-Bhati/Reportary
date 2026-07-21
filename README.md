@@ -112,6 +112,12 @@ Reportary/
 └── core/settings.py   # Django settings
 ```
 
+## Email Service Integration
+
+Reportary integrates with a serverless email worker API for secure, high-performance transactional email delivery (replaces SMTP setup).
+* **Worker API Repository:** [Serverless Email Service](https://github.com/Rishi-Bhati/Serverless-email-service)
+* **Legacy SMTP Support:** The legacy Django SMTP-based email sending configuration and driver code remains fully intact as commented-out sections in `core/settings.py` and `notifications/email_service.py`. If you want to fall back to traditional SMTP (e.g. Gmail App Passwords, SendGrid, Amazon SES), you can uncomment those sections and define standard SMTP environment variables.
+
 ---
 
 ## Running Tests
