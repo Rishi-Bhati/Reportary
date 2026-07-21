@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-19 20:50+0000\n"
+"POT-Creation-Date: 2026-07-21 18:56+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -57,17 +57,19 @@ msgstr "ページが見つかりません"
 msgid "Go Back"
 msgstr "戻る"
 
-#: core/templates/base.html:73
+#: core/templates/base.html:74
 msgid ""
 "Verify your email to unlock reporting, commenting, project creation, and "
 "collaboration."
-msgstr "レポート、コメント、プロジェクト作成、コラボレーションを有効にするためメールを確認してください。"
+msgstr ""
+"レポート、コメント、プロジェクト作成、コラボレーションを有効にするためメール"
+"を確認してください。"
 
-#: core/templates/base.html:79
+#: core/templates/base.html:80
 msgid "Resend verification"
 msgstr "確認メールを再送"
 
-#: core/templates/base.html:101
+#: core/templates/base.html:102
 msgid "Search this page"
 msgstr "このページを検索"
 
@@ -139,7 +141,7 @@ msgstr "ヘルプ"
 
 #: core/templates/partials/sidebar.html:158
 #: home/templates/home/base_public.html:25
-#: home/templates/home/changelog.html:202 home/templates/home/faq.html:4
+#: home/templates/home/changelog.html:260 home/templates/home/faq.html:4
 #: home/templates/home/faq.html:12 home/templates/home/landing_page.html:244
 msgid "FAQ"
 msgstr "よくある質問"
@@ -473,7 +475,9 @@ msgstr "主要モジュール / コンポーネント"
 
 #: dashboard/templates/dashboard/partials/analytics_partial.html:74
 msgid "No components mapped. Add components to projects."
-msgstr "マッピングされたコンポーネントはありません。プロジェクトにコンポーネントを追加してください。"
+msgstr ""
+"マッピングされたコンポーネントはありません。プロジェクトにコンポーネントを追"
+"加してください。"
 
 #: dashboard/templates/dashboard/partials/analytics_partial.html:84
 msgid "Issues Created Over Time (30d)"
@@ -625,7 +629,7 @@ msgstr "最近の報告アクティビティはありません。"
 
 #: home/templates/home/base_public.html:26
 #: home/templates/home/base_public.html:101
-#: home/templates/home/changelog.html:202
+#: home/templates/home/changelog.html:260
 msgid "Contact"
 msgstr "お問い合わせ"
 
@@ -651,14 +655,14 @@ msgid "All rights reserved."
 msgstr "All rights reserved."
 
 #: home/templates/home/base_public.html:99
-#: home/templates/home/changelog.html:202
+#: home/templates/home/changelog.html:260
 #: home/templates/home/landing_page.html:251 home/templates/home/privacy.html:4
 #: home/templates/home/privacy.html:11 home/templates/home/terms.html:61
 msgid "Privacy Policy"
 msgstr "プライバシーポリシー"
 
 #: home/templates/home/base_public.html:100
-#: home/templates/home/changelog.html:202
+#: home/templates/home/changelog.html:260
 #: home/templates/home/landing_page.html:252 home/templates/home/terms.html:4
 #: home/templates/home/terms.html:11
 msgid "Terms of Service"
@@ -680,40 +684,123 @@ msgstr "Reportaryの新着情報"
 msgid ""
 "A running log of every improvement, security fix, and new feature shipped. "
 "Most recent first."
-msgstr "実装されたすべての改善点、セキュリティ修正、新機能の履歴ログ。新しい順。"
+msgstr ""
+"実装されたすべての改善点、セキュリティ修正、新機能の履歴ログ。新しい順。"
 
 #: home/templates/home/changelog.html:29
-msgid ""
-"July 2026 · Auto Language Selection, Multilingual UI, & Mobile Email "
-"Templates"
-msgstr "2026年7月 · 自動言語選択、多言語UI、およびモバイルメールテンプレート"
+msgid "July 2026 · Production Stable Release"
+msgstr "2026年7月 · プロダクション安定版リリース"
 
 #: home/templates/home/changelog.html:30
 msgid "Latest"
 msgstr "最新"
 
-#: home/templates/home/changelog.html:37 home/templates/home/changelog.html:67
-#: home/templates/home/changelog.html:85 home/templates/home/changelog.html:95
-#: home/templates/home/changelog.html:134
-#: home/templates/home/changelog.html:142
-#: home/templates/home/changelog.html:150
-#: home/templates/home/changelog.html:158
-#: home/templates/home/changelog.html:183
-#: home/templates/home/changelog.html:191
-#: home/templates/home/changelog.html:199
+#: home/templates/home/changelog.html:37 home/templates/home/changelog.html:48
+#: home/templates/home/changelog.html:95 home/templates/home/changelog.html:125
+#: home/templates/home/changelog.html:143
+#: home/templates/home/changelog.html:153
+#: home/templates/home/changelog.html:192
+#: home/templates/home/changelog.html:200
+#: home/templates/home/changelog.html:208
+#: home/templates/home/changelog.html:216
+#: home/templates/home/changelog.html:241
+#: home/templates/home/changelog.html:249
+#: home/templates/home/changelog.html:257
+#: home/templates/home/changelog.html:265
+#: home/templates/home/changelog.html:273
+#: home/templates/home/changelog.html:281
 msgid "New"
 msgstr "新規"
 
-#: home/templates/home/changelog.html:38 home/templates/home/changelog.html:68
-#: home/templates/home/changelog.html:218
+#: home/templates/home/changelog.html:38 home/templates/home/changelog.html:134
+#: home/templates/home/changelog.html:174
+#: home/templates/home/changelog.html:183
+#: home/templates/home/changelog.html:284
+msgid "Security"
+msgstr "セキュリティ"
+
+#: home/templates/home/changelog.html:40
+msgid "Overhauled Recipient Email Privacy"
+msgstr "受信者のメールプライバシーの全面刷新"
+
+#: home/templates/home/changelog.html:42
+msgid ""
+"Transactional and notification emails are now dispatched in separate, "
+"concurrent requests individually to each recipient (primary and CC), fully "
+"preventing email address leakage in headers."
+msgstr "トランザクションメールや通知メールは、各受信者（宛先およびCC）ごとに個別のリクエストとして並行してディスパッチされるようになり、ヘッダー内でのメールアドレスの漏洩を完全に防ぎます。"
+
+#: home/templates/home/changelog.html:49 home/templates/home/changelog.html:144
+#: home/templates/home/changelog.html:152
+#: home/templates/home/changelog.html:232
+#: home/templates/home/changelog.html:300
+msgid "UX"
+msgstr "UX"
+
+#: home/templates/home/changelog.html:51
+msgid "Direct Action Buttons & Comment Prioritization"
+msgstr "ダイレクトアクションボタンとコメントの優先表示"
+
+#: home/templates/home/changelog.html:53
+msgid ""
+"Notification emails now include call-to-action buttons directing users "
+"directly to the specific issue or the Notification Center. Comment "
+"notification layout is restructured to highlight the comment content first."
+msgstr "通知メールに、特定の課題または通知センターに直接遷移できるコールトゥアクション（CTA）ボタンが含まれるようになりました。また、コメント通知のレイアウトが再構成され、コメント内容が最初に強調表示されるようになりました。"
+
+#: home/templates/home/changelog.html:59 home/templates/home/changelog.html:70
+msgid "Upgrade"
+msgstr "アップグレード"
+
+#: home/templates/home/changelog.html:60
+msgid "Authentication"
+msgstr "認証"
+
+#: home/templates/home/changelog.html:62
+msgid "Universal Onboarding Username Tags"
+msgstr "ユニバーサルなオンボーディング用ユーザネームタグ"
+
+#: home/templates/home/changelog.html:64
+msgid ""
+"Onboarding forms for all users and organizations now prompt and validate "
+"developer/username tags to ensure correct account indexing from the start."
+msgstr "すべてのユーザーおよび組織のオンボーディングフォームで、開発者/ユーザーネームタグの入力と検証が求められるようになり、最初からアカウントが正しくインデックスされるようになります。"
+
+#: home/templates/home/changelog.html:71
+msgid "Access Scoping"
+msgstr "アクセススコープ"
+
+#: home/templates/home/changelog.html:73
+msgid "Task Lists & Collaborator Confidentiality"
+msgstr "タスクリストと共同編集者の機密性"
+
+#: home/templates/home/changelog.html:75
+msgid ""
+"Access checks now restrict interactive task lists, designated project heads, "
+"and collaborator details in project pages exclusively to authorized project "
+"members."
+msgstr "アクセスチェックにより、プロジェクトページのインタラクティブなタスクリスト、指定されたプロジェクトヘッド、および共同編集者の詳細表示が、承認されたプロジェクトメンバーのみに厳密に制限されるようになりました。"
+
+#: home/templates/home/changelog.html:87
+msgid ""
+"July 2026 · Auto Language Selection, Multilingual UI, & Mobile Email "
+"Templates"
+msgstr "2026年7月 · 自動言語選択、多言語UI、およびモバイルメールテンプレート"
+
+#: home/templates/home/changelog.html:88
+msgid "Released"
+msgstr "リリース済み"
+
+#: home/templates/home/changelog.html:96 home/templates/home/changelog.html:126
+#: home/templates/home/changelog.html:276
 msgid "Feature"
 msgstr "機能"
 
-#: home/templates/home/changelog.html:40
+#: home/templates/home/changelog.html:98
 msgid "Global Multilingual Support (English & Japanese)"
 msgstr "グローバル多言語サポート（英語・日本語）"
 
-#: home/templates/home/changelog.html:41
+#: home/templates/home/changelog.html:99
 msgid ""
 "Allows users to navigate the platform entirely in Japanese or English. "
 "Features location-based auto language selection using Geo-IP database and "
@@ -722,62 +809,76 @@ msgid ""
 "landing page and navbar for instant session-persistent language switching, "
 "and full UI translation across all dashboards, analytics, search, FAQ, and "
 "legal pages."
-msgstr "ユーザーがプラットフォーム全体を日本語または英語で完全にナビゲートできるようになります。Geo-IPデータベースとクライアントブラウザヘッダーを使用した位置情報ベースの自動言語選択機能を備え、煩わしいプロンプトを表示することなく、日本国内のユーザーには日本語を、それ以外の地域のユーザーには英語を提供します。瞬時にセッション永続的な言語切り替えを行うための、ランディングページとナビゲーションバー上の地球儀ドロップダウンセレクター、およびすべてのダッシュボード、アナリティクス、検索、FAQ、法的ページにわたる完全なUI翻訳が含まれています。"
+msgstr ""
+"ユーザーがプラットフォーム全体を日本語または英語で完全にナビゲートできるよう"
+"になります。Geo-IPデータベースとクライアントブラウザヘッダーを使用した位置情"
+"報ベースの自動言語選択機能を備え、煩わしいプロンプトを表示することなく、日本"
+"国内のユーザーには日本語を、それ以外の地域のユーザーには英語を提供します。瞬"
+"時にセッション永続的な言語切り替えを行うための、ランディングページとナビゲー"
+"ションバー上の地球儀ドロップダウンセレクター、およびすべてのダッシュボード、"
+"アナリティクス、検索、FAQ、法的ページにわたる完全なUI翻訳が含まれています。"
 
-#: home/templates/home/changelog.html:46 home/templates/home/changelog.html:166
+#: home/templates/home/changelog.html:104
+#: home/templates/home/changelog.html:224
 msgid "Improvement"
 msgstr "改善"
 
-#: home/templates/home/changelog.html:48
+#: home/templates/home/changelog.html:106
 msgid "Simplified Mobile-Responsive Notification Emails"
 msgstr "簡素化されたモバイル対応の通知メール"
 
-#: home/templates/home/changelog.html:49
+#: home/templates/home/changelog.html:107
 msgid ""
 "Overhauled the email notification system to keep transactional layout "
 "styling simpler and professional. Fixed formatting constraints causing "
 "layouts to render poorly on mobile and phone screens, resulting in "
 "streamlined, clean email alerts for comments, status changes, assignments, "
 "and invitations."
-msgstr "トランザクションレイアウトのスタイルをよりシンプルかつプロフェッショナルに維持するために、メール通知システムを刷新しました。モバイルやスマートフォンの画面でレイアウトが崩れて表示される原因となっていたフォーマットの制約を修正し、コメント、ステータス変更、アサイン、招待に関する合理化されたクリーンなメールアラートを実現しました。"
+msgstr ""
+"トランザクションレイアウトのスタイルをよりシンプルかつプロフェッショナルに維"
+"持するために、メール通知システムを刷新しました。モバイルやスマートフォンの画"
+"面でレイアウトが崩れて表示される原因となっていたフォーマットの制約を修正し、"
+"コメント、ステータス変更、アサイン、招待に関する合理化されたクリーンなメール"
+"アラートを実現しました。"
 
-#: home/templates/home/changelog.html:60
+#: home/templates/home/changelog.html:118
 msgid "July 2026 · Security Hardening, Public Portals, & Organisation Upgrades"
 msgstr "2026年7月 · セキュリティ強化、公開ポータル、組織機能のアップグレード"
 
-#: home/templates/home/changelog.html:70
+#: home/templates/home/changelog.html:128
 msgid "Public Portals & Anonymous Reporting"
 msgstr "公開ポータルと匿名レポート"
 
-#: home/templates/home/changelog.html:71
+#: home/templates/home/changelog.html:129
 msgid ""
 "External users can now submit feedback anonymously through standalone "
 "project links at"
-msgstr "外部ユーザーは以下にあるスタンドアロンのプロジェクトリンクを介して匿名でフィードバックを送信できるようになりました："
+msgstr ""
+"外部ユーザーは以下にあるスタンドアロンのプロジェクトリンクを介して匿名で"
+"フィードバックを送信できるようになりました："
 
-#: home/templates/home/changelog.html:71
+#: home/templates/home/changelog.html:129
 msgid ""
 "Includes drag-and-drop attachment dropzones, math CAPTCHAs and honeypots to "
 "block spam, secure rate limits, and GDPR-safe salted IP hashing. Project "
 "owners can fully customize link states, attachments, and regeneration."
-msgstr "スパムをブロックするためのドラッグ＆ドロップ添付ドロップゾーン、計算CAPTCHA、ハニーポット、安全なレート制限、GDPRに準拠したソルト付きIPハッシュが含まれます。プロジェクトオーナーは、リンク状態、添付ファイル、再生成を完全にカスタマイズできます。"
+msgstr ""
+"スパムをブロックするためのドラッグ＆ドロップ添付ドロップゾーン、計算CAPTCHA、"
+"ハニーポット、安全なレート制限、GDPRに準拠したソルト付きIPハッシュが含まれま"
+"す。プロジェクトオーナーは、リンク状態、添付ファイル、再生成を完全にカスタマ"
+"イズできます。"
 
-#: home/templates/home/changelog.html:76 home/templates/home/changelog.html:116
-#: home/templates/home/changelog.html:125
-#: home/templates/home/changelog.html:226
-msgid "Security"
-msgstr "セキュリティ"
-
-#: home/templates/home/changelog.html:77 home/templates/home/changelog.html:117
-#: home/templates/home/changelog.html:126
+#: home/templates/home/changelog.html:135
+#: home/templates/home/changelog.html:175
+#: home/templates/home/changelog.html:184
 msgid "Fix"
 msgstr "修正"
 
-#: home/templates/home/changelog.html:79
+#: home/templates/home/changelog.html:137
 msgid "Production Readiness Security Hardening"
 msgstr "本番環境運用のためのセキュリティ強化"
 
-#: home/templates/home/changelog.html:80
+#: home/templates/home/changelog.html:138
 msgid ""
 "Remediated multiple vulnerabilities identified in the production readiness "
 "audit. Enforced strict UUID access checks, decoupled project managers from "
@@ -785,289 +886,351 @@ msgid ""
 "scraping, and hardened cookie attributes (Samesite, HttpOnly) and HTTP "
 "headers. Added Cache-based rate limits to contact form submissions and fixed "
 "IP spoofing vulnerabilities."
-msgstr "本番運用監査で特定された複数の脆弱性を修正しました。厳格なUUIDアクセスチェックの適用、プロジェクトマネージャーの直接所有権からの分離、データベースのメールスクレイピングに対するユーザー検索エンドポイントの保護、Cookie属性（SameSite、HttpOnly）およびHTTPヘッダーの強化を実施。お問い合わせフォーム送信へのキャッシュベースのレート制限追加、IPスプーフィングの脆弱性修正を行いました。"
+msgstr ""
+"本番運用監査で特定された複数の脆弱性を修正しました。厳格なUUIDアクセスチェッ"
+"クの適用、プロジェクトマネージャーの直接所有権からの分離、データベースのメー"
+"ルスクレイピングに対するユーザー検索エンドポイントの保護、Cookie属性"
+"（SameSite、HttpOnly）およびHTTPヘッダーの強化を実施。お問い合わせフォーム送"
+"信へのキャッシュベースのレート制限追加、IPスプーフィングの脆弱性修正を行いま"
+"した。"
 
-#: home/templates/home/changelog.html:86 home/templates/home/changelog.html:94
-#: home/templates/home/changelog.html:174
-#: home/templates/home/changelog.html:242
-msgid "UX"
-msgstr "UX"
-
-#: home/templates/home/changelog.html:88
+#: home/templates/home/changelog.html:146
 msgid "Organisation Management Polish & Creation Flow"
 msgstr "組織管理と作成フローのブラッシュアップ"
 
-#: home/templates/home/changelog.html:89
+#: home/templates/home/changelog.html:147
 msgid ""
 "Introduced a dedicated Organisations button in both the sidebar and topbar "
 "profile navigation. Added profile details validation (Full Name, Business "
 "Email, Corporate Role) during organisation creation for users who did not "
 "sign up as organisation contact persons during onboarding."
-msgstr "サイドバーとトップバーのプロフィールナビゲーションの両方に専用の「組織」ボタンを導入しました。オンボーディング中に組織の連絡先担当者として登録しなかったユーザー向けに、組織作成時のプロフィール詳細（氏名、ビジネスメール、会社役職）の検証を追加しました。"
+msgstr ""
+"サイドバーとトップバーのプロフィールナビゲーションの両方に専用の「組織」ボタ"
+"ンを導入しました。オンボーディング中に組織の連絡先担当者として登録しなかった"
+"ユーザー向けに、組織作成時のプロフィール詳細（氏名、ビジネスメール、会社役"
+"職）の検証を追加しました。"
 
-#: home/templates/home/changelog.html:97
+#: home/templates/home/changelog.html:155
 msgid "Complete Worldwide Country Onboarding"
 msgstr "全世界の国に対応したオンボーディング"
 
-#: home/templates/home/changelog.html:98
+#: home/templates/home/changelog.html:156
 msgid ""
 "Expanded the onboarding country dropdown menu from 3 placeholder options to "
 "a comprehensive list of all 195 countries globally via a unified, modular "
 "template include."
-msgstr "オンボーディングの国選択ドロップダウンメニューを、3つのプレースホルダーオプションから、統一されたモジュール式テンプレートによる全世界195カ国の包括的なリストへ拡張しました。"
+msgstr ""
+"オンボーディングの国選択ドロップダウンメニューを、3つのプレースホルダーオプ"
+"ションから、統一されたモジュール式テンプレートによる全世界195カ国の包括的なリ"
+"ストへ拡張しました。"
 
-#: home/templates/home/changelog.html:109
+#: home/templates/home/changelog.html:167
 msgid "July 2026 · Major public beta release"
 msgstr "2026年7月 · メジャーパブリックベータリリース"
 
-#: home/templates/home/changelog.html:119
+#: home/templates/home/changelog.html:177
 msgid "Endpoint Security Hardening"
 msgstr "エンドポイントセキュリティの強化"
 
-#: home/templates/home/changelog.html:120
+#: home/templates/home/changelog.html:178
 msgid "Fixed multiple open endpoints accessible without authentication:"
-msgstr "認証なしでアクセス可能だった複数のオープンエンドポイントを修正しました："
+msgstr ""
+"認証なしでアクセス可能だった複数のオープンエンドポイントを修正しました："
 
-#: home/templates/home/changelog.html:120
+#: home/templates/home/changelog.html:178
 msgid "and the profile page. All now enforce"
 msgstr "およびプロフィールページ。すべてにおいて"
 
-#: home/templates/home/changelog.html:120
+#: home/templates/home/changelog.html:178
 msgid "with project-level access scoping."
 msgstr "によるプロジェクトレベルのアクセス制限を強制するようになりました。"
 
-#: home/templates/home/changelog.html:128
+#: home/templates/home/changelog.html:186
 msgid "Global HTMX CSRF Token Fix"
 msgstr "グローバルHTMX CSRFトークン修正"
 
-#: home/templates/home/changelog.html:129
+#: home/templates/home/changelog.html:187
 msgid ""
 "Fixed a critical issue where HTMX POST requests (task toggles, bookmarks, "
 "comment actions) were silently failing due to missing CSRF headers. All HTMX "
 "mutations now automatically include the CSRF token via a centralised"
-msgstr "CSRFヘッダーの欠落によりHTMXのPOSTリクエスト（タスク切り替え、ブックマーク、コメント操作）がサイレントに失敗していた重大な問題を修正しました。すべてのHTMXミューテーションは、ベーステンプレートに集中配置された"
+msgstr ""
+"CSRFヘッダーの欠落によりHTMXのPOSTリクエスト（タスク切り替え、ブックマーク、"
+"コメント操作）がサイレントに失敗していた重大な問題を修正しました。すべての"
+"HTMXミューテーションは、ベーステンプレートに集中配置された"
 
-#: home/templates/home/changelog.html:129
+#: home/templates/home/changelog.html:187
 msgid "handler in the base template."
 msgstr "ハンドラーを介して自動的にCSRFトークンを含むようになります。"
 
-#: home/templates/home/changelog.html:136
+#: home/templates/home/changelog.html:194
 msgid "Project Dashboard"
 msgstr "プロジェクトダッシュボード"
 
-#: home/templates/home/changelog.html:137
+#: home/templates/home/changelog.html:195
 msgid ""
 "Every project now has a dedicated dashboard — real-time statistics, a "
 "dynamic health score, recent reports, active collaborators, and a fully "
 "interactive task checklist. Tasks persist, can be toggled, added, and "
 "deleted without page reloads."
-msgstr "各プロジェクトに専用ダッシュボードが追加されました。リアルタイムの統計情報、動的なヘルススコア、最近のレポート、アクティブな共同作業者、そして完全にインタラクティブなタスクチェックリストを提供します。タスクは保存され、ページの再読み込みなしで切り替え、追加、削除が可能です。"
+msgstr ""
+"各プロジェクトに専用ダッシュボードが追加されました。リアルタイムの統計情報、"
+"動的なヘルススコア、最近のレポート、アクティブな共同作業者、そして完全にイン"
+"タラクティブなタスクチェックリストを提供します。タスクは保存され、ページの再"
+"読み込みなしで切り替え、追加、削除が可能です。"
 
-#: home/templates/home/changelog.html:144
+#: home/templates/home/changelog.html:202
 msgid "Global Search — Real-time Popdown"
 msgstr "グローバル検索 — リアルタイムポップダウン"
 
-#: home/templates/home/changelog.html:145
+#: home/templates/home/changelog.html:203
 msgid ""
 "Search shows a live result popdown as you type — no Enter required. Results "
 "span projects, reports, comments, and organisations. Recent searches appear "
 "on focus. Clicking a result navigates directly and highlights it on the "
 "results page. Contextual filters for status, severity, assignee, and date "
 "range also available."
-msgstr "入力中にリアルタイムで結果ポップダウンを表示するようになりました。Enterキーを押す必要はありません。検索範囲はプロジェクト、レポート、コメント、組織に及びます。フォーカス時に最近の検索が表示されます。結果をクリックすると直接遷移し、結果ページでハイライトされます。ステータス、重大度、担当者、日付範囲によるコンテキストフィルターも利用可能です。"
+msgstr ""
+"入力中にリアルタイムで結果ポップダウンを表示するようになりました。Enterキーを"
+"押す必要はありません。検索範囲はプロジェクト、レポート、コメント、組織に及び"
+"ます。フォーカス時に最近の検索が表示されます。結果をクリックすると直接遷移"
+"し、結果ページでハイライトされます。ステータス、重大度、担当者、日付範囲によ"
+"るコンテキストフィルターも利用可能です。"
 
-#: home/templates/home/changelog.html:152
+#: home/templates/home/changelog.html:210
 msgid "Filter & Sort on Every List View"
 msgstr "すべてのリストビューでフィルターとソートに対応"
 
-#: home/templates/home/changelog.html:153
+#: home/templates/home/changelog.html:211
 msgid ""
 "Reports, projects, and organisation lists now feature contextual filters and "
 "sort controls. Report filters include status, severity, assignee, and date "
 "range. Project filters include visibility and creation date."
-msgstr "レポート、プロジェクト、および組織リストに、コンテキストに応じたフィルターとソートコントロールが追加されました。レポートのフィルターにはステータス、重大度、担当者、日付範囲が含まれます。プロジェクトのフィルターには公開範囲と作成日が含まれます。"
+msgstr ""
+"レポート、プロジェクト、および組織リストに、コンテキストに応じたフィルターと"
+"ソートコントロールが追加されました。レポートのフィルターにはステータス、重大"
+"度、担当者、日付範囲が含まれます。プロジェクトのフィルターには公開範囲と作成"
+"日が含まれます。"
 
-#: home/templates/home/changelog.html:160
+#: home/templates/home/changelog.html:218
 msgid "Bookmark & Watch Reports"
 msgstr "レポートのブックマークと監視"
 
-#: home/templates/home/changelog.html:161
+#: home/templates/home/changelog.html:219
 msgid ""
 "Bookmark any report for quick access. Watch a report to receive "
 "notifications on status, assignee, or severity changes. A dedicated "
 "Bookmarks & Watches view manages everything in one place."
-msgstr "すばやくアクセスできるように任意のレポートをブックマークできます。レポートを監視すると、ステータス、担当者、または重大度の変更に関する通知を受け取ることができます。専用のブックマーク＆監視ビューで、すべてを1か所で管理できます。"
+msgstr ""
+"すばやくアクセスできるように任意のレポートをブックマークできます。レポートを"
+"監視すると、ステータス、担当者、または重大度の変更に関する通知を受け取ること"
+"ができます。専用のブックマーク＆監視ビューで、すべてを1か所で管理できます。"
 
-#: home/templates/home/changelog.html:168
+#: home/templates/home/changelog.html:226
 msgid "Notification Centre Redesign"
 msgstr "通知センターの再設計"
 
-#: home/templates/home/changelog.html:169
+#: home/templates/home/changelog.html:227
 msgid ""
 "Cleaner layout, improved empty state, and better invite action cards with "
 "inline accept/decline buttons. Unread badges now reflect accurate server-"
 "side counts."
-msgstr "レイアウトをクリーンにし、空の状態の表示を改善、インラインで承諾/辞退ができる招待カードを導入しました。未読バッジにはサーバー側の正確なカウントが反映されるようになりました。"
+msgstr ""
+"レイアウトをクリーンにし、空の状態の表示を改善、インラインで承諾/辞退ができる"
+"招待カードを導入しました。未読バッジにはサーバー側の正確なカウントが反映され"
+"るようになりました。"
 
-#: home/templates/home/changelog.html:176
+#: home/templates/home/changelog.html:234
 msgid "Toast Notifications + HTMX Loading Bar"
 msgstr "トースト通知 + HTMXローディングバー"
 
-#: home/templates/home/changelog.html:177
+#: home/templates/home/changelog.html:235
 msgid ""
 "Replaced inline message banners with animated toast notifications — slide in "
 "from the top-right, auto-dismiss in 4 seconds, with a countdown progress "
 "bar. A thin blue loading bar tracks every HTMX request globally across all "
 "pages."
-msgstr "インラインのメッセージバナーを、画面右上からスライドインし4秒で自動消去されるアニメーション付きトースト通知（カウントダウンバー付き）に置き換えました。すべてのページでHTMXリクエストをグローバルに追跡する細いブルーのローディングバーが導入されました。"
+msgstr ""
+"インラインのメッセージバナーを、画面右上からスライドインし4秒で自動消去される"
+"アニメーション付きトースト通知（カウントダウンバー付き）に置き換えました。す"
+"べてのページでHTMXリクエストをグローバルに追跡する細いブルーのローディング"
+"バーが導入されました。"
 
-#: home/templates/home/changelog.html:182
+#: home/templates/home/changelog.html:240
 msgid "Admin"
 msgstr "管理者"
 
-#: home/templates/home/changelog.html:185
+#: home/templates/home/changelog.html:243
 msgid "Site Announcements"
 msgstr "サイトからのお知らせ"
 
-#: home/templates/home/changelog.html:186
+#: home/templates/home/changelog.html:244
 msgid ""
 "Superusers can post site-wide announcement banners (info / warning / "
 "critical / success) visible to all logged-in users. Banners are dismissable "
 "and support optional auto-expiry."
-msgstr "管理者（スーパーユーザー）は、ログインしているすべてのユーザーに表示されるサイト全体のお知らせバナー（info / warning / critical / success）を投稿できるようになりました。バナーは非表示にでき、オプションで自動有効期限の設定もサポートしています。"
+msgstr ""
+"管理者（スーパーユーザー）は、ログインしているすべてのユーザーに表示されるサ"
+"イト全体のお知らせバナー（info / warning / critical / success）を投稿できるよ"
+"うになりました。バナーは非表示にでき、オプションで自動有効期限の設定もサポー"
+"トしています。"
 
-#: home/templates/home/changelog.html:193
+#: home/templates/home/changelog.html:251
 msgid "Account Deletion (Soft-delete)"
 msgstr "アカウント削除 (論理削除)"
 
-#: home/templates/home/changelog.html:194
+#: home/templates/home/changelog.html:252
 msgid ""
 "Users can now permanently delete their account from Edit Profile, with "
 "password confirmation. Account is soft-deleted immediately and hard-deleted "
 "after a <strong>30-day grace window</strong> — log back in anytime before "
 "then to reactivate."
-msgstr "ユーザーはパスワードの確認を経て、プロフィール編集からアカウントを完全に削除できるようになりました。アカウントは即座に論理削除され、<strong>30日間の猶予期間</strong>の後に物理削除されます。期間内であればいつでも再ログインしてアカウントを再有効化できます。"
+msgstr ""
+"ユーザーはパスワードの確認を経て、プロフィール編集からアカウントを完全に削除"
+"できるようになりました。アカウントは即座に論理削除され、<strong>30日間の猶予"
+"期間</strong>の後に物理削除されます。期間内であればいつでも再ログインしてアカ"
+"ウントを再有効化できます。"
 
-#: home/templates/home/changelog.html:201
+#: home/templates/home/changelog.html:259
 msgid "FAQ, Privacy Policy, Terms & Contact Pages"
 msgstr "FAQ、プライバシーポリシー、利用規約、お問い合わせページ"
 
-#: home/templates/home/changelog.html:202
+#: home/templates/home/changelog.html:260
 msgid "All essential public-facing pages are now live: a searchable"
 msgstr "必須のすべての一般公開ページが公開されました：検索可能な"
 
-#: home/templates/home/changelog.html:202
+#: home/templates/home/changelog.html:260
 msgid "detailed"
 msgstr "、詳細な"
 
-#: home/templates/home/changelog.html:202
+#: home/templates/home/changelog.html:260
 msgid "and a"
 msgstr "、およびチームにメッセージを届ける"
 
-#: home/templates/home/changelog.html:202
+#: home/templates/home/changelog.html:260
 msgid "form that routes messages to the team."
 msgstr "フォームです。"
 
-#: home/templates/home/changelog.html:211
+#: home/templates/home/changelog.html:269
 msgid "Phase 2.0"
 msgstr "フェーズ 2.0"
 
-#: home/templates/home/changelog.html:212
+#: home/templates/home/changelog.html:270
 msgid "Public Beta · July 4, 2026"
 msgstr "パブリックベータ版 · 2026年7月4日"
 
-#: home/templates/home/changelog.html:220
+#: home/templates/home/changelog.html:278
 msgid "Organisation Support"
 msgstr "組織のサポート"
 
-#: home/templates/home/changelog.html:221
+#: home/templates/home/changelog.html:279
 msgid ""
 "Create organisations, invite members, and scope projects to your org. Assign "
 "a dedicated <strong>Project Head</strong> with full administrative control "
 "over org-owned projects, while the organisation owner stays the top-level "
 "authority."
-msgstr "組織を作成し、メンバーを招待し、プロジェクトを組織スコープに設定できます。組織が所有するプロジェクトの完全な管理権限を持つ専用の<strong>プロジェクトリーダー</strong>を割り当てることができ、一方で組織オーナーは最上位の権限を保持します。"
+msgstr ""
+"組織を作成し、メンバーを招待し、プロジェクトを組織スコープに設定できます。組"
+"織が所有するプロジェクトの完全な管理権限を持つ専用の<strong>プロジェクトリー"
+"ダー</strong>を割り当てることができ、一方で組織オーナーは最上位の権限を保持し"
+"ます。"
 
-#: home/templates/home/changelog.html:228
+#: home/templates/home/changelog.html:286
 msgid "3-Level Access Scoping & UUIDv7"
 msgstr "3レベルのアクセススコープ＆UUIDv7"
 
-#: home/templates/home/changelog.html:229
+#: home/templates/home/changelog.html:287
 msgid ""
 "Granular permissions enforced across the board: <strong>Public</strong>, "
 "<strong>Org-Only</strong>, and <strong>Private</strong> visibility levels. "
 "All database records migrated from sequential integer IDs to time-ordered, "
 "non-enumerable <strong>UUIDv7</strong> identifiers — eliminating IDOR risk "
 "entirely."
-msgstr "全面的な段階的権限管理：<strong>公開</strong>、<strong>組織のみ</strong>、および<strong>非公開</strong>の表示設定。すべてのデータベースレコードを連続した整数IDから時間順で推測不可能な<strong>UUIDv7</strong>識別子に移行し、IDOR（安全でない直接オブジェクト参照）リスクを完全に排除しました。"
+msgstr ""
+"全面的な段階的権限管理：<strong>公開</strong>、<strong>組織のみ</strong>、お"
+"よび<strong>非公開</strong>の表示設定。すべてのデータベースレコードを連続した"
+"整数IDから時間順で推測不可能な<strong>UUIDv7</strong>識別子に移行し、IDOR（安"
+"全でない直接オブジェクト参照）リスクを完全に排除しました。"
 
-#: home/templates/home/changelog.html:234
+#: home/templates/home/changelog.html:292
 msgid "Audit"
 msgstr "監査"
 
-#: home/templates/home/changelog.html:236
+#: home/templates/home/changelog.html:294
 msgid "Report History & Audit Logs"
 msgstr "レポート履歴＆操作ログ"
 
-#: home/templates/home/changelog.html:237
+#: home/templates/home/changelog.html:295
 msgid ""
 "Full event logging for all project and report modifications — status "
 "changes, reassignments, severity updates, and collaborator actions. View a "
 "complete change timeline on every report detail page."
-msgstr "すべてのプロジェクトとレポートの変更（ステータス変更、再割り当て、重大度の更新、コラボレーターのアクション）に対する完全なイベントロギング。すべてのレポート詳細ページで完全な変更タイムラインを表示可能。"
+msgstr ""
+"すべてのプロジェクトとレポートの変更（ステータス変更、再割り当て、重大度の更"
+"新、コラボレーターのアクション）に対する完全なイベントロギング。すべてのレ"
+"ポート詳細ページで完全な変更タイムラインを表示可能。"
 
-#: home/templates/home/changelog.html:244
+#: home/templates/home/changelog.html:302
 msgid "Navigation & UX Improvements"
 msgstr "ナビゲーションとUXの改善"
 
-#: home/templates/home/changelog.html:245
+#: home/templates/home/changelog.html:303
 msgid ""
 "Activated Collaborating Projects and Needs Attention views. Integrated the "
 "What's New changelog. Unified search box with refresh in a clean widget. "
 "Strong password validation with inline feedback on the auth card."
-msgstr "コラボレーション中のプロジェクトおよび「要対応」ビューを有効化。「新着情報」変更履歴の統合。クリーンなウィジェットに更新機能を備えた検索ボックスを統合。認証カードでのインラインフィードバックを伴う強力なパスワード検証を追加。"
+msgstr ""
+"コラボレーション中のプロジェクトおよび「要対応」ビューを有効化。「新着情報」"
+"変更履歴の統合。クリーンなウィジェットに更新機能を備えた検索ボックスを統合。"
+"認証カードでのインラインフィードバックを伴う強力なパスワード検証を追加。"
 
-#: home/templates/home/changelog.html:254
+#: home/templates/home/changelog.html:312
 msgid "Phase 1.5"
 msgstr "フェーズ 1.5"
 
-#: home/templates/home/changelog.html:255
+#: home/templates/home/changelog.html:313
 msgid "Public Alpha · January 7, 2026"
 msgstr "パブリックアルファ版 · 2026年1月7日"
 
-#: home/templates/home/changelog.html:256
+#: home/templates/home/changelog.html:314
 msgid "Development build"
 msgstr "開発ビルド"
 
-#: home/templates/home/changelog.html:262
+#: home/templates/home/changelog.html:320
 msgid "Foundation"
 msgstr "基盤"
 
-#: home/templates/home/changelog.html:264
+#: home/templates/home/changelog.html:322
 msgid "Core Project & Issue Tracking"
 msgstr "コアプロジェクト＆イシュートラッキング"
 
-#: home/templates/home/changelog.html:265
+#: home/templates/home/changelog.html:323
 msgid ""
 "Initial release. Create and manage Public/Private projects. File issue "
 "reports with Severity, Impact, Reproducibility, and Attachments. Full status "
 "lifecycle (Open → In Progress → Resolved → Closed), comments, personalised "
 "dashboard with Assigned to Me / Reported by Me filters, and Global Search."
-msgstr "初期リリース。公開/非公開プロジェクトの作成と管理。重大度、影響度、再現性、および添付ファイルを含むイシューレポートの作成。ステータスライフサイクル（オープン → 進行中 → 解決済み → クローズ）、コメント、自分に割り当てられたイシュー/自分が報告したイシューのフィルター付きのパーソナライズされたダッシュボード、グローバル検索。"
+msgstr ""
+"初期リリース。公開/非公開プロジェクトの作成と管理。重大度、影響度、再現性、お"
+"よび添付ファイルを含むイシューレポートの作成。ステータスライフサイクル（オー"
+"プン → 進行中 → 解決済み → クローズ）、コメント、自分に割り当てられたイ"
+"シュー/自分が報告したイシューのフィルター付きのパーソナライズされたダッシュ"
+"ボード、グローバル検索。"
 
-#: home/templates/home/changelog.html:276
+#: home/templates/home/changelog.html:334
 msgid "Have a feature request or found a bug?"
 msgstr "機能リクエストがありますか？それともバグを発見しましたか？"
 
-#: home/templates/home/changelog.html:277
+#: home/templates/home/changelog.html:335
 msgid "We'd love to hear what would make Reportary better for your team."
-msgstr "Reportaryをより良いチーム開発ツールにするためのご意見をお待ちしております。"
+msgstr ""
+"Reportaryをより良いチーム開発ツールにするためのご意見をお待ちしております。"
 
-#: home/templates/home/changelog.html:281
+#: home/templates/home/changelog.html:339
 msgid "Send Feedback"
 msgstr "フィードバックを送信"
 
-#: home/templates/home/changelog.html:284
+#: home/templates/home/changelog.html:342
 msgid "View on GitHub"
 msgstr "GitHubで表示"
 
@@ -1096,7 +1259,8 @@ msgstr "いつでもメッセージをお送りください。48時間以内に�
 
 #: home/templates/home/contact.html:39
 msgid "Found a bug? Open an issue on our public GitHub repository."
-msgstr "バグを発見しましたか？公式GitHubリポジトリでイシューを作成してください。"
+msgstr ""
+"バグを発見しましたか？公式GitHubリポジトリでイシューを作成してください。"
 
 #: home/templates/home/contact.html:47
 msgid "Check FAQ first"
@@ -1172,7 +1336,8 @@ msgstr "よくある質問"
 
 #: home/templates/home/faq.html:16
 msgid "Everything you need to know about Reportary. Can't find your answer?"
-msgstr "Reportaryに関するよくある質問と回答を掲載しています。解決しない場合は、"
+msgstr ""
+"Reportaryに関するよくある質問と回答を掲載しています。解決しない場合は、"
 
 #: home/templates/home/faq.html:17
 msgid "Contact us"
@@ -1225,7 +1390,9 @@ msgstr "シンプルに。"
 msgid ""
 "The modern standard for engineering teams. Unified data, real-time "
 "collaboration, and workflows that actually make sense."
-msgstr "エンジニアリングチームのためのモダンスタンダード。統合されたデータ、リアルタイムのコラボレーション、エンジニアに愛されるワークフロー。"
+msgstr ""
+"エンジニアリングチームのためのモダンスタンダード。統合されたデータ、リアルタ"
+"イムのコラボレーション、エンジニアに愛されるワークフロー。"
 
 #: home/templates/home/landing_page.html:143
 #: home/templates/home/landing_page.html:152
@@ -1251,7 +1418,9 @@ msgstr "オープンソース"
 
 #: home/templates/home/landing_page.html:230
 msgid "Modern issue tracking for engineering teams. Built in the open."
-msgstr "エンジニアリングチームのためのモダンなイシュートラッキング。オープンに構築されています。"
+msgstr ""
+"エンジニアリングチームのためのモダンなイシュートラッキング。オープンに構築さ"
+"れています。"
 
 #: home/templates/home/landing_page.html:242
 msgid "Support"
@@ -1307,14 +1476,20 @@ msgid ""
 "When you register for Reportary, we collect your email address, chosen "
 "username, and any profile information you optionally provide (such as your "
 "name, GitHub link, or organisation affiliation)."
-msgstr "ユーザーがReportaryに登録する際、メールアドレス、選択したユーザー名、および必要に応じて任意で提供されるプロフィール情報（お名前、GitHubリンク、所属組織など）を収集します。"
+msgstr ""
+"ユーザーがReportaryに登録する際、メールアドレス、選択したユーザー名、および必"
+"要に応じて任意で提供されるプロフィール情報（お名前、GitHubリンク、所属組織な"
+"ど）を収集します。"
 
 #: home/templates/home/privacy.html:23
 msgid ""
 "When you use the platform, we collect usage data including reports you "
 "create, comments you post, projects you join, and actions you take (audit "
 "logs). This data is essential for core functionality."
-msgstr "プラットフォームのご利用時、作成したレポート、投稿したコメント、参加したプロジェクト、および実行したアクション（操作ログ）を含む利用データを収集します。これらのデータはコア機能の提供に不可欠です。"
+msgstr ""
+"プラットフォームのご利用時、作成したレポート、投稿したコメント、参加したプロ"
+"ジェクト、および実行したアクション（操作ログ）を含む利用データを収集します。"
+"これらのデータはコア機能の提供に不可欠です。"
 
 #: home/templates/home/privacy.html:27
 msgid "2. How We Use Your Information"
@@ -1328,11 +1503,13 @@ msgstr "Reportaryプラットフォームの提供、維持、向上"
 msgid ""
 "To send transactional emails (email verification, password resets, "
 "invitation notifications)"
-msgstr "トランザクションメール（メール確認、パスワードリセット、招待通知など）の送信"
+msgstr ""
+"トランザクションメール（メール確認、パスワードリセット、招待通知など）の送信"
 
 #: home/templates/home/privacy.html:31
 msgid "To support collaboration features (project invitations, @mentions)"
-msgstr "コラボレーション機能（プロジェクトへの招待、@メンションなど）のサポート"
+msgstr ""
+"コラボレーション機能（プロジェクトへの招待、@メンションなど）のサポート"
 
 #: home/templates/home/privacy.html:32
 msgid "To maintain audit trails for security and accountability"
@@ -1344,7 +1521,9 @@ msgstr "お問い合わせフォームから送信されたサポートリクエ
 
 #: home/templates/home/privacy.html:35
 msgid "We do not sell, rent, or trade your personal data to third parties."
-msgstr "当社はお客様の個人データを第三者に販売、レンタル、または取引することはありません。"
+msgstr ""
+"当社はお客様の個人データを第三者に販売、レンタル、または取引することはありま"
+"せん。"
 
 #: home/templates/home/privacy.html:39
 msgid "3. Data Storage & Security"
@@ -1355,13 +1534,19 @@ msgid ""
 "Your data is stored on secure servers. We use industry-standard HTTPS/TLS "
 "encryption for all data in transit. Passwords are hashed using Django's "
 "PBKDF2 algorithm and are never stored in plaintext."
-msgstr "お客様のデータは安全なサーバーに保存されます。すべての通信において業界標準のHTTPS/TLS暗号化を使用しています。パスワードはDjangoのPBKDF2アルゴリズムを使用してハッシュ化され、平文で保存されることはありません。"
+msgstr ""
+"お客様のデータは安全なサーバーに保存されます。すべての通信において業界標準の"
+"HTTPS/TLS暗号化を使用しています。パスワードはDjangoのPBKDF2アルゴリズムを使用"
+"してハッシュ化され、平文で保存されることはありません。"
 
 #: home/templates/home/privacy.html:41
 msgid ""
 "Access to project data is strictly controlled: users can only access "
 "projects they own, are members of, or that are explicitly marked as public."
-msgstr "プロジェクトデータへのアクセスは厳格に制御されます。ユーザーは、自身が所有するプロジェクト、メンバーであるプロジェクト、または明示的に公開とマークされたプロジェクトにのみアクセスできます。"
+msgstr ""
+"プロジェクトデータへのアクセスは厳格に制御されます。ユーザーは、自身が所有す"
+"るプロジェクト、メンバーであるプロジェクト、または明示的に公開とマークされた"
+"プロジェクトにのみアクセスできます。"
 
 #: home/templates/home/privacy.html:45
 msgid "4. File Uploads & Attachments"
@@ -1372,7 +1557,10 @@ msgid ""
 "Report attachments you upload are stored via Cloudinary, our cloud media "
 "provider. Files are served over HTTPS. You may delete attachments at any "
 "time from within the platform."
-msgstr "アップロードされた添付ファイルは、当社のクラウドメディアプロバイダーであるCloudinaryを介して保存されます。ファイルはHTTPS経由で提供されます。添付ファイルは、プラットフォーム内からいつでも削除できます。"
+msgstr ""
+"アップロードされた添付ファイルは、当社のクラウドメディアプロバイダーである"
+"Cloudinaryを介して保存されます。ファイルはHTTPS経由で提供されます。添付ファイ"
+"ルは、プラットフォーム内からいつでも削除できます。"
 
 #: home/templates/home/privacy.html:50
 msgid "5. Cookies & Sessions"
@@ -1384,7 +1572,10 @@ msgid ""
 "logged in) and for transient state such as recent search history and "
 "recently viewed reports. We do not use third-party advertising or tracking "
 "cookies."
-msgstr "Reportaryは、認証（ログイン状態の維持）および最近の検索履歴や最近表示したレポートなどの一時的な状態の保持にのみセッションクッキーを使用します。サードパーティの広告または追跡用クッキーは使用しません。"
+msgstr ""
+"Reportaryは、認証（ログイン状態の維持）および最近の検索履歴や最近表示したレ"
+"ポートなどの一時的な状態の保持にのみセッションクッキーを使用します。サード"
+"パーティの広告または追跡用クッキーは使用しません。"
 
 #: home/templates/home/privacy.html:55
 msgid "6. Account Deletion & Data Retention"
@@ -1394,7 +1585,9 @@ msgstr "6. アカウントの削除とデータ保持"
 msgid ""
 "You may request deletion of your account at any time from your Edit Profile "
 "page. Upon deletion:"
-msgstr "プロフィール編集ページからいつでもアカウントの削除をリクエストできます。削除すると："
+msgstr ""
+"プロフィール編集ページからいつでもアカウントの削除をリクエストできます。削除"
+"すると："
 
 #: home/templates/home/privacy.html:58
 msgid "Your account is immediately deactivated"
@@ -1406,12 +1599,16 @@ msgstr "30日後に完全に、かつ元に戻せない方法で削除されま�
 
 #: home/templates/home/privacy.html:60
 msgid "You may reactivate it by logging in before the 30-day window expires"
-msgstr "30日間の猶予期間が満了する前にログインすることで、アカウントを再有効化できます"
+msgstr ""
+"30日間の猶予期間が満了する前にログインすることで、アカウントを再有効化できま"
+"す"
 
 #: home/templates/home/privacy.html:61
 msgid ""
 "Anonymised audit log entries may be retained to preserve project integrity"
-msgstr "プロジェクトの整合性を維持するため、匿名化された操作ログエントリーが保持される場合があります"
+msgstr ""
+"プロジェクトの整合性を維持するため、匿名化された操作ログエントリーが保持され"
+"る場合があります"
 
 #: home/templates/home/privacy.html:66
 msgid "7. Third-Party Services"
@@ -1433,7 +1630,9 @@ msgstr "Gmail SMTP — トランザクションメール配信"
 msgid ""
 "These providers have their own privacy policies and are used solely to "
 "support the platform's operation."
-msgstr "これらのプロバイダーはそれぞれ独自のプライバシーポリシーを有しており、プラットフォームの運営サポートのみを目的として使用されます。"
+msgstr ""
+"これらのプロバイダーはそれぞれ独自のプライバシーポリシーを有しており、プラッ"
+"トフォームの運営サポートのみを目的として使用されます。"
 
 #: home/templates/home/privacy.html:76
 msgid "8. Contact"
@@ -1468,7 +1667,10 @@ msgid ""
 "By creating an account or using Reportary (\"the Service\"), you agree to be "
 "bound by these Terms of Service. If you do not agree, you must not use the "
 "Service."
-msgstr "アカウントを作成するか、Reportary（以下「本サービス」）を使用することにより、お客様は本利用規約に同意したものとみなされます。同意しない場合は、本サービスを使用しないでください。"
+msgstr ""
+"アカウントを作成するか、Reportary（以下「本サービス」）を使用することにより、"
+"お客様は本利用規約に同意したものとみなされます。同意しない場合は、本サービス"
+"を使用しないでください。"
 
 #: home/templates/home/terms.html:26
 msgid "2. Eligibility"
@@ -1480,7 +1682,11 @@ msgid ""
 "you represent that you meet this requirement. If you are using the Service "
 "on behalf of an organisation, you represent that you have the authority to "
 "bind that organisation to these terms."
-msgstr "本サービスを利用するには13歳以上である必要があります。本サービスを利用することにより、お客様はこの要件を満たしていることを表明したものとみなされます。組織を代表してサービスを利用する場合、その組織を本規約に拘束する権限を有していることを表明するものとします。"
+msgstr ""
+"本サービスを利用するには13歳以上である必要があります。本サービスを利用するこ"
+"とにより、お客様はこの要件を満たしていることを表明したものとみなされます。組"
+"織を代表してサービスを利用する場合、その組織を本規約に拘束する権限を有してい"
+"ることを表明するものとします。"
 
 #: home/templates/home/terms.html:31
 msgid "3. Acceptable Use"
@@ -1524,13 +1730,19 @@ msgid ""
 "attachments). By submitting content, you grant Reportary a limited, non-"
 "exclusive licence to store and display it as necessary to provide the "
 "Service."
-msgstr "提出されたコンテンツ（レポート、コメント、添付ファイル）の所有権は、お客様に留保されます。コンテンツを提出することにより、お客様はReportaryに対して、本サービスを提供するために必要な範囲でコンテンツを保存および表示するための制限付き、非独占的なライセンスを付与するものとします。"
+msgstr ""
+"提出されたコンテンツ（レポート、コメント、添付ファイル）の所有権は、お客様に"
+"留保されます。コンテンツを提出することにより、お客様はReportaryに対して、本"
+"サービスを提供するために必要な範囲でコンテンツを保存および表示するための制限"
+"付き、非独占的なライセンスを付与するものとします。"
 
 #: home/templates/home/terms.html:46
 msgid ""
 "You are solely responsible for the content you submit. Reportary reserves "
 "the right to remove content that violates these terms or applicable law."
-msgstr "提出したコンテンツの全責任はお客様が負うものとします。Reportaryは、本規約または適用法に違反するコンテンツを削除する権利を留保します。"
+msgstr ""
+"提出したコンテンツの全責任はお客様が負うものとします。Reportaryは、本規約また"
+"は適用法に違反するコンテンツを削除する権利を留保します。"
 
 #: home/templates/home/terms.html:50
 msgid "5. Account Responsibility"
@@ -1542,7 +1754,10 @@ msgid ""
 "credentials. Notify us immediately if you suspect unauthorised access to "
 "your account. Reportary is not liable for any loss resulting from "
 "unauthorised use of your account."
-msgstr "アカウントのログイン情報の機密性を維持する責任はお客様にあります。アカウントへの不正アクセスが疑われる場合は、ただちにお知らせください。不正利用によって生じた損失について、Reportaryは一切の責任を負いません。"
+msgstr ""
+"アカウントのログイン情報の機密性を維持する責任はお客様にあります。アカウント"
+"への不正アクセスが疑われる場合は、ただちにお知らせください。不正利用によって"
+"生じた損失について、Reportaryは一切の責任を負いません。"
 
 #: home/templates/home/terms.html:55
 msgid "6. Service Availability"
@@ -1554,7 +1769,10 @@ msgid ""
 "uninterrupted or error-free operation. We may modify, suspend, or "
 "discontinue features with or without notice, particularly during the beta "
 "phase."
-msgstr "本サービスは「現状有姿」かつ「利用可能な範囲」で提供されます。中断のない、またはエラーのない運営を保証するものではありません。特にベータフェーズにおいては、予告なしに機能を変更、一時停止、または廃止する場合があります。"
+msgstr ""
+"本サービスは「現状有姿」かつ「利用可能な範囲」で提供されます。中断のない、ま"
+"たはエラーのない運営を保証するものではありません。特にベータフェーズにおいて"
+"は、予告なしに機能を変更、一時停止、または廃止する場合があります。"
 
 #: home/templates/home/terms.html:60
 msgid "7. Privacy"
@@ -1577,7 +1795,10 @@ msgid ""
 "To the maximum extent permitted by law, Reportary and its creators shall not "
 "be liable for any indirect, incidental, special, or consequential damages "
 "arising from your use of the Service."
-msgstr "法律で認められる最大限の範囲において、Reportaryおよびその開発者は、本サービスの使用に起因する間接的、付随的、特別、または結果的な損害について一切の責任を負いません。"
+msgstr ""
+"法律で認められる最大限の範囲において、Reportaryおよびその開発者は、本サービス"
+"の使用に起因する間接的、付随的、特別、または結果的な損害について一切の責任を"
+"負いません。"
 
 #: home/templates/home/terms.html:70
 msgid "9. Termination"
@@ -1588,7 +1809,10 @@ msgid ""
 "We reserve the right to suspend or terminate your account if you violate "
 "these Terms or engage in conduct harmful to other users or the platform. You "
 "may terminate your account at any time via your"
-msgstr "利用規約に違反した場合や、他のユーザーまたはプラットフォームに有害な行為を行った場合、当社はアカウントを停止または終了する権利を留保します。アカウントはいつでも自身の"
+msgstr ""
+"利用規約に違反した場合や、他のユーザーまたはプラットフォームに有害な行為を"
+"行った場合、当社はアカウントを停止または終了する権利を留保します。アカウント"
+"はいつでも自身の"
 
 #: home/templates/home/terms.html:71
 msgid "profile settings"
@@ -1603,7 +1827,10 @@ msgid ""
 "We may update these Terms from time to time. Continued use of the Service "
 "after changes are posted constitutes acceptance. We will notify users of "
 "significant changes via in-app announcements."
-msgstr "本規約は随時更新される場合があります。変更の掲載後も本サービスの利用を継続することにより、変更に同意したものとみなされます。重要な変更については、アプリ内のお知らせを通じて通知します。"
+msgstr ""
+"本規約は随時更新される場合があります。変更の掲載後も本サービスの利用を継続す"
+"ることにより、変更に同意したものとみなされます。重要な変更については、アプリ"
+"内のお知らせを通じて通知します。"
 
 #: home/templates/home/terms.html:80
 msgid "11. Contact"
@@ -1613,23 +1840,26 @@ msgstr "11. お問い合わせ"
 msgid "For questions about these Terms, please"
 msgstr "規約に関するご質問は、"
 
-#: home/views.py:221
+#: home/views.py:222
 msgid "What is Reportary?"
 msgstr "Reportaryとは何ですか？"
 
-#: home/views.py:222
+#: home/views.py:223
 msgid ""
 "Reportary is a modern, collaborative bug and issue tracking platform "
 "designed for development teams. It helps you capture, organize, and resolve "
 "software issues efficiently."
-msgstr "Reportaryは、開発チーム向けに設計されたモダンでコラボレーティブなバグおよびイシュートラッキングプラットフォームです。ソフトウェアの問題を効率的にキャプチャ、整理、解決するのに役立ちます。"
+msgstr ""
+"Reportaryは、開発チーム向けに設計されたモダンでコラボレーティブなバグおよびイ"
+"シュートラッキングプラットフォームです。ソフトウェアの問題を効率的にキャプ"
+"チャ、整理、解決するのに役立ちます。"
 
-#: home/views.py:225
+#: home/views.py:226
 msgid ""
 "What is the difference between Watching (Following) and Bookmarking a report?"
 msgstr "レポートの「監視（フォロー）」と「ブックマーク」の違いは何ですか？"
 
-#: home/views.py:226
+#: home/views.py:227
 msgid ""
 "<strong>Watching (Following)</strong> subscribes you to real-time updates. "
 "You will receive in-app notifications and email alerts whenever the status "
@@ -1637,128 +1867,165 @@ msgid ""
 "<br><strong>Bookmarking</strong> acts as a personal shortcut for quick "
 "reference in your library. Bookmarking a report does not trigger any "
 "notification emails."
-msgstr "<strong>「監視（フォロー）」</strong>はリアルタイムアップデートを購読します。ステータスの変更、詳細の更新、または新しいコメントの追加のたびに、アプリ内通知とメールアラートが送信されます。<br><strong>「ブックマーク」</strong>はライブラリ内のクイック参照用の個人用ショートカットとして機能します。ブックマークしても通知メールはトリガーされません。"
+msgstr ""
+"<strong>「監視（フォロー）」</strong>はリアルタイムアップデートを購読します。"
+"ステータスの変更、詳細の更新、または新しいコメントの追加のたびに、アプリ内通"
+"知とメールアラートが送信されます。<br><strong>「ブックマーク」</strong>はライ"
+"ブラリ内のクイック参照用の個人用ショートカットとして機能します。ブックマーク"
+"しても通知メールはトリガーされません。"
 
-#: home/views.py:229
+#: home/views.py:230
 msgid "How do I collect issues from external users?"
 msgstr "外部ユーザーからイシューを収集するにはどうすればよいですか？"
 
-#: home/views.py:230
+#: home/views.py:231
 msgid ""
 "You can activate a <strong>Public Reporting Portal</strong> link for your "
 "project. This generates a unique URL that you can share with clients or "
 "stakeholders, allowing them to submit reports directly into your tracker."
-msgstr "プロジェクトの<strong>「公開報告ポータル」</strong>リンクを有効にできます。これにより、クライアントや関係者と共有できる一意のURLが生成され、トラッカーに直接レポートを送信できるようになります。"
-
-#: home/views.py:233
-msgid "How do Organisation Policies override project portal settings?"
-msgstr "組織ポリシーはプロジェクトポータル設定をどのようにオーバーライドしますか？"
+msgstr ""
+"プロジェクトの<strong>「公開報告ポータル」</strong>リンクを有効にできます。こ"
+"れにより、クライアントや関係者と共有できる一意のURLが生成され、トラッカーに直"
+"接レポートを送信できるようになります。"
 
 #: home/views.py:234
+msgid "How do Organisation Policies override project portal settings?"
+msgstr ""
+"組織ポリシーはプロジェクトポータル設定をどのようにオーバーライドしますか？"
+
+#: home/views.py:235
 msgid ""
 "If an Organisation disables anonymous reporting, it acts as a global policy. "
 "All projects belonging to that organisation will automatically require users "
 "to log in before filing a report, even if an individual project's settings "
 "allow anonymous reporting."
-msgstr "組織が匿名報告を無効にした場合、それはグローバルポリシーとして機能します。個々のプロジェクトの設定で匿名報告が許可されていても、その組織に属するすべてのプロジェクトは、レポートを提出する前にユーザーにログインを要求します。"
+msgstr ""
+"組織が匿名報告を無効にした場合、それはグローバルポリシーとして機能します。"
+"個々のプロジェクトの設定で匿名報告が許可されていても、その組織に属するすべて"
+"のプロジェクトは、レポートを提出する前にユーザーにログインを要求します。"
 
-#: home/views.py:237
+#: home/views.py:238
 msgid "Who can create a project?"
 msgstr "誰がプロジェクトを作成できますか？"
 
-#: home/views.py:238
+#: home/views.py:239
 msgid ""
 "Any registered and email-verified user can create a project. Projects can be "
 "public (visible to anyone) or private (restricted to team members only)."
-msgstr "登録およびメール認証済みのすべてのユーザーがプロジェクトを作成できます。プロジェクトは、公開（誰でも表示可能）または非公開（チームメンバーのみに制限）に設定できます。"
+msgstr ""
+"登録およびメール認証済みのすべてのユーザーがプロジェクトを作成できます。プロ"
+"ジェクトは、公開（誰でも表示可能）または非公開（チームメンバーのみに制限）に"
+"設定できます。"
 
-#: home/views.py:241
+#: home/views.py:242
 msgid "How do I invite team members to my project?"
 msgstr "チームメンバーをプロジェクトに招待するにはどうすればよいですか？"
 
-#: home/views.py:242
+#: home/views.py:243
 msgid ""
 "Open your project's dashboard and use the 'Invite Collaborator' option. "
 "Invited users will receive an in-app notification and can accept or decline "
 "the invitation."
-msgstr "プロジェクトのダッシュボードを開き、「コラボレーターを招待」オプションを使用します。招待されたユーザーはアプリ内通知を受け取り、招待を承諾または辞退できます。"
+msgstr ""
+"プロジェクトのダッシュボードを開き、「コラボレーターを招待」オプションを使用"
+"します。招待されたユーザーはアプリ内通知を受け取り、招待を承諾または辞退でき"
+"ます。"
 
-#: home/views.py:245
+#: home/views.py:246
 msgid "What is the difference between Severity and Impact?"
 msgstr "「重大度」と「影響度」の違いは何ですか？"
 
-#: home/views.py:246
+#: home/views.py:247
 msgid ""
 "Severity describes how technically bad the bug is (e.g., Critical, High, "
 "Medium, Low). Impact describes how many users or systems are affected. Both "
 "help prioritize issues effectively."
-msgstr "「重大度」はバグの技術的な深刻度（Critical、High、Medium、Lowなど）を示します。「影響度」は影響を受けるユーザーやシステムの数を示します。両方を使用してイシューの優先順位を効果的に決定できます。"
+msgstr ""
+"「重大度」はバグの技術的な深刻度（Critical、High、Medium、Lowなど）を示しま"
+"す。「影響度」は影響を受けるユーザーやシステムの数を示します。両方を使用して"
+"イシューの優先順位を効果的に決定できます。"
 
-#: home/views.py:249
+#: home/views.py:250
 msgid "Can I make a report private?"
 msgstr "レポートを非公開にできますか？"
 
-#: home/views.py:250
+#: home/views.py:251
 msgid ""
 "Yes. When creating or editing a report, you can toggle its visibility to "
 "private. Private reports are only visible to project members and the "
 "reporter."
-msgstr "はい。レポートの作成または編集時に、表示範囲を非公開に切り替えることができます。非公開レポートは、プロジェクトメンバーと報告者にのみ表示されます。"
+msgstr ""
+"はい。レポートの作成または編集時に、表示範囲を非公開に切り替えることができま"
+"す。非公開レポートは、プロジェクトメンバーと報告者にのみ表示されます。"
 
-#: home/views.py:253
+#: home/views.py:254
 msgid "What happens when I delete my account?"
 msgstr "アカウントを削除するとどうなりますか？"
 
-#: home/views.py:254
+#: home/views.py:255
 msgid ""
 "Your account is deactivated immediately and permanently deleted after 30 "
 "days. During this window, you can reactivate it by logging back in. Your "
 "reports and project history are preserved."
-msgstr "アカウントはすぐに無効化され、30日後に完全に削除されます。この期間内であれば、再度ログインすることでアカウントを再有効化できます。レポートとプロジェクトの履歴は保持されます。"
+msgstr ""
+"アカウントはすぐに無効化され、30日後に完全に削除されます。この期間内であれ"
+"ば、再度ログインすることでアカウントを再有効化できます。レポートとプロジェク"
+"トの履歴は保持されます。"
 
-#: home/views.py:257
+#: home/views.py:258
 msgid "Is my data secure?"
 msgstr "データは安全ですか？"
 
-#: home/views.py:258
+#: home/views.py:259
 msgid ""
 "Yes. We use industry-standard encryption for all data in transit and at "
 "rest. Access to projects is strictly enforced via our permissions system — "
 "users can only access what they are explicitly authorized for."
-msgstr "はい。すべての通信中および保存データに対して業界標準の暗号化を使用しています。プロジェクトへのアクセスはパーミッションシステムによって厳密に制御されており、明示的に権限を与えられたユーザーのみがアクセスできます。"
+msgstr ""
+"はい。すべての通信中および保存データに対して業界標準の暗号化を使用していま"
+"す。プロジェクトへのアクセスはパーミッションシステムによって厳密に制御されて"
+"おり、明示的に権限を与えられたユーザーのみがアクセスできます。"
 
-#: home/views.py:261
+#: home/views.py:262
 msgid "How do I report a bug in Reportary itself?"
 msgstr "Reportary自体のバグを報告するにはどうすればよいですか？"
 
-#: home/views.py:262
+#: home/views.py:263
 msgid ""
 "You can report bugs or request features directly on our tracking project. "
 "Just click <a href='/projects/019f2e92-7f0d-78e9-92b3-9431a1014882/reports/"
 "new/' class='text-[#226ce0] underline underline-offset-2'>here</a> to file a "
 "report."
-msgstr "バグの報告や機能のリクエストは、当社のトラッキングプロジェクトで直接行うことができます。レポートを作成するには、<a href='/projects/019f2e92-7f0d-78e9-92b3-9431a1014882/reports/new/' class='text-[#226ce0] underline underline-offset-2'>こちら</a>をクリックしてください。"
+msgstr ""
+"バグの報告や機能のリクエストは、当社のトラッキングプロジェクトで直接行うこと"
+"ができます。レポートを作成するには、<a href='/projects/"
+"019f2e92-7f0d-78e9-92b3-9431a1014882/reports/new/' class='text-[#226ce0] "
+"underline underline-offset-2'>こちら</a>をクリックしてください。"
 
-#: home/views.py:265
+#: home/views.py:266
 msgid "Is Reportary free?"
 msgstr "Reportaryは無料ですか？"
 
-#: home/views.py:266
+#: home/views.py:267
 msgid ""
 "Yes, Reportary is free during its current beta phase. We plan to introduce "
 "subscription tiers in the future, but the core functionality will always "
 "remain accessible."
-msgstr "はい、Reportaryは現在のベータフェーズ中は無料です。将来的には有料プランの導入を予定していますが、コア機能は常に無料でご利用いただけます。"
+msgstr ""
+"はい、Reportaryは現在のベータフェーズ中は無料です。将来的には有料プランの導入"
+"を予定していますが、コア機能は常に無料でご利用いただけます。"
 
-#: home/views.py:269
+#: home/views.py:270
 msgid "How do I reset my password?"
 msgstr "パスワードをリセットするにはどうすればよいですか？"
 
-#: home/views.py:270
+#: home/views.py:271
 msgid ""
 "Click 'Forgot Password' on the login page. You will receive an email with a "
 "secure link to set a new password."
-msgstr "ログインページの「パスワードをお忘れですか？」をクリックしてください。新しいパスワードを設定するための安全なリンクが記載されたメールが届きます。"
+msgstr ""
+"ログインページの「パスワードをお忘れですか？」をクリックしてください。新しい"
+"パスワードを設定するための安全なリンクが記載されたメールが届きます。"
 
 #: notifications/templates/notifications/notification_center.html:19
 msgid "Mark All as Read"
@@ -1894,7 +2161,8 @@ msgstr "新しいプロジェクトを登録"
 
 #: projects/templates/register_project.html:13
 msgid "Create a new project to start tracking issues and collaborating."
-msgstr "イシューの追跡と共同作業を開始するために、新しいプロジェクトを作成します。"
+msgstr ""
+"イシューの追跡と共同作業を開始するために、新しいプロジェクトを作成します。"
 
 #: projects/templates/register_project.html:86
 msgid "Collaborators"
@@ -1911,7 +2179,9 @@ msgstr "コンポーネント"
 #: projects/templates/register_project.html:101
 msgid ""
 "Define the main components of your project (e.g., Backend, Frontend, API)."
-msgstr "プロジェクトの主要コンポーネント（例：バックエンド、フロントエンド、API）を定義します。"
+msgstr ""
+"プロジェクトの主要コンポーネント（例：バックエンド、フロントエンド、API）を定"
+"義します。"
 
 #: projects/templates/register_project.html:149
 #: projects/templates/register_project.html:230
@@ -1944,7 +2214,9 @@ msgstr "手順"
 msgid ""
 "1. Go to...\n"
 "2. Click on..."
-msgstr "1. ...に移動する\n2. ...をクリックする"
+msgstr ""
+"1. ...に移動する\n"
+"2. ...をクリックする"
 
 #: reports/forms.py:58
 msgid "Frequency"
@@ -2036,7 +2308,9 @@ msgstr "匿名で報告"
 
 #: reports/templates/create_report.html:171
 msgid "Hide your user details on this report. Only project owners will see it."
-msgstr "このレポートのユーザー詳細を非表示にします。プロジェクトオーナーのみが表示できます。"
+msgstr ""
+"このレポートのユーザー詳細を非表示にします。プロジェクトオーナーのみが表示で"
+"きます。"
 
 #: reports/templates/create_report.html:183
 msgid "Submit Issue"
