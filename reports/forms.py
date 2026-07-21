@@ -2,7 +2,8 @@ from django import forms
 from reports.models import Report
 from components.models import Component
 from projects.models import Project
-from django.utils.translation import gettext as _
+# from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 
 
 class ReportForm(forms.ModelForm):

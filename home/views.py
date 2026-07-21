@@ -3,7 +3,8 @@ from django.core.exceptions import ValidationError
 from django.http import HttpResponse
 from django.urls import reverse
 from django.shortcuts import render, redirect
-from django.utils.translation import gettext as _
+# from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
