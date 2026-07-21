@@ -21,13 +21,71 @@
 
     <div class="space-y-6">
 
+        <!-- ── v1.0.0 Stable ─────────────────────────────────────── -->
+        <div class="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm">
+            <!-- Release Header -->
+            <div class="flex items-center gap-3 px-6 py-4 border-b border-gray-100 bg-[#226ce0]/5">
+                <span class="text-xs font-bold text-white bg-emerald-600 px-3 py-1 rounded-full tracking-wide">v1.0.0 Stable</span>
+                <span class="text-xs text-gray-500 font-medium">{% trans "July 2026 · Production Stable Release" %}</span>
+                <span class="ml-auto text-xs text-[#226ce0] font-semibold">{% trans "Latest" %}</span>
+            </div>
+            <!-- Items -->
+            <div class="divide-y divide-gray-50">
+
+                <div class="px-6 py-5">
+                    <div class="flex flex-wrap gap-1.5 mb-1.5">
+                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">{% trans "New" %}</span>
+                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">{% trans "Security" %}</span>
+                    </div>
+                    <h3 class="text-sm font-bold text-gray-900 mb-1">{% trans "Overhauled Recipient Email Privacy" %}</h3>
+                    <p class="text-xs text-gray-500 leading-relaxed">
+                        {% trans "Transactional and notification emails are now dispatched in separate, concurrent requests individually to each recipient (primary and CC), fully preventing email address leakage in headers." %}
+                    </p>
+                </div>
+
+                <div class="px-6 py-5">
+                    <div class="flex flex-wrap gap-1.5 mb-1.5">
+                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">{% trans "New" %}</span>
+                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-purple-50 text-purple-700 border border-purple-200">{% trans "UX" %}</span>
+                    </div>
+                    <h3 class="text-sm font-bold text-gray-900 mb-1">{% trans "Direct Action Buttons & Comment Prioritization" %}</h3>
+                    <p class="text-xs text-gray-500 leading-relaxed">
+                        {% trans "Notification emails now include call-to-action buttons directing users directly to the specific issue or the Notification Center. Comment notification layout is restructured to highlight the comment content first." %}
+                    </p>
+                </div>
+
+                <div class="px-6 py-5">
+                    <div class="flex flex-wrap gap-1.5 mb-1.5">
+                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">{% trans "Upgrade" %}</span>
+                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">{% trans "Authentication" %}</span>
+                    </div>
+                    <h3 class="text-sm font-bold text-gray-900 mb-1">{% trans "Universal Onboarding Username Tags" %}</h3>
+                    <p class="text-xs text-gray-500 leading-relaxed">
+                        {% trans "Onboarding forms for all users and organizations now prompt and validate developer/username tags to ensure correct account indexing from the start." %}
+                    </p>
+                </div>
+
+                <div class="px-6 py-5">
+                    <div class="flex flex-wrap gap-1.5 mb-1.5">
+                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">{% trans "Upgrade" %}</span>
+                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">{% trans "Access Scoping" %}</span>
+                    </div>
+                    <h3 class="text-sm font-bold text-gray-900 mb-1">{% trans "Task Lists & Collaborator Confidentiality" %}</h3>
+                    <p class="text-xs text-gray-500 leading-relaxed">
+                        {% trans "Access checks now restrict interactive task lists, designated project heads, and collaborator details in project pages exclusively to authorized project members." %}
+                    </p>
+                </div>
+
+            </div>
+        </div>
+
         <!-- ── v1.0.0-rc ─────────────────────────────────────── -->
         <div class="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm">
             <!-- Release Header -->
             <div class="flex items-center gap-3 px-6 py-4 border-b border-gray-100 bg-[#226ce0]/5">
                 <span class="text-xs font-bold text-white bg-[#226ce0] px-3 py-1 rounded-full tracking-wide">v1.0.0-rc</span>
                 <span class="text-xs text-gray-500 font-medium">{% trans "July 2026 · Auto Language Selection, Multilingual UI, & Mobile Email Templates" %}</span>
-                <span class="ml-auto text-xs text-[#226ce0] font-semibold">{% trans "Latest" %}</span>
+                <span class="ml-auto text-xs text-gray-400 font-medium">{% trans "Released" %}</span>
             </div>
             <!-- Items -->
             <div class="divide-y divide-gray-50">

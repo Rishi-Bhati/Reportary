@@ -1,3 +1,29 @@
+# Release Notes - v1.0.0 Stable (Email Privacy, Scoped Access, & Performance Calibration)
+
+**Date**: July 22, 2026
+
+## Overview
+This is the official stable production release (**v1.0.0**) of Reportary. It hardens email recipient privacy, scopes internal project details and collaborator listings to project members, enhances onboarding validations, and refines personal dashboard analytics and project health metrics for a production-ready launch.
+
+## Key Features Shipped
+
+### ✉️ Email Privacy & Layout Overhaul
+- **Private Individual Dispatch**: The notification email service now extracts all unique primary and CC recipients and dispatches individual emails concurrently. This ensures that no recipient's email address is leaked in email headers (`To` or `Cc`) to other users.
+- **Actionable Call-To-Action (CTA) Buttons**: All notification emails (assignments, updates, comments, and invitations) now include clear CTA buttons that link directly to the relevant issue page or the Notification Center.
+- **Comment-First Email Layout**: Comments notifications now prioritize the comment body at the top of the email, followed by the issue detail card.
+- **Separated Issue Reports vs. Manual Assignments**: Created a new notification template (`report_created.html`) for new issue submissions, keeping the manual assignment template (`report_assigned.html`) reserved strictly for actual ownership changes.
+
+### 🏢 Onboarding & Account Validation
+- **Onboarding Username Tags**: Standardized username/dev tag inputs and validation checks across all three onboarding flows (Developer, User, and Organization). Taken tags are properly checked, and validation errors are shown inline.
+- **Reliable Verification Emails**: Adjusted signup token generation ordering to ensure registration verification links do not immediately expire on the first attempt.
+
+### 🔒 Access Scoping & Metrics Calibration
+- **Internal Details Privacy**: Hid the interactive task checklists, active project head, and collaborator list details on project pages from non-members, revealing only the project owner.
+- **Scoped Personal Dashboards**: Personal overview dashboard metrics now exclude unrelated public projects on Reportary, displaying data only for user-related projects and organisations.
+- **Refined Project Health Rating**: Adjusted project health calculation thresholds so that brand-new active projects with few open issues are not flagged as having "Critical" or "Warning" health.
+
+---
+
 # Release Notes - v1.0.0-rc (Global Multilingual Support & Mobile Email Templates)
 
 **Date**: July 20, 2026

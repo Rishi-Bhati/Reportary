@@ -4,7 +4,7 @@
 
 Reportary is an open-source project management and issue tracking platform. It provides structured workflows for reporting, triaging, and resolving bugs and tasks — with strong access controls, real-time collaboration, and a clean, fast interface.
 
-> **Current release: `v1.0.0-rc`** — Global Multilingual Support (English & Japanese) & Mobile Email updates.
+> **Current release: `v1.0.0 Stable`** — Email privacy hardening, scoped access controls, and onboarding validations.
 
 **Live demo:** [reportary.onrender.com](https://reportary.onrender.com)
 
@@ -158,7 +158,7 @@ If you discover a security vulnerability, please report it through the [issue tr
 
 See [RELEASE_NOTES.md](RELEASE_NOTES.md) for the full version history.
 
-**Current version:** `v1.0.0-rc` — July 2026
+**Current version:** `v1.0.0 Stable` — July 2026
 
 ---
 
