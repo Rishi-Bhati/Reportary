@@ -39,32 +39,34 @@ def create_organisation(request):
                 contact_valid = False
         
         if form.is_valid() and contact_valid:
-            name = form.cleaned_data['name']
-            description = form.cleaned_data.get('description', '')
-            domain = form.cleaned_data.get('domain', '')
-            
-            # Save contact person info if not already set
-            if not user.is_cp:
-                user.name = call_name
-                user.business_email = biz_email
-                user.cp_role = cp_role
-                user.type = 'cp'
-                user.is_cp = True
-                user.save()
-            
-            org = services.create_organisation(
-                name=name,
-                description=description,
-                owner=user,
-                domain=domain
-            )
-            
-            # also link to user model organisation field (stores PK)
-            try:
-                user.organisation = org.pk
-                user.save()
-            except Exception:
-                pass
+            from django.db import transaction
+            with transaction.atomic():
+                name = form.cleaned_data['name']
+                description = form.cleaned_data.get('description', '')
+                domain = form.cleaned_data.get('domain', '')
+                
+                # Save contact person info if not already set
+                if not user.is_cp:
+                    user.name = call_name
+                    user.business_email = biz_email
+                    user.cp_role = cp_role
+                    user.type = 'cp'
+                    user.is_cp = True
+                    user.save()
+                
+                org = services.create_organisation(
+                    name=name,
+                    description=description,
+                    owner=user,
+                    domain=domain
+                )
+                
+                # also link to user model organisation field (stores PK)
+                try:
+                    user.organisation = org.pk
+                    user.save()
+                except Exception:
+                    pass
             
             messages.success(request, f"Organisation '{name}' created successfully!")
             return redirect('organisations:dashboard', uuid=org.uuid)

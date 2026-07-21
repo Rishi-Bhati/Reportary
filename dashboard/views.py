@@ -63,13 +63,16 @@ def dashboard_overview(request):
     
     accessible_reports = Report.objects.filter(project__in=accessible_projects).distinct()
     
-    resolved_reports = accessible_reports.filter(status='resolved', updated_at__gt=F('created_at'))
-    resolved_count = resolved_reports.count()
-    total_duration_seconds = 0
-    if resolved_count > 0:
-        for r in resolved_reports:
-            total_duration_seconds += (r.updated_at - r.created_at).total_seconds()
-        avg_seconds = total_duration_seconds / resolved_count
+    from django.db.models import Avg, ExpressionWrapper, DurationField
+    avg_duration = accessible_reports.filter(
+        status='resolved',
+        updated_at__gt=F('created_at')
+    ).aggregate(
+        avg_time=Avg(ExpressionWrapper(F('updated_at') - F('created_at'), output_field=DurationField()))
+    )['avg_time']
+
+    if avg_duration is not None:
+        avg_seconds = avg_duration.total_seconds()
         days = int(avg_seconds // 86400)
         hours = int((avg_seconds % 86400) // 3600)
         if days > 0:

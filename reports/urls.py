@@ -46,7 +46,7 @@ urlpatterns = [
     path('bookmarks-and-watches/', bookmarks_and_watches, name='bookmarks_and_watches'),
     path('save-search/', save_search, name='save_search'),
     path('saved-searches/<int:search_id>/delete/', delete_saved_search, name='delete_saved_search'),
-    path('attachments/<int:attachment_id>/delete/', delete_attachment, name='delete_attachment'),
+    path('attachments/<uuid:attachment_uuid>/delete/', delete_attachment, name='delete_attachment'),
     path('my_reports/', my_report_list, name='my_reports'),
     # URL pattern for showing reports assigned to logged in user
     path('assigned_to_me/', assigned_to_me, name='assigned_to_me'),

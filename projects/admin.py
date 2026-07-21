@@ -26,8 +26,14 @@ class ProjectAdmin(admin.ModelAdmin): # Admin for Project model
     inlines = [ComponentInline, ProjectTaskInline]
     filter_horizontal = ('collaborators',)
     
+    def get_queryset(self, request):
+        from django.db import models
+        return super().get_queryset(request).annotate(
+            _component_count=models.Count('project_components', distinct=True)
+        ).select_related('owner')
+
     def component_count(self, obj):
-        return obj.project_components.count()
+        return obj._component_count
     component_count.short_description = 'Components'
 
 

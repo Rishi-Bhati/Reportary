@@ -30,13 +30,15 @@ class ReportAdmin(admin.ModelAdmin):
     # directly on the report's change page.
     inlines = [CommentInline]
     
+    def get_queryset(self, request):
+        from django.db import models
+        return super().get_queryset(request).annotate(
+            _comments_count=models.Count('comments', distinct=True)
+        ).select_related('project', 'component', 'reported_by')
+
     # This is a custom method to display the number of comments for each report in the 'list_display'.
     def comments_count(self, obj):
-        # 'obj' is the Report instance.
-        # We use 'obj.comments.count()' to get the number of associated comments.
-        # This works because of the 'related_name="comments"' we set on the ForeignKey in the Comment model.
-        # The previous code used 'obj.comment_set.count()', which is the default and would fail if 'related_name' is set.
-        return obj.comments.count()
+        return obj._comments_count
     
     # This sets the column header for our custom method in the admin list view.
     comments_count.short_description = 'Comments'

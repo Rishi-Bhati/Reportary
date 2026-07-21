@@ -2,6 +2,7 @@ from django.contrib import admin
 from .models import Comment
 
 class CommentAdmin(admin.ModelAdmin):
+    list_select_related = ('commented_by', 'report')
     readonly_fields = ('uuid', 'created_at', 'updated_at')
     list_display = ('__str__', 'commented_by', 'report', 'created_at')
     fieldsets = (

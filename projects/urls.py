@@ -1,6 +1,16 @@
 from django.urls import path
 from django.urls import include
-from projects.views import *
+from projects.views import (
+    register_project,
+    projects_view,
+    project_detail,
+    edit_project,
+    my_projects_view,
+    collaborating_projects_view,
+    add_project_task,
+    toggle_project_task,
+    delete_project_task,
+)
 from public_portal import views as portal_views
 
 app_name = 'projects'

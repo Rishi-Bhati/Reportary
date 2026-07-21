@@ -186,12 +186,17 @@ def project_detail(request, project_uuid):
     critical_reports = reports_qs.filter(severity__in=['high', 'critical']).count()
 
     # Average Resolution Time
-    resolved_and_closed = reports_qs.filter(status__in=['resolved', 'closed'])
+    from django.db.models import Avg, F, ExpressionWrapper, DurationField
+    avg_duration = reports_qs.filter(
+        status__in=['resolved', 'closed'],
+        updated_at__gt=F('created_at')
+    ).aggregate(
+        avg_time=Avg(ExpressionWrapper(F('updated_at') - F('created_at'), output_field=DurationField()))
+    )['avg_time']
+
     avg_resolution_time = "N/A"
-    if resolved_and_closed.exists():
-        durations = [r.updated_at - r.created_at for r in resolved_and_closed]
-        total_seconds = sum(d.total_seconds() for d in durations)
-        avg_seconds = total_seconds / len(durations)
+    if avg_duration is not None:
+        avg_seconds = avg_duration.total_seconds()
         if avg_seconds < 3600:
             avg_resolution_time = f"{int(avg_seconds / 60)}m"
         elif avg_seconds < 86400:

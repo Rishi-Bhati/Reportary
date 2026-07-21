@@ -47,7 +47,7 @@ def add_comment(request, report_uuid):
         comment.save()
 
         from notifications.services import create_notification
-        followers = [f.user for f in report.followers.all()]
+        followers = [f.user for f in report.followers.select_related('user')]
         recipients = {report.assigned_to, report.reported_by, report.project.owner, report.project.project_head} | set(followers)
         for recipient in recipients:
             if recipient and recipient != request.user:

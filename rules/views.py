@@ -21,6 +21,8 @@ def is_project_manager(user, project):
     return False
 
 def is_project_member(user, project):
+    if not user or not user.is_authenticated:
+        return False
     if project.collaborators.filter(id=user.id).exists() or is_project_owner(user, project):
         return True
     if project.visibility == 'org' and project.org:
@@ -95,6 +97,8 @@ def is_organisation_owner(user, organisation):
 
 def is_organisation_member(user, organisation):
     """Check if user is a member of the organisation."""
+    if not user or not user.is_authenticated:
+        return False
     return organisation.members.filter(id=user.id).exists() or is_organisation_owner(user, organisation)
 
 

@@ -51,14 +51,14 @@ class Report(models.Model):
     steps = models.TextField()
     
     frequency = models.CharField(max_length=20, choices=FREQ_CHOICES, default='once')
-    impact = models.CharField(max_length=20, choices=IMPACT_CHOICES, default='low')
-    severity = models.CharField(max_length=20, choices=SEVERITY_CHOICES, default='low')
+    impact = models.CharField(max_length=20, choices=IMPACT_CHOICES, default='low', db_index=True)
+    severity = models.CharField(max_length=20, choices=SEVERITY_CHOICES, default='low', db_index=True)
 
     attatchment = models.FileField(upload_to='reports/', null=True, blank=True)
     visibility = models.BooleanField(default=True)
 
     assigned_to = models.ForeignKey('accounts.User', on_delete=models.SET_NULL, null=True, blank=True, related_name='assigned_reports')
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='open')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='open', db_index=True)
 
     # Anonymous reporting tracking
     is_anonymous = models.BooleanField(default=False)
@@ -69,8 +69,14 @@ class Report(models.Model):
         related_name='submitted_reports'
     )
 
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+    updated_at = models.DateTimeField(auto_now=True, db_index=True)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['project', 'status']),
+            models.Index(fields=['project', 'created_at']),
+        ]
 
     def __str__(self):
         return self.title
@@ -110,6 +116,12 @@ class ReportFollower(models.Model):
 
 
 class ReportAttachment(models.Model):
+    uuid = models.UUIDField(
+        default=uuid7,
+        editable=False,
+        unique=True,
+        db_index=True,
+    )
     report = models.ForeignKey(Report, on_delete=models.CASCADE, related_name='attachments')
     file = models.FileField(upload_to='reports/attachments/')
     filename = models.CharField(max_length=255)

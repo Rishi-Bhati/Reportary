@@ -4,6 +4,7 @@ from .models import Organisation
 # Register your models here.
 @admin.register(Organisation)
 class OrganisationAdmin(admin.ModelAdmin):
+    list_select_related = ('owner',)
     list_display = ("name", "owner", "domain", "verified", "created_at")
     search_fields = ("name", "owner__username", "domain")
     list_filter = ("verified", "created_at")

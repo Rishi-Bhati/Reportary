@@ -280,42 +280,44 @@ def create_report(request, project_uuid=None):
                     break
         
         if form.is_valid():
-            report = form.save(commit=False)
-            report.reported_by = request.user
-            if project:
-                report.project = project
-            # Recalculate dynamically on POST if project was selected from dropdown
-            if project and not anon_allowed:
-                from public_portal.services import anon_reporting_allowed
-                anon_allowed, _ = anon_reporting_allowed(project)
-            if not project or not anon_allowed:
-                report.is_anonymous = False
-            report.assigned_to = report.project.owner
-            report.save()
+            from django.db import transaction
+            with transaction.atomic():
+                report = form.save(commit=False)
+                report.reported_by = request.user
+                if project:
+                    report.project = project
+                # Recalculate dynamically on POST if project was selected from dropdown
+                if project and not anon_allowed:
+                    from public_portal.services import anon_reporting_allowed
+                    anon_allowed, _ = anon_reporting_allowed(project)
+                if not project or not anon_allowed:
+                    report.is_anonymous = False
+                report.assigned_to = report.project.owner
+                report.save()
 
-            # Save multiple attachments
-            from reports.models import ReportAttachment
-            for f in files:
-                ReportAttachment.objects.create(
-                    report=report,
-                    file=f,
-                    filename=f.name,
-                    file_size=f.size
-                )
-
-            from notifications.services import create_notification
-            recipients = {report.project.owner, report.project.project_head}
-            for recipient in recipients:
-                if recipient and recipient != request.user:
-                    create_notification(
-                        recipient=recipient,
-                        actor=request.user,
-                        notification_type='report_assigned',
-                        title="New Issue Reported",
-                        message=f"A new issue '{report.title}' was reported by {request.user.username} in project '{report.project.title}'.",
-                        target_content_type='report',
-                        target_uuid=report.uuid
+                # Save multiple attachments
+                from reports.models import ReportAttachment
+                for f in files:
+                    ReportAttachment.objects.create(
+                        report=report,
+                        file=f,
+                        filename=f.name,
+                        file_size=f.size
                     )
+
+                from notifications.services import create_notification
+                recipients = {report.project.owner, report.project.project_head}
+                for recipient in recipients:
+                    if recipient and recipient != request.user:
+                        create_notification(
+                            recipient=recipient,
+                            actor=request.user,
+                            notification_type='report_assigned',
+                            title="New Issue Reported",
+                            message=f"A new issue '{report.title}' was reported by {request.user.username} in project '{report.project.title}'.",
+                            target_content_type='report',
+                            target_uuid=report.uuid
+                        )
 
             from django.contrib import messages
             messages.success(request, f"Report submitted successfully! Tracking ID: {report.uuid}")
@@ -707,9 +709,9 @@ def ajax_check_duplicate(request):
 
 
 @login_required
-def delete_attachment(request, attachment_id, project_uuid=None):
+def delete_attachment(request, attachment_uuid, project_uuid=None):
     from reports.models import ReportAttachment
-    attachment = get_object_or_404(ReportAttachment, id=attachment_id)
+    attachment = get_object_or_404(ReportAttachment, uuid=attachment_uuid)
     report = attachment.report
     
     # Check edit permissions (only the reporter is authorized to change/edit reports)

@@ -64,7 +64,7 @@ def update_report_status(*, request, report, new_status, actor):
     )
 
     from notifications.services import create_notification
-    followers = [f.user for f in report.followers.all()]
+    followers = [f.user for f in report.followers.select_related('user')]
     recipients = {report.assigned_to, report.reported_by, report.project.owner, report.project.project_head} | set(followers)
     for recipient in recipients:
         if recipient and recipient != actor:
@@ -106,7 +106,7 @@ def update_report_impact(*, report, new_impact, actor):
     )
 
     from notifications.services import create_notification
-    followers = [f.user for f in report.followers.all()]
+    followers = [f.user for f in report.followers.select_related('user')]
     recipients = {report.assigned_to, report.reported_by, report.project.owner, report.project.project_head} | set(followers)
     for recipient in recipients:
         if recipient and recipient != actor:
