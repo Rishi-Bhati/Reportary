@@ -1,6 +1,10 @@
 import json
 import logging
 import threading
+import time
+import uuid
+import hmac
+import hashlib
 
 import requests
 from django.conf import settings
@@ -12,10 +16,11 @@ logger = logging.getLogger(__name__)
 # ─── Internal thread target ───────────────────────────────────────────────────
 def _send_via_api(subject: str, html_body: str, to_emails: list, cc_emails: list):
     """
-    Fires a single POST request to the mail API service.
+    Fires a single POST request to the mail API service with HMAC-SHA256 signing.
     Runs inside a background daemon thread — only plain Python types are accepted.
     """
     api_key = settings.MAIL_API_KEY
+    api_secret = settings.MAIL_API_SECRET
     endpoint = settings.MAIL_API_ENDPOINT
 
     if not api_key:
@@ -30,21 +35,67 @@ def _send_via_api(subject: str, html_body: str, to_emails: list, cc_emails: list
     if cc_emails:
         payload["cc"] = ", ".join(cc_emails)
 
-    headers = {
-        "Authorization": f"Bearer {api_key}",
-        "Content-Type": "application/json",
-    }
-
     try:
+        # Use compact JSON representation (no spacing) to avoid signature mismatch
+        body = json.dumps(payload, separators=(',', ':'))
+
+        # Get UTC epoch timestamp
+        timestamp = str(int(time.time()))
+
+        # Generate a random UUID nonce
+        nonce = str(uuid.uuid4())
+
+        # Compute SHA-256 of the raw request body
+        body_hash = hashlib.sha256(body.encode('utf-8')).hexdigest()
+
+        # Build canonical message: timestamp + \n + nonce + \n + body_hash
+        canonical_message = f"{timestamp}\n{nonce}\n{body_hash}"
+
+        # Sign the canonical message using the API secret
+        signature = hmac.new(
+            api_secret.encode('utf-8'),
+            canonical_message.encode('utf-8'),
+            hashlib.sha256
+        ).hexdigest()
+
+        headers = {
+            'X-API-Key': api_key,
+            'X-Timestamp': timestamp,
+            'X-Nonce': nonce,
+            'X-Signature': signature,
+            'Content-Type': 'application/json'
+        }
+
         response = requests.post(
             endpoint,
             headers=headers,
-            data=json.dumps(payload),
+            data=body,
             timeout=15,
         )
         response.raise_for_status()
     except Exception:
         logger.exception("Failed to deliver email via API in background thread")
+
+
+def send_api_email(subject: str, html_body: str, to_emails: list, cc_emails: list = None):
+    """
+    Queues an email for background dispatch using the secure workers email API.
+    """
+    to_list = [e for e in (to_emails or []) if e]
+    cc_list = [e for e in (cc_emails or []) if e]
+
+    if not to_list:
+        logger.warning("send_api_email skipped — to_list is empty.")
+        return
+
+    logger.debug("Queuing email → to=%s cc=%s", to_list, cc_list)
+
+    thread = threading.Thread(
+        target=_send_via_api,
+        args=(subject, html_body, to_list, cc_list),
+    )
+    thread.daemon = True
+    thread.start()
 
 
 def send_notification_email(*, notification_type, subject, context, to_emails, cc_emails=None):
@@ -75,22 +126,7 @@ def send_notification_email(*, notification_type, subject, context, to_emails, c
                 f"<p>Check details on your Reportary dashboard.</p>"
             )
 
-    # Resolve recipients to plain lists of strings before entering the thread
-    to_list = [e for e in (to_emails or []) if e]
-    cc_list = [e for e in (cc_emails or []) if e]
-
-    if not to_list:
-        logger.warning("send_notification_email skipped for '%s' — to_list is empty.", notification_type)
-        return
-
-    logger.debug("Queuing %s email → to=%s cc=%s", notification_type, to_list, cc_list)
-
-    thread = threading.Thread(
-        target=_send_via_api,
-        args=(subject, html_content, to_list, cc_list),
-    )
-    thread.daemon = True
-    thread.start()
+    send_api_email(subject, html_content, to_emails, cc_emails)
 
 
 # ─── Legacy SMTP implementation (kept for future reference) ───────────────────

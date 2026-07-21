@@ -309,13 +309,8 @@ def contact_page(request):
             })
 
         try:
-            import json
-            import threading
-            import logging
-            import requests
             from django.conf import settings as django_settings
-
-            logger = logging.getLogger(__name__)
+            from notifications.email_service import send_api_email
 
             html_body = (
                 f"<h2>Contact Form Submission</h2>"
@@ -327,35 +322,11 @@ def contact_page(request):
                 f"<p><em>Sent via Reportary Contact Page</em></p>"
             )
 
-            # Snapshot all values as plain strings before entering the thread
-            _subject = f"[Reportary Contact] {subject}"
-            _body = html_body
-            _to = django_settings.CONTACT_EMAIL
-            _api_key = django_settings.MAIL_API_KEY
-            _endpoint = django_settings.MAIL_API_ENDPOINT
-
-            def _send_contact_email():
-                try:
-                    response = requests.post(
-                        _endpoint,
-                        headers={
-                            "Authorization": f"Bearer {_api_key}",
-                            "Content-Type": "application/json",
-                        },
-                        data=json.dumps({
-                            "to": _to,
-                            "subject": _subject,
-                            "body": _body,
-                        }),
-                        timeout=15,
-                    )
-                    response.raise_for_status()
-                except Exception:
-                    logger.exception("Failed to send contact email in background thread")
-
-            thread = threading.Thread(target=_send_contact_email)
-            thread.daemon = True
-            thread.start()
+            send_api_email(
+                subject=f"[Reportary Contact] {subject}",
+                html_body=html_body,
+                to_emails=[django_settings.CONTACT_EMAIL]
+            )
 
             messages.success(request, "Your message has been received! We'll get back to you soon.")
             return redirect("home:contact")
