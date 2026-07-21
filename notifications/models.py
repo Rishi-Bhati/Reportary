@@ -7,6 +7,7 @@ class Notification(models.Model):
     
     NOTIFICATION_TYPES = [
         # Informational (auto-read on page open)
+        ('report_created', 'New Report Created'),
         ('report_assigned', 'Report Assigned'),
         ('report_reassigned', 'Report Reassigned'),
         ('report_status_changed', 'Report Status Changed'),

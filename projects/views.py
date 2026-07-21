@@ -211,9 +211,9 @@ def project_detail(request, project_uuid):
         resolved_ratio = (resolved_reports + closed_reports) / total_reports
         health_score = int(resolved_ratio * 100)
         open_critical = reports_qs.filter(status__in=['open', 'in_progress'], severity__in=['high', 'critical']).count()
-        if open_critical > 3 or resolved_ratio < 0.4:
+        if open_critical > 3 or (total_reports >= 10 and resolved_ratio < 0.3):
             health_rating = "Critical"
-        elif open_critical > 0 or resolved_ratio < 0.7:
+        elif open_critical > 0 or (total_reports >= 5 and resolved_ratio < 0.6):
             health_rating = "Warning"
         else:
             health_rating = "Healthy"

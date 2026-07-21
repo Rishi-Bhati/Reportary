@@ -1,6 +1,6 @@
 # Types that auto-mark-read when notification page is opened
 AUTO_READ_TYPES = {
-    'report_assigned', 'report_reassigned', 'report_status_changed',
+    'report_created', 'report_assigned', 'report_reassigned', 'report_status_changed',
     'report_commented', 'collaborator_added', 'report_impact_changed',
 }
 

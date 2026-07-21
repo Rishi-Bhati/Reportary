@@ -312,7 +312,7 @@ def create_report(request, project_uuid=None):
                         create_notification(
                             recipient=recipient,
                             actor=request.user,
-                            notification_type='report_assigned',
+                            notification_type='report_created',
                             title="New Issue Reported",
                             message=f"A new issue '{report.title}' was reported by {request.user.username} in project '{report.project.title}'.",
                             target_content_type='report',
