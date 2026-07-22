@@ -98,10 +98,21 @@
             <div class="flex gap-5">
                 <a href="{% url 'home:privacy' %}" class="hover:text-[#226ce0] transition-colors">{% trans "Privacy Policy" %}</a>
                 <a href="{% url 'home:terms' %}" class="hover:text-[#226ce0] transition-colors">{% trans "Terms of Service" %}</a>
-                <a href="{% url 'home:contact' %}" class="hover:text-[#226ce0] transition-colors">{% trans "Contact" %}</a>
             </div>
         </div>
     </footer>
 
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed top-5 right-5 z-[9998] flex flex-col gap-2.5 pointer-events-none" style="max-width: 360px;"></div>
+
+    {% if messages %}
+    <div id="django-messages" class="hidden">
+        {% for message in messages %}
+        <span data-type="{{ message.tags }}" data-text="{{ message }}"></span>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <script src="{% static 'js/main.js' %}"></script>
 </body>
 </html>

@@ -99,8 +99,25 @@ def handle_login(request):
                 response["HX-Redirect"] = reverse("dashboard:dashboard")
             return response
         else:
+            # Check if user exists but is deactivated (soft-deleted)
+            from accounts.models import User
+            inactive_user = User.objects.filter(email__iexact=email, is_active=False).first()
+            if inactive_user and inactive_user.check_password(password):
+                inactive_user.is_active = True
+                inactive_user.scheduled_deletion_date = None
+                inactive_user.save(update_fields=['is_active', 'scheduled_deletion_date'])
+
+                login(request, inactive_user)
+                messages.success(request, _('Welcome back! Your account has been reactivated.'))
+                response = HttpResponse(status=204)
+                if next_url:
+                    response["HX-Redirect"] = next_url
+                else:
+                    response["HX-Redirect"] = reverse("dashboard:dashboard")
+                return response
+
             context = {
-                'error': 'Invalid credentials. Please try again.',
+                'error': _('Invalid credentials. Please try again.'),
                 'next': next_url,
             }
             return render(request, "home/partials/login_card.html", context)

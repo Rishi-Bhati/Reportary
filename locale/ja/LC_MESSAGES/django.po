@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-21 18:56+0000\n"
+"POT-Creation-Date: 2026-07-22 07:55+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -40,6 +40,16 @@ msgstr "パスワードリセット"
 #: accounts/templates/accounts/password_reset_form.html:12
 msgid "Enter your email address"
 msgstr "メールアドレスを入力"
+
+#: accounts/views.py:370
+msgid "Incorrect password. Account deletion cancelled."
+msgstr "パスワードが正しくありません。アカウントの削除がキャンセルされました。"
+
+#: accounts/views.py:380
+msgid ""
+"Your account has been deactivated. It will be permanently deleted after 30 "
+"days. Log in before then to reactivate it."
+msgstr "アカウントが無効化されました。30日後に完全に削除されます。再有効化するにはそれまでにログインしてください。"
 
 #: core/settings.py:220
 msgid "English"
@@ -273,25 +283,25 @@ msgstr "すべての重大度"
 
 #: core/templates/search_results.html:81
 #: dashboard/templates/dashboard/partials/analytics_partial.html:154
-#: reports/forms.py:68
+#: reports/forms.py:67
 msgid "Low"
 msgstr "低"
 
 #: core/templates/search_results.html:82
 #: dashboard/templates/dashboard/partials/analytics_partial.html:154
-#: reports/forms.py:69
+#: reports/forms.py:68
 msgid "Medium"
 msgstr "中"
 
 #: core/templates/search_results.html:83
 #: dashboard/templates/dashboard/partials/analytics_partial.html:154
-#: reports/forms.py:70
+#: reports/forms.py:69
 msgid "High"
 msgstr "高"
 
 #: core/templates/search_results.html:84
 #: dashboard/templates/dashboard/partials/analytics_partial.html:154
-#: reports/forms.py:71
+#: reports/forms.py:70
 msgid "Critical"
 msgstr "致命的"
 
@@ -321,7 +331,7 @@ msgstr "組織"
 msgid "All Organizations"
 msgstr "すべての組織"
 
-#: core/templates/search_results.html:123 reports/forms.py:74
+#: core/templates/search_results.html:123 reports/forms.py:73
 msgid "Component"
 msgstr "コンポーネント"
 
@@ -628,7 +638,6 @@ msgid "No recent reporting activity."
 msgstr "最近の報告アクティビティはありません。"
 
 #: home/templates/home/base_public.html:26
-#: home/templates/home/base_public.html:101
 #: home/templates/home/changelog.html:260
 msgid "Contact"
 msgstr "お問い合わせ"
@@ -706,9 +715,6 @@ msgstr "最新"
 #: home/templates/home/changelog.html:241
 #: home/templates/home/changelog.html:249
 #: home/templates/home/changelog.html:257
-#: home/templates/home/changelog.html:265
-#: home/templates/home/changelog.html:273
-#: home/templates/home/changelog.html:281
 msgid "New"
 msgstr "新規"
 
@@ -728,7 +734,10 @@ msgid ""
 "Transactional and notification emails are now dispatched in separate, "
 "concurrent requests individually to each recipient (primary and CC), fully "
 "preventing email address leakage in headers."
-msgstr "トランザクションメールや通知メールは、各受信者（宛先およびCC）ごとに個別のリクエストとして並行してディスパッチされるようになり、ヘッダー内でのメールアドレスの漏洩を完全に防ぎます。"
+msgstr ""
+"トランザクションメールや通知メールは、各受信者（宛先およびCC）ごとに個別のリ"
+"クエストとして並行してディスパッチされるようになり、ヘッダー内でのメールアド"
+"レスの漏洩を完全に防ぎます。"
 
 #: home/templates/home/changelog.html:49 home/templates/home/changelog.html:144
 #: home/templates/home/changelog.html:152
@@ -746,7 +755,10 @@ msgid ""
 "Notification emails now include call-to-action buttons directing users "
 "directly to the specific issue or the Notification Center. Comment "
 "notification layout is restructured to highlight the comment content first."
-msgstr "通知メールに、特定の課題または通知センターに直接遷移できるコールトゥアクション（CTA）ボタンが含まれるようになりました。また、コメント通知のレイアウトが再構成され、コメント内容が最初に強調表示されるようになりました。"
+msgstr ""
+"通知メールに、特定の課題または通知センターに直接遷移できるコールトゥアクショ"
+"ン（CTA）ボタンが含まれるようになりました。また、コメント通知のレイアウトが再"
+"構成され、コメント内容が最初に強調表示されるようになりました。"
 
 #: home/templates/home/changelog.html:59 home/templates/home/changelog.html:70
 msgid "Upgrade"
@@ -764,7 +776,10 @@ msgstr "ユニバーサルなオンボーディング用ユーザネームタグ
 msgid ""
 "Onboarding forms for all users and organizations now prompt and validate "
 "developer/username tags to ensure correct account indexing from the start."
-msgstr "すべてのユーザーおよび組織のオンボーディングフォームで、開発者/ユーザーネームタグの入力と検証が求められるようになり、最初からアカウントが正しくインデックスされるようになります。"
+msgstr ""
+"すべてのユーザーおよび組織のオンボーディングフォームで、開発者/ユーザーネーム"
+"タグの入力と検証が求められるようになり、最初からアカウントが正しくインデック"
+"スされるようになります。"
 
 #: home/templates/home/changelog.html:71
 msgid "Access Scoping"
@@ -779,7 +794,10 @@ msgid ""
 "Access checks now restrict interactive task lists, designated project heads, "
 "and collaborator details in project pages exclusively to authorized project "
 "members."
-msgstr "アクセスチェックにより、プロジェクトページのインタラクティブなタスクリスト、指定されたプロジェクトヘッド、および共同編集者の詳細表示が、承認されたプロジェクトメンバーのみに厳密に制限されるようになりました。"
+msgstr ""
+"アクセスチェックにより、プロジェクトページのインタラクティブなタスクリスト、"
+"指定されたプロジェクトヘッド、および共同編集者の詳細表示が、承認されたプロ"
+"ジェクトメンバーのみに厳密に制限されるようになりました。"
 
 #: home/templates/home/changelog.html:87
 msgid ""
@@ -1840,11 +1858,19 @@ msgstr "11. お問い合わせ"
 msgid "For questions about these Terms, please"
 msgstr "規約に関するご質問は、"
 
-#: home/views.py:222
+#: home/views.py:111
+msgid "Welcome back! Your account has been reactivated."
+msgstr "おかえりなさい！アカウントが正常に再有効化されました。"
+
+#: home/views.py:120
+msgid "Invalid credentials. Please try again."
+msgstr "ログイン情報が無効です。もう一度お試しください。"
+
+#: home/views.py:239
 msgid "What is Reportary?"
 msgstr "Reportaryとは何ですか？"
 
-#: home/views.py:223
+#: home/views.py:240
 msgid ""
 "Reportary is a modern, collaborative bug and issue tracking platform "
 "designed for development teams. It helps you capture, organize, and resolve "
@@ -1854,12 +1880,12 @@ msgstr ""
 "シュートラッキングプラットフォームです。ソフトウェアの問題を効率的にキャプ"
 "チャ、整理、解決するのに役立ちます。"
 
-#: home/views.py:226
+#: home/views.py:243
 msgid ""
 "What is the difference between Watching (Following) and Bookmarking a report?"
 msgstr "レポートの「監視（フォロー）」と「ブックマーク」の違いは何ですか？"
 
-#: home/views.py:227
+#: home/views.py:244
 msgid ""
 "<strong>Watching (Following)</strong> subscribes you to real-time updates. "
 "You will receive in-app notifications and email alerts whenever the status "
@@ -1874,11 +1900,11 @@ msgstr ""
 "ブラリ内のクイック参照用の個人用ショートカットとして機能します。ブックマーク"
 "しても通知メールはトリガーされません。"
 
-#: home/views.py:230
+#: home/views.py:247
 msgid "How do I collect issues from external users?"
 msgstr "外部ユーザーからイシューを収集するにはどうすればよいですか？"
 
-#: home/views.py:231
+#: home/views.py:248
 msgid ""
 "You can activate a <strong>Public Reporting Portal</strong> link for your "
 "project. This generates a unique URL that you can share with clients or "
@@ -1888,12 +1914,12 @@ msgstr ""
 "れにより、クライアントや関係者と共有できる一意のURLが生成され、トラッカーに直"
 "接レポートを送信できるようになります。"
 
-#: home/views.py:234
+#: home/views.py:251
 msgid "How do Organisation Policies override project portal settings?"
 msgstr ""
 "組織ポリシーはプロジェクトポータル設定をどのようにオーバーライドしますか？"
 
-#: home/views.py:235
+#: home/views.py:252
 msgid ""
 "If an Organisation disables anonymous reporting, it acts as a global policy. "
 "All projects belonging to that organisation will automatically require users "
@@ -1904,11 +1930,11 @@ msgstr ""
 "個々のプロジェクトの設定で匿名報告が許可されていても、その組織に属するすべて"
 "のプロジェクトは、レポートを提出する前にユーザーにログインを要求します。"
 
-#: home/views.py:238
+#: home/views.py:255
 msgid "Who can create a project?"
 msgstr "誰がプロジェクトを作成できますか？"
 
-#: home/views.py:239
+#: home/views.py:256
 msgid ""
 "Any registered and email-verified user can create a project. Projects can be "
 "public (visible to anyone) or private (restricted to team members only)."
@@ -1917,11 +1943,11 @@ msgstr ""
 "ジェクトは、公開（誰でも表示可能）または非公開（チームメンバーのみに制限）に"
 "設定できます。"
 
-#: home/views.py:242
+#: home/views.py:259
 msgid "How do I invite team members to my project?"
 msgstr "チームメンバーをプロジェクトに招待するにはどうすればよいですか？"
 
-#: home/views.py:243
+#: home/views.py:260
 msgid ""
 "Open your project's dashboard and use the 'Invite Collaborator' option. "
 "Invited users will receive an in-app notification and can accept or decline "
@@ -1931,11 +1957,11 @@ msgstr ""
 "します。招待されたユーザーはアプリ内通知を受け取り、招待を承諾または辞退でき"
 "ます。"
 
-#: home/views.py:246
+#: home/views.py:263
 msgid "What is the difference between Severity and Impact?"
 msgstr "「重大度」と「影響度」の違いは何ですか？"
 
-#: home/views.py:247
+#: home/views.py:264
 msgid ""
 "Severity describes how technically bad the bug is (e.g., Critical, High, "
 "Medium, Low). Impact describes how many users or systems are affected. Both "
@@ -1945,11 +1971,11 @@ msgstr ""
 "す。「影響度」は影響を受けるユーザーやシステムの数を示します。両方を使用して"
 "イシューの優先順位を効果的に決定できます。"
 
-#: home/views.py:250
+#: home/views.py:267
 msgid "Can I make a report private?"
 msgstr "レポートを非公開にできますか？"
 
-#: home/views.py:251
+#: home/views.py:268
 msgid ""
 "Yes. When creating or editing a report, you can toggle its visibility to "
 "private. Private reports are only visible to project members and the "
@@ -1958,11 +1984,11 @@ msgstr ""
 "はい。レポートの作成または編集時に、表示範囲を非公開に切り替えることができま"
 "す。非公開レポートは、プロジェクトメンバーと報告者にのみ表示されます。"
 
-#: home/views.py:254
+#: home/views.py:271
 msgid "What happens when I delete my account?"
 msgstr "アカウントを削除するとどうなりますか？"
 
-#: home/views.py:255
+#: home/views.py:272
 msgid ""
 "Your account is deactivated immediately and permanently deleted after 30 "
 "days. During this window, you can reactivate it by logging back in. Your "
@@ -1972,11 +1998,11 @@ msgstr ""
 "ば、再度ログインすることでアカウントを再有効化できます。レポートとプロジェク"
 "トの履歴は保持されます。"
 
-#: home/views.py:258
+#: home/views.py:275
 msgid "Is my data secure?"
 msgstr "データは安全ですか？"
 
-#: home/views.py:259
+#: home/views.py:276
 msgid ""
 "Yes. We use industry-standard encryption for all data in transit and at "
 "rest. Access to projects is strictly enforced via our permissions system — "
@@ -1986,11 +2012,11 @@ msgstr ""
 "す。プロジェクトへのアクセスはパーミッションシステムによって厳密に制御されて"
 "おり、明示的に権限を与えられたユーザーのみがアクセスできます。"
 
-#: home/views.py:262
+#: home/views.py:279
 msgid "How do I report a bug in Reportary itself?"
 msgstr "Reportary自体のバグを報告するにはどうすればよいですか？"
 
-#: home/views.py:263
+#: home/views.py:280
 msgid ""
 "You can report bugs or request features directly on our tracking project. "
 "Just click <a href='/projects/019f2e92-7f0d-78e9-92b3-9431a1014882/reports/"
@@ -2002,11 +2028,11 @@ msgstr ""
 "019f2e92-7f0d-78e9-92b3-9431a1014882/reports/new/' class='text-[#226ce0] "
 "underline underline-offset-2'>こちら</a>をクリックしてください。"
 
-#: home/views.py:266
+#: home/views.py:283
 msgid "Is Reportary free?"
 msgstr "Reportaryは無料ですか？"
 
-#: home/views.py:267
+#: home/views.py:284
 msgid ""
 "Yes, Reportary is free during its current beta phase. We plan to introduce "
 "subscription tiers in the future, but the core functionality will always "
@@ -2015,11 +2041,11 @@ msgstr ""
 "はい、Reportaryは現在のベータフェーズ中は無料です。将来的には有料プランの導入"
 "を予定していますが、コア機能は常に無料でご利用いただけます。"
 
-#: home/views.py:270
+#: home/views.py:287
 msgid "How do I reset my password?"
 msgstr "パスワードをリセットするにはどうすればよいですか？"
 
-#: home/views.py:271
+#: home/views.py:288
 msgid ""
 "Click 'Forgot Password' on the login page. You will receive an email with a "
 "secure link to set a new password."
@@ -2079,7 +2105,7 @@ msgstr "プロジェクトが見つかりません"
 msgid "It looks like there are no projects in this organisation yet."
 msgstr "この組織にはまだプロジェクトが登録されていないようです。"
 
-#: projects/forms.py:7 reports/forms.py:49
+#: projects/forms.py:7 reports/forms.py:48
 msgid "Title"
 msgstr "タイトル"
 
@@ -2093,7 +2119,7 @@ msgstr "説明..."
 
 #: projects/forms.py:9 projects/forms.py:169
 #: projects/templates/register_project.html:223
-#: projects/templates/register_project.html:225 reports/forms.py:52
+#: projects/templates/register_project.html:225 reports/forms.py:51
 msgid "Description"
 msgstr "説明"
 
@@ -2196,21 +2222,21 @@ msgstr "別のコンポーネントを追加"
 msgid "Enter collaborator emails"
 msgstr "コラボレーターのメールアドレスを入力"
 
-#: reports/forms.py:50 reports/templates/create_report.html:55
+#: reports/forms.py:49 reports/templates/create_report.html:55
 #: reports/templates/edit_report.html:43
 msgid "Brief summary of the issue"
 msgstr "イシューの簡単な概要"
 
-#: reports/forms.py:53 reports/templates/create_report.html:108
+#: reports/forms.py:52 reports/templates/create_report.html:108
 #: reports/templates/edit_report.html:84
 msgid "Detailed explanation..."
 msgstr "詳細な説明..."
 
-#: reports/forms.py:55
+#: reports/forms.py:54
 msgid "Steps"
 msgstr "手順"
 
-#: reports/forms.py:56
+#: reports/forms.py:55
 msgid ""
 "1. Go to...\n"
 "2. Click on..."
@@ -2218,36 +2244,36 @@ msgstr ""
 "1. ...に移動する\n"
 "2. ...をクリックする"
 
-#: reports/forms.py:58
+#: reports/forms.py:57
 msgid "Frequency"
 msgstr "頻度"
 
-#: reports/forms.py:60
+#: reports/forms.py:59
 msgid "Once"
 msgstr "1回"
 
-#: reports/forms.py:61
+#: reports/forms.py:60
 msgid "Daily"
 msgstr "毎日"
 
-#: reports/forms.py:62
+#: reports/forms.py:61
 msgid "Weekly"
 msgstr "毎週"
 
-#: reports/forms.py:63
+#: reports/forms.py:62
 msgid "Monthly"
 msgstr "毎月"
 
-#: reports/forms.py:66
+#: reports/forms.py:65
 msgid "Impact"
 msgstr "影響度"
 
-#: reports/forms.py:77 reports/templates/create_report.html:70
+#: reports/forms.py:76 reports/templates/create_report.html:70
 #: reports/templates/reports/partials/reports_list_partial.html:9
 msgid "Project"
 msgstr "プロジェクト"
 
-#: reports/forms.py:80
+#: reports/forms.py:79
 msgid "Public Visibility"
 msgstr "公開設定"
 

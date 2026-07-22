@@ -361,12 +361,13 @@ def delete_account(request):
     from django.contrib.auth import logout
     from django.utils import timezone
     from datetime import timedelta
+    from django.utils.translation import gettext as _
 
     password = request.POST.get('password', '')
     user = request.user
 
     if not user.check_password(password):
-        messages.error(request, 'Incorrect password. Account deletion cancelled.')
+        messages.error(request, _('Incorrect password. Account deletion cancelled.'))
         return redirect('accounts:edit_profile')
 
     # Soft delete: deactivate account and schedule hard-delete in 30 days
@@ -376,7 +377,7 @@ def delete_account(request):
 
     logout(request)
     messages.success(request,
-        'Your account has been deactivated. It will be permanently deleted after 30 days. '
-        'Log in before then to reactivate it.'
+        _('Your account has been deactivated. It will be permanently deleted after 30 days. '
+        'Log in before then to reactivate it.')
     )
     return redirect('home:landing_page')
