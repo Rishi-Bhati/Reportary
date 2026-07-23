@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-22 07:55+0000\n"
+"POT-Creation-Date: 2026-07-23 17:27+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -49,7 +49,9 @@ msgstr "パスワードが正しくありません。アカウントの削除が
 msgid ""
 "Your account has been deactivated. It will be permanently deleted after 30 "
 "days. Log in before then to reactivate it."
-msgstr "アカウントが無効化されました。30日後に完全に削除されます。再有効化するにはそれまでにログインしてください。"
+msgstr ""
+"アカウントが無効化されました。30日後に完全に削除されます。再有効化するにはそ"
+"れまでにログインしてください。"
 
 #: core/settings.py:220
 msgid "English"
@@ -1481,6 +1483,19 @@ msgstr "アカウント作成"
 msgid "Get started with Reportary"
 msgstr "Reportaryを始める"
 
+#: home/templates/home/partials/signup_card.html:87
+#, python-format
+msgid ""
+"I agree to the <a href=\"%(terms_url)s\" target=\"_blank\" class=\"text-"
+"[#226ce0] hover:underline font-medium\">Terms & Conditions</a> and <a "
+"href=\"%(privacy_url)s\" target=\"_blank\" class=\"text-[#226ce0] "
+"hover:underline font-medium\">Privacy Policy</a>."
+msgstr ""
+"<a href=\"%(terms_url)s\" target=\"_blank\" class=\"text-[#226ce0] "
+"hover:underline font-medium\">利用規約</a>と<a href=\"%(privacy_url)s\" "
+"target=\"_blank\" class=\"text-[#226ce0] hover:underline font-medium\">"
+"プライバシーポリシー</a>に同意します。"
+
 #: home/templates/home/privacy.html:12
 msgid "Last updated: July 2025"
 msgstr "最終更新日：2025年7月"
@@ -1866,11 +1881,15 @@ msgstr "おかえりなさい！アカウントが正常に再有効化されま
 msgid "Invalid credentials. Please try again."
 msgstr "ログイン情報が無効です。もう一度お試しください。"
 
-#: home/views.py:239
+#: home/views.py:148
+msgid "You must accept the Terms & Conditions and Privacy Policy to register."
+msgstr "登録するには利用規約とプライバシーポリシーに同意する必要があります。"
+
+#: home/views.py:245
 msgid "What is Reportary?"
 msgstr "Reportaryとは何ですか？"
 
-#: home/views.py:240
+#: home/views.py:246
 msgid ""
 "Reportary is a modern, collaborative bug and issue tracking platform "
 "designed for development teams. It helps you capture, organize, and resolve "
@@ -1880,12 +1899,12 @@ msgstr ""
 "シュートラッキングプラットフォームです。ソフトウェアの問題を効率的にキャプ"
 "チャ、整理、解決するのに役立ちます。"
 
-#: home/views.py:243
+#: home/views.py:249
 msgid ""
 "What is the difference between Watching (Following) and Bookmarking a report?"
 msgstr "レポートの「監視（フォロー）」と「ブックマーク」の違いは何ですか？"
 
-#: home/views.py:244
+#: home/views.py:250
 msgid ""
 "<strong>Watching (Following)</strong> subscribes you to real-time updates. "
 "You will receive in-app notifications and email alerts whenever the status "
@@ -1900,11 +1919,11 @@ msgstr ""
 "ブラリ内のクイック参照用の個人用ショートカットとして機能します。ブックマーク"
 "しても通知メールはトリガーされません。"
 
-#: home/views.py:247
+#: home/views.py:253
 msgid "How do I collect issues from external users?"
 msgstr "外部ユーザーからイシューを収集するにはどうすればよいですか？"
 
-#: home/views.py:248
+#: home/views.py:254
 msgid ""
 "You can activate a <strong>Public Reporting Portal</strong> link for your "
 "project. This generates a unique URL that you can share with clients or "
@@ -1914,12 +1933,12 @@ msgstr ""
 "れにより、クライアントや関係者と共有できる一意のURLが生成され、トラッカーに直"
 "接レポートを送信できるようになります。"
 
-#: home/views.py:251
+#: home/views.py:257
 msgid "How do Organisation Policies override project portal settings?"
 msgstr ""
 "組織ポリシーはプロジェクトポータル設定をどのようにオーバーライドしますか？"
 
-#: home/views.py:252
+#: home/views.py:258
 msgid ""
 "If an Organisation disables anonymous reporting, it acts as a global policy. "
 "All projects belonging to that organisation will automatically require users "
@@ -1930,11 +1949,11 @@ msgstr ""
 "個々のプロジェクトの設定で匿名報告が許可されていても、その組織に属するすべて"
 "のプロジェクトは、レポートを提出する前にユーザーにログインを要求します。"
 
-#: home/views.py:255
+#: home/views.py:261
 msgid "Who can create a project?"
 msgstr "誰がプロジェクトを作成できますか？"
 
-#: home/views.py:256
+#: home/views.py:262
 msgid ""
 "Any registered and email-verified user can create a project. Projects can be "
 "public (visible to anyone) or private (restricted to team members only)."
@@ -1943,11 +1962,11 @@ msgstr ""
 "ジェクトは、公開（誰でも表示可能）または非公開（チームメンバーのみに制限）に"
 "設定できます。"
 
-#: home/views.py:259
+#: home/views.py:265
 msgid "How do I invite team members to my project?"
 msgstr "チームメンバーをプロジェクトに招待するにはどうすればよいですか？"
 
-#: home/views.py:260
+#: home/views.py:266
 msgid ""
 "Open your project's dashboard and use the 'Invite Collaborator' option. "
 "Invited users will receive an in-app notification and can accept or decline "
@@ -1957,11 +1976,11 @@ msgstr ""
 "します。招待されたユーザーはアプリ内通知を受け取り、招待を承諾または辞退でき"
 "ます。"
 
-#: home/views.py:263
+#: home/views.py:269
 msgid "What is the difference between Severity and Impact?"
 msgstr "「重大度」と「影響度」の違いは何ですか？"
 
-#: home/views.py:264
+#: home/views.py:270
 msgid ""
 "Severity describes how technically bad the bug is (e.g., Critical, High, "
 "Medium, Low). Impact describes how many users or systems are affected. Both "
@@ -1971,11 +1990,11 @@ msgstr ""
 "す。「影響度」は影響を受けるユーザーやシステムの数を示します。両方を使用して"
 "イシューの優先順位を効果的に決定できます。"
 
-#: home/views.py:267
+#: home/views.py:273
 msgid "Can I make a report private?"
 msgstr "レポートを非公開にできますか？"
 
-#: home/views.py:268
+#: home/views.py:274
 msgid ""
 "Yes. When creating or editing a report, you can toggle its visibility to "
 "private. Private reports are only visible to project members and the "
@@ -1984,11 +2003,11 @@ msgstr ""
 "はい。レポートの作成または編集時に、表示範囲を非公開に切り替えることができま"
 "す。非公開レポートは、プロジェクトメンバーと報告者にのみ表示されます。"
 
-#: home/views.py:271
+#: home/views.py:277
 msgid "What happens when I delete my account?"
 msgstr "アカウントを削除するとどうなりますか？"
 
-#: home/views.py:272
+#: home/views.py:278
 msgid ""
 "Your account is deactivated immediately and permanently deleted after 30 "
 "days. During this window, you can reactivate it by logging back in. Your "
@@ -1998,11 +2017,11 @@ msgstr ""
 "ば、再度ログインすることでアカウントを再有効化できます。レポートとプロジェク"
 "トの履歴は保持されます。"
 
-#: home/views.py:275
+#: home/views.py:281
 msgid "Is my data secure?"
 msgstr "データは安全ですか？"
 
-#: home/views.py:276
+#: home/views.py:282
 msgid ""
 "Yes. We use industry-standard encryption for all data in transit and at "
 "rest. Access to projects is strictly enforced via our permissions system — "
@@ -2012,11 +2031,11 @@ msgstr ""
 "す。プロジェクトへのアクセスはパーミッションシステムによって厳密に制御されて"
 "おり、明示的に権限を与えられたユーザーのみがアクセスできます。"
 
-#: home/views.py:279
+#: home/views.py:285
 msgid "How do I report a bug in Reportary itself?"
 msgstr "Reportary自体のバグを報告するにはどうすればよいですか？"
 
-#: home/views.py:280
+#: home/views.py:286
 msgid ""
 "You can report bugs or request features directly on our tracking project. "
 "Just click <a href='/projects/019f2e92-7f0d-78e9-92b3-9431a1014882/reports/"
@@ -2028,11 +2047,11 @@ msgstr ""
 "019f2e92-7f0d-78e9-92b3-9431a1014882/reports/new/' class='text-[#226ce0] "
 "underline underline-offset-2'>こちら</a>をクリックしてください。"
 
-#: home/views.py:283
+#: home/views.py:289
 msgid "Is Reportary free?"
 msgstr "Reportaryは無料ですか？"
 
-#: home/views.py:284
+#: home/views.py:290
 msgid ""
 "Yes, Reportary is free during its current beta phase. We plan to introduce "
 "subscription tiers in the future, but the core functionality will always "
@@ -2041,11 +2060,11 @@ msgstr ""
 "はい、Reportaryは現在のベータフェーズ中は無料です。将来的には有料プランの導入"
 "を予定していますが、コア機能は常に無料でご利用いただけます。"
 
-#: home/views.py:287
+#: home/views.py:293
 msgid "How do I reset my password?"
 msgstr "パスワードをリセットするにはどうすればよいですか？"
 
-#: home/views.py:288
+#: home/views.py:294
 msgid ""
 "Click 'Forgot Password' on the login page. You will receive an email with a "
 "secure link to set a new password."

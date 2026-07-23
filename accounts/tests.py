@@ -46,11 +46,30 @@ class AuthenticationEmailTests(TestCase):
         """Test that registering a new account defaults to unverified."""
         response = self.client.post(
             reverse('home:handle_signup'),
-            {'email': 'newuser@example.com', 'password': 'Password123!', 'confirm_password': 'Password123!'}
+            {
+                'email': 'newuser@example.com',
+                'password': 'Password123!',
+                'confirm_password': 'Password123!',
+                'accept_terms': 'on'
+            }
         )
         self.assertEqual(response.status_code, 204) # HX-Redirect triggered
         new_user = User.objects.get(email='newuser@example.com')
         self.assertFalse(new_user.is_email_verified)
+
+    def test_signup_fails_without_accepting_terms(self):
+        """Test that signup fails if the user does not accept terms and conditions."""
+        response = self.client.post(
+            reverse('home:handle_signup'),
+            {
+                'email': 'newuser_no_terms@example.com',
+                'password': 'Password123!',
+                'confirm_password': 'Password123!'
+            }
+        )
+        self.assertEqual(response.status_code, 200) # Form re-renders with error
+        self.assertIn('You must accept the Terms & Conditions and Privacy Policy to register.', response.content.decode('utf-8'))
+        self.assertFalse(User.objects.filter(email='newuser_no_terms@example.com').exists())
 
     def test_verify_email_endpoint(self):
         """Test token-based email verification view sets flag to True."""

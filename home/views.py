@@ -142,6 +142,12 @@ def handle_signup(request):
         if next_url and not url_has_allowed_host_and_scheme(next_url, allowed_hosts={request.get_host()}):
             next_url = None
 
+        # Enforce acceptance of terms & conditions / privacy policy
+        accept_terms = request.POST.get('accept_terms')
+        if not accept_terms:
+            context = {'error': _('You must accept the Terms & Conditions and Privacy Policy to register.'), 'next': next_url}
+            return render(request, "home/partials/signup_card.html", context)
+
         # Validate email format server-side (M-09)
         try:
             django_validate_email(email)
