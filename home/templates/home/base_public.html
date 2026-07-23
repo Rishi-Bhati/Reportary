@@ -1,10 +1,45 @@
 {% load static %}{% load i18n %}
 <!DOCTYPE html>
-<html lang="{{ current_language|default:'en' }}" data-theme="light">
+<html lang="{{ current_language|default:'en' }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Reportary{% endblock %}</title>
+    
+    <script>
+        // Init theme immediately to prevent flashing
+        (function() {
+            const theme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            document.documentElement.setAttribute('data-theme', theme);
+            document.documentElement.style.colorScheme = theme;
+        })();
+
+        function updateThemeToggleIcons() {
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+            const sunIcon = document.getElementById('theme-sun-icon');
+            const moonIcon = document.getElementById('theme-moon-icon');
+            if (currentTheme === 'dark') {
+                if (sunIcon) sunIcon.classList.remove('hidden');
+                if (moonIcon) moonIcon.classList.add('hidden');
+            } else {
+                if (sunIcon) sunIcon.classList.add('hidden');
+                if (moonIcon) moonIcon.classList.remove('hidden');
+            }
+        }
+
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            document.documentElement.style.colorScheme = newTheme;
+            localStorage.setItem('theme', newTheme);
+            updateThemeToggleIcons();
+        }
+
+        document.addEventListener('DOMContentLoaded', updateThemeToggleIcons);
+        document.addEventListener('htmx:afterSwap', updateThemeToggleIcons);
+    </script>
+
     <link rel="stylesheet" href="{% static 'css/dist/styles.css' %}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -12,7 +47,7 @@
         body { font-family: 'Inter', sans-serif; }
     </style>
 </head>
-<body class="bg-[#f8f9fc] text-gray-900 min-h-screen flex flex-col">
+<body class="bg-base-200 text-base-content min-h-screen flex flex-col">
 
     <!-- Nav -->
     <nav class="bg-white border-b border-gray-100 sticky top-0 z-50">
@@ -25,7 +60,18 @@
                 <a href="{% url 'home:faq' %}" class="hover:text-[#226ce0] transition-colors">{% trans "FAQ" %}</a>
                 <a href="{% url 'home:contact' %}" class="hover:text-[#226ce0] transition-colors">{% trans "Contact" %}</a>
                 <a href="{% url 'home:privacy' %}" class="hover:text-[#226ce0] transition-colors">{% trans "Privacy" %}</a>
-                
+                <!-- Theme Toggle Button -->
+                <button id="theme-toggle-btn" onclick="toggleTheme()" class="btn btn-ghost btn-circle btn-sm hover:bg-[#226ce0]/10 text-gray-500 hover:text-[#226ce0] transition-colors" title="{% trans 'Toggle Light/Dark Mode' %}">
+                    <!-- Sun icon -->
+                    <svg id="theme-sun-icon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m12.728 12.728l.707.707M12 8a4 4 0 100 8 4 4 0 000-8z"></path>
+                    </svg>
+                    <!-- Moon icon -->
+                    <svg id="theme-moon-icon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+                    </svg>
+                </button>
+
                 <!-- Globe Language Toggle -->
                 <div class="dropdown dropdown-end" id="public-lang-dropdown">
                     <button tabindex="0" id="public-lang-btn"
