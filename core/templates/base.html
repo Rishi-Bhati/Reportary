@@ -64,8 +64,8 @@
                     </div>
                 </div>
                 <button hx-post="{% url 'dismiss_announcement' announcement_id=announcement.pk %}"
-                        hx-swap="none"
-                        onclick="document.getElementById('announcement-{{ announcement.pk }}').remove()"
+                        hx-target="#announcement-{{ announcement.pk }}"
+                        hx-swap="outerHTML"
                         class="shrink-0 opacity-50 hover:opacity-100 font-bold px-1 focus:outline-none">&times;</button>
             </div>
             {% endwith %}

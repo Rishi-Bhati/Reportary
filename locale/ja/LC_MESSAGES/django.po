@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-24 13:53+0000\n"
+"POT-Creation-Date: 2026-07-24 18:14+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -749,7 +749,7 @@ msgid ""
 "Opt-in to experimental features per user or organisation from settings. "
 "Includes a bottom-right version badge indicator and centralized feature "
 "gates."
-msgstr ""
+msgstr "設定からユーザーまたは組織ごとに実験的機能を選択（オプトイン）できます。右下のバージョンバッジ表示や、中央集権的な機能ゲートが含まれます。"
 
 #: home/templates/home/changelog.html:49
 msgid "Developer API"
@@ -764,7 +764,7 @@ msgid ""
 "Generate scoped API keys with fine-grained CRUD permissions, PBKDF2 hashing, "
 "usage metrics tracking, and an interactive in-dashboard API documentation "
 "section."
-msgstr ""
+msgstr "きめ細かなCRUD権限、PBKDF2ハッシュ化、使用状況メトリクス追跡、ダッシュボード内のインタラクティブなAPIドキュメントセクションを備えた、スコープ付きAPIキーを生成します。"
 
 #: home/templates/home/changelog.html:60
 msgid "Form Builder"
@@ -780,7 +780,7 @@ msgid ""
 "Vulnerabilities), customize standard field visibility, add dynamic custom "
 "fields (text, textareas, checkboxes, select menus), and enjoy live HTMX "
 "field swapping."
-msgstr ""
+msgstr "プロジェクトオーナーは、レポートカテゴリ（バグ、機能、脆弱性）の設定、標準フィールドの表示非表示カスタマイズ、動的カスタムフィールド（テキスト、テキストエリア、チェックボックス、選択メニュー）の追加、およびリアルタイムなHTMXフィールド切り替えを利用できます。"
 
 #: home/templates/home/changelog.html:70 home/templates/home/changelog.html:117
 #: home/templates/home/changelog.html:128
@@ -800,7 +800,7 @@ msgid ""
 "New reports are automatically assigned when a project has exactly 1 member. "
 "Site announcements persist user dismissals across sessions and are organized "
 "under a dedicated tab in the Notification Center."
-msgstr ""
+msgstr "プロジェクトのメンバーがちょうど1名の場合、新しいレポートは自動的に割り当てられます。サイトのお知らせはセッションをまたいでユーザーの非表示設定が維持され、通知センターの専用タブに整理されます。"
 
 #: home/templates/home/changelog.html:87
 msgid "July 2026 · Production Stable Release"
@@ -854,6 +854,7 @@ msgstr ""
 "構成され、コメント内容が最初に強調表示されるようになりました。"
 
 #: home/templates/home/changelog.html:118
+#: restapi/templates/restapi/dashboard.html:136
 msgid "Authentication"
 msgstr "認証"
 
@@ -1777,7 +1778,7 @@ msgstr "アカウント設定"
 
 #: home/templates/home/settings.html:13
 msgid "Manage your profile, beta program features, and security preferences."
-msgstr ""
+msgstr "プロフィール、ベータプログラム機能、およびセキュリティ設定を管理します。"
 
 #: home/templates/home/settings.html:19
 msgid "Profile Overview"
@@ -1785,11 +1786,11 @@ msgstr "プロフィール概要"
 
 #: home/templates/home/settings.html:26
 msgid "Display Name"
-msgstr ""
+msgstr "表示名"
 
 #: home/templates/home/settings.html:30
 msgid "Tag/Username"
-msgstr ""
+msgstr "タグ/ユーザー名"
 
 #: home/templates/home/settings.html:34
 msgid "Email Address"
@@ -1797,15 +1798,15 @@ msgstr "メールアドレス"
 
 #: home/templates/home/settings.html:38
 msgid "Verified"
-msgstr ""
+msgstr "認証済み"
 
 #: home/templates/home/settings.html:40
 msgid "Unverified"
-msgstr ""
+msgstr "未認証"
 
 #: home/templates/home/settings.html:58
 msgid "Danger Zone"
-msgstr ""
+msgstr "デンジャーゾーン"
 
 #: home/templates/home/settings.html:62
 msgid "Delete My Account"
@@ -1830,17 +1831,18 @@ msgstr "アカウントを削除しますか？"
 
 #: home/templates/home/settings.html:84
 msgid "This action starts a 30-day countdown to permanent deletion."
-msgstr ""
+msgstr "この操作を行うと、完全削除への30日間のカウントダウンが開始されます。"
 
 #: home/templates/home/settings.html:88
 msgid "To confirm, enter your current password:"
-msgstr ""
+msgstr "確認のため、現在のパスワードを入力してください："
 
 #: home/templates/home/settings.html:92
 msgid "Enter your password"
 msgstr "パスワードを入力してください"
 
 #: home/templates/home/settings.html:97 reports/templates/edit_report.html:141
+#: restapi/templates/restapi/dashboard.html:308
 msgid "Cancel"
 msgstr "キャンセル"
 
@@ -2300,6 +2302,7 @@ msgstr "説明..."
 #: projects/forms.py:9 projects/forms.py:169
 #: projects/templates/register_project.html:223
 #: projects/templates/register_project.html:225 reports/forms.py:52
+#: restapi/templates/restapi/dashboard.html:177
 msgid "Description"
 msgstr "説明"
 
@@ -2346,19 +2349,19 @@ msgstr "このプロジェクトの説明はありません。"
 
 #: projects/templates/projects/configure_report_form.html:4
 msgid "Configure Reporting Form"
-msgstr ""
+msgstr "報告フォームの設定"
 
 #: projects/templates/projects/configure_report_form.html:13
 msgid "Custom Reporting Form"
-msgstr ""
+msgstr "カスタム報告フォーム"
 
 #: projects/templates/projects/configure_report_form.html:20
 msgid "Customise Reporting Form"
-msgstr ""
+msgstr "報告フォームのカスタマイズ"
 
 #: projects/templates/projects/configure_report_form.html:21
 msgid "Tailor standard fields, dynamic custom fields, and report categories."
-msgstr ""
+msgstr "標準フィールド、動的カスタムフィールド、およびレポートカテゴリを調整します。"
 
 #: projects/templates/projects/configure_report_form.html:24
 #: public_portal/templates/public_portal/configure_theme.html:24
@@ -2367,30 +2370,31 @@ msgstr "プロジェクトに戻る"
 
 #: projects/templates/projects/configure_report_form.html:35
 msgid "Form Warning:"
-msgstr ""
+msgstr "フォームの警告:"
 
 #: projects/templates/projects/configure_report_form.html:36
 msgid ""
 "You have disabled important reporting fields in your default configuration:"
-msgstr ""
+msgstr "デフォルト設定で重要な報告フィールドが無効化されています："
 
 #: projects/templates/projects/configure_report_form.html:55
 msgid "Global Default Category"
-msgstr ""
+msgstr "グローバルデフォルトカテゴリ"
 
 #: projects/templates/projects/configure_report_form.html:98
 #: projects/templates/projects/configure_report_form.html:283
 msgid "Delete Category"
-msgstr ""
+msgstr "カテゴリを削除"
 
 #: projects/templates/projects/configure_report_form.html:114
 #: projects/templates/projects/configure_report_form.html:297
+#: restapi/templates/restapi/dashboard.html:176
 msgid "Required"
-msgstr ""
+msgstr "必須"
 
 #: projects/templates/projects/configure_report_form.html:195
 msgid "Save Form Layout"
-msgstr ""
+msgstr "フォームレイアウトを保存"
 
 #: projects/templates/projects/configure_report_form.html:204
 msgid "Frequency Per Component"
@@ -2400,21 +2404,21 @@ msgstr "コンポーネントごとの頻度"
 msgid ""
 "Customise frequency options for each component. Type comma-separated options "
 "as 'value:Label' (e.g. 'once:Just once, daily:Daily')."
-msgstr ""
+msgstr "コンポーネントごとの頻度オプションをカスタマイズします。コンマ区切りで「値:ラベル」の形式で入力してください（例:「once:1回のみ, daily:毎日」）。"
 
 #: projects/templates/projects/configure_report_form.html:224
 msgid ""
 "No components registered for this project yet. Please create some in Project "
 "Settings first."
-msgstr ""
+msgstr "このプロジェクトにはまだコンポーネントが登録されていません。最初にプロジェクト設定で作成してください。"
 
 #: projects/templates/projects/partials/public_link_panel.html:212
 msgid "Configure Fields"
-msgstr ""
+msgstr "フィールドの設定"
 
 #: projects/templates/projects/partials/public_link_panel.html:217
 msgid "portal Theme & CSS"
-msgstr ""
+msgstr "ポータルテーマ＆CSS"
 
 #: projects/templates/projects_view.html:34
 msgid "Search projects in this list..."
@@ -2476,17 +2480,17 @@ msgstr "コラボレーターのメールアドレスを入力"
 
 #: public_portal/templates/public_portal/configure_theme.html:4
 msgid "Configure Portal Theme"
-msgstr ""
+msgstr "ポータルテーマの設定"
 
 #: public_portal/templates/public_portal/configure_theme.html:13
 #: public_portal/templates/public_portal/configure_theme.html:20
 msgid "Custom Portal Styling"
-msgstr ""
+msgstr "カスタムポータルスタイリング"
 
 #: public_portal/templates/public_portal/configure_theme.html:21
 msgid ""
 "Customise the styling, branding, and CSS of your public reporting portal."
-msgstr ""
+msgstr "公開報告ポータルのスタイリング、ブランディング、およびCSSをカスタマイズします。"
 
 #: public_portal/templates/public_portal/configure_theme.html:36
 msgid "Branding Overrides"
@@ -2494,26 +2498,27 @@ msgstr "ブランディングのオーバーライド"
 
 #: public_portal/templates/public_portal/configure_theme.html:57
 msgid "Theme Colors"
-msgstr ""
+msgstr "テーマカラー"
 
 #: public_portal/templates/public_portal/configure_theme.html:99
 msgid "Typography & Borders"
-msgstr ""
+msgstr "タイポグラフィ＆境界線"
 
 #: public_portal/templates/public_portal/configure_theme.html:126
 msgid "Custom Arbitrary CSS"
-msgstr ""
+msgstr "カスタム任意CSS"
 
 #: public_portal/templates/public_portal/configure_theme.html:137
 msgid "Save Portal Theme"
-msgstr ""
+msgstr "ポータルテーマを保存"
 
 #: public_portal/templates/public_portal/configure_theme.html:144
 msgid "Live Interactive Preview"
-msgstr ""
+msgstr "リアルタイム・インタラクティブプレビュー"
 
 #: reports/forms.py:50 reports/templates/edit_report.html:43
 #: reports/templates/reports/partials/report_fields_partial.html:49
+#: restapi/templates/restapi/dashboard.html:181
 msgid "Brief summary of the issue"
 msgstr "イシューの簡単な概要"
 
@@ -2775,28 +2780,28 @@ msgstr "APIキーダッシュボード"
 #: restapi/templates/restapi/dashboard.html:12
 msgid ""
 "Generate and manage programmatic keys to interact with Reportary services."
-msgstr ""
+msgstr "Reportaryサービスとプログラムでやり取りするためのキーを生成し管理します。"
 
 #: restapi/templates/restapi/dashboard.html:18
 msgid "Generate New Key"
-msgstr ""
+msgstr "新しいキーを生成"
 
 #: restapi/templates/restapi/dashboard.html:25
 msgid "Total API Keys"
-msgstr ""
+msgstr "合計APIキー数"
 
 #: restapi/templates/restapi/dashboard.html:29
 msgid "Active Keys"
-msgstr ""
+msgstr "有効なキー"
 
 #: restapi/templates/restapi/dashboard.html:33
 #: restapi/templates/restapi/org_dashboard.html:36
 msgid "Requests (Last 30 Days)"
-msgstr ""
+msgstr "リクエスト数（直近30日間）"
 
 #: restapi/templates/restapi/dashboard.html:41
 msgid "My API Keys"
-msgstr ""
+msgstr "マイAPIキー"
 
 #: restapi/templates/restapi/dashboard.html:47
 msgid "Key Name / Project"
@@ -2809,57 +2814,227 @@ msgstr "公開キー"
 
 #: restapi/templates/restapi/dashboard.html:49
 msgid "Permissions/Scopes"
-msgstr ""
+msgstr "権限/スコープ"
 
 #: restapi/templates/restapi/dashboard.html:50
 #: restapi/templates/restapi/org_dashboard.html:81
 msgid "Last Used"
-msgstr ""
+msgstr "最終使用"
 
 #: restapi/templates/restapi/dashboard.html:52
 #: restapi/templates/restapi/org_dashboard.html:83
 msgid "Actions"
 msgstr "操作"
 
+#: restapi/templates/restapi/dashboard.html:75
+msgid "None"
+msgstr "なし"
+
+#: restapi/templates/restapi/dashboard.html:84
+msgid "Never"
+msgstr "無期限"
+
+#: restapi/templates/restapi/dashboard.html:89
+msgid "Active"
+msgstr "有効"
+
+#: restapi/templates/restapi/dashboard.html:91
+msgid "Expired"
+msgstr "期限切れ"
+
+#: restapi/templates/restapi/dashboard.html:93
+msgid "Revoked"
+msgstr "無効化済み"
+
+#: restapi/templates/restapi/dashboard.html:97
+msgid "Metrics"
+msgstr "メトリクス"
+
+#: restapi/templates/restapi/dashboard.html:99
+msgid "Are you sure you want to revoke this API key? This cannot be undone."
+msgstr "このAPIキーを無効化してもよろしいですか？この操作は取り消せません。"
+
+#: restapi/templates/restapi/dashboard.html:99
+msgid "Revoke"
+msgstr "無効化"
+
+#: restapi/templates/restapi/dashboard.html:101
+msgid "Are you sure you want to permanently delete this API key?"
+msgstr "このAPIキーを完全に削除してもよろしいですか？"
+
+#: restapi/templates/restapi/dashboard.html:101
+msgid "Delete"
+msgstr "削除"
+
+#: restapi/templates/restapi/dashboard.html:111
+msgid "You haven't created any API keys yet."
+msgstr "まだAPIキーが作成されていません。"
+
 #: restapi/templates/restapi/dashboard.html:126
 msgid "API Documentation & Integration Guide"
-msgstr ""
+msgstr "APIドキュメント＆統合ガイド"
+
+#: restapi/templates/restapi/dashboard.html:131
+msgid ""
+"Reportary provides a secure developer API to submit issues, pull logs, and "
+"interface with project components programmatically."
+msgstr "Reportaryは、プログラムから課題の送信、ログの取得、プロジェクトコンポーネントとの連携を行うための、安全な開発者向けAPIを提供します。"
+
+#: restapi/templates/restapi/dashboard.html:138
+msgid ""
+"All requests must authenticate using a HTTP standard Authorization header "
+"containing your public key and plaintext secret key separated by a colon:"
+msgstr "すべてのリクエストは、公開キーと平文のシークレットキーをコロンで区切った値を含む、HTTP標準のAuthorizationヘッダーを使用して認証する必要があります："
+
+#: restapi/templates/restapi/dashboard.html:152
+msgid "Create a new issue inside the project scoped to the API key."
+msgstr "APIキーのスコープ対象となるプロジェクト内に新しい課題を作成します。"
+
+#: restapi/templates/restapi/dashboard.html:155
+msgid "Request Body (JSON)"
+msgstr "リクエストボディ (JSON)"
+
+#: restapi/templates/restapi/dashboard.html:170
+msgid "Fields Reference"
+msgstr "フィールドリファレンス"
+
+#: restapi/templates/restapi/dashboard.html:174
+msgid "Field"
+msgstr "フィールド"
+
+#: restapi/templates/restapi/dashboard.html:175
+msgid "Type"
+msgstr "データ型"
+
+#: restapi/templates/restapi/dashboard.html:181
+#: restapi/templates/restapi/dashboard.html:182
+msgid "yes"
+msgstr "必須"
+
+#: restapi/templates/restapi/dashboard.html:182
+msgid "Detailed description"
+msgstr "詳細な説明"
+
+#: restapi/templates/restapi/dashboard.html:183
+#: restapi/templates/restapi/dashboard.html:184
+#: restapi/templates/restapi/dashboard.html:185
+#: restapi/templates/restapi/dashboard.html:186
+#: restapi/templates/restapi/dashboard.html:187
+#: restapi/templates/restapi/dashboard.html:188
+msgid "no"
+msgstr "任意"
+
+#: restapi/templates/restapi/dashboard.html:183
+msgid "Category slug:"
+msgstr "カテゴリのスラッグ："
+
+#: restapi/templates/restapi/dashboard.html:186
+msgid "Steps to reproduce"
+msgstr "再現手順"
+
+#: restapi/templates/restapi/dashboard.html:187
+msgid "Component UUID string"
+msgstr "コンポーネントのUUID文字列"
+
+#: restapi/templates/restapi/dashboard.html:188
+msgid "Key/value pairs for custom form fields"
+msgstr "カスタムフォームフィールドのキー/値ペア"
+
+#: restapi/templates/restapi/dashboard.html:194
+msgid "cURL Example"
+msgstr "cURLの例"
+
+#: restapi/templates/restapi/dashboard.html:209
+msgid "List the 50 most recent reports created for the scoped project."
+msgstr "対象プロジェクトで作成された直近50件のレポートを一覧表示します。"
+
+#: restapi/templates/restapi/dashboard.html:212
+msgid "Response Body (JSON Array)"
+msgstr "レスポンスボディ (JSON配列)"
 
 #: restapi/templates/restapi/dashboard.html:250
 msgid "Generate API Key"
-msgstr ""
+msgstr "APIキーの生成"
 
 #: restapi/templates/restapi/dashboard.html:251
 msgid "Create a public-secret key pair for programmatic requests."
-msgstr ""
+msgstr "プログラムによるリクエストのためのパブリック・シークレットキーのペアを作成します。"
+
+#: restapi/templates/restapi/dashboard.html:257
+msgid "Key Label/Alias"
+msgstr "キーのラベル/エイリアス"
+
+#: restapi/templates/restapi/dashboard.html:258
+msgid "e.g. Jenkins Production Server"
+msgstr "例：Jenkins本番サーバー"
+
+#: restapi/templates/restapi/dashboard.html:264
+msgid "Project Scope"
+msgstr "プロジェクトのスコープ"
+
+#: restapi/templates/restapi/dashboard.html:266
+msgid "-- Choose Project --"
+msgstr "-- プロジェクトを選択 --"
+
+#: restapi/templates/restapi/dashboard.html:273
+msgid "Expiration"
+msgstr "有効期限"
+
+#: restapi/templates/restapi/dashboard.html:275
+msgid "Never expire"
+msgstr "無期限"
+
+#: restapi/templates/restapi/dashboard.html:276
+msgid "7 Days"
+msgstr "7日間"
+
+#: restapi/templates/restapi/dashboard.html:277
+msgid "30 Days"
+msgstr "30日間"
+
+#: restapi/templates/restapi/dashboard.html:278
+msgid "90 Days"
+msgstr "90日間"
+
+#: restapi/templates/restapi/dashboard.html:279
+msgid "1 Year"
+msgstr "1年間"
+
+#: restapi/templates/restapi/dashboard.html:286
+msgid "Scopes / Permissions"
+msgstr "スコープ / 権限"
+
+#: restapi/templates/restapi/dashboard.html:312
+msgid "Generate Key"
+msgstr "キーを生成"
 
 #: restapi/templates/restapi/key_created.html:17
 msgid "API Key Generated Successfully"
-msgstr ""
+msgstr "APIキーが正常に生成されました"
 
 #: restapi/templates/restapi/key_created.html:18
 msgid "Make sure to copy your secret key now. It will never be shown again."
-msgstr ""
+msgstr "今すぐシークレットキーをコピーしてください。二度と表示されません。"
 
 #: restapi/templates/restapi/key_created.html:29
 msgid "Keep this secret key safe!"
-msgstr ""
+msgstr "このシークレットキーを安全に保管してください！"
 
 #: restapi/templates/restapi/key_created.html:30
 msgid ""
 "If you lose this key, you will have to generate a new one. We cannot "
 "retrieve or restore this key for security reasons."
-msgstr ""
+msgstr "このキーを紛失した場合、新しいキーを再生成する必要があります。セキュリティ上の理由から、キーの取得や復元はできません。"
 
 #: restapi/templates/restapi/key_created.html:80
 msgid ""
 "Pass this as Bearer <token> in the Authorization header of your HTTP request."
-msgstr ""
+msgstr "HTTPリクエストのAuthorizationヘッダーに「Bearer <token>」としてこれを指定してください。"
 
 #: restapi/templates/restapi/key_created.html:86
 msgid ""
 "Permissions are restricted to the scopes chosen during key configuration."
-msgstr ""
+msgstr "権限はキー設定時に選択されたスコープに制限されます。"
 
 #: restapi/templates/restapi/key_created.html:88
 msgid "Back to Dashboard"
@@ -2867,15 +3042,15 @@ msgstr "ダッシュボードに戻る"
 
 #: restapi/templates/restapi/key_detail.html:11
 msgid "API Keys"
-msgstr ""
+msgstr "APIキー"
 
 #: restapi/templates/restapi/key_detail.html:35
 msgid "Revoke Key"
-msgstr ""
+msgstr "キーを無効化"
 
 #: restapi/templates/restapi/key_detail.html:42
 msgid "Delete Permanently"
-msgstr ""
+msgstr "完全に削除"
 
 #: restapi/templates/restapi/org_dashboard.html:20
 msgid "Organisation API Dashboard"
@@ -2887,11 +3062,11 @@ msgstr "この組織内のすべてのプロジェクトにわたるAPI使用状
 
 #: restapi/templates/restapi/org_dashboard.html:28
 msgid "Total Org API Keys"
-msgstr ""
+msgstr "組織合計APIキー数"
 
 #: restapi/templates/restapi/org_dashboard.html:32
 msgid "Active Org Keys"
-msgstr ""
+msgstr "組織有効キー数"
 
 #: restapi/templates/restapi/org_dashboard.html:72
 msgid "All Organisation API Keys"
@@ -2899,4 +3074,5 @@ msgstr "すべての組織APIキー"
 
 #: restapi/templates/restapi/org_dashboard.html:78
 msgid "Key Owner / Label"
-msgstr ""
+msgstr "キー所有者 / ラベル"
+
