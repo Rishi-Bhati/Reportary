@@ -7,7 +7,7 @@ from django.utils.translation import gettext as _
 class ReportForm(forms.ModelForm):
     class Meta:
         model = Report
-        exclude = ['severity', 'reported_by', 'assigned_to', 'status', 'created_at', 'updated_at']
+        exclude = ['severity', 'reported_by', 'assigned_to', 'status', 'created_at', 'updated_at', 'report_type', 'custom_fields_data']
         widgets = {
             'title': forms.TextInput(attrs={
                 'class': 'shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
@@ -38,6 +38,7 @@ class ReportForm(forms.ModelForm):
         # or if the user is selecting a project themselves (from /reports/new/)
         project = kwargs.pop('project', None)
         user = kwargs.pop('user', None)
+        report_type_slug = kwargs.pop('report_type_slug', 'bug')
         super().__init__(*args, **kwargs)
         
         # Store the project as an instance variable so we can access it in clean() and save() methods
@@ -141,6 +142,13 @@ class ReportForm(forms.ModelForm):
         if not resolved_project and self.instance and self.instance.pk and getattr(self.instance, 'project', None):
             resolved_project = self.instance.project
 
+        # Determine report type slug
+        self.report_type_slug = report_type_slug
+        if self.is_bound and 'report_type' in self.data and self.data['report_type']:
+            self.report_type_slug = self.data['report_type']
+        elif self.instance and self.instance.pk and self.instance.report_type:
+            self.report_type_slug = self.instance.report_type
+
         if resolved_project:
             from beta.utils import user_has_feature
             from projects.models import ReportFormConfig
@@ -148,12 +156,32 @@ class ReportForm(forms.ModelForm):
             if user_has_feature(user, 'custom_report_forms', project=resolved_project):
                 form_config = ReportFormConfig.objects.filter(project=resolved_project).first()
                 if form_config:
-                    enabled_fields = form_config.get_enabled_fields()
+                    type_config = form_config.get_fields_for_type(self.report_type_slug)
+                    enabled_fields = type_config.get('enabled_fields', ["title", "description", "steps", "component", "frequency", "impact", "visibility"])
+                    custom_fields_schema = type_config.get('custom_fields', [])
                     
+                    # Add report_type choice field
+                    types_config = form_config.get_report_types_config()
+                    type_choices = [(slug, cfg.get('name', slug)) for slug, cfg in types_config.items()]
+                    
+                    self.fields['report_type'] = forms.ChoiceField(
+                        choices=type_choices,
+                        initial=self.report_type_slug,
+                        required=False,
+                        label=_("Report Type"),
+                        widget=forms.Select(attrs={
+                            'class': 'select select-bordered w-full focus:border-[#226ce0] bg-gray-50 focus:bg-white transition-colors',
+                            'hx-get': '/reports/ajax/get-report-type-fields/',
+                            'hx-target': '#form-fields-container',
+                            'hx-swap': 'innerHTML',
+                            'hx-include': '[name="project"], [name="project_uuid"]'
+                        })
+                    )
+
                     # Remove disabled fields
                     all_fields = list(self.fields.keys())
                     for field_name in all_fields:
-                        if field_name in ['project', 'attatchment']:
+                        if field_name in ['project', 'attatchment', 'report_type']:
                             continue
                         if field_name not in enabled_fields:
                             del self.fields[field_name]
@@ -175,23 +203,74 @@ class ReportForm(forms.ModelForm):
 
                         choices = form_config.get_frequency_choices(component=selected_component)
                         self.fields['frequency'].choices = [(c['value'], c['label']) for c in choices]
+
+                    # Inject dynamic custom fields
+                    self.custom_field_names = []
+                    for cf in custom_fields_schema:
+                        cf_name = f"custom_field_{cf['name']}"
+                        cf_label = cf['label']
+                        cf_type = cf['type']
+                        cf_required = cf.get('required', False)
+                        
+                        if cf_type == 'text':
+                            field = forms.CharField(label=cf_label, required=cf_required, widget=forms.TextInput(attrs={
+                                'class': 'input input-bordered w-full focus:border-[#226ce0] bg-gray-50 focus:bg-white transition-colors'
+                            }))
+                        elif cf_type == 'textarea':
+                            field = forms.CharField(label=cf_label, required=cf_required, widget=forms.Textarea(attrs={
+                                'rows': 4,
+                                'class': 'textarea textarea-bordered w-full focus:border-[#226ce0] bg-gray-50 focus:bg-white transition-colors'
+                            }))
+                        elif cf_type == 'checkbox':
+                            field = forms.BooleanField(label=cf_label, required=cf_required, widget=forms.CheckboxInput(attrs={
+                                'class': 'form-checkbox h-5 w-5 text-blue-600 rounded'
+                            }))
+                        elif cf_type == 'select':
+                            opts = [(opt.strip(), opt.strip()) for opt in cf.get('choices', '').split(',') if opt.strip()]
+                            field = forms.ChoiceField(label=cf_label, required=cf_required, choices=opts, widget=forms.Select(attrs={
+                                'class': 'select select-bordered w-full focus:border-[#226ce0] bg-gray-50 focus:bg-white transition-colors'
+                            }))
+                        else:
+                            field = forms.CharField(label=cf_label, required=cf_required)
+                        
+                        # Populate initial value if editing
+                        if self.instance and self.instance.pk and self.instance.custom_fields_data:
+                            initial_val = self.instance.custom_fields_data.get(cf['name'])
+                            if initial_val is not None:
+                                field.initial = initial_val
+                        
+                        self.fields[cf_name] = field
+                        self.custom_field_names.append(cf['name'])
     
     def clean(self):
         """
         Custom validation method that Django calls during form.is_valid()
-        
-        This ensures that a project is always provided:
-        - Either via the URL parameter (stored in self.project)
-        - Or via the form submission (in cleaned_data['project'])
-        
-        Without this, form submission from /reports/new/ without selecting a project
-        would pass validation but fail when trying to save (NOT NULL constraint error)
         """
         cleaned_data = super().clean()
         
         # Check if neither route provided a project
         if self.project is None and 'project' not in cleaned_data:
             raise forms.ValidationError("Project is required.")
+
+        # Collect and validate dynamic custom fields
+        custom_fields_data = {}
+        if hasattr(self, 'custom_field_names'):
+            for name in self.custom_field_names:
+                field_key = f"custom_field_{name}"
+                if field_key in cleaned_data:
+                    custom_fields_data[name] = cleaned_data[field_key]
+        self.cleaned_custom_fields = custom_fields_data
+
+        # Fallbacks for db-required fields if disabled
+        title = cleaned_data.get('title')
+        if not title:
+            cleaned_data['title'] = f"[{self.report_type_slug.upper()}] Report"
+            self.errors.pop('title', None)
+        
+        description = cleaned_data.get('description')
+        if not description:
+            cleaned_data['description'] = f"Submitted as {self.report_type_slug} report."
+            self.errors.pop('description', None)
 
         title = cleaned_data.get('title')
         project = self.project or cleaned_data.get('project')
@@ -208,18 +287,15 @@ class ReportForm(forms.ModelForm):
     def save(self, commit=True):
         """
         Custom save method that handles setting the project field securely
-        
-        Why this is important:
-        - If project came from URL (self.project is set), we use that value
-        - We ignore whatever was submitted in the form data for the project field
-        - This prevents tampering: even if someone tries to modify the form data,
-          the backend uses the URL parameter instead
         """
         instance = super().save(commit=False)
         
+        # Set report type and custom fields data
+        instance.report_type = self.report_type_slug
+        if hasattr(self, 'cleaned_custom_fields'):
+            instance.custom_fields_data = self.cleaned_custom_fields
+
         # If a project was passed from the URL, set it on the instance
-        # This ensures the report is created for the correct project
-        # regardless of what the form submission contained
         if self.project:
             instance.project = self.project
         

@@ -68,6 +68,8 @@ class Report(models.Model):
         null=True, blank=True,
         related_name='submitted_reports'
     )
+    report_type = models.CharField(max_length=50, default='bug', db_index=True)
+    custom_fields_data = models.JSONField(default=dict, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     updated_at = models.DateTimeField(auto_now=True, db_index=True)

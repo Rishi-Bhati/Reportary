@@ -654,4 +654,94 @@ class ReportAutoAssignmentAndDuplicatesTests(TestCase):
         self.assertIn('A report with this title already exists for this project.', form.non_field_errors())
 
 
+class CustomReportTypesTests(TestCase):
+    def setUp(self):
+        self.owner = User.objects.create_user(username='formowner', email='formowner@example.com', password='password')
+        self.project = Project.objects.create(title='Form Project', link='https://example.com', description='desc', owner=self.owner)
+        
+        # Enable the custom report forms feature
+        from organisations.models import Organisation
+        org = Organisation.objects.create(name='Beta Org', owner=self.owner)
+        self.project.organisation = org
+        self.project.save()
+        
+        from beta.models import BetaFeature, UserBetaEnrollment
+        self.feature, _ = BetaFeature.objects.get_or_create(
+            slug='custom_report_forms',
+            defaults={
+                'name': 'Custom Report Forms',
+                'description': 'desc',
+            }
+        )
+        enrollment = UserBetaEnrollment.objects.create(user=self.owner)
+        enrollment.features.add(self.feature)
+        
+        # Setup form config with custom fields
+        from projects.models import ReportFormConfig
+        self.form_config = ReportFormConfig.objects.create(
+            project=self.project,
+            config={
+                "default_report_type": "bug",
+                "report_types": {
+                    "bug": {
+                        "name": "Bug Report",
+                        "enabled_fields": ["title", "description"],
+                        "custom_fields": [
+                            {"name": "os_version", "label": "OS Version", "type": "text", "required": True},
+                            {"name": "is_reproducible", "label": "Reproducible?", "type": "checkbox", "required": False}
+                        ]
+                    }
+                }
+            }
+        )
+
+    def test_report_form_custom_fields_validation(self):
+        from reports.forms import ReportForm
+        
+        # Test missing required custom field
+        form_data = {
+            'title': 'New Bug',
+            'description': 'Description',
+            'report_type': 'bug',
+            'custom_field_is_reproducible': False
+        }
+        form = ReportForm(data=form_data, project=self.project, user=self.owner, report_type_slug='bug')
+        self.assertFalse(form.is_valid())
+        self.assertIn('custom_field_os_version', form.errors)
+
+        # Test validation success with correct custom fields
+        form_data_valid = {
+            'title': 'New Bug 2',
+            'description': 'Description 2',
+            'report_type': 'bug',
+            'custom_field_os_version': 'macOS 14',
+            'custom_field_is_reproducible': True
+        }
+        form_valid = ReportForm(data=form_data_valid, project=self.project, user=self.owner, report_type_slug='bug')
+        self.assertTrue(form_valid.is_valid())
+        
+        # Test save populates custom_fields_data JSON field
+        report = form_valid.save(commit=False)
+        report.reported_by = self.owner
+        report.project = self.project
+        report.save()
+        
+        self.assertEqual(report.report_type, 'bug')
+        self.assertEqual(report.custom_fields_data, {'os_version': 'macOS 14', 'is_reproducible': True})
+
+    def test_anon_report_form_custom_fields(self):
+        from public_portal.forms import AnonReportForm
+        
+        form_data = {
+            'title': 'Anon Bug',
+            'description': 'Anon Desc',
+            'report_type': 'bug',
+            'captcha_answer': 0, # mock captcha
+            'custom_field_os_version': 'Ubuntu 22.04'
+        }
+        form = AnonReportForm(data=form_data, project=self.project, expected_captcha=0, allow_attachments=False, report_type_slug='bug')
+        self.assertTrue(form.is_valid())
+        self.assertEqual(form.cleaned_custom_fields, {'os_version': 'Ubuntu 22.04', 'is_reproducible': False})
+
+
 

@@ -157,8 +157,37 @@
   "title": "Bug Report via API",
   "description": "Steps to reproduce this bug...",
   "impact": "high",
-  "frequency": "daily"
+  "frequency": "daily",
+  "report_type": "bug",
+  "custom_fields": {
+    "os_version": "Ubuntu 22.04",
+    "is_reproducible": true
+  }
 }</pre>
+                    </div>
+
+                    <div class="space-y-1">
+                        <span class="text-[10px] font-bold text-gray-400 uppercase">Fields Reference</span>
+                        <table class="w-full text-xs border border-gray-200 rounded-lg overflow-hidden">
+                            <thead class="bg-gray-100 text-gray-600 uppercase text-[10px]">
+                                <tr>
+                                    <th class="text-left px-3 py-2">Field</th>
+                                    <th class="text-left px-3 py-2">Type</th>
+                                    <th class="text-left px-3 py-2">Required</th>
+                                    <th class="text-left px-3 py-2">Description</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-100 bg-white font-mono">
+                                <tr><td class="px-3 py-1.5 text-blue-600">title</td><td class="px-3 py-1.5">string</td><td class="px-3 py-1.5 text-green-600">yes</td><td class="px-3 py-1.5 text-gray-500 font-sans">Brief summary of the issue</td></tr>
+                                <tr><td class="px-3 py-1.5 text-blue-600">description</td><td class="px-3 py-1.5">string</td><td class="px-3 py-1.5 text-green-600">yes</td><td class="px-3 py-1.5 text-gray-500 font-sans">Detailed description</td></tr>
+                                <tr><td class="px-3 py-1.5 text-blue-600">report_type</td><td class="px-3 py-1.5">string</td><td class="px-3 py-1.5 text-gray-400">no</td><td class="px-3 py-1.5 text-gray-500 font-sans">Category slug: <code>bug</code>, <code>feature</code>, <code>vulnerability</code></td></tr>
+                                <tr><td class="px-3 py-1.5 text-blue-600">impact</td><td class="px-3 py-1.5">string</td><td class="px-3 py-1.5 text-gray-400">no</td><td class="px-3 py-1.5 text-gray-500 font-sans"><code>low</code>, <code>medium</code>, <code>high</code>, <code>critical</code></td></tr>
+                                <tr><td class="px-3 py-1.5 text-blue-600">frequency</td><td class="px-3 py-1.5">string</td><td class="px-3 py-1.5 text-gray-400">no</td><td class="px-3 py-1.5 text-gray-500 font-sans"><code>once</code>, <code>daily</code>, <code>weekly</code>, <code>monthly</code></td></tr>
+                                <tr><td class="px-3 py-1.5 text-blue-600">steps</td><td class="px-3 py-1.5">string</td><td class="px-3 py-1.5 text-gray-400">no</td><td class="px-3 py-1.5 text-gray-500 font-sans">Steps to reproduce</td></tr>
+                                <tr><td class="px-3 py-1.5 text-blue-600">component</td><td class="px-3 py-1.5">string</td><td class="px-3 py-1.5 text-gray-400">no</td><td class="px-3 py-1.5 text-gray-500 font-sans">Component UUID string</td></tr>
+                                <tr><td class="px-3 py-1.5 text-blue-600">custom_fields</td><td class="px-3 py-1.5">object</td><td class="px-3 py-1.5 text-gray-400">no</td><td class="px-3 py-1.5 text-gray-500 font-sans">Key/value pairs for custom form fields</td></tr>
+                            </tbody>
+                        </table>
                     </div>
 
                     <div class="space-y-1">
@@ -166,7 +195,7 @@
                         <pre class="bg-gray-900 text-gray-100 text-xs font-mono p-3 rounded-lg overflow-x-auto">curl -X POST \
   -H "Authorization: Bearer rpk_xxx:rsk_yyy" \
   -H "Content-Type: application/json" \
-  -d '{"title": "Bug Title", "description": "Desc"}' \
+  -d '{"title": "Bug Title", "description": "Desc", "report_type": "bug", "impact": "high"}' \
   https://{{ request.get_host }}/api/v1/reports/</pre>
                     </div>
                 </div>
@@ -189,6 +218,8 @@
     "status": "open",
     "impact": "high",
     "frequency": "daily",
+    "report_type": "bug",
+    "custom_fields": {},
     "created_at": "2026-07-24T18:00:00Z"
   }
 ]</pre>

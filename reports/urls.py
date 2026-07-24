@@ -22,6 +22,7 @@ from reports.views import (
     assigned_to_me,
     needs_attention_view,
     ajax_get_frequencies,
+    ajax_get_report_type_fields,
 )
 from comments.views import add_comment
 
@@ -34,6 +35,7 @@ urlpatterns = [
     path('ajax/get-components/', get_components, name='ajax_get_components'),
     path('ajax/get-project-config/', get_project_config, name='ajax_get_project_config'),
     path('ajax/get-frequencies/', ajax_get_frequencies, name='ajax_get_frequencies'),
+    path('ajax/get-report-type-fields/', ajax_get_report_type_fields, name='ajax_get_report_type_fields'),
     path('', report_list, name='report_list'),
     path('<uuid:report_uuid>/', report_detail, name='report_detail'),
     path('<uuid:report_uuid>/reassign/', reassign_report, name='reassign_report'),

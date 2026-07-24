@@ -4,7 +4,7 @@
 {% block title %}{% trans "Configure Reporting Form" %} | {{ project.title }} | Reportary{% endblock %}
 
 {% block content %}
-<div class="max-w-4xl mx-auto space-y-6 animate-fade-in-up">
+<div class="max-w-5xl mx-auto space-y-6 animate-fade-in-up">
     <!-- Breadcrumbs -->
     <div class="text-sm breadcrumbs text-[#534b62] font-medium">
         <ul>
@@ -18,7 +18,7 @@
     <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
             <h1 class="text-2xl font-bold text-gray-900 tracking-tight">{% trans "Customise Reporting Form" %}</h1>
-            <p class="text-gray-500 text-sm mt-0.5">{% trans "Tailor the bug/issue reporting form fields and options for this project." %}</p>
+            <p class="text-gray-500 text-sm mt-0.5">{% trans "Tailor standard fields, dynamic custom fields, and report categories." %}</p>
         </div>
         <a href="{% url 'projects:project_detail' project_uuid=project.uuid %}" class="btn btn-ghost btn-sm text-gray-500 hover:text-gray-900 border border-gray-200 rounded-xl">
             {% trans "Back to Project" %}
@@ -33,61 +33,168 @@
             </svg>
             <div class="text-sm text-amber-800 leading-normal">
                 <span class="font-bold">{% trans "Form Warning:" %}</span>
-                {% trans "You have disabled important reporting fields:" %}
+                {% trans "You have disabled important reporting fields in your default configuration:" %}
                 <ul class="list-disc list-inside mt-1 font-semibold">
                     {% for f in missing_important %}
                         <li class="capitalize">{{ f }}</li>
                     {% endfor %}
                 </ul>
-                <p class="text-xs text-amber-600 mt-2">{% trans "Removing these fields might make it difficult for reporters to describe their issues effectively." %}</p>
             </div>
         </div>
     {% endif %}
 
     <!-- Main Config Form -->
-    <form method="post" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <form method="post" id="form-config-parent" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {% csrf_token %}
 
-        <!-- Left Column: Enabled Fields Checkbox list -->
-        <div class="lg:col-span-2 bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex flex-col justify-between">
-            <div>
-                <div class="px-6 py-5 border-b border-gray-50">
-                    <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wider">{% trans "Form Fields Layout" %}</h3>
-                    <p class="text-xs text-gray-400 mt-0.5">{% trans "Choose which fields to display to users filing a report." %}</p>
-                </div>
-
-                <div class="p-6 space-y-3.5">
-                    {% for field_slug in default_fields %}
-                        <label class="flex items-center gap-3.5 p-4 rounded-xl border border-gray-150 hover:border-[#226ce0]/30 hover:bg-[#226ce0]/5 cursor-pointer transition-all">
-                            <input type="checkbox" name="enabled_fields" value="{{ field_slug }}"
-                                   {% if field_slug in config.enabled_fields or not config %}checked{% endif %}
-                                   class="w-4 h-4 rounded text-[#226ce0] border-gray-300 focus:ring-[#226ce0] cursor-pointer">
-                            <div>
-                                <span class="text-sm font-semibold text-gray-900 capitalize">{{ field_slug }}</span>
-                                {% if field_slug == 'title' or field_slug == 'description' %}
-                                    <span class="ml-1.5 text-[10px] font-bold uppercase tracking-wider text-red-500">{% trans "Recommended" %}</span>
-                                {% endif %}
-                                <p class="text-xs text-gray-500 mt-0.5">
-                                    {% if field_slug == 'title' %}{% trans "Brief summary/header of the issue." %}
-                                    {% elif field_slug == 'description' %}{% trans "Detailed description of the issue." %}
-                                    {% elif field_slug == 'steps' %}{% trans "Numbered list of steps to replicate the bug." %}
-                                    {% elif field_slug == 'component' %}{% trans "Categorize which component is affected." %}
-                                    {% elif field_slug == 'frequency' %}{% trans "Select how often the issue happens." %}
-                                    {% elif field_slug == 'impact' %}{% trans "Select the impact/severity of the bug." %}
-                                    {% elif field_slug == 'visibility' %}{% trans "Control if the report is publicly visible." %}
-                                    {% endif %}
-                                </p>
-                            </div>
-                        </label>
-                    {% endfor %}
+        <!-- Left Column: Report Types Configuration -->
+        <div class="lg:col-span-2 space-y-6">
+            
+            <!-- Global Default Type selector -->
+            <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-4">
+                <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wider">{% trans "Global Default Category" %}</h3>
+                <div class="form-control w-full max-w-xs">
+                    <select name="default_report_type" id="default-report-type-selector" class="select select-bordered focus:border-[#226ce0] bg-gray-50 focus:bg-white transition-colors">
+                        {% for slug, type_cfg in report_types.items %}
+                            <option value="{{ slug }}" {% if slug == default_report_type %}selected{% endif %}>{{ type_cfg.name }}</option>
+                        {% endfor %}
+                    </select>
                 </div>
             </div>
 
-            <!-- Footer Save Changes -->
-            <div class="px-6 py-4 bg-gray-50 border-t border-gray-100 flex items-center justify-end rounded-b-2xl">
-                <button type="submit" class="btn bg-[#226ce0] hover:bg-[#1b56b3] text-white border-none rounded-xl px-6 py-2.5 shadow-md shadow-[#226ce0]/10 hover:shadow-lg transition-all text-sm font-semibold">
-                    {% trans "Save Form Layout" %}
-                </button>
+            <!-- Report Type Configuration Panels -->
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                <!-- Tabs navigation -->
+                <div class="flex border-b border-gray-250 bg-gray-50 overflow-x-auto" id="report-type-tabs">
+                    {% for slug, type_cfg in report_types.items %}
+                        <button type="button" onclick="switchReportTypeTab('{{ slug }}')" id="tab-btn-{{ slug }}"
+                                class="report-type-tab-btn px-6 py-4 font-bold text-xs uppercase tracking-wider border-b-2 transition-all shrink-0
+                                {% if forloop.first %}border-[#226ce0] text-[#226ce0] bg-white{% else %}border-transparent text-gray-500 hover:text-gray-800{% endif %}">
+                            {{ type_cfg.name }}
+                        </button>
+                    {% endfor %}
+                </div>
+
+                <!-- Active list of slugs for post parsing -->
+                <div id="slugs-list-container">
+                    {% for slug, type_cfg in report_types.items %}
+                        <input type="hidden" name="report_type_slugs" id="slug-input-{{ slug }}" value="{{ slug }}">
+                    {% endfor %}
+                </div>
+
+                <div class="p-6 space-y-6" id="report-type-configs-container">
+                    {% for slug, type_cfg in report_types.items %}
+                    <div id="config-panel-{{ slug }}" class="report-type-panel space-y-6 {% if not forloop.first %}hidden{% endif %}">
+                        
+                        <!-- Header / Name -->
+                        <div class="flex justify-between items-center gap-4 border-b border-gray-100 pb-4">
+                            <div class="form-control w-full max-w-md">
+                                <label class="label text-xs font-bold text-gray-400 uppercase tracking-wider p-0 mb-1.5">Category Name</label>
+                                <input type="text" name="report_type_name_{{ slug }}" value="{{ type_cfg.name }}" required
+                                       oninput="updateTabLabel('{{ slug }}', this.value)"
+                                       class="input input-bordered w-full focus:border-[#226ce0] bg-gray-50 focus:bg-white transition-colors">
+                            </div>
+                            <button type="button" onclick="deleteReportType('{{ slug }}')" class="btn btn-outline btn-error btn-sm rounded-xl mt-4">
+                                {% trans "Delete Category" %}
+                            </button>
+                        </div>
+
+                        <!-- Standard fields layout selection -->
+                        <div class="space-y-3">
+                            <h4 class="text-xs font-bold text-gray-700 uppercase tracking-wider">Standard Fields to Display</h4>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                {% for field_slug in default_fields %}
+                                    <label class="flex items-center gap-3 p-3 rounded-xl border border-gray-100 hover:bg-gray-50/50 cursor-pointer transition-all">
+                                        <input type="checkbox" name="enabled_fields_{{ slug }}" value="{{ field_slug }}"
+                                               {% if field_slug in type_cfg.enabled_fields %}checked{% endif %}
+                                               class="w-4 h-4 rounded text-[#226ce0] border-gray-300 focus:ring-[#226ce0] cursor-pointer">
+                                        <div>
+                                            <span class="text-xs font-bold text-gray-800 capitalize">{{ field_slug }}</span>
+                                            {% if field_slug == 'title' or field_slug == 'description' %}
+                                                <span class="ml-1 text-[8px] font-bold uppercase text-red-500">{% trans "Required" %}</span>
+                                            {% endif %}
+                                        </div>
+                                    </label>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <!-- Custom fields schema configuration -->
+                        <div class="space-y-4 pt-4 border-t border-gray-100">
+                            <div class="flex justify-between items-center gap-4">
+                                <div>
+                                    <h4 class="text-xs font-bold text-gray-700 uppercase tracking-wider">Custom Form Fields</h4>
+                                    <p class="text-xs text-gray-400 mt-0.5">Add custom textboxes, checkboxes, or selectors specific to this category.</p>
+                                </div>
+                                <button type="button" onclick="addCustomFieldRow('{{ slug }}')" class="btn btn-xs btn-outline btn-primary rounded-lg">
+                                    + Add Custom Field
+                                </button>
+                            </div>
+
+                            <div id="custom-fields-container-{{ slug }}" class="space-y-3">
+                                {% for cf in type_cfg.custom_fields %}
+                                    <div class="custom-field-row grid grid-cols-1 sm:grid-cols-12 gap-3 p-4 rounded-xl border border-gray-150 bg-gray-50/50 relative">
+                                        <div class="sm:col-span-3">
+                                            <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Field Name (ID)</label>
+                                            <input type="text" name="cf_name_{{ slug }}" value="{{ cf.name }}" placeholder="e.g. browser_name" required
+                                                   class="w-full px-3 py-1.5 text-xs border border-gray-300 rounded-lg focus:ring-1 focus:ring-[#226ce0] outline-none transition">
+                                        </div>
+                                        <div class="sm:col-span-3">
+                                            <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Field Label</label>
+                                            <input type="text" name="cf_label_{{ slug }}" value="{{ cf.label }}" placeholder="e.g. Browser/OS" required
+                                                   class="w-full px-3 py-1.5 text-xs border border-gray-300 rounded-lg focus:ring-1 focus:ring-[#226ce0] outline-none transition">
+                                        </div>
+                                        <div class="sm:col-span-2">
+                                            <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Field Type</label>
+                                            <select name="cf_type_{{ slug }}" onchange="toggleChoicesInput(this)"
+                                                    class="w-full px-2 py-1.5 text-xs border border-gray-300 rounded-lg focus:ring-1 focus:ring-[#226ce0] outline-none transition">
+                                                <option value="text" {% if cf.type == 'text' %}selected{% endif %}>Text Input</option>
+                                                <option value="textarea" {% if cf.type == 'textarea' %}selected{% endif %}>Text Area</option>
+                                                <option value="checkbox" {% if cf.type == 'checkbox' %}selected{% endif %}>Checkbox</option>
+                                                <option value="select" {% if cf.type == 'select' %}selected{% endif %}>Dropdown Select</option>
+                                            </select>
+                                        </div>
+                                        <div class="sm:col-span-3 choices-container {% if cf.type != 'select' %}hidden{% endif %}">
+                                            <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Choices (comma-separated)</label>
+                                            <input type="text" name="cf_choices_{{ slug }}" value="{{ cf.choices }}" placeholder="e.g. Chrome, Firefox, Safari"
+                                                   class="w-full px-3 py-1.5 text-xs border border-gray-300 rounded-lg focus:ring-1 focus:ring-[#226ce0] outline-none transition">
+                                        </div>
+                                        <div class="sm:col-span-1 flex flex-col items-center justify-center">
+                                            <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Required</label>
+                                            <input type="checkbox" {% if cf.required %}checked{% endif %}
+                                                   onchange="this.nextElementSibling.value = this.checked ? 'true' : 'false'"
+                                                   class="cf-required-checkbox w-4 h-4 rounded text-[#226ce0] border-gray-300 focus:ring-[#226ce0] cursor-pointer">
+                                            <input type="hidden" class="cf-required-hidden" name="cf_required_{{ slug }}_{{ forloop.counter0 }}" value="{% if cf.required %}true{% else %}false{% endif %}">
+                                        </div>
+                                        <button type="button" onclick="removeCustomFieldRow(this, '{{ slug }}')"
+                                                class="absolute top-2 right-2 text-gray-400 hover:text-red-500 transition-colors">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Add New Category -->
+                <div class="p-6 bg-gray-50 border-t border-gray-100 flex items-center justify-between gap-4">
+                    <div class="flex items-center gap-2 max-w-sm w-full">
+                        <input type="text" id="new-category-input" placeholder="e.g. Vulnerability Report"
+                               class="input input-bordered input-sm w-full focus:border-[#226ce0] bg-white transition-colors">
+                        <button type="button" onclick="createNewReportType()" class="btn btn-sm btn-primary text-white shrink-0">
+                            + Add Category
+                        </button>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-sm bg-[#226ce0] hover:bg-[#1b56b3] text-white border-none rounded-xl px-6 py-2 shadow-md transition-all text-xs font-semibold">
+                        {% trans "Save Form Layout" %}
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -120,4 +227,275 @@
         </div>
     </form>
 </div>
+
+<!-- Dynamic HTML Row Templates -->
+<template id="custom-field-row-template">
+    <div class="custom-field-row grid grid-cols-1 sm:grid-cols-12 gap-3 p-4 rounded-xl border border-gray-150 bg-gray-50/50 relative">
+        <div class="sm:col-span-3">
+            <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Field Name (ID)</label>
+            <input type="text" placeholder="e.g. browser_name" required
+                   class="cf-name-input w-full px-3 py-1.5 text-xs border border-gray-300 rounded-lg focus:ring-1 focus:ring-[#226ce0] outline-none transition">
+        </div>
+        <div class="sm:col-span-3">
+            <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Field Label</label>
+            <input type="text" placeholder="e.g. Browser/OS" required
+                   class="cf-label-input w-full px-3 py-1.5 text-xs border border-gray-300 rounded-lg focus:ring-1 focus:ring-[#226ce0] outline-none transition">
+        </div>
+        <div class="sm:col-span-2">
+            <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Field Type</label>
+            <select onchange="toggleChoicesInput(this)"
+                    class="cf-type-input w-full px-2 py-1.5 text-xs border border-gray-300 rounded-lg focus:ring-1 focus:ring-[#226ce0] outline-none transition">
+                <option value="text">Text Input</option>
+                <option value="textarea">Text Area</option>
+                <option value="checkbox">Checkbox</option>
+                <option value="select">Dropdown Select</option>
+            </select>
+        </div>
+        <div class="sm:col-span-3 choices-container hidden">
+            <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Choices (comma-separated)</label>
+            <input type="text" placeholder="e.g. Chrome, Firefox, Safari"
+                   class="cf-choices-input w-full px-3 py-1.5 text-xs border border-gray-300 rounded-lg focus:ring-1 focus:ring-[#226ce0] outline-none transition">
+        </div>
+        <div class="sm:col-span-1 flex flex-col items-center justify-center">
+            <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Required</label>
+            <input type="checkbox"
+                   onchange="this.nextElementSibling.value = this.checked ? 'true' : 'false'"
+                   class="cf-required-checkbox w-4 h-4 rounded text-[#226ce0] border-gray-300 focus:ring-[#226ce0] cursor-pointer">
+            <input type="hidden" class="cf-required-hidden" value="false">
+        </div>
+        <button type="button" class="cf-remove-btn absolute top-2 right-2 text-gray-400 hover:text-red-500 transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+        </button>
+    </div>
+</template>
+
+<template id="config-panel-template">
+    <div class="report-type-panel space-y-6 hidden">
+        <div class="flex justify-between items-center gap-4 border-b border-gray-100 pb-4">
+            <div class="form-control w-full max-w-md">
+                <label class="label text-xs font-bold text-gray-400 uppercase tracking-wider p-0 mb-1.5">Category Name</label>
+                <input type="text" required
+                       class="panel-name-input input input-bordered w-full focus:border-[#226ce0] bg-gray-50 focus:bg-white transition-colors">
+            </div>
+            <button type="button" class="panel-delete-btn btn btn-outline btn-error btn-sm rounded-xl mt-4">
+                {% trans "Delete Category" %}
+            </button>
+        </div>
+
+        <div class="space-y-3">
+            <h4 class="text-xs font-bold text-gray-700 uppercase tracking-wider">Standard Fields to Display</h4>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {% for field_slug in default_fields %}
+                    <label class="flex items-center gap-3 p-3 rounded-xl border border-gray-100 hover:bg-gray-50/50 cursor-pointer transition-all">
+                        <input type="checkbox" value="{{ field_slug }}" checked
+                               class="panel-field-checkbox w-4 h-4 rounded text-[#226ce0] border-gray-300 focus:ring-[#226ce0] cursor-pointer">
+                        <div>
+                            <span class="text-xs font-bold text-gray-800 capitalize">{{ field_slug }}</span>
+                            {% if field_slug == 'title' or field_slug == 'description' %}
+                                <span class="ml-1 text-[8px] font-bold uppercase text-red-500">{% trans "Required" %}</span>
+                            {% endif %}
+                        </div>
+                    </label>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="space-y-4 pt-4 border-t border-gray-100">
+            <div class="flex justify-between items-center gap-4">
+                <div>
+                    <h4 class="text-xs font-bold text-gray-700 uppercase tracking-wider">Custom Form Fields</h4>
+                    <p class="text-xs text-gray-400 mt-0.5">Add custom textboxes, checkboxes, or selectors specific to this category.</p>
+                </div>
+                <button type="button" class="panel-add-field-btn btn btn-xs btn-outline btn-primary rounded-lg">
+                    + Add Custom Field
+                </button>
+            </div>
+            <div class="panel-custom-fields-container space-y-3"></div>
+        </div>
+    </div>
+</template>
+
+<script>
+    let activeTab = "{{ default_report_type }}";
+
+    function switchReportTypeTab(slug) {
+        activeTab = slug;
+        
+        // Update tab buttons style
+        document.querySelectorAll('.report-type-tab-btn').forEach(btn => {
+            if (btn.id === `tab-btn-${slug}`) {
+                btn.classList.add('border-[#226ce0]', 'text-[#226ce0]', 'bg-white');
+                btn.classList.remove('border-transparent', 'text-gray-500');
+            } else {
+                btn.classList.remove('border-[#226ce0]', 'text-[#226ce0]', 'bg-white');
+                btn.classList.add('border-transparent', 'text-gray-500');
+            }
+        });
+
+        // Toggle panels visibility
+        document.querySelectorAll('.report-type-panel').forEach(panel => {
+            if (panel.id === `config-panel-${slug}`) {
+                panel.classList.remove('hidden');
+            } else {
+                panel.classList.add('hidden');
+            }
+        });
+    }
+
+    function updateTabLabel(slug, value) {
+        const tabBtn = document.getElementById(`tab-btn-${slug}`);
+        if (tabBtn) {
+            tabBtn.textContent = value || slug;
+        }
+        
+        // Update selection option in default dropdown
+        const selectOption = document.querySelector(`#default-report-type-selector option[value="${slug}"]`);
+        if (selectOption) {
+            selectOption.textContent = value || slug;
+        }
+    }
+
+    function toggleChoicesInput(selectElement) {
+        const container = selectElement.closest('.custom-field-row').querySelector('.choices-container');
+        if (selectElement.value === 'select') {
+            container.classList.remove('hidden');
+            container.querySelector('input').setAttribute('required', 'required');
+        } else {
+            container.classList.add('hidden');
+            container.querySelector('input').removeAttribute('required');
+        }
+    }
+
+    function addCustomFieldRow(slug) {
+        const container = document.getElementById(`custom-fields-container-${slug}`);
+        const template = document.getElementById('custom-field-row-template').content.cloneNode(true);
+        
+        // Set proper dynamic names
+        template.querySelector('.cf-name-input').setAttribute('name', `cf_name_${slug}`);
+        template.querySelector('.cf-label-input').setAttribute('name', `cf_label_${slug}`);
+        template.querySelector('.cf-type-input').setAttribute('name', `cf_type_${slug}`);
+        template.querySelector('.cf-choices-input').setAttribute('name', `cf_choices_${slug}`);
+        
+        const row = template.querySelector('.custom-field-row');
+        container.appendChild(row);
+        
+        reindexCustomFields(slug);
+    }
+
+    function removeCustomFieldRow(button, slug) {
+        const row = button.closest('.custom-field-row');
+        row.remove();
+        reindexCustomFields(slug);
+    }
+
+    function reindexCustomFields(slug) {
+        const container = document.getElementById(`custom-fields-container-${slug}`);
+        if (!container) return;
+        const rows = container.querySelectorAll('.custom-field-row');
+        rows.forEach((row, index) => {
+            const checkbox = row.querySelector('.cf-required-checkbox');
+            const hidden = row.querySelector('.cf-required-hidden');
+            if (checkbox && hidden) {
+                hidden.setAttribute('name', `cf_required_${slug}_${index}`);
+            }
+        });
+    }
+
+    function createNewReportType() {
+        const input = document.getElementById('new-category-input');
+        const name = input.value.trim();
+        if (!name) return;
+
+        const slug = name.toLowerCase().replace(/[^a-z0-9]/g, '_').replace(/_+/g, '_').replace(/^_+|_+$/g, '');
+        if (!slug) return;
+
+        // Check if exists
+        if (document.getElementById(`tab-btn-${slug}`)) {
+            alert('Category already exists.');
+            return;
+        }
+
+        // 1. Add tab button
+        const tabsContainer = document.getElementById('report-type-tabs');
+        const newBtn = document.createElement('button');
+        newBtn.type = 'button';
+        newBtn.id = `tab-btn-${slug}`;
+        newBtn.setAttribute('onclick', `switchReportTypeTab('${slug}')`);
+        newBtn.className = 'report-type-tab-btn px-6 py-4 font-bold text-xs uppercase tracking-wider border-b-2 border-transparent text-gray-500 hover:text-gray-800 transition-all shrink-0';
+        newBtn.textContent = name;
+        tabsContainer.appendChild(newBtn);
+
+        // 2. Add hidden slug input
+        const slugsContainer = document.getElementById('slugs-list-container');
+        const hiddenSlug = document.createElement('input');
+        hiddenSlug.type = 'hidden';
+        hiddenSlug.name = 'report_type_slugs';
+        hiddenSlug.id = `slug-input-${slug}`;
+        hiddenSlug.value = slug;
+        slugsContainer.appendChild(hiddenSlug);
+
+        // 3. Add config panel
+        const panelsContainer = document.getElementById('report-type-configs-container');
+        const template = document.getElementById('config-panel-template').content.cloneNode(true);
+        const panel = template.querySelector('.report-type-panel');
+        panel.id = `config-panel-${slug}`;
+        
+        // Configure inputs in panel
+        panel.querySelector('.panel-name-input').setAttribute('name', `report_type_name_${slug}`);
+        panel.querySelector('.panel-name-input').value = name;
+        panel.querySelector('.panel-name-input').setAttribute('oninput', `updateTabLabel('${slug}', this.value)`);
+        
+        panel.querySelectorAll('.panel-field-checkbox').forEach(cb => {
+            cb.setAttribute('name', `enabled_fields_${slug}`);
+        });
+
+        panel.querySelector('.panel-custom-fields-container').id = `custom-fields-container-${slug}`;
+        
+        panel.querySelector('.panel-add-field-btn').setAttribute('onclick', `addCustomFieldRow('${slug}')`);
+        panel.querySelector('.panel-delete-btn').setAttribute('onclick', `deleteReportType('${slug}')`);
+
+        panelsContainer.appendChild(panel);
+
+        // 4. Add option to default selector dropdown
+        const defaultSelector = document.getElementById('default-report-type-selector');
+        const newOpt = document.createElement('option');
+        newOpt.value = slug;
+        newOpt.textContent = name;
+        defaultSelector.appendChild(newOpt);
+
+        // Switch to the newly created tab
+        switchReportTypeTab(slug);
+
+        // Reset input
+        input.value = '';
+    }
+
+    function deleteReportType(slug) {
+        const tabBtn = document.getElementById(`tab-btn-${slug}`);
+        const panel = document.getElementById(`config-panel-${slug}`);
+        const hiddenSlug = document.getElementById(`slug-input-${slug}`);
+        
+        if (!tabBtn) return;
+        
+        if (confirm(`Are you sure you want to delete the category "${tabBtn.textContent.trim()}"?`)) {
+            // Remove option from default selector dropdown
+            const opt = document.querySelector(`#default-report-type-selector option[value="${slug}"]`);
+            if (opt) opt.remove();
+
+            // Remove from DOM
+            tabBtn.remove();
+            if (panel) panel.remove();
+            if (hiddenSlug) hiddenSlug.remove();
+
+            // Switch to the first available tab
+            const remainingTabs = document.querySelectorAll('.report-type-tab-btn');
+            if (remainingTabs.length > 0) {
+                const firstId = remainingTabs[0].id.replace('tab-btn-', '');
+                switchReportTypeTab(firstId);
+            }
+        }
+    }
+</script>
 {% endblock %}

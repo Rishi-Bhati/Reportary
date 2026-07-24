@@ -87,7 +87,26 @@ class ProjectTask(models.Model):
 # Default form configuration — the baseline all projects start with.
 # All standard fields are enabled by default.
 DEFAULT_FORM_CONFIG = {
-    # Which standard fields are shown on the report form (order matters for display)
+    # Default set of report types (slug -> configuration)
+    "report_types": {
+        "bug": {
+            "name": "Bug Report",
+            "enabled_fields": ["title", "description", "steps", "component", "frequency", "impact", "visibility"],
+            "custom_fields": []
+        },
+        "feature": {
+            "name": "Feature Request",
+            "enabled_fields": ["title", "description", "visibility"],
+            "custom_fields": []
+        },
+        "vulnerability": {
+            "name": "Vulnerability Report",
+            "enabled_fields": ["title", "description", "impact"],
+            "custom_fields": []
+        }
+    },
+    "default_report_type": "bug",
+    # Which standard fields are shown on the report form (legacy, kept for backward compatibility/graceful degradation)
     "enabled_fields": [
         "title",
         "description",
@@ -146,6 +165,27 @@ class ReportFormConfig(models.Model):
 
     def get_enabled_fields(self) -> list:
         return self.config.get('enabled_fields', DEFAULT_FORM_CONFIG['enabled_fields'])
+
+    def get_report_types_config(self) -> dict:
+        """Returns the dictionary of configured report types."""
+        return self.config.get('report_types', DEFAULT_FORM_CONFIG['report_types'])
+
+    def get_fields_for_type(self, type_slug: str) -> dict:
+        """
+        Returns configuration (name, enabled_fields, custom_fields) for a report type.
+        Falls back to default configurations if slug not found.
+        """
+        types = self.get_report_types_config()
+        if type_slug in types:
+            return types[type_slug]
+        defaults = DEFAULT_FORM_CONFIG['report_types']
+        if type_slug in defaults:
+            return defaults[type_slug]
+        return {
+            "name": type_slug.replace('_', ' ').title(),
+            "enabled_fields": DEFAULT_FORM_CONFIG["enabled_fields"],
+            "custom_fields": []
+        }
 
     def get_frequency_choices(self, component=None) -> list:
         """

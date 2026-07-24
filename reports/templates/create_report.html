@@ -34,146 +34,8 @@
         <form id="report-form" method="post" enctype="multipart/form-data" class="divide-y divide-gray-100" onsubmit="handleFormSubmit(event)">
             {% csrf_token %}
 
-            <div class="p-8 space-y-6">
-                {% if form.non_field_errors %}
-                <div class="alert alert-error text-xs p-3 bg-red-50 border border-red-200 text-red-800 rounded-xl space-y-1">
-                    {% for error in form.non_field_errors %}
-                    <p class="font-semibold">{{ error }}</p>
-                    {% endfor %}
-                </div>
-                {% endif %}
-
-                <!-- Title with Duplicate warnings checker -->
-                <div class="form-control w-full relative">
-                    <label class="label text-sm font-semibold text-gray-700" for="{{ form.title.id_for_label }}">{{ form.title.label }}</label>
-                    <input type="text" name="{{ form.title.name }}" id="{{ form.title.id_for_label }}"
-                        hx-get="{% url 'reports:ajax_check_duplicate' %}"
-                        hx-trigger="keyup changed delay:500ms"
-                        hx-target="#duplicate-warnings"
-                        hx-include="[name='project']"
-                        class="input input-bordered w-full focus:border-[#226ce0] bg-gray-50 focus:bg-white transition-colors"
-                        placeholder="{% trans "Brief summary of the issue" %}" required>
-                    {{ form.title.errors }}
-                    
-                    <!-- Hidden field to include project uuid in warning check if pre-selected -->
-                    {% if project %}
-                    <input type="hidden" name="project_uuid" value="{{ project.uuid }}">
-                    {% endif %}
-                    
-                    <!-- Duplicate Warnings Div -->
-                    <div id="duplicate-warnings"></div>
-                </div>
-
-                <!-- Project Selection (if no project context) -->
-                {% if not project %}
-                <div class="form-control w-full">
-                    <label class="label text-sm font-semibold text-gray-700" for="id_project">{% trans "Project" %}</label>
-                    {{ form.project }}
-                    {{ form.project.errors }}
-                </div>
-                {% else %}
-                <input type="hidden" name="project" value="{{ project.id }}">
-                {% endif %}
-
-                <!-- Component & Frequency Grid -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="form-control w-full">
-                        <label class="label text-sm font-semibold text-gray-700"
-                            for="{{ form.component.id_for_label }}">{{ form.component.label }}</label>
-                        {{ form.component }}
-                        {{ form.component.errors }}
-                    </div>
-
-                    <div class="form-control w-full">
-                        <label class="label text-sm font-semibold text-gray-700"
-                            for="{{ form.frequency.id_for_label }}">{{ form.frequency.label }}</label>
-                        {{ form.frequency }}
-                        {{ form.frequency.errors }}
-                    </div>
-                </div>
-
-                <!-- Description with Markdown Preview Tabs -->
-                <div class="form-control w-full">
-                    <div class="flex justify-between items-center mb-1">
-                        <label class="label text-sm font-semibold text-gray-700 p-0" for="{{ form.description.id_for_label }}">{{ form.description.label }}</label>
-                        <div class="tabs tabs-boxed bg-gray-100 p-0.5 rounded-lg text-xs" style="width: fit-content;">
-                            <button type="button" onclick="toggleMarkdownTab('write', 'description')" id="tab-description-write" class="px-3 py-1 font-semibold rounded-md bg-white text-gray-900 shadow-sm transition-all">{% trans "Write" %}</button>
-                            <button type="button" onclick="toggleMarkdownTab('preview', 'description')" id="tab-description-preview" class="px-3 py-1 font-semibold rounded-md text-gray-500 hover:text-gray-900 transition-all">{% trans "Preview" %}</button>
-                        </div>
-                    </div>
-                    
-                    <div id="container-description-write">
-                        <textarea name="{{ form.description.name }}" id="{{ form.description.id_for_label }}" rows="5"
-                            class="textarea textarea-bordered w-full focus:border-[#226ce0] bg-gray-50 focus:bg-white transition-colors text-base"
-                            placeholder="{% trans "Detailed explanation..." %}"></textarea>
-                    </div>
-                    <div id="container-description-preview" class="hidden min-h-[130px] p-4 bg-gray-50 border border-gray-200 rounded-xl prose max-w-none text-sm text-gray-800">
-                        <em class="text-gray-400">{% trans "Nothing to preview" %}</em>
-                    </div>
-                    {{ form.description.errors }}
-                </div>
-
-                <!-- Steps to Reproduce with Markdown Preview Tabs -->
-                <div class="form-control w-full">
-                    <div class="flex justify-between items-center mb-1">
-                        <label class="label text-sm font-semibold text-gray-700 p-0" for="{{ form.steps.id_for_label }}">{{ form.steps.label }}</label>
-                        <div class="tabs tabs-boxed bg-gray-100 p-0.5 rounded-lg text-xs" style="width: fit-content;">
-                            <button type="button" onclick="toggleMarkdownTab('write', 'steps')" id="tab-steps-write" class="px-3 py-1 font-semibold rounded-md bg-white text-gray-900 shadow-sm transition-all">{% trans "Write" %}</button>
-                            <button type="button" onclick="toggleMarkdownTab('preview', 'steps')" id="tab-steps-preview" class="px-3 py-1 font-semibold rounded-md text-gray-500 hover:text-gray-900 transition-all">{% trans "Preview" %}</button>
-                        </div>
-                    </div>
-                    
-                    <div id="container-steps-write">
-                        <textarea name="{{ form.steps.name }}" id="{{ form.steps.id_for_label }}" rows="5"
-                            class="textarea textarea-bordered w-full focus:border-[#226ce0] bg-gray-50 focus:bg-white transition-colors text-base font-mono text-sm"
-                            placeholder="{% trans "1. Go to...\n2. Click on..." %}"></textarea>
-                    </div>
-                    <div id="container-steps-preview" class="hidden min-h-[130px] p-4 bg-gray-50 border border-gray-200 rounded-xl prose max-w-none text-sm text-gray-800">
-                        <em class="text-gray-400">{% trans "Nothing to preview" %}</em>
-                    </div>
-                    {{ form.steps.errors }}
-                </div>
-
-                <!-- Impact & Attachments -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="form-control w-full">
-                        <label class="label text-sm font-semibold text-gray-700" for="{{ form.impact.id_for_label }}">{{ form.impact.label }}</label>
-                        {{ form.impact }}
-                        {{ form.impact.errors }}
-                    </div>
-
-                    <!-- Modular Drag and Drop Attachment Partial -->
-                    {% include "reports/partials/drag_drop_uploader.html" %}
-                </div>
-
-                <!-- Visibility & Anonymity -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6">
-                    <!-- Visibility -->
-                    <div class="flex items-start gap-3">
-                        <div class="flex items-center h-5 pt-0.5">
-                            {{ form.visibility }}
-                        </div>
-                        <div class="text-sm">
-                            <label for="{{ form.visibility.id_for_label }}" class="font-semibold text-gray-900 cursor-pointer block leading-none">{{ form.visibility.label }}</label>
-                            <p class="text-xs text-gray-500 mt-1.5 leading-normal">{% trans "Display this report to the public or restrict it to project members only." %}</p>
-                        </div>
-                        {{ form.visibility.errors }}
-                    </div>
-
-                    {% if anon_reporting_allowed %}
-                    <!-- Stay Anonymous -->
-                    <div class="flex items-start gap-3">
-                        <div class="flex items-center h-5 pt-0.5">
-                            {{ form.is_anonymous }}
-                        </div>
-                        <div class="text-sm">
-                            <label for="{{ form.is_anonymous.id_for_label }}" class="font-semibold text-gray-900 cursor-pointer block leading-none">{% trans "Report Anonymously" %}</label>
-                            <p class="text-xs text-gray-500 mt-1.5 leading-normal">{% trans "Hide your user details on this report. Only project owners will see it." %}</p>
-                        </div>
-                        {{ form.is_anonymous.errors }}
-                    </div>
-                    {% endif %}
-                </div>
+            <div class="p-8 space-y-6" id="form-fields-container">
+                {% include "reports/partials/report_fields_partial.html" %}
             </div>
 
             <!-- Submit Button -->
@@ -193,65 +55,17 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const projectSelect = document.getElementById('id_project');
-        const componentSelectId = '{{ form.component.id_for_label }}';
-        const componentSelect = document.getElementById(componentSelectId);
-        const componentsUrl = "{% url 'reports:ajax_get_components' %}";
+        const frequenciesUrl = "{% url 'reports:ajax_get_frequencies' %}";
 
-        // Helper styling
-        const selects = document.querySelectorAll('select:not(.select)');
-        selects.forEach(select => {
-            select.classList.add('select', 'select-bordered', 'w-full', 'focus:border-[#226ce0]', 'bg-gray-50', 'focus:bg-white', 'transition-colors');
+        // Listen for changes in component select dynamically (event delegation)
+        document.getElementById('form-fields-container').addEventListener('change', function(e) {
+            if (e.target && e.target.name === 'component') {
+                updateFrequencies(e.target.value);
+            }
         });
 
-        // Trigger check duplicate logic inclusion
-        const titleInput = document.getElementById('{{ form.title.id_for_label }}');
-        if (titleInput && projectSelect) {
-            titleInput.addEventListener('keyup', function() {
-                // HTMX include project dropdown automatically if exists
-            });
-        }
-
-        if (projectSelect) {
-            projectSelect.addEventListener('change', function () {
-                const projectId = this.value;
-
-                // Clear component options
-                componentSelect.innerHTML = '<option value="">---------</option>';
-
-                if (projectId) {
-                    fetch(`${componentsUrl}?project_id=${projectId}`)
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.length > 0) {
-                                data.forEach(function (component) {
-                                    const option = new Option(component.name, component.id);
-                                    componentSelect.add(option);
-                                });
-                                componentSelect.disabled = false;
-                            } else {
-                                componentSelect.disabled = true;
-                            }
-                        });
-                    // Load default frequencies of new project
-                    updateFrequencies("");
-                } else {
-                    componentSelect.disabled = true;
-                    if (frequencySelect) {
-                        frequencySelect.innerHTML = '<option value="">---------</option>';
-                    }
-                }
-            });
-
-            // Trigger change on load if a project is already selected
-            if (projectSelect.value) {
-                projectSelect.dispatchEvent(new Event('change'));
-            }
-        }
-
-        const frequenciesUrl = "{% url 'reports:ajax_get_frequencies' %}";
-        const frequencySelect = document.getElementById('{{ form.frequency.id_for_label }}');
-
         function updateFrequencies(componentId) {
+            const frequencySelect = document.querySelector('[name="frequency"]');
             if (!frequencySelect) return;
             
             let urlParams = `component_id=${componentId}`;
@@ -281,14 +95,14 @@
                 });
         }
 
-        if (componentSelect) {
-            componentSelect.addEventListener('change', function() {
-                updateFrequencies(this.value);
+        if (projectSelect) {
+            projectSelect.addEventListener('change', function () {
+                const projectId = this.value;
+                if (projectId) {
+                    // Load report fields block dynamically via HTMX
+                    htmx.ajax('GET', `/reports/ajax/get-report-type-fields/?project=${projectId}`, {target: '#form-fields-container'});
+                }
             });
-            // Trigger on load if component is preselected
-            if (componentSelect.value) {
-                updateFrequencies(componentSelect.value);
-            }
         }
     });
 
@@ -298,7 +112,7 @@
         const previewContainer = document.getElementById(`container-${field}-preview`);
         const writeBtn = document.getElementById(`tab-${field}-write`);
         const previewBtn = document.getElementById(`tab-${field}-preview`);
-        const textarea = document.getElementById(field === 'description' ? 'id_description' : 'id_steps');
+        const textarea = document.querySelector(`[name="${field}"]`);
 
         if (mode === 'preview') {
             writeContainer.classList.add('hidden');

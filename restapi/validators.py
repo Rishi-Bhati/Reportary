@@ -97,6 +97,20 @@ def validate_create_report(data: dict) -> dict:
         else:
             cleaned['component_uuid'] = component_uuid.strip()
 
+    try:
+        cleaned['report_type'] = _require_str(data, 'report_type', 50, required=False) or 'bug'
+    except ValidationError as e:
+        errors.update(e.errors)
+
+    custom_fields = data.get('custom_fields')
+    if custom_fields is not None:
+        if not isinstance(custom_fields, dict):
+            errors['custom_fields'] = "'custom_fields' must be a JSON object (key-value pairs)."
+        else:
+            cleaned['custom_fields'] = custom_fields
+    else:
+        cleaned['custom_fields'] = {}
+
     if errors:
         raise ValidationError(errors)
 

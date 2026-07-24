@@ -8,6 +8,7 @@
     <meta name="robots" content="noindex, nofollow">
     <link rel="stylesheet" href="{% static 'css/dist/styles.css' %}">
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     {% if theme and theme.font_family %}
     <link href="https://fonts.googleapis.com/css2?family={{ theme.font_family }}&display=swap" rel="stylesheet">
     {% endif %}
@@ -195,56 +196,8 @@
                 <!-- Honeypot -->
                 <div style="display:none;aria-hidden:true;">{{ form.website }}</div>
 
-                <!-- Title -->
-                <div>
-                    <label class="portal-label">{{ form.title.label }} <span style="color:#ef4444;">*</span></label>
-                    <input type="text" name="title" value="{{ form.title.value|default_if_none:'' }}"
-                           placeholder="Brief summary of the issue" class="portal-input">
-                    {% if form.title.errors %}<p class="portal-error">{{ form.title.errors.0 }}</p>{% endif %}
-                </div>
-
-                <!-- Description -->
-                <div>
-                    <label class="portal-label">{{ form.description.label }} <span style="color:#ef4444;">*</span></label>
-                    <textarea name="description" rows="4" placeholder="Describe what happened..." class="portal-input">{{ form.description.value|default_if_none:'' }}</textarea>
-                    {% if form.description.errors %}<p class="portal-error">{{ form.description.errors.0 }}</p>{% endif %}
-                </div>
-
-                <!-- Steps -->
-                <div>
-                    <label class="portal-label">{{ form.steps.label }}</label>
-                    <textarea name="steps" rows="3" placeholder="Step 1: &#10;Step 2: ..." class="portal-input">{{ form.steps.value|default_if_none:'' }}</textarea>
-                </div>
-
-                <!-- Component / Frequency / Impact -->
-                <div class="{% if form.component.field.queryset.exists %}portal-grid-3{% else %}portal-grid-2{% endif %}">
-                    {% if form.component.field.queryset.exists %}
-                    <div>
-                        <label class="portal-label">{{ form.component.label }}</label>
-                        <select name="component" class="portal-input">
-                            <option value="">— Any component —</option>
-                            {% for comp in form.component.field.queryset %}
-                            <option value="{{ comp.pk }}" {% if form.component.value == comp.pk|stringformat:"s" %}selected{% endif %}>{{ comp.name }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    {% endif %}
-                    <div>
-                        <label class="portal-label">{{ form.frequency.label }}</label>
-                        <select name="frequency" class="portal-input">
-                            {% for val, label in form.frequency.field.choices %}
-                            <option value="{{ val }}" {% if form.frequency.value == val %}selected{% endif %}>{{ label }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div>
-                        <label class="portal-label">{{ form.impact.label }}</label>
-                        <select name="impact" class="portal-input">
-                            {% for val, label in form.impact.field.choices %}
-                            <option value="{{ val }}" {% if form.impact.value == val %}selected{% endif %}>{{ label }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
+                <div id="form-fields-container" style="display:flex;flex-direction:column;gap:1.25rem;">
+                    {% include "reports/partials/report_fields_partial.html" %}
                 </div>
 
                 <!-- Attachment & CAPTCHA Side-by-Side -->
@@ -336,40 +289,45 @@
 
     // Drag and Drop Attachment logic & Dynamic Frequencies
     document.addEventListener('DOMContentLoaded', function() {
-        const componentSelect = document.querySelector('select[name="component"]');
-        const frequencySelect = document.querySelector('select[name="frequency"]');
+        const frequenciesUrl = "{% url 'reports:ajax_get_frequencies' %}";
         
-        if (componentSelect && frequencySelect) {
-            const frequenciesUrl = "{% url 'reports:ajax_get_frequencies' %}";
-            
-            function updatePortalFrequencies(componentId) {
-                const urlParams = `component_id=${componentId}&project_uuid={{ project.uuid }}`;
-                fetch(`${frequenciesUrl}?${urlParams}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        frequencySelect.innerHTML = '';
-                        if (data.length > 0) {
-                            data.forEach(function (choice) {
-                                const option = new Option(choice.label, choice.value);
-                                frequencySelect.add(option);
-                            });
-                            frequencySelect.disabled = false;
-                        } else {
-                            const option = new Option('Once', 'once');
-                            frequencySelect.add(option);
-                            frequencySelect.disabled = true;
-                        }
-                    });
-            }
-            
-            componentSelect.addEventListener('change', function() {
-                updatePortalFrequencies(this.value);
+        // Listen for changes in component select dynamically (event delegation)
+        const container = document.getElementById('form-fields-container');
+        if (container) {
+            container.addEventListener('change', function(e) {
+                if (e.target && e.target.name === 'component') {
+                    updatePortalFrequencies(e.target.value);
+                }
             });
+        }
+        
+        function updatePortalFrequencies(componentId) {
+            const frequencySelect = document.querySelector('select[name="frequency"]');
+            if (!frequencySelect) return;
             
-            // Trigger on load if component is preselected
-            if (componentSelect.value) {
-                updatePortalFrequencies(componentSelect.value);
-            }
+            const urlParams = `component_id=${componentId}&project_uuid={{ project.uuid }}`;
+            fetch(`${frequenciesUrl}?${urlParams}`)
+                .then(response => response.json())
+                .then(data => {
+                    frequencySelect.innerHTML = '';
+                    if (data.length > 0) {
+                        data.forEach(function (choice) {
+                            const option = new Option(choice.label, choice.value);
+                            frequencySelect.add(option);
+                        });
+                        frequencySelect.disabled = false;
+                    } else {
+                        const option = new Option('Once', 'once');
+                        frequencySelect.add(option);
+                        frequencySelect.disabled = true;
+                    }
+                });
+        }
+        
+        // Trigger on load if component is preselected
+        const initialComponentSelect = document.querySelector('select[name="component"]');
+        if (initialComponentSelect && initialComponentSelect.value) {
+            updatePortalFrequencies(initialComponentSelect.value);
         }
 
         const dropzone = document.getElementById('portal-dropzone');
@@ -428,6 +386,40 @@
             }
         }
     });
+
+    // Toggle Preview Tab function
+    function toggleMarkdownTab(mode, field) {
+        const writeContainer = document.getElementById(`container-${field}-write`);
+        const previewContainer = document.getElementById(`container-${field}-preview`);
+        const writeBtn = document.getElementById(`tab-${field}-write`);
+        const previewBtn = document.getElementById(`tab-${field}-preview`);
+        const textarea = document.querySelector(`[name="${field}"]`);
+
+        if (mode === 'preview') {
+            writeContainer.classList.add('hidden');
+            previewContainer.classList.remove('hidden');
+            
+            // Toggle active classes
+            if (writeBtn) writeBtn.className = "px-3 py-1 font-semibold rounded-md text-gray-500 hover:text-gray-900 transition-all";
+            if (previewBtn) previewBtn.className = "px-3 py-1 font-semibold rounded-md bg-white text-gray-900 shadow-sm transition-all";
+
+            // Parse markdown using marked.js
+            const rawVal = textarea.value.trim();
+            if (rawVal) {
+                previewContainer.innerHTML = marked.parse(rawVal);
+            } else {
+                previewContainer.innerHTML = '<em class="text-gray-400">Nothing to preview</em>';
+            }
+        } else {
+            writeContainer.classList.remove('hidden');
+            previewContainer.classList.add('hidden');
+            
+            // Toggle active classes
+            if (writeBtn) writeBtn.className = "px-3 py-1 font-semibold rounded-md bg-white text-gray-900 shadow-sm transition-all";
+            if (previewBtn) previewBtn.className = "px-3 py-1 font-semibold rounded-md text-gray-500 hover:text-gray-900 transition-all";
+            textarea.focus();
+        }
+    }
 </script>
 
 <style>

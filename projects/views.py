@@ -542,13 +542,62 @@ def configure_report_form(request, project_uuid):
     )
     
     if request.method == "POST":
-        fields = request.POST.getlist('enabled_fields')
-        if not fields:
-            fields = DEFAULT_FORM_CONFIG['enabled_fields']
-            
         current_config = form_config.config or DEFAULT_FORM_CONFIG.copy()
-        current_config['enabled_fields'] = fields
         
+        # Parse report types
+        active_slugs = request.POST.getlist('report_type_slugs')
+        if not active_slugs:
+            active_slugs = list(current_config.get('report_types', DEFAULT_FORM_CONFIG['report_types']).keys())
+            
+        new_report_types = {}
+        for slug in active_slugs:
+            slug = slug.strip().lower().replace(' ', '_')
+            if not slug:
+                continue
+            name = request.POST.get(f'report_type_name_{slug}', slug.title())
+            enabled_fields = request.POST.getlist(f'enabled_fields_{slug}')
+            
+            # Parse custom fields for this type
+            custom_fields = []
+            cf_names = request.POST.getlist(f'cf_name_{slug}')
+            cf_labels = request.POST.getlist(f'cf_label_{slug}')
+            cf_types = request.POST.getlist(f'cf_type_{slug}')
+            cf_choices = request.POST.getlist(f'cf_choices_{slug}')
+            
+            n_fields = len(cf_names)
+            for i in range(n_fields):
+                cf_name = cf_names[i].strip().lower().replace(' ', '_')
+                if not cf_name:
+                    continue
+                cf_label = cf_labels[i].strip() or cf_name.title()
+                cf_type = cf_types[i].strip() or 'text'
+                cf_choice_str = cf_choices[i].strip() if i < len(cf_choices) else ''
+                
+                req_key = f'cf_required_{slug}_{i}'
+                cf_required = request.POST.get(req_key) == 'true'
+                
+                custom_fields.append({
+                    "name": cf_name,
+                    "label": cf_label,
+                    "type": cf_type,
+                    "choices": cf_choice_str,
+                    "required": cf_required
+                })
+                
+            new_report_types[slug] = {
+                "name": name,
+                "enabled_fields": enabled_fields,
+                "custom_fields": custom_fields
+            }
+            
+        current_config['report_types'] = new_report_types
+        current_config['default_report_type'] = request.POST.get('default_report_type', 'bug')
+        
+        # Legacy key sync
+        current_config['enabled_fields'] = new_report_types.get(
+            current_config['default_report_type'], {}
+        ).get('enabled_fields', DEFAULT_FORM_CONFIG['enabled_fields'])
+
         # Parse component overrides
         component_frequencies = {}
         for comp in project.components:
@@ -593,6 +642,8 @@ def configure_report_form(request, project_uuid):
         'components': project.components,
         'component_freq_strings': component_freq_strings,
         'default_fields': DEFAULT_FORM_CONFIG['enabled_fields'],
+        'report_types': form_config.get_report_types_config(),
+        'default_report_type': form_config.config.get('default_report_type', 'bug'),
     }
     return render(request, 'projects/configure_report_form.html', context)
 

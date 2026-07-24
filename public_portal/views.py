@@ -96,7 +96,19 @@ def portal_view(request, token: str):
 
     # GET: fresh form with new CAPTCHA
     captcha_question, _ = _generate_captcha(request, token)
-    form = AnonReportForm(project=project, allow_attachments=allow_attachments)
+    
+    # Determine default report type slug
+    report_type_slug = 'bug'
+    from projects.models import ReportFormConfig
+    form_config = ReportFormConfig.objects.filter(project=project).first()
+    if form_config:
+        report_type_slug = form_config.config.get('default_report_type', 'bug')
+    if 'type' in request.GET:
+        report_type_slug = request.GET.get('type')
+    elif 'report_type' in request.GET:
+        report_type_slug = request.GET.get('report_type')
+
+    form = AnonReportForm(project=project, allow_attachments=allow_attachments, report_type_slug=report_type_slug)
     
     # Build login URL for logged-out users to log in and report
     import urllib.parse
@@ -148,12 +160,14 @@ def _handle_portal_post(request, link, project, token, allow_attachments,
             'retry_after_minutes': (retry_after or 3600) // 60,
         }, status=429)
 
+    report_type_slug = request.POST.get('report_type', 'bug')
     form = AnonReportForm(
         request.POST,
         files=request.FILES if allow_attachments else None,
         project=project,
         expected_captcha=expected_captcha,
         allow_attachments=allow_attachments,
+        report_type_slug=report_type_slug,
     )
 
     # Honeypot check — silent discard
@@ -229,6 +243,8 @@ def _create_anonymous_report(form, project, link, ip_hash):
             submitted_via_link=link,
             visibility=True,
             status='open',
+            report_type=form.report_type_slug,
+            custom_fields_data=getattr(form, 'cleaned_custom_fields', {}),
         )
 
         # Handle optional attachment

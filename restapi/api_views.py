@@ -55,6 +55,8 @@ def _report_to_dict(report) -> dict:
         'status': report.status,
         'component': str(report.component.uuid) if report.component else None,
         'project': str(report.project.uuid),
+        'report_type': report.report_type,
+        'custom_fields': report.custom_fields_data,
         'created_at': report.created_at.isoformat(),
         'updated_at': report.updated_at.isoformat(),
     }
@@ -105,6 +107,25 @@ def _create_report(request):
                     status=404
                 )
 
+        report_type_slug = cleaned.get('report_type', 'bug')
+        custom_fields_payload = cleaned.get('custom_fields', {})
+
+        # Validate required custom fields if custom forms feature is active
+        from beta.utils import project_has_feature
+        from projects.models import ReportFormConfig
+        if project_has_feature(api_key.project, 'custom_report_forms'):
+            form_config = ReportFormConfig.objects.filter(project=api_key.project).first()
+            if form_config:
+                type_config = form_config.get_fields_for_type(report_type_slug)
+                custom_fields_schema = type_config.get('custom_fields', [])
+                for cf in custom_fields_schema:
+                    cf_name = cf['name']
+                    if cf.get('required', False) and cf_name not in custom_fields_payload:
+                        return JsonResponse(
+                            {'error': f"Custom field '{cf_name}' is required for report type '{report_type_slug}'."},
+                            status=400
+                        )
+
         if Report.objects.filter(project=api_key.project, title__iexact=cleaned['title']).exists():
             return JsonResponse(
                 {'error': "A report with this title already exists for this project."},
@@ -122,6 +143,8 @@ def _create_report(request):
             component=component,
             status='open',
             visibility=True,
+            report_type=report_type_slug,
+            custom_fields_data=custom_fields_payload,
         )
 
         # Notify project owner

@@ -87,10 +87,13 @@ class AnonReportForm(forms.Form):
         widget=forms.NumberInput(attrs={'placeholder': 'Enter the answer'})
     )
 
-    def __init__(self, *args, project=None, expected_captcha=None, allow_attachments=False, **kwargs):
+    def __init__(self, *args, project=None, expected_captcha=None, allow_attachments=False, report_type_slug=None, **kwargs):
         super().__init__(*args, **kwargs)
         self._expected_captcha = expected_captcha
         self.project = project
+        self.report_type_slug = report_type_slug or 'bug'
+        if self.is_bound and 'report_type' in self.data and self.data['report_type']:
+            self.report_type_slug = self.data['report_type']
 
         # Filter components to this project's components
         if project:
@@ -108,12 +111,32 @@ class AnonReportForm(forms.Form):
             if project_has_feature(project, 'custom_report_forms'):
                 form_config = ReportFormConfig.objects.filter(project=project).first()
                 if form_config:
-                    enabled_fields = form_config.get_enabled_fields()
+                    type_config = form_config.get_fields_for_type(self.report_type_slug)
+                    enabled_fields = type_config.get('enabled_fields', ["title", "description", "steps", "component", "frequency", "impact", "visibility"])
+                    custom_fields_schema = type_config.get('custom_fields', [])
+
+                    # Add report_type choice field
+                    types_config = form_config.get_report_types_config()
+                    type_choices = [(slug, cfg.get('name', slug)) for slug, cfg in types_config.items()]
                     
+                    self.fields['report_type'] = forms.ChoiceField(
+                        choices=type_choices,
+                        initial=self.report_type_slug,
+                        required=False,
+                        label="Report Type",
+                        widget=forms.Select(attrs={
+                            'class': 'select select-bordered w-full focus:border-[#226ce0] bg-gray-50 focus:bg-white transition-colors',
+                            'hx-get': '/reports/ajax/get-report-type-fields/?is_public=true',
+                            'hx-target': '#form-fields-container',
+                            'hx-swap': 'innerHTML',
+                            'hx-include': '[name="project"], [name="project_uuid"]'
+                        })
+                    )
+
                     # Remove disabled fields (keeping anti-spam / contact / attachment)
                     all_fields = list(self.fields.keys())
                     for field_name in all_fields:
-                        if field_name in ['captcha_answer', 'website', 'reporter_name', 'reporter_email', 'attachment']:
+                        if field_name in ['captcha_answer', 'website', 'reporter_name', 'reporter_email', 'attachment', 'report_type']:
                             continue
                         if field_name not in enabled_fields:
                             del self.fields[field_name]
@@ -133,6 +156,38 @@ class AnonReportForm(forms.Form):
 
                         choices = form_config.get_frequency_choices(component=selected_component)
                         self.fields['frequency'].choices = [(c['value'], c['label']) for c in choices]
+
+                    # Inject dynamic custom fields
+                    self.custom_field_names = []
+                    for cf in custom_fields_schema:
+                        cf_name = f"custom_field_{cf['name']}"
+                        cf_label = cf['label']
+                        cf_type = cf['type']
+                        cf_required = cf.get('required', False)
+                        
+                        if cf_type == 'text':
+                            field = forms.CharField(label=cf_label, required=cf_required, widget=forms.TextInput(attrs={
+                                'class': 'input input-bordered w-full focus:border-[#226ce0] bg-gray-50 focus:bg-white transition-colors'
+                            }))
+                        elif cf_type == 'textarea':
+                            field = forms.CharField(label=cf_label, required=cf_required, widget=forms.Textarea(attrs={
+                                'rows': 4,
+                                'class': 'textarea textarea-bordered w-full focus:border-[#226ce0] bg-gray-50 focus:bg-white transition-colors'
+                            }))
+                        elif cf_type == 'checkbox':
+                            field = forms.BooleanField(label=cf_label, required=cf_required, widget=forms.CheckboxInput(attrs={
+                                'class': 'form-checkbox h-5 w-5 text-blue-600 rounded'
+                            }))
+                        elif cf_type == 'select':
+                            opts = [(opt.strip(), opt.strip()) for opt in cf.get('choices', '').split(',') if opt.strip()]
+                            field = forms.ChoiceField(label=cf_label, required=cf_required, choices=opts, widget=forms.Select(attrs={
+                                'class': 'select select-bordered w-full focus:border-[#226ce0] bg-gray-50 focus:bg-white transition-colors'
+                            }))
+                        else:
+                            field = forms.CharField(label=cf_label, required=cf_required)
+                        
+                        self.fields[cf_name] = field
+                        self.custom_field_names.append(cf['name'])
 
     def clean_website(self):
         """Honeypot: if this field has any value, silently mark as spam."""
@@ -158,6 +213,34 @@ class AnonReportForm(forms.Form):
 
     def clean(self):
         cleaned_data = super().clean()
+
+        # Fallback report_type value if not submitted
+        report_type = cleaned_data.get('report_type')
+        if not report_type:
+            cleaned_data['report_type'] = self.report_type_slug
+        else:
+            self.report_type_slug = report_type
+
+        # Collect and validate dynamic custom fields
+        custom_fields_data = {}
+        if hasattr(self, 'custom_field_names'):
+            for name in self.custom_field_names:
+                field_key = f"custom_field_{name}"
+                if field_key in cleaned_data:
+                    custom_fields_data[name] = cleaned_data[field_key]
+        self.cleaned_custom_fields = custom_fields_data
+
+        # Fallbacks for db-required fields if disabled
+        title = cleaned_data.get('title')
+        if not title:
+            cleaned_data['title'] = f"[{self.report_type_slug.upper()}] Report"
+            self.errors.pop('title', None)
+        
+        description = cleaned_data.get('description')
+        if not description:
+            cleaned_data['description'] = f"Submitted as {self.report_type_slug} report via public portal."
+            self.errors.pop('description', None)
+
         title = cleaned_data.get('title')
         if title and self.project:
             from reports.models import Report
