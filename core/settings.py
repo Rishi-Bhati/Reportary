@@ -86,6 +86,8 @@ INSTALLED_APPS = [
     "organisations",
     "notifications",
     "public_portal.apps.PublicPortalConfig",
+    "beta",
+    "restapi",
     "core",
 ]
 
@@ -121,6 +123,7 @@ TEMPLATES = [
                 'notifications.context_processors.notification_context',
                 'core.context_processors.announcements',
                 'core.context_processors.language_context',
+                'beta.context_processors.beta_features',
             ],
         },
     },
@@ -134,6 +137,13 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 
 tmpPostgres = urlparse(os.getenv("DATABASE_URL"))
+
+# DATABASES = {
+#         'default': {
+#             'ENGINE': 'django.db.backends.sqlite3',
+#             'NAME': BASE_DIR / 'db.sqlite3',
+#         }
+#     }
 
 import sys
 if 'test' in sys.argv:
@@ -155,7 +165,7 @@ else:
         'PORT': 5432,
         'CONN_MAX_AGE': 600,  # Persistent connections for 10 minutes
         'CONN_HEALTH_CHECKS': True,  # Re-establish connection if dropped by remote host
-        # "OPTIONS": dict(parse_qsl(tmpPostgres.query)),
+        "OPTIONS": dict(parse_qsl(tmpPostgres.query)),
         "OPTIONS": {
             "sslmode": "require",
             "keepalives": 1,

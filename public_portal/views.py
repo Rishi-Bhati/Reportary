@@ -96,7 +96,19 @@ def portal_view(request, token: str):
 
     # GET: fresh form with new CAPTCHA
     captcha_question, _ = _generate_captcha(request, token)
-    form = AnonReportForm(project=project, allow_attachments=allow_attachments)
+    
+    # Determine default report type slug
+    report_type_slug = 'bug'
+    from projects.models import ReportFormConfig
+    form_config = ReportFormConfig.objects.filter(project=project).first()
+    if form_config:
+        report_type_slug = form_config.config.get('default_report_type', 'bug')
+    if 'type' in request.GET:
+        report_type_slug = request.GET.get('type')
+    elif 'report_type' in request.GET:
+        report_type_slug = request.GET.get('report_type')
+
+    form = AnonReportForm(project=project, allow_attachments=allow_attachments, report_type_slug=report_type_slug)
     
     # Build login URL for logged-out users to log in and report
     import urllib.parse
@@ -106,6 +118,17 @@ def portal_view(request, token: str):
     encoded_next = urllib.parse.quote(f"{report_new_url}?from_public_link=true")
     login_url = f"{login_url_base}?next={encoded_next}"
 
+    # Fetch theme details if beta is enabled
+    theme = None
+    sanitized_css = ""
+    from beta.utils import project_has_feature
+    if project_has_feature(project, 'portal_custom_styling'):
+        from public_portal.models import PortalTheme
+        from public_portal.css_sanitizer import sanitize_and_scope_css
+        theme = PortalTheme.objects.filter(project=project).first()
+        if theme and theme.custom_css:
+            sanitized_css = sanitize_and_scope_css(theme.custom_css)
+
     return render(request, 'public_portal/portal.html', {
         'form': form,
         'link': link,
@@ -114,6 +137,8 @@ def portal_view(request, token: str):
         'captcha_question': captcha_question,
         'token': token,
         'login_url': login_url,
+        'theme': theme,
+        'sanitized_css': sanitized_css,
     })
 
 
@@ -135,12 +160,14 @@ def _handle_portal_post(request, link, project, token, allow_attachments,
             'retry_after_minutes': (retry_after or 3600) // 60,
         }, status=429)
 
+    report_type_slug = request.POST.get('report_type', 'bug')
     form = AnonReportForm(
         request.POST,
         files=request.FILES if allow_attachments else None,
         project=project,
         expected_captcha=expected_captcha,
         allow_attachments=allow_attachments,
+        report_type_slug=report_type_slug,
     )
 
     # Honeypot check — silent discard
@@ -162,6 +189,17 @@ def _handle_portal_post(request, link, project, token, allow_attachments,
             logger.exception("Error creating anonymous report: %s", e)
             form.add_error(None, "An unexpected error occurred. Please try again.")
 
+    # Fetch theme details if beta is enabled
+    theme = None
+    sanitized_css = ""
+    from beta.utils import project_has_feature
+    if project_has_feature(project, 'portal_custom_styling'):
+        from public_portal.models import PortalTheme
+        from public_portal.css_sanitizer import sanitize_and_scope_css
+        theme = PortalTheme.objects.filter(project=project).first()
+        if theme and theme.custom_css:
+            sanitized_css = sanitize_and_scope_css(theme.custom_css)
+
     # Re-generate CAPTCHA for retry
     captcha_question, _ = _generate_captcha(request, token)
     return render(request, 'public_portal/portal.html', {
@@ -171,6 +209,8 @@ def _handle_portal_post(request, link, project, token, allow_attachments,
         'project_name': project_display_name,
         'captcha_question': captcha_question,
         'token': token,
+        'theme': theme,
+        'sanitized_css': sanitized_css,
     })
 
 
@@ -203,6 +243,8 @@ def _create_anonymous_report(form, project, link, ip_hash):
             submitted_via_link=link,
             visibility=True,
             status='open',
+            report_type=form.report_type_slug,
+            custom_fields_data=getattr(form, 'cleaned_custom_fields', {}),
         )
 
         # Handle optional attachment
@@ -375,4 +417,45 @@ def htmx_toggle_anon_attachments(request, project_uuid):
         'project': project,
         'link': link,
         'is_owner': True,
+    })
+
+
+@login_required
+def configure_portal_theme(request, project_uuid):
+    """View to configure custom portal styling (colors, font, custom CSS)."""
+    from beta.utils import user_has_feature
+    from projects.models import Project
+    from public_portal.models import PortalTheme
+    import rules.views as rules
+    from django.http import HttpResponseForbidden
+
+    project = get_object_or_404(Project, uuid=project_uuid)
+    if not rules.can_manage_public_links(request.user, project):
+        return HttpResponseForbidden("You don't have permission to manage this project's portal settings.")
+
+    if not user_has_feature(request.user, 'portal_custom_styling', project=project):
+        messages.warning(request, "Portal Custom Styling feature requires Beta Program enrollment.")
+        return redirect('projects:project_detail', project_uuid=project.uuid)
+
+    theme, created = PortalTheme.objects.get_or_create(project=project)
+
+    if request.method == "POST":
+        theme.primary_color = request.POST.get('primary_color', '#6366f1').strip()
+        theme.background_color = request.POST.get('background_color', '#0f0f1a').strip()
+        theme.card_background = request.POST.get('card_background', '#1a1a2e').strip()
+        theme.text_color = request.POST.get('text_color', '#e2e8f0').strip()
+        theme.accent_color = request.POST.get('accent_color', '#818cf8').strip()
+        theme.font_family = request.POST.get('font_family', 'Inter').strip()
+        theme.border_radius = request.POST.get('border_radius', '12px').strip()
+        theme.custom_css = request.POST.get('custom_css', '').strip()
+        theme.custom_logo_url = request.POST.get('custom_logo_url', '').strip() or None
+        theme.custom_heading = request.POST.get('custom_heading', '').strip() or None
+        
+        theme.save()
+        messages.success(request, "Portal theme saved successfully.")
+        return redirect('public_portal:configure_theme', project_uuid=project.uuid)
+
+    return render(request, 'public_portal/configure_theme.html', {
+        'project': project,
+        'theme': theme,
     })

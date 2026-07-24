@@ -39,6 +39,7 @@ urlpatterns = [
     # Global search
     path('search/', core_views.global_search, name='global_search'),
     path('search/glimpse/', core_views.global_search_glimpse, name='global_search_glimpse'),
+    path('announcements/<int:announcement_id>/dismiss/', core_views.dismiss_announcement, name='dismiss_announcement'),
 
     
     # URLs for the landing page, login, and signup
@@ -68,6 +69,13 @@ urlpatterns = [
     # We add a namespace 'comments' here.
     # This was the fix for the NoReverseMatch error, which occurred because Django couldn't find the namespaced URL 'comments:add_comment'.
     path('comments/', include('comments.urls', namespace='comments')),
+
+    # Beta Program URLs
+    path('beta/', include('beta.urls', namespace='beta')),
+
+    # REST API dashboard and API endpoints
+    path('api/', include('restapi.urls', namespace='restapi')),
+    path('api/v1/', include('restapi.api_urls', namespace='api_v1')),
 
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
 ]

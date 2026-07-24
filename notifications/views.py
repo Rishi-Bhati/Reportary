@@ -33,6 +33,24 @@ def notification_center(request):
     else:
         notifications = all_notifications
 
+    # Fetch site announcements
+    from core.models import Announcement
+    now = timezone.now()
+    active_announcements = Announcement.objects.filter(is_active=True).filter(
+        expires_at__isnull=True
+    ) | Announcement.objects.filter(is_active=True, expires_at__gt=now)
+    active_announcements = active_announcements.distinct()
+
+    undismissed_announcements = active_announcements.exclude(dismissals__user=user)
+    announcements_count = undismissed_announcements.count()
+
+    announcements_list = []
+    if active_tab == 'announcements':
+        announcements_list = list(active_announcements.order_by('-created_at'))
+        dismissed_ids = set(user.announcement_dismissals.values_list('announcement_id', flat=True))
+        for ann in announcements_list:
+            ann.is_dismissed = ann.id in dismissed_ids
+
     # 4. Auto-mark informational/non-actionable notifications as read on opening this page
     mark_informational_as_read(user)
 
@@ -42,6 +60,8 @@ def notification_center(request):
         'unread_count': all_notifications.filter(is_read=False).count(),
         'invites_count': all_notifications.filter(requires_action=True, is_read=False).count(),
         'all_count': all_notifications.count(),
+        'announcements_count': announcements_count,
+        'announcements_list': announcements_list,
     }
     return render(request, "notifications/notification_center.html", context)
 

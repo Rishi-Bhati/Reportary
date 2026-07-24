@@ -1,5 +1,6 @@
 from django.utils import timezone
 from django.utils.translation import get_language
+from django.db.models import Q
 
 
 def language_context(request):
@@ -12,15 +13,17 @@ def announcements(request):
     try:
         from core.models import Announcement
         now = timezone.now()
-        active_announcements = Announcement.objects.filter(
+
+        # Single query using Q objects avoids union issues with .exclude()
+        qs = Announcement.objects.filter(
             is_active=True
         ).filter(
-            # Either no expiry set, or expiry hasn't passed yet
-            expires_at__isnull=True
-        ) | Announcement.objects.filter(
-            is_active=True,
-            expires_at__gt=now
+            Q(expires_at__isnull=True) | Q(expires_at__gt=now)
         )
-        return {'site_announcements': active_announcements.distinct()}
+
+        if request.user.is_authenticated:
+            qs = qs.exclude(dismissals__user=request.user)
+
+        return {'site_announcements': qs}
     except Exception:
         return {'site_announcements': []}

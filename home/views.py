@@ -43,6 +43,26 @@ def nota_page(request):
     }
     return render(request, "home/nota.html", context)
 
+@login_required
+def settings_page(request):
+    """Renders the settings page showing profile overview, beta enrollment, and danger zone."""
+    from beta.models import BetaFeature, UserBetaEnrollment
+    user = request.user
+    
+    # Check if enrolled
+    enrollment = UserBetaEnrollment.objects.filter(user=user).first()
+    is_enrolled = enrollment is not None
+    
+    # Fetch beta features (those that are is_enrollable=True and status='beta')
+    beta_features = BetaFeature.objects.filter(is_enrollable=True, status='beta')
+    
+    context = {
+        'user': user,
+        'is_enrolled': is_enrolled,
+        'beta_features_list': beta_features,
+    }
+    return render(request, "home/settings.html", context)
+
 def landing_page(request):
     """
     Renders the main landing page.

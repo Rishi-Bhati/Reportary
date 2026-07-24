@@ -1,4 +1,4 @@
-{% load static %}
+{% load static %}{% load i18n %}
 {% with full_url=request.scheme|add:"://"|add:request.get_host|add:link.get_absolute_url %}
 <div id="public-link-panel" class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
     <div class="px-6 py-4 border-b border-gray-100 bg-[#f8f6fa]/30 flex items-center justify-between">
@@ -202,8 +202,27 @@
         </div>
         {% endif %}
 
+        <!-- Beta Styling & Form customization options -->
+        {% if beta_features.custom_report_forms or beta_features.portal_custom_styling %}
+        <div class="pt-3 border-t border-gray-100 space-y-2">
+            <p class="text-xs font-bold text-gray-500 uppercase tracking-wider">Beta Portal Customization</p>
+            <div class="flex flex-wrap gap-2">
+                {% if beta_features.custom_report_forms %}
+                    <a href="{% url 'projects:configure_report_form' project_uuid=project.uuid %}" class="btn btn-xs bg-[#226ce0]/10 hover:bg-[#226ce0]/20 text-[#226ce0] border-none rounded-lg font-bold">
+                        {% trans "Configure Fields" %}
+                    </a>
+                {% endif %}
+                {% if beta_features.portal_custom_styling %}
+                    <a href="{% url 'public_portal:configure_theme' project_uuid=project.uuid %}" class="btn btn-xs bg-[#226ce0]/10 hover:bg-[#226ce0]/20 text-[#226ce0] border-none rounded-lg font-bold">
+                        {% trans "portal Theme & CSS" %}
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+
         <!-- Regenerate link button -->
-        <div class="pt-1 border-t border-gray-100">
+        <div class="pt-3 border-t border-gray-100">
             <form
                 hx-post="{% url 'projects:portal_regenerate_link' project_uuid=project.uuid %}"
                 hx-target="#public-link-panel"

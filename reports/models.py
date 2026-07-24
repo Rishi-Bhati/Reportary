@@ -68,6 +68,8 @@ class Report(models.Model):
         null=True, blank=True,
         related_name='submitted_reports'
     )
+    report_type = models.CharField(max_length=50, default='bug', db_index=True)
+    custom_fields_data = models.JSONField(default=dict, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     updated_at = models.DateTimeField(auto_now=True, db_index=True)
@@ -80,6 +82,18 @@ class Report(models.Model):
 
     def __str__(self):
         return self.title
+
+    def save(self, *args, **kwargs):
+        # Auto-assignment logic on creation:
+        # If the project has exactly 1 member, auto-assign to that member.
+        # Otherwise, keep it unassigned (None).
+        if not self.pk and not self.assigned_to:
+            members = self.project.get_project_members()
+            if len(members) == 1:
+                self.assigned_to = list(members)[0]
+            else:
+                self.assigned_to = None
+        super().save(*args, **kwargs)
 
     @property
     def safe_attatchment_size(self):

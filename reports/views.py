@@ -264,7 +264,16 @@ def create_report(request, project_uuid=None):
                 except Project.DoesNotExist:
                     pass
 
-        form = ReportForm(request.POST, request.FILES, project=project, user=request.user)
+        # Determine report type slug
+        report_type_slug = 'bug'
+        if project:
+            from projects.models import ReportFormConfig
+            form_config = ReportFormConfig.objects.filter(project=project).first()
+            if form_config:
+                report_type_slug = form_config.config.get('default_report_type', 'bug')
+        report_type_slug = request.POST.get('report_type', report_type_slug)
+
+        form = ReportForm(request.POST, request.FILES, project=project, user=request.user, report_type_slug=report_type_slug)
         files = request.FILES.getlist('attachments')
 
         # Backend validations for multiple attachments
@@ -292,7 +301,6 @@ def create_report(request, project_uuid=None):
                     anon_allowed, _ = anon_reporting_allowed(project)
                 if not project or not anon_allowed:
                     report.is_anonymous = False
-                report.assigned_to = report.project.owner
                 report.save()
 
                 # Save multiple attachments
@@ -324,13 +332,39 @@ def create_report(request, project_uuid=None):
 
             return redirect('projects:reports:report_detail', project_uuid=report.project.uuid, report_uuid=report.uuid)
     else:
-        form = ReportForm(project=project, user=request.user)
+        # Determine default report type slug
+        report_type_slug = 'bug'
+        if project:
+            from projects.models import ReportFormConfig
+            form_config = ReportFormConfig.objects.filter(project=project).first()
+            if form_config:
+                report_type_slug = form_config.config.get('default_report_type', 'bug')
+        if 'type' in request.GET:
+            report_type_slug = request.GET.get('type')
+        elif 'report_type' in request.GET:
+            report_type_slug = request.GET.get('report_type')
+
+        form = ReportForm(project=project, user=request.user, report_type_slug=report_type_slug)
         
+    # Build report type choices for the template (fallback selector for non-beta users)
+    from projects.models import ReportFormConfig, DEFAULT_FORM_CONFIG
+    report_type_choices = None
+    if project and not hasattr(form.fields.get('report_type'), 'choices'):
+        # No dynamic field injected — provide fallback choices from config or defaults
+        form_config = ReportFormConfig.objects.filter(project=project).first()
+        if form_config:
+            types_cfg = form_config.get_report_types_config()
+        else:
+            types_cfg = DEFAULT_FORM_CONFIG['report_types']
+        report_type_choices = [(slug, cfg.get('name', slug)) for slug, cfg in types_cfg.items()]
+
     return render(request, 'create_report.html', {
         'form': form,
         'project': project,
         'is_public_reporter': is_public_reporter,
-        'anon_reporting_allowed': anon_allowed
+        'anon_reporting_allowed': anon_allowed,
+        'report_type_choices': report_type_choices,
+        'selected_report_type': report_type_slug,
     })
 
 
@@ -577,7 +611,7 @@ def edit_report(request, report_uuid, project_uuid=None):
         return HttpResponseForbidden("You do not have permission to edit this report.")
     
     if request.method == 'POST':
-        form = ReportForm(request.POST, request.FILES, instance=report, project=project, user=request.user)
+        form = ReportForm(request.POST, request.FILES, instance=report, project=project, user=request.user, report_type_slug=report.report_type)
         files = request.FILES.getlist('attachments')
 
         # Backend validations for multiple attachments
@@ -608,7 +642,7 @@ def edit_report(request, report_uuid, project_uuid=None):
             messages.success(request, "Report updated successfully.")
             return redirect('projects:reports:report_detail', project_uuid=project.uuid, report_uuid=report.uuid)
     else:
-        form = ReportForm(instance=report, project=project, user=request.user)
+        form = ReportForm(instance=report, project=project, user=request.user, report_type_slug=report.report_type)
         
     return render(request, 'edit_report.html', {
         'form': form,
@@ -789,3 +823,98 @@ def delete_saved_search(request, search_id):
         saved_search.delete()
         messages.success(request, "Saved search deleted.")
     return redirect(request.META.get('HTTP_REFERER', 'global_search'))
+
+
+def ajax_get_frequencies(request):
+    """AJAX endpoint to return custom or default frequencies for a component/project."""
+    project_id = request.GET.get('project_id')
+    project_uuid = request.GET.get('project_uuid')
+    component_id = request.GET.get('component_id')
+    
+    project = None
+    if project_uuid:
+        try:
+            project = Project.objects.get(uuid=project_uuid)
+        except Project.DoesNotExist:
+            pass
+    elif project_id:
+        try:
+            project = Project.objects.get(id=project_id)
+        except Project.DoesNotExist:
+            pass
+            
+    if not project:
+        return JsonResponse([], safe=False)
+        
+    # Check project accessibility (public links are accessible without login)
+    if not rules.can_access_project(request.user, project):
+        public_link = getattr(project, 'public_link', None)
+        if not (public_link and public_link.is_active and project.public_reporting_enabled):
+            return JsonResponse([], safe=False)
+            
+    from projects.models import ReportFormConfig, DEFAULT_FORM_CONFIG
+    
+    form_config = ReportFormConfig.objects.filter(project=project).first()
+    
+    component = None
+    if component_id:
+        try:
+            component = Component.objects.get(id=component_id, project=project)
+        except Component.DoesNotExist:
+            pass
+            
+    if form_config:
+        choices = form_config.get_frequency_choices(component=component)
+    else:
+        choices = DEFAULT_FORM_CONFIG['frequency_choices']
+        
+    return JsonResponse(choices, safe=False)
+
+
+def ajax_get_report_type_fields(request):
+    """AJAX endpoint that returns the HTML partial of form fields for a selected report type."""
+    project_id = request.GET.get('project') or request.GET.get('project_id')
+    project_uuid = request.GET.get('project_uuid')
+    report_type_slug = request.GET.get('report_type') or request.GET.get('type', 'bug')
+    is_public = request.GET.get('is_public') == 'true'
+
+    project = None
+    if project_uuid:
+        try:
+            project = Project.objects.get(uuid=project_uuid)
+        except Project.DoesNotExist:
+            pass
+    elif project_id:
+        try:
+            if '-' in str(project_id): # uuid check
+                project = Project.objects.get(uuid=project_id)
+            else:
+                project = Project.objects.get(id=project_id)
+        except (Project.DoesNotExist, ValueError):
+            pass
+
+    if not project:
+        return HttpResponse("Project not found", status=404)
+
+    # Instantiate the correct form passing GET data to preserve values
+    if is_public:
+        from public_portal.forms import AnonReportForm
+        form = AnonReportForm(request.GET or None, project=project, expected_captcha=0, allow_attachments=project.allow_attachments, report_type_slug=report_type_slug)
+    else:
+        form = ReportForm(request.GET or None, project=project, user=request.user, report_type_slug=report_type_slug)
+
+    # Build fallback report type choices if not injected by beta feature
+    from projects.models import ReportFormConfig, DEFAULT_FORM_CONFIG
+    report_type_choices = None
+    if not form.fields.get('report_type'):
+        form_config = ReportFormConfig.objects.filter(project=project).first()
+        types_cfg = form_config.get_report_types_config() if form_config else DEFAULT_FORM_CONFIG['report_types']
+        report_type_choices = [(slug, cfg.get('name', slug)) for slug, cfg in types_cfg.items()]
+
+    context = {
+        'form': form,
+        'project': project,
+        'report_type_choices': report_type_choices,
+        'selected_report_type': report_type_slug,
+    }
+    return render(request, 'reports/partials/report_fields_partial.html', context)

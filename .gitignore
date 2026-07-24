@@ -212,3 +212,6 @@ __marimo__/
 media/
 
 Reportary_email_serivce/
+
+# Static files
+staticfiles/

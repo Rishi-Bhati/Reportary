@@ -27,3 +27,15 @@ class Announcement(models.Model):
 
     def __str__(self):
         return f"[{self.get_level_display()}] {self.title}"
+
+
+class AnnouncementDismissal(models.Model):
+    user = models.ForeignKey('accounts.User', on_delete=models.CASCADE, related_name='announcement_dismissals')
+    announcement = models.ForeignKey(Announcement, on_delete=models.CASCADE, related_name='dismissals')
+    dismissed_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'announcement')
+
+    def __str__(self):
+        return f"{self.user.username} dismissed {self.announcement.title}"

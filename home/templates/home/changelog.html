@@ -21,13 +21,71 @@
 
     <div class="space-y-6">
 
+        <!-- ── v1.1.0-beta.1 ─────────────────────────────────────── -->
+        <div class="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm">
+            <!-- Release Header -->
+            <div class="flex items-center gap-3 px-6 py-4 border-b border-gray-100 bg-[#226ce0]/5">
+                <span class="text-xs font-bold text-white bg-[#226ce0] px-3 py-1 rounded-full tracking-wide">v1.1.0-beta.1</span>
+                <span class="text-xs text-gray-500 font-medium">{% trans "July 2026 · Beta Program, Scoped REST API, & Dynamic Custom Forms" %}</span>
+                <span class="ml-auto text-xs text-[#226ce0] font-semibold">{% trans "Latest" %}</span>
+            </div>
+            <!-- Items -->
+            <div class="divide-y divide-gray-50">
+
+                <div class="px-6 py-5">
+                    <div class="flex flex-wrap gap-1.5 mb-1.5">
+                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">{% trans "New" %}</span>
+                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-purple-50 text-purple-700 border border-purple-200">{% trans "Beta Program" %}</span>
+                    </div>
+                    <h3 class="text-sm font-bold text-gray-900 mb-1">{% trans "Unified Beta Program & Feature Flag Engine" %}</h3>
+                    <p class="text-xs text-gray-500 leading-relaxed">
+                        {% trans "Opt-in to experimental features per user or organisation from settings. Includes a bottom-right version badge indicator and centralized feature gates." %}
+                    </p>
+                </div>
+
+                <div class="px-6 py-5">
+                    <div class="flex flex-wrap gap-1.5 mb-1.5">
+                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">{% trans "New" %}</span>
+                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">{% trans "Developer API" %}</span>
+                    </div>
+                    <h3 class="text-sm font-bold text-gray-900 mb-1">{% trans "Scoped REST API Engine & Developer Dashboard" %}</h3>
+                    <p class="text-xs text-gray-500 leading-relaxed">
+                        {% trans "Generate scoped API keys with fine-grained CRUD permissions, PBKDF2 hashing, usage metrics tracking, and an interactive in-dashboard API documentation section." %}
+                    </p>
+                </div>
+
+                <div class="px-6 py-5">
+                    <div class="flex flex-wrap gap-1.5 mb-1.5">
+                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">{% trans "New" %}</span>
+                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200">{% trans "Form Builder" %}</span>
+                    </div>
+                    <h3 class="text-sm font-bold text-gray-900 mb-1">{% trans "Customizable Report Types & Dynamic Custom Fields" %}</h3>
+                    <p class="text-xs text-gray-500 leading-relaxed">
+                        {% trans "Project owners can configure report categories (Bugs, Features, Vulnerabilities), customize standard field visibility, add dynamic custom fields (text, textareas, checkboxes, select menus), and enjoy live HTMX field swapping." %}
+                    </p>
+                </div>
+
+                <div class="px-6 py-5">
+                    <div class="flex flex-wrap gap-1.5 mb-1.5">
+                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">{% trans "Upgrade" %}</span>
+                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-gray-50 text-gray-700 border border-gray-200">{% trans "UX & System" %}</span>
+                    </div>
+                    <h3 class="text-sm font-bold text-gray-900 mb-1">{% trans "Smart Auto-Assignment & Announcement Center" %}</h3>
+                    <p class="text-xs text-gray-500 leading-relaxed">
+                        {% trans "New reports are automatically assigned when a project has exactly 1 member. Site announcements persist user dismissals across sessions and are organized under a dedicated tab in the Notification Center." %}
+                    </p>
+                </div>
+
+            </div>
+        </div>
+
         <!-- ── v1.0.0 Stable ─────────────────────────────────────── -->
         <div class="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm">
             <!-- Release Header -->
             <div class="flex items-center gap-3 px-6 py-4 border-b border-gray-100 bg-[#226ce0]/5">
                 <span class="text-xs font-bold text-white bg-emerald-600 px-3 py-1 rounded-full tracking-wide">v1.0.0 Stable</span>
                 <span class="text-xs text-gray-500 font-medium">{% trans "July 2026 · Production Stable Release" %}</span>
-                <span class="ml-auto text-xs text-[#226ce0] font-semibold">{% trans "Latest" %}</span>
+                <span class="ml-auto text-xs text-gray-400 font-medium">{% trans "Released" %}</span>
             </div>
             <!-- Items -->
             <div class="divide-y divide-gray-50">

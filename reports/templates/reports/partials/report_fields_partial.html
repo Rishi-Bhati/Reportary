@@ -1,0 +1,214 @@
+{% load i18n %}
+
+{% if form.non_field_errors %}
+<div class="alert alert-error text-xs p-3 bg-red-50 border border-red-200 text-red-800 rounded-xl space-y-1">
+    {% for error in form.non_field_errors %}
+    <p class="font-semibold">{{ error }}</p>
+    {% endfor %}
+</div>
+{% endif %}
+
+<!-- Report Type / Category Selector -->
+{% if form.report_type %}
+<div class="form-control w-full">
+    <label class="label text-sm font-semibold text-gray-700" for="{{ form.report_type.id_for_label }}">
+        {{ form.report_type.label|default:"Report Type" }}
+    </label>
+    {{ form.report_type }}
+    {{ form.report_type.errors }}
+</div>
+{% elif report_type_choices %}
+<div class="form-control w-full">
+    <label class="label text-sm font-semibold text-gray-700" for="id_report_type">{% trans "Report Type" %}</label>
+    <select name="report_type" id="id_report_type"
+        hx-get="{% url 'reports:ajax_get_report_type_fields' %}"
+        hx-target="#form-fields-container"
+        hx-swap="innerHTML"
+        hx-include="[name='project'], [name='project_uuid']"
+        class="select select-bordered w-full focus:border-[#226ce0] bg-gray-50 focus:bg-white transition-colors">
+        {% for slug, label in report_type_choices %}
+        <option value="{{ slug }}" {% if slug == selected_report_type %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+    </select>
+</div>
+{% endif %}
+
+
+{% if form.title %}
+<div class="form-control w-full relative">
+    <label class="label text-sm font-semibold text-gray-700" for="{{ form.title.id_for_label }}">{{ form.title.label }}</label>
+    <input type="text" name="{{ form.title.name }}" id="{{ form.title.id_for_label }}"
+        value="{{ form.title.value|default:'' }}"
+        {% if request.user.is_authenticated %}
+        hx-get="{% url 'reports:ajax_check_duplicate' %}"
+        hx-trigger="keyup changed delay:500ms"
+        hx-target="#duplicate-warnings"
+        hx-include="[name='project']"
+        {% endif %}
+        class="input input-bordered w-full focus:border-[#226ce0] bg-gray-50 focus:bg-white transition-colors"
+        placeholder="{% trans "Brief summary of the issue" %}" required>
+    {{ form.title.errors }}
+    
+    <!-- Hidden field to include project uuid in warning check if pre-selected -->
+    {% if project %}
+    <input type="hidden" name="project_uuid" value="{{ project.uuid }}">
+    {% endif %}
+    
+    <!-- Duplicate Warnings Div -->
+    <div id="duplicate-warnings"></div>
+</div>
+{% endif %}
+
+<!-- Project Selection (if no project context) -->
+{% if not project and form.project %}
+<div class="form-control w-full">
+    <label class="label text-sm font-semibold text-gray-700" for="id_project">{% trans "Project" %}</label>
+    {{ form.project }}
+    {{ form.project.errors }}
+</div>
+{% elif project %}
+<input type="hidden" name="project" value="{{ project.id }}">
+{% endif %}
+
+<!-- Component & Frequency Grid -->
+{% if form.component or form.frequency %}
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    {% if form.component %}
+    <div class="form-control w-full">
+        <label class="label text-sm font-semibold text-gray-700"
+            for="{{ form.component.id_for_label }}">{{ form.component.label }}</label>
+        {{ form.component }}
+        {{ form.component.errors }}
+    </div>
+    {% endif %}
+
+    {% if form.frequency %}
+    <div class="form-control w-full">
+        <label class="label text-sm font-semibold text-gray-700"
+            for="{{ form.frequency.id_for_label }}">{{ form.frequency.label }}</label>
+        {{ form.frequency }}
+        {{ form.frequency.errors }}
+    </div>
+    {% endif %}
+</div>
+{% endif %}
+
+<!-- Description with Markdown Preview Tabs -->
+{% if form.description %}
+<div class="form-control w-full">
+    <div class="flex justify-between items-center mb-1">
+        <label class="label text-sm font-semibold text-gray-700 p-0" for="{{ form.description.id_for_label }}">{{ form.description.label }}</label>
+        <div class="tabs tabs-boxed bg-gray-100 p-0.5 rounded-lg text-xs" style="width: fit-content;">
+            <button type="button" onclick="toggleMarkdownTab('write', 'description')" id="tab-description-write" class="px-3 py-1 font-semibold rounded-md bg-white text-gray-900 shadow-sm transition-all">{% trans "Write" %}</button>
+            <button type="button" onclick="toggleMarkdownTab('preview', 'description')" id="tab-description-preview" class="px-3 py-1 font-semibold rounded-md text-gray-500 hover:text-gray-900 transition-all">{% trans "Preview" %}</button>
+        </div>
+    </div>
+    
+    <div id="container-description-write">
+        <textarea name="{{ form.description.name }}" id="{{ form.description.id_for_label }}" rows="5"
+            class="textarea textarea-bordered w-full focus:border-[#226ce0] bg-gray-50 focus:bg-white transition-colors text-base"
+            placeholder="{% trans "Detailed explanation..." %}">{{ form.description.value|default:'' }}</textarea>
+    </div>
+    <div id="container-description-preview" class="hidden min-h-[130px] p-4 bg-gray-50 border border-gray-200 rounded-xl prose max-w-none text-sm text-gray-800">
+        <em class="text-gray-400">{% trans "Nothing to preview" %}</em>
+    </div>
+    {{ form.description.errors }}
+</div>
+{% endif %}
+
+<!-- Steps to Reproduce with Markdown Preview Tabs -->
+{% if form.steps %}
+<div class="form-control w-full">
+    <div class="flex justify-between items-center mb-1">
+        <label class="label text-sm font-semibold text-gray-700 p-0" for="{{ form.steps.id_for_label }}">{{ form.steps.label }}</label>
+        <div class="tabs tabs-boxed bg-gray-100 p-0.5 rounded-lg text-xs" style="width: fit-content;">
+            <button type="button" onclick="toggleMarkdownTab('write', 'steps')" id="tab-steps-write" class="px-3 py-1 font-semibold rounded-md bg-white text-gray-900 shadow-sm transition-all">{% trans "Write" %}</button>
+            <button type="button" onclick="toggleMarkdownTab('preview', 'steps')" id="tab-steps-preview" class="px-3 py-1 font-semibold rounded-md text-gray-500 hover:text-gray-900 transition-all">{% trans "Preview" %}</button>
+        </div>
+    </div>
+    
+    <div id="container-steps-write">
+        <textarea name="{{ form.steps.name }}" id="{{ form.steps.id_for_label }}" rows="5"
+            class="textarea textarea-bordered w-full focus:border-[#226ce0] bg-gray-50 focus:bg-white transition-colors text-base font-mono text-sm"
+            placeholder="{% trans "1. Go to...\n2. Click on..." %}">{{ form.steps.value|default:'' }}</textarea>
+    </div>
+    <div id="container-steps-preview" class="hidden min-h-[130px] p-4 bg-gray-50 border border-gray-200 rounded-xl prose max-w-none text-sm text-gray-800">
+        <em class="text-gray-400">{% trans "Nothing to preview" %}</em>
+    </div>
+    {{ form.steps.errors }}
+</div>
+{% endif %}
+
+<!-- Impact & Attachments -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    {% if form.impact %}
+    <div class="form-control w-full">
+        <label class="label text-sm font-semibold text-gray-700" for="{{ form.impact.id_for_label }}">{{ form.impact.label }}</label>
+        {{ form.impact }}
+        {{ form.impact.errors }}
+    </div>
+    {% endif %}
+
+    <!-- Modular Drag and Drop Attachment Partial (always include if exists) -->
+    {% if form.attatchment or form.attachment %}
+        {% include "reports/partials/drag_drop_uploader.html" %}
+    {% endif %}
+</div>
+
+<!-- Dynamic Custom Fields -->
+{% for field in form %}
+    {% if field.name|slice:":13" == "custom_field_" %}
+        {% if field.field.widget.input_type == "checkbox" %}
+            <div class="flex items-start gap-3 py-2">
+                <div class="flex items-center h-5 pt-0.5">
+                    {{ field }}
+                </div>
+                <div class="text-sm">
+                    <label for="{{ field.id_for_label }}" class="font-semibold text-gray-900 cursor-pointer block leading-none">{{ field.label }}</label>
+                </div>
+                {% if field.errors %}
+                <div class="text-error text-xs mt-1">{{ field.errors }}</div>
+                {% endif %}
+            </div>
+        {% else %}
+            <div class="form-control w-full">
+                <label class="label text-sm font-semibold text-gray-700" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                <div class="text-error text-xs mt-1">{{ field.errors }}</div>
+                {% endif %}
+            </div>
+        {% endif %}
+    {% endif %}
+{% endfor %}
+
+<!-- Visibility & Anonymity -->
+{% if form.visibility or form.is_anonymous %}
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6">
+    {% if form.visibility %}
+    <div class="flex items-start gap-3">
+        <div class="flex items-center h-5 pt-0.5">
+            {{ form.visibility }}
+        </div>
+        <div class="text-sm">
+            <label for="{{ form.visibility.id_for_label }}" class="font-semibold text-gray-900 cursor-pointer block leading-none">{{ form.visibility.label }}</label>
+            <p class="text-xs text-gray-500 mt-1.5 leading-normal">{% trans "Display this report to the public or restrict it to project members only." %}</p>
+        </div>
+        {{ form.visibility.errors }}
+    </div>
+    {% endif %}
+
+    {% if form.is_anonymous %}
+    <div class="flex items-start gap-3">
+        <div class="flex items-center h-5 pt-0.5">
+            {{ form.is_anonymous }}
+        </div>
+        <div class="text-sm">
+            <label for="{{ form.is_anonymous.id_for_label }}" class="font-semibold text-gray-900 cursor-pointer block leading-none">{% trans "Report Anonymously" %}</label>
+            <p class="text-xs text-gray-500 mt-1.5 leading-normal">{% trans "Hide your user details on this report. Only project owners will see it." %}</p>
+        </div>
+        {{ form.is_anonymous.errors }}
+    </div>
+    {% endif %}
+</div>
+{% endif %}

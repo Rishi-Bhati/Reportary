@@ -19,6 +19,10 @@ def _send_via_api(subject: str, html_body: str, to_emails: list, cc_emails: list
     Fires a single POST request to the mail API service with HMAC-SHA256 signing.
     Runs inside a background daemon thread — only plain Python types are accepted.
     """
+    import sys
+    if 'test' in sys.argv or any('test' in arg for arg in sys.argv):
+        return
+
     api_key = settings.MAIL_API_KEY
     api_secret = settings.MAIL_API_SECRET
     endpoint = settings.MAIL_API_ENDPOINT

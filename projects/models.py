@@ -59,6 +59,15 @@ class Project(models.Model):
         """Get all components related to this project"""
         return self.project_components.all()
 
+    def get_project_members(self) -> set:
+        """Returns the set of unique users who are members of this project (owner, head, collaborators)."""
+        members = {self.owner}
+        if self.project_head:
+            members.add(self.project_head)
+        for col in self.collaborators.all():
+            members.add(col)
+        return members
+
 
 class ProjectTask(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='tasks')
@@ -68,3 +77,129 @@ class ProjectTask(models.Model):
 
     def __str__(self):
         return self.title
+
+
+# ─── Beta Feature: Custom Report Forms ───────────────────────────────────────
+# Slug: 'custom_report_forms'
+# This model lives here in the projects app. Beta is just a gate, not a container.
+# When this feature graduates to stable, it stays here — nothing needs to move.
+
+# Default form configuration — the baseline all projects start with.
+# All standard fields are enabled by default.
+DEFAULT_FORM_CONFIG = {
+    # Default set of report types (slug -> configuration)
+    "report_types": {
+        "bug": {
+            "name": "Bug Report",
+            "enabled_fields": ["title", "description", "steps", "component", "frequency", "impact", "visibility"],
+            "custom_fields": []
+        },
+        "feature": {
+            "name": "Feature Request",
+            "enabled_fields": ["title", "description", "visibility"],
+            "custom_fields": []
+        },
+        "vulnerability": {
+            "name": "Vulnerability Report",
+            "enabled_fields": ["title", "description", "impact"],
+            "custom_fields": []
+        }
+    },
+    "default_report_type": "bug",
+    # Which standard fields are shown on the report form (legacy, kept for backward compatibility/graceful degradation)
+    "enabled_fields": [
+        "title",
+        "description",
+        "steps",
+        "component",
+        "frequency",
+        "impact",
+        "visibility",
+    ],
+    # Global default frequency choices (used when no per-component override exists)
+    "frequency_choices": [
+        {"value": "once", "label": "Once"},
+        {"value": "daily", "label": "Daily"},
+        {"value": "weekly", "label": "Weekly"},
+        {"value": "monthly", "label": "Monthly"},
+    ],
+    # Per-component frequency overrides: {"<component_uuid_str>": [{"value":..., "label":...}]}
+    # If a component is not listed here, the global frequency_choices are used.
+    "component_frequencies": {},
+}
+
+# Fields that are considered important — removing these shows a warning in the UI.
+IMPORTANT_FORM_FIELDS = {"title", "description"}
+
+
+class ReportFormConfig(models.Model):
+    """
+    Custom report submission form configuration for a project.
+    Beta feature slug: 'custom_report_forms'
+
+    The config JSON schema:
+    {
+        "enabled_fields": ["title", "description", ...],
+        "frequency_choices": [{"value": "once", "label": "Once"}, ...],
+        "component_frequencies": {
+            "<component_uuid>": [{"value": "daily", "label": "Daily"}, ...]
+        }
+    }
+
+    When this feature graduates to stable, only BetaFeature.status changes.
+    This model stays exactly here.
+    """
+    project = models.OneToOneField(
+        Project,
+        on_delete=models.CASCADE,
+        related_name='form_config'
+    )
+    config = models.JSONField(
+        default=dict,
+        help_text="JSON configuration for the report submission form."
+    )
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"FormConfig for {self.project.title}"
+
+    def get_enabled_fields(self) -> list:
+        return self.config.get('enabled_fields', DEFAULT_FORM_CONFIG['enabled_fields'])
+
+    def get_report_types_config(self) -> dict:
+        """Returns the dictionary of configured report types."""
+        return self.config.get('report_types', DEFAULT_FORM_CONFIG['report_types'])
+
+    def get_fields_for_type(self, type_slug: str) -> dict:
+        """
+        Returns configuration (name, enabled_fields, custom_fields) for a report type.
+        Falls back to default configurations if slug not found.
+        """
+        types = self.get_report_types_config()
+        if type_slug in types:
+            return types[type_slug]
+        defaults = DEFAULT_FORM_CONFIG['report_types']
+        if type_slug in defaults:
+            return defaults[type_slug]
+        return {
+            "name": type_slug.replace('_', ' ').title(),
+            "enabled_fields": DEFAULT_FORM_CONFIG["enabled_fields"],
+            "custom_fields": []
+        }
+
+    def get_frequency_choices(self, component=None) -> list:
+        """
+        Returns frequency choices for a given component (or global defaults).
+        component: Component instance or None.
+        """
+        if component:
+            component_overrides = self.config.get('component_frequencies', {})
+            component_uuid_str = str(component.uuid)
+            if component_uuid_str in component_overrides:
+                return component_overrides[component_uuid_str]
+        return self.config.get('frequency_choices', DEFAULT_FORM_CONFIG['frequency_choices'])
+
+    def get_missing_important_fields(self) -> list:
+        """Returns any important fields that have been removed from the config."""
+        enabled = set(self.get_enabled_fields())
+        return list(IMPORTANT_FORM_FIELDS - enabled)

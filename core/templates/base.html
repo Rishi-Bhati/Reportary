@@ -63,7 +63,10 @@
                         {% if announcement.body %}<span class="ml-1.5 opacity-80">{{ announcement.body }}</span>{% endif %}
                     </div>
                 </div>
-                <button onclick="document.getElementById('announcement-{{ announcement.pk }}').remove()" class="shrink-0 opacity-50 hover:opacity-100 font-bold px-1 focus:outline-none">&times;</button>
+                <button hx-post="{% url 'dismiss_announcement' announcement_id=announcement.pk %}"
+                        hx-swap="none"
+                        onclick="document.getElementById('announcement-{{ announcement.pk }}').remove()"
+                        class="shrink-0 opacity-50 hover:opacity-100 font-bold px-1 focus:outline-none">&times;</button>
             </div>
             {% endwith %}
             {% endfor %}
@@ -212,6 +215,15 @@
         // Expose showToast globally for use in templates
         window.showToast = showToast;
     </script>
+    <!-- Version Tag -->
+    {% if app_version %}
+    <div class="fixed bottom-4 right-4 z-50 pointer-events-none select-none">
+        <span class="px-2.5 py-1 text-[10px] font-bold tracking-wider rounded-lg bg-base-100/80 text-base-content/60 border border-[#d0bcd5]/20 backdrop-blur-md shadow-sm">
+            {{ app_version }}
+        </span>
+    </div>
+    {% endif %}
+
     {% block scripts %}{% endblock %}
 </body>
 
