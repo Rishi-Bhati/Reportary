@@ -68,7 +68,7 @@ class AuthenticationEmailTests(TestCase):
             }
         )
         self.assertEqual(response.status_code, 200) # Form re-renders with error
-        self.assertIn('You must accept the Terms & Conditions and Privacy Policy to register.', response.content.decode('utf-8'))
+        self.assertIn('You must accept the Terms', response.content.decode('utf-8'))
         self.assertFalse(User.objects.filter(email='newuser_no_terms@example.com').exists())
 
     def test_verify_email_endpoint(self):

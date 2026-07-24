@@ -131,6 +131,7 @@ def apply_project_filters_and_sorting(projects_qs, request):
     return projects_qs
 
 
+@login_required
 def projects_view(request):
     projects = Project.objects.filter(public=True).select_related('org', 'owner').annotate(num_components=Count('project_components'))
     projects = apply_project_filters_and_sorting(projects, request)
@@ -164,6 +165,7 @@ def _get_public_link(project):
     return get_or_create_link(project)
 
 
+@login_required
 def project_detail(request, project_uuid):
     user = request.user
     # C-05: Use get_object_or_404 instead of .get() to return clean 404 on invalid UUID

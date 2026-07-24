@@ -62,12 +62,12 @@ def can_change_status(user, report):
 
 
 def can_edit_report(user, report):
-    """Reporter or project manager (owner/head) can edit a report."""
+    """Only original reporter can edit a report."""
     if not user or not user.is_authenticated:
         return False
     if not user.is_email_verified:
         return False
-    return is_reporter(user, report) or is_project_manager(user, report.project)
+    return is_reporter(user, report)
 
 
 def can_delete_report(user, report):
@@ -82,6 +82,24 @@ def can_delete_report(user, report):
 
 def is_commenter(user, comment):
     return comment.commented_by == user
+
+
+def can_edit_comment(user, comment):
+    """Only original commenter can edit a comment."""
+    if not user or not user.is_authenticated:
+        return False
+    if not user.is_email_verified:
+        return False
+    return is_commenter(user, comment)
+
+
+def can_delete_comment(user, comment):
+    """Commenter or project manager (owner/head) can delete a comment."""
+    if not user or not user.is_authenticated:
+        return False
+    if not user.is_email_verified:
+        return False
+    return is_commenter(user, comment) or is_project_manager(user, comment.report.project)
 
 
 def can_see_history(user, report):

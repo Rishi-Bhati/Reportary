@@ -141,26 +141,60 @@ def send_notification_email(*, notification_type, subject, context, to_emails, c
         send_api_email(subject, html_content, [email], cc_emails=None)
 
 
-# ─── Legacy SMTP implementation (kept for future reference) ───────────────────
-#
-# from django.core.mail import EmailMultiAlternatives
-# from django.utils.html import strip_tags
-#
-# def _send_email_thread_smtp(subject, body, from_email, to_emails, cc_emails, html_content):
-#     from django.core.mail import EmailMultiAlternatives
-#     from django.db import close_old_connections
-#     try:
-#         msg = EmailMultiAlternatives(
-#             subject=subject,
-#             body=body,
-#             from_email=from_email,
-#             to=to_emails,
-#             cc=cc_emails or []
-#         )
-#         if html_content:
-#             msg.attach_alternative(html_content, "text/html")
-#         msg.send()
-#     except Exception:
-#         logger.exception("Failed to send asynchronous notification email in background thread")
-#     finally:
-#         close_old_connections()
+from django.core.mail.backends.base import BaseEmailBackend
+
+class ApiEmailBackend(BaseEmailBackend):
+    """
+    Django email backend that routes all emails (e.g. password resets)
+    through the HTTP workers email API in background threads.
+    Forces individual delivery to avoid recipient address leakage.
+    """
+    def send_messages(self, email_messages):
+        if not email_messages:
+            return 0
+
+        sent_count = 0
+        for message in email_messages:
+            html_body = None
+            if hasattr(message, 'alternatives') and message.alternatives:
+                for alt, mimetype in message.alternatives:
+                    if mimetype == 'text/html':
+                        html_body = alt
+                        break
+            if not html_body:
+                html_body = f"<div style='font-family: sans-serif; white-space: pre-wrap; line-height: 1.6;'>{message.body}</div>"
+
+            # Merge all recipients to enforce individual sends (no leakage)
+            recipients = set()
+            if message.to:
+                for r in message.to:
+                    if r:
+                        recipients.add(r.strip())
+            if message.cc:
+                for r in message.cc:
+                    if r:
+                        recipients.add(r.strip())
+            if message.bcc:
+                for r in message.bcc:
+                    if r:
+                        recipients.add(r.strip())
+
+            if not recipients:
+                continue
+
+            try:
+                for recipient in recipients:
+                    send_api_email(
+                        subject=message.subject,
+                        html_body=html_body,
+                        to_emails=[recipient],
+                        cc_emails=None
+                    )
+                sent_count += 1
+            except Exception:
+                logger.exception("Failed to send message via ApiEmailBackend")
+                if not self.fail_silently:
+                    raise
+
+        return sent_count
+

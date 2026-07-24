@@ -17,4 +17,6 @@ urlpatterns = [
     path('<uuid:report_uuid>/cancel_edit_comment/<uuid:comment_uuid>/', views.cancel_edit_comment, name='cancel_edit_comment'),
     # This URL is for toggling the visibility of a comment. Only the project owner can do this.
     path('<uuid:report_uuid>/toggle_comment_visibility/<uuid:comment_uuid>/', views.toggle_comment_visibility, name='toggle_comment_visibility'),
+    # This URL is for deleting a comment.
+    path('<uuid:report_uuid>/delete_comment/<uuid:comment_uuid>/', views.delete_comment, name='delete_comment'),
 ]

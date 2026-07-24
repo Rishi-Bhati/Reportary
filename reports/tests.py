@@ -333,19 +333,19 @@ class ReportWorkflowTests(TestCase):
             file_size=14
         )
         
-        url = reverse('projects:reports:delete_attachment', kwargs={'project_uuid': self.project.uuid, 'attachment_id': attachment.id})
+        url = reverse('projects:reports:delete_attachment', kwargs={'project_uuid': self.project.uuid, 'attachment_uuid': attachment.uuid})
         
         # Stranger (other_user) cannot delete
         self.client.force_login(self.other_user)
         resp = self.client.post(url)
         self.assertEqual(resp.status_code, 403)
-        self.assertTrue(ReportAttachment.objects.filter(id=attachment.id).exists())
+        self.assertTrue(ReportAttachment.objects.filter(uuid=attachment.uuid).exists())
         
         # Reporter (self.user) can delete
         self.client.force_login(self.user)
         resp = self.client.post(url)
         self.assertEqual(resp.status_code, 200)
-        self.assertFalse(ReportAttachment.objects.filter(id=attachment.id).exists())
+        self.assertFalse(ReportAttachment.objects.filter(uuid=attachment.uuid).exists())
 
     def test_global_search_and_filters(self):
         self.client.force_login(self.user)

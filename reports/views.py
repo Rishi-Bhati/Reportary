@@ -631,6 +631,15 @@ def delete_report(request, report_uuid, project_uuid=None):
         return HttpResponseForbidden("You do not have permission to delete this report.")
         
     if request.method == 'POST':
+        # Log details of the deleted report (requirement 1)
+        logger.info(
+            "Report deleted: UUID=%s, Title='%s', Project='%s', ReportedBy=%s, DeletedBy=%s",
+            report.uuid,
+            report.title,
+            project.title,
+            report.reported_by.email if report.reported_by else "Anonymous",
+            request.user.email
+        )
         report.delete()
         messages.success(request, "Report deleted successfully.")
         return redirect('projects:project_detail', project_uuid=project.uuid)

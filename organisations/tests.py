@@ -144,7 +144,7 @@ class OrganisationProjectAccessTests(TestCase):
         detail_url = reverse('projects:project_detail', kwargs={'project_uuid': project.uuid})
         self.client.logout()
         resp = self.client.get(detail_url)
-        self.assertEqual(resp.status_code, 403)
+        self.assertEqual(resp.status_code, 302)
 
     def test_private_org_project_hidden_from_unrelated_members(self):
         # Create another org member who is not related to the project

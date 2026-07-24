@@ -82,7 +82,10 @@ def edit_comment(request, report_uuid, comment_uuid):
     
     if not rules.can_access_project(request.user, report.project):
         return HttpResponseForbidden("You do not have permission to access this project.")
-    comment = get_object_or_404(Comment, uuid=comment_uuid, commented_by=request.user, report=report)
+    comment = get_object_or_404(Comment, uuid=comment_uuid, report=report)
+
+    if not rules.can_edit_comment(request.user, comment):
+        return HttpResponseForbidden("You do not have permission to edit this comment.")
 
     # Requirement: A hidden comment cannot be edited.
     if not comment.visibility:
@@ -148,3 +151,43 @@ def toggle_comment_visibility(request, report_uuid, comment_uuid):
     # Return the updated comment partial. HTMX will swap this into the DOM.
     # We pass project to the template context so the hide/unhide button renders correctly.
     return render(request, 'comments/partials/comment.html', {'comment': comment, 'report': report, 'project': report.project})
+
+
+@require_POST
+@login_required
+def delete_comment(request, report_uuid, comment_uuid):
+    """
+    This view handles deleting a comment.
+    Accessible by commenter or project owner/head.
+    Details of the deleted comment must be logged.
+    """
+    report = get_object_or_404(Report, uuid=report_uuid)
+    if not rules.can_access_project(request.user, report.project):
+        return HttpResponseForbidden("You do not have permission to access this project.")
+
+    comment = get_object_or_404(Comment, uuid=comment_uuid, report=report)
+
+    if not rules.can_delete_comment(request.user, comment):
+        return HttpResponseForbidden("You do not have permission to delete this comment.")
+
+    # Log details of the deleted comment in logs
+    import logging
+    logger = logging.getLogger(__name__)
+    logger.info(
+        "Comment deleted: UUID=%s, Report_UUID=%s, CommentedBy=%s, DeletedBy=%s, Content='%s'",
+        comment.uuid,
+        report.uuid,
+        comment.commented_by.email if comment.commented_by else "Anonymous",
+        request.user.email,
+        comment.text
+    )
+
+    comment.delete()
+
+    if request.headers.get('HX-Request'):
+        return HttpResponse("")
+
+    from django.contrib import messages
+    messages.success(request, "Comment deleted successfully.")
+    return redirect('reports:report_detail', report_uuid=report.uuid)
+

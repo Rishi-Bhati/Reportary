@@ -135,20 +135,19 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 tmpPostgres = urlparse(os.getenv("DATABASE_URL"))
 
-# DATABASES = {
-
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-
-#     }
-# }
-
-
-##### PRODUCTION DATABASE SETUP ##########
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
+import sys
+if 'test' in sys.argv:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
+else:
+    ##### PRODUCTION DATABASE SETUP ##########
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
         'NAME': tmpPostgres.path.replace('/', ''),
         'USER': tmpPostgres.username,
         'PASSWORD': tmpPostgres.password,
@@ -285,6 +284,9 @@ SITE_URL = os.getenv('SITE_URL', 'https://reportary.onrender.com')
 
 # Contact form submissions recipient
 CONTACT_EMAIL = os.getenv('CONTACT_EMAIL', 'support.reportary@gmail.com')
+
+EMAIL_BACKEND = 'notifications.email_service.ApiEmailBackend'
+DEFAULT_FROM_EMAIL = os.getenv('MAIL_ID', 'support.reportary@gmail.com')
 
 # ── Legacy SMTP config (kept for future reference, currently unused) ──────────
 # EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

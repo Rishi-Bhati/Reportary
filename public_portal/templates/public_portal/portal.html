@@ -162,27 +162,6 @@
                 <!-- Honeypot -->
                 <div style="display:none;aria-hidden:true;">{{ form.website }}</div>
 
-                <!-- Optional Contact -->
-                <div>
-                    <p style="font-size:0.7rem;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.07em;margin:0 0 0.75rem;">Your info (optional)</p>
-                    <div class="portal-grid-2">
-                        <div>
-                            <label class="portal-label">{{ form.reporter_name.label }}</label>
-                            <input type="text" name="reporter_name" value="{{ form.reporter_name.value|default_if_none:'' }}"
-                                   placeholder="Anonymous" autocomplete="name" class="portal-input">
-                            {% if form.reporter_name.errors %}<p class="portal-error">{{ form.reporter_name.errors.0 }}</p>{% endif %}
-                        </div>
-                        <div>
-                            <label class="portal-label">{{ form.reporter_email.label }}</label>
-                            <input type="email" name="reporter_email" value="{{ form.reporter_email.value|default_if_none:'' }}"
-                                   placeholder="Leave blank to stay anonymous" autocomplete="email" class="portal-input">
-                            {% if form.reporter_email.errors %}<p class="portal-error">{{ form.reporter_email.errors.0 }}</p>{% endif %}
-                        </div>
-                    </div>
-                </div>
-
-                <hr class="portal-divider">
-
                 <!-- Title -->
                 <div>
                     <label class="portal-label">{{ form.title.label }} <span style="color:#ef4444;">*</span></label>
@@ -194,18 +173,18 @@
                 <!-- Description -->
                 <div>
                     <label class="portal-label">{{ form.description.label }} <span style="color:#ef4444;">*</span></label>
-                    <textarea name="description" rows="5" placeholder="Describe what happened..." class="portal-input">{{ form.description.value|default_if_none:'' }}</textarea>
+                    <textarea name="description" rows="4" placeholder="Describe what happened..." class="portal-input">{{ form.description.value|default_if_none:'' }}</textarea>
                     {% if form.description.errors %}<p class="portal-error">{{ form.description.errors.0 }}</p>{% endif %}
                 </div>
 
                 <!-- Steps -->
                 <div>
                     <label class="portal-label">{{ form.steps.label }}</label>
-                    <textarea name="steps" rows="4" placeholder="Step 1: &#10;Step 2: ..." class="portal-input">{{ form.steps.value|default_if_none:'' }}</textarea>
+                    <textarea name="steps" rows="3" placeholder="Step 1: &#10;Step 2: ..." class="portal-input">{{ form.steps.value|default_if_none:'' }}</textarea>
                 </div>
 
                 <!-- Component / Frequency / Impact -->
-                <div class="portal-grid-3">
+                <div class="{% if form.component.field.queryset.exists %}portal-grid-3{% else %}portal-grid-2{% endif %}">
                     {% if form.component.field.queryset.exists %}
                     <div>
                         <label class="portal-label">{{ form.component.label }}</label>
@@ -235,43 +214,65 @@
                     </div>
                 </div>
 
-                <!-- Attachment (conditional) -->
-                {% if form.attachment %}
-                <div>
-                    <label class="portal-label">{{ form.attachment.label }}</label>
-                    <div id="portal-dropzone" class="portal-dropzone" onclick="document.getElementById('portal-file-input').click()">
-                        <svg style="width:1.75rem;height:1.75rem;color:#9ca3af;margin-bottom:0.375rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                        </svg>
-                        <span style="font-size:0.75rem;font-weight:600;color:#374151;display:block;">
-                            Drag &amp; drop a file here, or <span style="color:#226ce0;text-decoration:underline;">browse</span>
-                        </span>
-                        <span id="portal-file-help" style="font-size:0.65rem;color:#9ca3af;display:block;margin-top:0.25rem;">
-                            {{ form.attachment.help_text }}
-                        </span>
-                        <input type="file" name="attachment" id="portal-file-input" style="display:none;">
+                <!-- Attachment & CAPTCHA Side-by-Side -->
+                <div class="{% if form.attachment %}portal-grid-2{% endif %}">
+                    {% if form.attachment %}
+                    <div>
+                        <label class="portal-label">{{ form.attachment.label }}</label>
+                        <div id="portal-dropzone" class="portal-dropzone" style="padding:0.75rem 1rem;" onclick="document.getElementById('portal-file-input').click()">
+                            <svg style="width:1.25rem;height:1.25rem;color:#9ca3af;margin-bottom:0.125rem;display:inline-block;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                            </svg>
+                            <span style="font-size:0.75rem;font-weight:600;color:#374151;display:block;">
+                                Drag &amp; drop, or <span style="color:#226ce0;text-decoration:underline;">browse</span>
+                            </span>
+                            <span id="portal-file-help" style="font-size:0.65rem;color:#9ca3af;display:block;margin-top:0.125rem;">
+                                {{ form.attachment.help_text }}
+                            </span>
+                            <input type="file" name="attachment" id="portal-file-input" style="display:none;">
+                        </div>
+                        {% if form.attachment.errors %}<p class="portal-error">{{ form.attachment.errors.0 }}</p>{% endif %}
                     </div>
-                    {% if form.attachment.errors %}<p class="portal-error">{{ form.attachment.errors.0 }}</p>{% endif %}
+                    {% endif %}
+
+                    <div>
+                        <label class="portal-label" style="display:flex;align-items:center;gap:0.25rem;">
+                            <svg style="width:0.875rem;height:0.875rem;color:#9ca3af;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                            </svg>
+                            Spam check — {{ captcha_question }} <span style="color:#ef4444;">*</span>
+                        </label>
+                        <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:0.75rem;padding:0.75rem 1rem;display:flex;align-items:center;min-height:3.625rem;box-sizing:border-box;">
+                            <input type="number" name="captcha_answer" value="{{ form.captcha_answer.value|default_if_none:'' }}"
+                                   placeholder="Answer" class="portal-input" style="max-width:100%;">
+                        </div>
+                        {% if form.captcha_answer.errors %}<p class="portal-error">{{ form.captcha_answer.errors.0 }}</p>{% endif %}
+                    </div>
                 </div>
-                {% endif %}
 
                 <hr class="portal-divider">
 
-                <!-- CAPTCHA -->
-                <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:0.75rem;padding:1rem;">
-                    <label class="portal-label" style="display:flex;align-items:center;gap:0.375rem;margin-bottom:0.5rem;">
-                        <svg style="width:0.875rem;height:0.875rem;color:#9ca3af;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
-                        </svg>
-                        Spam check — {{ captcha_question }}
-                    </label>
-                    <input type="number" name="captcha_answer" value="{{ form.captcha_answer.value|default_if_none:'' }}"
-                           placeholder="Enter the answer" class="portal-input" style="max-width:12rem;">
-                    {% if form.captcha_answer.errors %}<p class="portal-error">{{ form.captcha_answer.errors.0 }}</p>{% endif %}
+                <!-- Optional Contact info at bottom -->
+                <div>
+                    <p style="font-size:0.7rem;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.07em;margin:0 0 0.75rem;">Your info (optional)</p>
+                    <div class="portal-grid-2">
+                        <div>
+                            <label class="portal-label">{{ form.reporter_name.label }}</label>
+                            <input type="text" name="reporter_name" value="{{ form.reporter_name.value|default_if_none:'' }}"
+                                   placeholder="Anonymous" autocomplete="name" class="portal-input">
+                            {% if form.reporter_name.errors %}<p class="portal-error">{{ form.reporter_name.errors.0 }}</p>{% endif %}
+                        </div>
+                        <div>
+                            <label class="portal-label">{{ form.reporter_email.label }}</label>
+                            <input type="email" name="reporter_email" value="{{ form.reporter_email.value|default_if_none:'' }}"
+                                   placeholder="Leave blank to stay anonymous" autocomplete="email" class="portal-input">
+                            {% if form.reporter_email.errors %}<p class="portal-error">{{ form.reporter_email.errors.0 }}</p>{% endif %}
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Submit -->
-                <button type="submit" class="portal-btn-primary">Submit Report</button>
+                <button type="submit" class="portal-btn-primary" style="margin-top:0.5rem;">Submit Report</button>
             </form>
         </div>
     </div>
