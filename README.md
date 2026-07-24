@@ -4,7 +4,7 @@
 
 Reportary is an open-source project management and issue tracking platform. It provides structured workflows for reporting, triaging, and resolving bugs and tasks — with strong access controls, real-time collaboration, and a clean, fast interface.
 
-> **Current release: `v1.0.0 Stable`** — Email privacy hardening, scoped access controls, and onboarding validations.
+> **Current release: `v1.1.0-beta.1`** — Beta Program framework, Scoped REST API, Customizable Report Types & Dynamic Forms, and Public Portal Custom Styling.
 
 **Live demo:** [reportary.onrender.com](https://reportary.onrender.com)
 
@@ -12,19 +12,15 @@ Reportary is an open-source project management and issue tracking platform. It p
 
 ## What it does
 
+- **Beta Program & Feature Flags** — Centralized feature gating for opt-in beta features with organization-wide and user-level enrollment controls.
+- **Scoped REST API Engine** — Generate scoped API keys (`rpk_`/`rsk_`) with granular resource permissions (`reports`, `comments`, `projects` CRUD), metrics tracking, and built-in interactive API documentation.
+- **Customizable Report Types & Dynamic Forms** — Define custom report categories per project (Bug, Feature, Vulnerability, or custom types), customize standard field visibility, and create dynamic custom fields (text, textarea, checkbox, select menus) with live HTMX reloading.
+- **Portal Custom Styling** — Full theme customization (colors, typography, rounded corners, CSS variables) for public reporting portals with safe CSS sanitization and scoping.
 - **Multilingual Support & Language Detection** — Complete English/Japanese UI support featuring location-based automatic geo-IP & device language selection, and a topbar visual globe dropdown toggle.
 - **Anonymous Reporting & Public Portals** — Standalone feedback portal links (`/p/<token>/`) with honeypot fields, math CAPTCHAs, interactive drag-and-drop file uploaders, GDPR-compliant daily IP hashing, and customizable owner controls.
-- **Issue Reporting** — Rich markdown-powered reports with severity levels, impact, reproducibility, and file attachments.
-- **Project Management** — Create public or private projects, manage collaborators, and track progress in one place.
-- **Organization Support** — Group projects under an organization with role-based membership (Owner, Project Head, Member) and inline contact details verification.
-- **3-Level Visibility** — Scope projects, reports, and comments to `Public`, `Org-Only`, or `Private`.
-- **Project Dashboard** — Per-project overview with health score, open/resolved counts, recent activity, and an interactive task checklist.
-- **Audit Logs** — Immutable history of every status change, reassignment, and update on reports and projects.
-- **Global Search** — Real-time popdown search across projects, reports, comments, and organisations as you type.
-- **Bookmarks & Watches** — Bookmark reports for quick access; watch reports to receive in-app notifications on changes.
-- **Notification Centre** — In-app notifications for assignments, comments, invitations, and status changes.
-- **Site Announcements** — Superusers can publish site-wide banners (info / warning / critical / success) with optional expiry.
-- **Account Management** — Email verification, soft-delete with 30-day reactivation window, profile management, and worldwide onboarding country picker.
+- **Issue Reporting & Triage** — Rich markdown-powered reports with severity levels, impact, reproducibility, duplicate checking, and auto-assignment to sole project members.
+- **Project & Organization Management** — Role-based access (Owner, Project Head, Collaborator), 3-level visibility (`Public`, `Org-Only`, `Private`), project dashboards, health scores, and audit logs.
+- **Notifications & Announcements** — In-app notification center with dedicated Announcements tab, persistent user dismissal tracking, and individual email dispatch.
 
 ---
 
@@ -99,15 +95,17 @@ The app will be available at `http://127.0.0.1:8000`.
 Reportary/
 ├── accounts/          # User model, auth views, profile, account deletion
 ├── audit/             # Immutable audit log model and admin
+├── beta/              # Beta feature program registry, user/org enrollment & feature gates
 ├── comments/          # Threaded comments with visibility scoping
 ├── components/        # Shared UI components and utilities
 ├── core/              # Base templates, global search, context processors, announcements
 ├── dashboard/         # Personal dashboard (assigned, reported, watching, bookmarks)
 ├── home/              # Landing page, changelog, FAQ, privacy, terms, contact
-├── notifications/     # In-app notification system
+├── notifications/     # In-app notification system & announcement tab
 ├── organisations/     # Organisation model, membership, invitations
-├── projects/          # Project model, collaborators, tasks, dashboard
-├── reports/           # Report model, create/edit/detail views, attachments
+├── projects/          # Project model, collaborators, tasks, form configuration
+├── reports/           # Report model, create/edit/detail views, custom types & fields
+├── restapi/           # Scoped API key management, JSON endpoints, metrics & docs
 ├── theme/             # TailwindCSS source (static_src/) and compiled output
 └── core/settings.py   # Django settings
 ```

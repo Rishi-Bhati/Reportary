@@ -1,3 +1,40 @@
+# Release Notes - v1.1.0-beta.1 (Beta Program Framework, Scoped REST API, & Dynamic Form Customization)
+
+**Date**: July 24, 2026
+
+## Overview
+This feature release (**v1.1.0-beta.1**) introduces the **Beta Program Framework**, **Scoped REST API Engine**, **Customizable Report Types & Dynamic Custom Fields**, and **Public Portal Theme Customization**. It also includes security hardening fixes, single-member auto-assignment logic, persistent announcement dismissal, and UI enhancements across settings and navigation.
+
+## Key Features Shipped
+
+### 🚀 Beta Program Framework (`beta` app)
+- **Centralized Feature Gating**: Implemented `user_has_feature(user, feature_slug, project)` as the single gatekeeper across views, forms, and templates.
+- **Personal & Org-Level Opt-In**: Organizations and individual users can enroll in beta features directly from their Account Settings dashboard.
+- **Version Flagging**: Displays version badge indicator (`v1.0.0 - stable` or `v1.1.0-beta.1`) in the footer based on beta enrollment status.
+
+### 🔑 Scoped REST API Engine (`restapi` app)
+- **Scoped API Keys**: Users can generate `rpk_`/`rsk_` API key pairs with fine-grained CRUD scopes (`reports.create`, `reports.read`, `comments`, `projects`).
+- **One-Time Secret Key Visibility & Hashing**: Secret keys are displayed exactly once at creation and stored securely using Django PBKDF2 hashing.
+- **Metrics & Logging**: Tracks request metrics (status codes, response times, client IP) to provide user-facing and org-level API analytics.
+- **Interactive Documentation**: Integrated an in-dashboard API reference with cURL examples and JSON payload specifications.
+
+### 📝 Customizable Report Types & Dynamic Fields (`custom_report_forms`)
+- **Per-Project Category Schemas**: Configure standard field visibility and dynamic custom fields for Bug Reports, Feature Requests, Vulnerabilities, or custom categories.
+- **Dynamic Field Types**: Supports text inputs, textareas, checkboxes, and select dropdowns with clean validation and JSON storage.
+- **Interactive Drag-and-Drop Form Builder**: Redesigned form configuration page (`configure_report_form.html`) with category tabs, custom field schema builder, and real-time JavaScript preview.
+- **Live HTMX Category Swapping**: Dynamically reloads relevant form fields when switching report categories on report submission forms and public portals.
+
+### 🎨 Public Portal Custom Styling (`portal_custom_styling`)
+- **Theme Variables**: Custom primary color, text color, background color, font family, and border radius settings per project portal.
+- **Scoped CSS Sanitization**: Safely injects user CSS scoped to `#portal-form-wrapper` with disallow rules for external scripts or expression hijacks.
+
+### 🛠️ Bug Fixes & System Hardening
+- **Smart Auto-Assignment**: Centralized assignment logic in `Report.save()` to automatically assign new reports to the sole project member when a project has exactly 1 member; otherwise leaves reports unassigned for triage.
+- **Persistent Site Announcements**: Added `AnnouncementDismissal` model and HTMX dismiss hooks so dismissed announcement banners stay dismissed across sessions and page reloads. Added dedicated "Announcements" tab to Notification Center.
+- **Duplicate Check Authorization**: Hardened title duplicate check endpoints against unauthorized script execution.
+
+---
+
 # Release Notes - v1.0.0 Stable (Email Privacy, Scoped Access, & Performance Calibration)
 
 **Date**: July 22, 2026

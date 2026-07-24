@@ -196,7 +196,7 @@
   -H "Authorization: Bearer rpk_xxx:rsk_yyy" \
   -H "Content-Type: application/json" \
   -d '{"title": "Bug Title", "description": "Desc", "report_type": "bug", "impact": "high"}' \
-  https://{{ request.get_host }}/api/v1/reports/</pre>
+  {{ request.scheme }}://{{ request.get_host }}/api/v1/reports/</pre>
                     </div>
                 </div>
 
@@ -229,7 +229,7 @@
                         <span class="text-[10px] font-bold text-gray-400 uppercase">cURL Example</span>
                         <pre class="bg-gray-900 text-gray-100 text-xs font-mono p-3 rounded-lg overflow-x-auto">curl -X GET \
   -H "Authorization: Bearer rpk_xxx:rsk_yyy" \
-  https://{{ request.get_host }}/api/v1/reports/</pre>
+  {{ request.scheme }}://{{ request.get_host }}/api/v1/reports/</pre>
                     </div>
                 </div>
             </div>
