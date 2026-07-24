@@ -1,3 +1,4 @@
+{% load i18n %}
 <div id="org-beta-panel" class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden p-6 space-y-4">
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -5,10 +6,10 @@
                 <svg class="w-4 h-4 text-[#226ce0]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
                 </svg>
-                Beta Program
+                {% trans "Beta Program" %}
             </h3>
             <p class="text-xs text-gray-500 mt-1">
-                Participate in the beta program to get early access to upcoming beta features for all projects under this organisation.
+                {% trans "Participate in the beta program to get early access to upcoming beta features for all projects under this organisation." %}
             </p>
         </div>
         <div class="shrink-0">
@@ -18,14 +19,14 @@
                         hx-swap="outerHTML"
                         class="btn btn-sm bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 gap-1.5 font-semibold">
                     <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
-                    Leave Beta Program
+                    {% trans "Leave Beta Program" %}
                 </button>
             {% else %}
                 <button hx-post="{% url 'beta:enroll_org' org_uuid=org.uuid %}"
                         hx-target="#org-beta-panel"
                         hx-swap="outerHTML"
                         class="btn btn-sm bg-[#226ce0] hover:bg-[#1b56b3] text-white gap-1.5 font-semibold">
-                    Join Beta Program
+                    {% trans "Join Beta Program" %}
                 </button>
             {% endif %}
         </div>
@@ -36,9 +37,9 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
             </svg>
             <div>
-                All projects in this organisation can now use beta features (e.g. custom reporting forms, custom portal styling, rest API keys). 
-                Org members can also view the org's API dashboard at 
-                <a href="{% url 'restapi:org_dashboard' org_uuid=org.uuid %}" class="underline font-bold text-[#226ce0] hover:text-[#1b56b3]">Org API Keys Dashboard</a>.
+                {% trans "All projects in this organisation can now use beta features (e.g. custom reporting forms, custom portal styling, rest API keys)." %} 
+                {% trans "Org members can also view the org's API dashboard at" %} 
+                <a href="{% url 'restapi:org_dashboard' org_uuid=org.uuid %}" class="underline font-bold text-[#226ce0] hover:text-[#1b56b3]">{% trans "Org API Keys Dashboard" %}</a>.
             </div>
         </div>
     {% endif %}

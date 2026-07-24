@@ -206,6 +206,46 @@ def report_detail(request, report_uuid, project_uuid=None):
     collaborators = report.project.collaborators.all()
 
     # Renders the 'report_detail.html' template with all the necessary context.
+    report_type_display = report.report_type.replace('_', ' ').title()
+    custom_fields_list = []
+    try:
+        from projects.models import ReportFormConfig
+        form_config = ReportFormConfig.objects.filter(project=project).first()
+        schema_names = set()
+        if form_config:
+            type_cfg = form_config.get_fields_for_type(report.report_type)
+            report_type_display = type_cfg.get('name', report_type_display)
+            custom_fields_schema = type_cfg.get('custom_fields', [])
+            
+            for cf in custom_fields_schema:
+                cf_name = cf.get('name')
+                cf_label = cf.get('label')
+                schema_names.add(cf_name)
+                cf_value = report.custom_fields_data.get(cf_name)
+                if cf_value is not None and cf_value != "":
+                    if isinstance(cf_value, bool):
+                        cf_value_display = "Yes" if cf_value else "No"
+                    else:
+                        cf_value_display = str(cf_value)
+                    custom_fields_list.append({
+                        'label': cf_label,
+                        'value': cf_value_display,
+                    })
+        
+        # Fallback: display other values in custom_fields_data not in schema
+        for key, val in report.custom_fields_data.items():
+            if key not in schema_names and val is not None and val != "":
+                if isinstance(val, bool):
+                    val_display = "Yes" if val else "No"
+                else:
+                    val_display = str(val)
+                custom_fields_list.append({
+                    'label': key.replace('_', ' ').title(),
+                    'value': val_display,
+                })
+    except Exception:
+        pass
+
     return render(request, 'report_detail.html', {
         'report': report, 
         'project': project, 
@@ -225,6 +265,8 @@ def report_detail(request, report_uuid, project_uuid=None):
         'can_edit': can_edit,
         'can_delete': can_delete,
         'has_project_access': rules.can_access_project(request.user, project),
+        'report_type_display': report_type_display,
+        'custom_fields': custom_fields_list,
         })
 
 @login_required

@@ -1,3 +1,4 @@
+{% load i18n %}
 <div class="space-y-3.5" id="project-tasks-container">
     <!-- Active Tasks -->
     {% if active_tasks %}
@@ -34,7 +35,7 @@
         <div class="border-t border-dashed border-gray-200 my-4 pt-4"></div>
         {% endif %}
         <div class="space-y-2">
-            <p class="text-[9px] font-bold text-gray-400 uppercase tracking-wider px-1">Completed Tasks</p>
+            <p class="text-[9px] font-bold text-gray-400 uppercase tracking-wider px-1">{% trans "Completed Tasks" %}</p>
             {% for task in completed_tasks %}
             <div class="flex items-center justify-between p-3.5 bg-gray-50/40 hover:bg-gray-100/30 border border-gray-100 rounded-xl transition-all opacity-70">
                 <div class="flex items-center gap-3 min-w-0">
@@ -63,6 +64,6 @@
     {% endif %}
 
     {% if not active_tasks and not completed_tasks %}
-    <p class="text-xs text-gray-400 italic py-4 text-center">No tasks listed for this project yet.</p>
+    <p class="text-xs text-gray-400 italic py-4 text-center">{% trans "No tasks listed for this project yet." %}</p>
     {% endif %}
 </div>

@@ -743,5 +743,28 @@ class CustomReportTypesTests(TestCase):
         self.assertTrue(form.is_valid())
         self.assertEqual(form.cleaned_custom_fields, {'os_version': 'Ubuntu 22.04', 'is_reproducible': False})
 
+    def test_report_detail_renders_custom_fields(self):
+        from reports.models import Report
+        
+        # Create a report with custom fields data
+        report = Report.objects.create(
+            title="Custom Bug report",
+            description="Detail description",
+            project=self.project,
+            reported_by=self.owner,
+            report_type="bug",
+            custom_fields_data={'os_version': 'macOS 14', 'is_reproducible': True}
+        )
+        
+        self.client.force_login(self.owner)
+        url = reverse('projects:reports:report_detail', kwargs={'project_uuid': self.project.uuid, 'report_uuid': report.uuid})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "macOS 14")
+        self.assertContains(response, "OS Version")
+        self.assertContains(response, "Reproducible?")
+        self.assertContains(response, "Yes")
+        self.assertContains(response, "Category")
+
 
 
