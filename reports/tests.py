@@ -3,6 +3,7 @@ from django.urls import reverse
 from accounts.models import User
 from projects.models import Project
 from reports.models import Report
+from components.models import Component
 
 
 class ReportListTests(TestCase):
@@ -519,4 +520,138 @@ class PrivateProjectPublicReportingTests(TestCase):
         self.client.force_login(self.other)
         resp = self.client.get(detail_url)
         self.assertEqual(resp.status_code, 403)
+
+
+class AjaxFrequenciesTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username='tester', email='tester@example.com', password='password')
+        self.project = Project.objects.create(
+            title='Sandbox Project',
+            link='https://example.com',
+            description='desc',
+            owner=self.user
+        )
+        self.component = Component.objects.create(
+            name='Backend Engine',
+            project=self.project
+        )
+        
+        # Configure custom component frequencies
+        from projects.models import ReportFormConfig
+        self.form_config = ReportFormConfig.objects.create(
+            project=self.project,
+            config={
+                'enabled_fields': ['title', 'description', 'component', 'frequency'],
+                'frequency_choices': [
+                    {'value': 'daily', 'label': 'Daily'},
+                    {'value': 'weekly', 'label': 'Weekly'}
+                ],
+                'component_frequencies': {
+                    str(self.component.uuid): [
+                        {'value': 'hourly', 'label': 'Hourly'},
+                        {'value': 'custom', 'label': 'Custom Rate'}
+                    ]
+                }
+            }
+        )
+
+    def test_ajax_frequencies_default(self):
+        """No component specified -> returns project-level custom frequency options."""
+        self.client.force_login(self.user)
+        url = reverse('reports:ajax_get_frequencies')
+        resp = self.client.get(url, {
+            'project_uuid': str(self.project.uuid),
+            'component_id': ''
+        })
+        self.assertEqual(resp.status_code, 200)
+        data = resp.json()
+        self.assertEqual(len(data), 2)
+        self.assertEqual(data[0]['value'], 'daily')
+        self.assertEqual(data[1]['value'], 'weekly')
+
+    def test_ajax_frequencies_for_component(self):
+        """Component with overrides specified -> returns component-specific options."""
+        self.client.force_login(self.user)
+        url = reverse('reports:ajax_get_frequencies')
+        resp = self.client.get(url, {
+            'project_uuid': str(self.project.uuid),
+            'component_id': self.component.id
+        })
+        self.assertEqual(resp.status_code, 200)
+        data = resp.json()
+        self.assertEqual(len(data), 2)
+        self.assertEqual(data[0]['value'], 'hourly')
+        self.assertEqual(data[1]['value'], 'custom')
+
+
+class ReportAutoAssignmentAndDuplicatesTests(TestCase):
+    def setUp(self):
+        self.owner = User.objects.create_user(username='proj_owner', email='owner@example.com', password='password')
+        self.collaborator = User.objects.create_user(username='proj_collab', email='collab@example.com', password='password')
+
+        # Project with 1 person initially
+        self.project_1_person = Project.objects.create(
+            title='Solo Project',
+            link='https://example.com',
+            description='desc',
+            owner=self.owner
+        )
+
+        # Project with multiple people
+        self.project_multi_people = Project.objects.create(
+            title='Team Project',
+            link='https://example.com',
+            description='desc',
+            owner=self.owner
+        )
+        self.project_multi_people.collaborators.add(self.collaborator)
+
+    def test_auto_assign_if_one_person(self):
+        """Report on Solo Project should get auto-assigned to the sole member (the owner)."""
+        report = Report.objects.create(
+            project=self.project_1_person,
+            title='Solo Bug',
+            description='Bug desc',
+            reported_by=self.owner
+        )
+        self.assertEqual(report.assigned_to, self.owner)
+
+    def test_no_auto_assign_if_multiple_people(self):
+        """Report on Team Project should remain unassigned."""
+        report = Report.objects.create(
+            project=self.project_multi_people,
+            title='Team Bug',
+            description='Bug desc',
+            reported_by=self.owner
+        )
+        self.assertIsNone(report.assigned_to)
+
+    def test_duplicate_title_validation(self):
+        """Form validation should reject reports with duplicate titles in the same project."""
+        # Create initial report
+        Report.objects.create(
+            project=self.project_1_person,
+            title='Duplicate Issue Title',
+            description='desc',
+            reported_by=self.owner
+        )
+
+        # Try to submit another report with same title on same project
+        from reports.forms import ReportForm
+        form = ReportForm(
+            data={
+                'title': 'Duplicate Issue Title',
+                'description': 'different desc',
+                'steps': 'steps',
+                'frequency': 'once',
+                'impact': 'low',
+                'visibility': True,
+                'project': self.project_1_person.id
+            },
+            project=self.project_1_person
+        )
+        self.assertFalse(form.is_valid())
+        self.assertIn('A report with this title already exists for this project.', form.non_field_errors())
+
+
 

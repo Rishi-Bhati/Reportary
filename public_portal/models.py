@@ -81,3 +81,80 @@ class AnonSubmission(models.Model):
 
     def __str__(self):
         return f"AnonSubmission on {self.link} at {self.submitted_at}"
+
+
+# ─── Beta Feature: Portal Custom Styling ─────────────────────────────────────
+# Slug: 'portal_custom_styling'
+# This model lives here in the public_portal app. Beta is just a gate.
+# When this feature graduates to stable, it stays here — nothing needs to move.
+
+class PortalTheme(models.Model):
+    """
+    Custom styling configuration for a project's public portal.
+    Beta feature slug: 'portal_custom_styling'
+
+    Two layers of styling:
+    1. Structured fields → safe CSS custom properties (sanitized by field type)
+    2. custom_css → arbitrary CSS, server-sanitized and scoped to #portal-wrapper
+
+    When this feature graduates to stable, only BetaFeature.status changes.
+    This model stays exactly here.
+    """
+    project = models.OneToOneField(
+        'projects.Project',
+        on_delete=models.CASCADE,
+        related_name='portal_theme'
+    )
+
+    # ── Structured convenience fields (always safe, no injection risk) ────────
+    primary_color = models.CharField(max_length=20, default='#6366f1')
+    background_color = models.CharField(max_length=20, default='#0f0f1a')
+    card_background = models.CharField(max_length=20, default='#1a1a2e')
+    text_color = models.CharField(max_length=20, default='#e2e8f0')
+    accent_color = models.CharField(max_length=20, default='#818cf8')
+    font_family = models.CharField(
+        max_length=100,
+        default='Inter',
+        help_text="Google Font name or CSS font stack."
+    )
+    border_radius = models.CharField(max_length=10, default='12px')
+
+    # ── Arbitrary custom CSS (sanitized server-side before rendering) ─────────
+    custom_css = models.TextField(
+        blank=True,
+        default='',
+        help_text=(
+            "Arbitrary CSS injected into the portal page. "
+            "Server-sanitized and scoped to #portal-wrapper. "
+            "Dangerous directives (script, javascript:, expression(), external @import) are stripped."
+        )
+    )
+
+    # ── Optional branding overrides ───────────────────────────────────────────
+    custom_logo_url = models.URLField(
+        null=True, blank=True,
+        help_text="URL to a logo image displayed on the portal."
+    )
+    custom_heading = models.CharField(
+        max_length=200,
+        null=True, blank=True,
+        help_text="Custom heading text shown on the portal form."
+    )
+
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"PortalTheme for {self.project.title}"
+
+    def to_css_vars(self) -> str:
+        """Render structured fields as CSS custom properties on :root."""
+        return (
+            f"--portal-primary: {self.primary_color};\n"
+            f"--portal-bg: {self.background_color};\n"
+            f"--portal-card-bg: {self.card_background};\n"
+            f"--portal-text: {self.text_color};\n"
+            f"--portal-accent: {self.accent_color};\n"
+            f"--portal-radius: {self.border_radius};\n"
+            f"--portal-font: '{self.font_family}', sans-serif;\n"
+        )
+

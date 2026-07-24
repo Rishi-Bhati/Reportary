@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% load static %}{% load i18n %}{% load custom_filters %}
+
+{% block title %}{% trans "Configure Reporting Form" %} | {{ project.title }} | Reportary{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto space-y-6 animate-fade-in-up">
+    <!-- Breadcrumbs -->
+    <div class="text-sm breadcrumbs text-[#534b62] font-medium">
+        <ul>
+            <li><a href="{% url 'projects:projects_view' %}" class="hover:text-[#226ce0]">{% trans "Projects" %}</a></li>
+            <li><a href="{% url 'projects:project_detail' project_uuid=project.uuid %}" class="hover:text-[#226ce0]">{{ project.title }}</a></li>
+            <li>{% trans "Custom Reporting Form" %}</li>
+        </ul>
+    </div>
+
+    <!-- Header -->
+    <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900 tracking-tight">{% trans "Customise Reporting Form" %}</h1>
+            <p class="text-gray-500 text-sm mt-0.5">{% trans "Tailor the bug/issue reporting form fields and options for this project." %}</p>
+        </div>
+        <a href="{% url 'projects:project_detail' project_uuid=project.uuid %}" class="btn btn-ghost btn-sm text-gray-500 hover:text-gray-900 border border-gray-200 rounded-xl">
+            {% trans "Back to Project" %}
+        </a>
+    </div>
+
+    {% if missing_important %}
+        <!-- Warnings -->
+        <div class="bg-amber-50 border border-amber-200 rounded-2xl p-5 flex items-start gap-3">
+            <svg class="w-5 h-5 text-amber-600 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+            </svg>
+            <div class="text-sm text-amber-800 leading-normal">
+                <span class="font-bold">{% trans "Form Warning:" %}</span>
+                {% trans "You have disabled important reporting fields:" %}
+                <ul class="list-disc list-inside mt-1 font-semibold">
+                    {% for f in missing_important %}
+                        <li class="capitalize">{{ f }}</li>
+                    {% endfor %}
+                </ul>
+                <p class="text-xs text-amber-600 mt-2">{% trans "Removing these fields might make it difficult for reporters to describe their issues effectively." %}</p>
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- Main Config Form -->
+    <form method="post" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {% csrf_token %}
+
+        <!-- Left Column: Enabled Fields Checkbox list -->
+        <div class="lg:col-span-2 bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex flex-col justify-between">
+            <div>
+                <div class="px-6 py-5 border-b border-gray-50">
+                    <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wider">{% trans "Form Fields Layout" %}</h3>
+                    <p class="text-xs text-gray-400 mt-0.5">{% trans "Choose which fields to display to users filing a report." %}</p>
+                </div>
+
+                <div class="p-6 space-y-3.5">
+                    {% for field_slug in default_fields %}
+                        <label class="flex items-center gap-3.5 p-4 rounded-xl border border-gray-150 hover:border-[#226ce0]/30 hover:bg-[#226ce0]/5 cursor-pointer transition-all">
+                            <input type="checkbox" name="enabled_fields" value="{{ field_slug }}"
+                                   {% if field_slug in config.enabled_fields or not config %}checked{% endif %}
+                                   class="w-4 h-4 rounded text-[#226ce0] border-gray-300 focus:ring-[#226ce0] cursor-pointer">
+                            <div>
+                                <span class="text-sm font-semibold text-gray-900 capitalize">{{ field_slug }}</span>
+                                {% if field_slug == 'title' or field_slug == 'description' %}
+                                    <span class="ml-1.5 text-[10px] font-bold uppercase tracking-wider text-red-500">{% trans "Recommended" %}</span>
+                                {% endif %}
+                                <p class="text-xs text-gray-500 mt-0.5">
+                                    {% if field_slug == 'title' %}{% trans "Brief summary/header of the issue." %}
+                                    {% elif field_slug == 'description' %}{% trans "Detailed description of the issue." %}
+                                    {% elif field_slug == 'steps' %}{% trans "Numbered list of steps to replicate the bug." %}
+                                    {% elif field_slug == 'component' %}{% trans "Categorize which component is affected." %}
+                                    {% elif field_slug == 'frequency' %}{% trans "Select how often the issue happens." %}
+                                    {% elif field_slug == 'impact' %}{% trans "Select the impact/severity of the bug." %}
+                                    {% elif field_slug == 'visibility' %}{% trans "Control if the report is publicly visible." %}
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </label>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Footer Save Changes -->
+            <div class="px-6 py-4 bg-gray-50 border-t border-gray-100 flex items-center justify-end rounded-b-2xl">
+                <button type="submit" class="btn bg-[#226ce0] hover:bg-[#1b56b3] text-white border-none rounded-xl px-6 py-2.5 shadow-md shadow-[#226ce0]/10 hover:shadow-lg transition-all text-sm font-semibold">
+                    {% trans "Save Form Layout" %}
+                </button>
+            </div>
+        </div>
+
+        <!-- Right Column: Component Frequency Customization -->
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-6">
+            <div>
+                <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wider">{% trans "Frequency Per Component" %}</h3>
+                <p class="text-xs text-gray-400 mt-1 leading-normal">
+                    {% trans "Customise frequency options for each component. Type comma-separated options as 'value:Label' (e.g. 'once:Just once, daily:Daily')." %}
+                </p>
+            </div>
+
+            <div class="space-y-5">
+                {% for comp in components %}
+                    <div class="space-y-1.5">
+                        <label class="block text-xs font-bold text-gray-700">
+                            {{ comp.name }}
+                        </label>
+                        {% with comp_uuid=comp.uuid|stringformat:"s" %}
+                        <input type="text" name="comp_freq_{{ comp.uuid }}" 
+                               value="{{ component_freq_strings|get_item:comp_uuid|default:'' }}"
+                               placeholder="e.g. once:Once, hourly:Hourly, daily:Daily"
+                               class="w-full px-3.5 py-2 text-xs border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#226ce0]/30 focus:border-[#226ce0] outline-none transition font-mono">
+                        {% endwith %}
+                    </div>
+                {% empty %}
+                    <p class="text-xs text-gray-400">{% trans "No components registered for this project yet. Please create some in Project Settings first." %}</p>
+                {% endfor %}
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -69,6 +69,13 @@ urlpatterns = [
     # This was the fix for the NoReverseMatch error, which occurred because Django couldn't find the namespaced URL 'comments:add_comment'.
     path('comments/', include('comments.urls', namespace='comments')),
 
+    # Beta Program URLs
+    path('beta/', include('beta.urls', namespace='beta')),
+
+    # REST API dashboard and API endpoints
+    path('api/', include('restapi.urls', namespace='restapi')),
+    path('api/v1/', include('restapi.api_urls', namespace='api_v1')),
+
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
 ]
 

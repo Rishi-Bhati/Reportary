@@ -292,7 +292,6 @@ def create_report(request, project_uuid=None):
                     anon_allowed, _ = anon_reporting_allowed(project)
                 if not project or not anon_allowed:
                     report.is_anonymous = False
-                report.assigned_to = report.project.owner
                 report.save()
 
                 # Save multiple attachments
@@ -789,3 +788,49 @@ def delete_saved_search(request, search_id):
         saved_search.delete()
         messages.success(request, "Saved search deleted.")
     return redirect(request.META.get('HTTP_REFERER', 'global_search'))
+
+
+def ajax_get_frequencies(request):
+    """AJAX endpoint to return custom or default frequencies for a component/project."""
+    project_id = request.GET.get('project_id')
+    project_uuid = request.GET.get('project_uuid')
+    component_id = request.GET.get('component_id')
+    
+    project = None
+    if project_uuid:
+        try:
+            project = Project.objects.get(uuid=project_uuid)
+        except Project.DoesNotExist:
+            pass
+    elif project_id:
+        try:
+            project = Project.objects.get(id=project_id)
+        except Project.DoesNotExist:
+            pass
+            
+    if not project:
+        return JsonResponse([], safe=False)
+        
+    # Check project accessibility (public links are accessible without login)
+    if not rules.can_access_project(request.user, project):
+        public_link = getattr(project, 'public_link', None)
+        if not (public_link and public_link.is_active and project.public_reporting_enabled):
+            return JsonResponse([], safe=False)
+            
+    from projects.models import ReportFormConfig, DEFAULT_FORM_CONFIG
+    
+    form_config = ReportFormConfig.objects.filter(project=project).first()
+    
+    component = None
+    if component_id:
+        try:
+            component = Component.objects.get(id=component_id, project=project)
+        except Component.DoesNotExist:
+            pass
+            
+    if form_config:
+        choices = form_config.get_frequency_choices(component=component)
+    else:
+        choices = DEFAULT_FORM_CONFIG['frequency_choices']
+        
+    return JsonResponse(choices, safe=False)

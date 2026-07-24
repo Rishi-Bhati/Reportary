@@ -1,0 +1,227 @@
+{% extends "base.html" %}
+{% load static %}{% load i18n %}
+
+{% block title %}API Key Details & Metrics | Reportary{% endblock %}
+
+{% block content %}
+<div class="space-y-6 max-w-6xl mx-auto animate-fade-in-up">
+    <!-- Breadcrumbs -->
+    <div class="text-sm breadcrumbs text-[#534b62] font-medium">
+        <ul>
+            <li><a href="{% url 'restapi:dashboard' %}" class="hover:text-[#226ce0]">{% trans "API Keys" %}</a></li>
+            <li>{{ api_key.name }}</li>
+        </ul>
+    </div>
+
+    <!-- Header Details -->
+    <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+        <div>
+            <div class="flex items-center gap-3">
+                <h1 class="text-xl font-bold text-gray-900 tracking-tight">{{ api_key.name }}</h1>
+                {% if api_key.status == 'active' %}
+                    <span class="badge badge-success text-white text-[10px] font-bold px-2 py-0.5 h-auto">Active</span>
+                {% else %}
+                    <span class="badge badge-error text-white text-[10px] font-bold px-2 py-0.5 h-auto">Revoked</span>
+                {% endif %}
+            </div>
+            <p class="text-gray-400 text-xs mt-1.5 font-mono">Public Key: {{ api_key.public_key }}</p>
+            <p class="text-gray-500 text-sm mt-1">Project: <span class="font-bold text-gray-800">{{ api_key.project.title }}</span></p>
+        </div>
+        <div class="flex gap-2">
+            {% if api_key.status == 'active' %}
+                <form method="post" action="{% url 'restapi:revoke_key' key_uuid=api_key.uuid %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-error btn-sm text-white rounded-xl font-semibold">
+                        {% trans "Revoke Key" %}
+                    </button>
+                </form>
+            {% else %}
+                <form method="post" action="{% url 'restapi:delete_key' key_uuid=api_key.uuid %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-ghost btn-sm text-red-600 hover:bg-red-50 rounded-xl font-semibold border border-red-200">
+                        {% trans "Delete Permanently" %}
+                    </button>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Stats Matrix -->
+    <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+        <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
+            <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Requests (30d)</span>
+            <span class="text-2xl font-black text-gray-900 mt-2">{{ total_30d }}</span>
+        </div>
+        <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
+            <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Success Rate</span>
+            <span class="text-2xl font-black text-green-600 mt-2">
+                {% if total_30d > 0 %}
+                    {% widthratio success_30d total_30d 100 %}%
+                {% else %}
+                    100%
+                {% endif %}
+            </span>
+        </div>
+        <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
+            <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Avg Latency</span>
+            <span class="text-2xl font-black text-[#226ce0] mt-2">
+                {% if avg_response_ms %}{{ avg_response_ms }} ms{% else %}—{% endif %}
+            </span>
+        </div>
+        <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
+            <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Expiration Date</span>
+            <span class="text-sm font-bold text-gray-900 mt-2">
+                {% if api_key.expires_at %}{{ api_key.expires_at|date:"M d, Y" }}{% else %}Never{% endif %}
+            </span>
+        </div>
+    </div>
+
+    <!-- Grid: Volume Chart & Scopes Info -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Chart -->
+        <div class="lg:col-span-2 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+            <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">Request Volume (Last 14 Days)</h3>
+            <div class="h-64">
+                <canvas id="volumeChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Scopes / Metadata Info -->
+        <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-6">
+            <div>
+                <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wider mb-3">Key Scopes</h3>
+                <div class="flex flex-wrap gap-1.5">
+                    {% for scope in scopes %}
+                        <span class="bg-[#226ce0]/5 text-[#226ce0] text-xs font-bold px-2.5 py-1 rounded border border-[#226ce0]/10 uppercase">
+                            {{ scope.resource }}:{{ scope.action }}
+                        </span>
+                    {% empty %}
+                        <span class="text-sm text-gray-400">None</span>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="border-t border-gray-100 pt-5 space-y-3">
+                <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wider">Metadata</h3>
+                <div class="grid grid-cols-2 gap-y-3 text-xs">
+                    <span class="text-gray-400">Created by:</span>
+                    <span class="font-bold text-gray-800">{{ api_key.user.username }}</span>
+
+                    <span class="text-gray-400">Created at:</span>
+                    <span class="font-bold text-gray-800">{{ api_key.created_at|date:"M d, Y H:i" }}</span>
+
+                    <span class="text-gray-400">Last IP:</span>
+                    <span class="font-mono font-bold text-gray-800">{{ api_key.last_used_ip|default:"—" }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Logs Table -->
+    <div class="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
+        <div class="px-6 py-5 border-b border-gray-50">
+            <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wider">Recent API Request Logs</h3>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="table w-full border-collapse">
+                <thead>
+                    <tr class="bg-gray-50 border-b border-gray-100 text-[#534b62] text-xs font-bold">
+                        <th class="px-6 py-3.5 text-left">Timestamp</th>
+                        <th class="px-6 py-3.5 text-left">Method</th>
+                        <th class="px-6 py-3.5 text-left">Endpoint</th>
+                        <th class="px-6 py-3.5 text-left">Status</th>
+                        <th class="px-6 py-3.5 text-left">Latency</th>
+                        <th class="px-6 py-3.5 text-left">Client IP</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-50 text-sm">
+                    {% for log in recent_logs %}
+                        <tr class="hover:bg-gray-50/50 transition-colors">
+                            <td class="px-6 py-3.5 text-gray-500 font-medium">
+                                {{ log.requested_at|date:"M d, H:i:s" }}
+                            </td>
+                            <td class="px-6 py-3.5 font-bold text-gray-700">
+                                {{ log.method }}
+                            </td>
+                            <td class="px-6 py-3.5 font-mono text-xs text-gray-600">
+                                {{ log.endpoint }}
+                            </td>
+                            <td class="px-6 py-3.5">
+                                {% if log.status_code < 300 %}
+                                    <span class="text-green-600 font-bold">{{ log.status_code }}</span>
+                                {% elif log.status_code < 400 %}
+                                    <span class="text-blue-600 font-bold">{{ log.status_code }}</span>
+                                {% else %}
+                                    <span class="text-red-600 font-bold">{{ log.status_code }}</span>
+                                {% endif %}
+                            </td>
+                            <td class="px-6 py-3.5 font-medium text-gray-800">
+                                {% if log.response_ms %}{{ log.response_ms }} ms{% else %}—{% endif %}
+                            </td>
+                            <td class="px-6 py-3.5 font-mono text-xs text-gray-500">
+                                {{ log.ip_address|default:"—" }}
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="6" class="px-6 py-8 text-center text-gray-400 text-sm">
+                                No requests logged for this key yet.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Load Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const ctx = document.getElementById('volumeChart').getContext('2d');
+        const chartData = {
+            labels: [{% for day in daily_counts %}'{{ day.date }}',{% endfor %}],
+            datasets: [{
+                label: 'Requests',
+                data: [{% for day in daily_counts %}{{ day.count }},{% endfor %}],
+                borderColor: '#226ce0',
+                backgroundColor: 'rgba(34, 108, 224, 0.05)',
+                borderWidth: 2,
+                fill: true,
+                tension: 0.3
+            }]
+        };
+        
+        new Chart(ctx, {
+            type: 'line',
+            data: chartData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0
+                        },
+                        grid: {
+                            color: '#f1f1f1'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

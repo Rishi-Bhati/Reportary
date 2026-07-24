@@ -130,6 +130,51 @@ class ReportForm(forms.ModelForm):
             except (ValueError, TypeError):
                 # If invalid data was submitted, show no components
                 self.fields['component'].queryset = Component.objects.none()
+
+        # ─── Custom Report Forms Beta Feature ───
+        resolved_project = project
+        if not resolved_project and self.is_bound and 'project' in self.data and self.data['project']:
+            try:
+                resolved_project = Project.objects.get(id=self.data['project'])
+            except Exception:
+                pass
+        if not resolved_project and self.instance and self.instance.pk and getattr(self.instance, 'project', None):
+            resolved_project = self.instance.project
+
+        if resolved_project:
+            from beta.utils import user_has_feature
+            from projects.models import ReportFormConfig
+            
+            if user_has_feature(user, 'custom_report_forms', project=resolved_project):
+                form_config = ReportFormConfig.objects.filter(project=resolved_project).first()
+                if form_config:
+                    enabled_fields = form_config.get_enabled_fields()
+                    
+                    # Remove disabled fields
+                    all_fields = list(self.fields.keys())
+                    for field_name in all_fields:
+                        if field_name in ['project', 'attatchment']:
+                            continue
+                        if field_name not in enabled_fields:
+                            del self.fields[field_name]
+                    
+                    # Custom frequencies choice overrides
+                    if 'frequency' in self.fields:
+                        selected_component = None
+                        selected_comp_id = None
+                        if self.is_bound:
+                            selected_comp_id = self.data.get('component')
+                        elif self.instance and self.instance.pk and self.instance.component:
+                            selected_component = self.instance.component
+
+                        if selected_comp_id and not selected_component:
+                            try:
+                                selected_component = Component.objects.get(id=selected_comp_id, project=resolved_project)
+                            except Exception:
+                                pass
+
+                        choices = form_config.get_frequency_choices(component=selected_component)
+                        self.fields['frequency'].choices = [(c['value'], c['label']) for c in choices]
     
     def clean(self):
         """
@@ -147,6 +192,16 @@ class ReportForm(forms.ModelForm):
         # Check if neither route provided a project
         if self.project is None and 'project' not in cleaned_data:
             raise forms.ValidationError("Project is required.")
+
+        title = cleaned_data.get('title')
+        project = self.project or cleaned_data.get('project')
+        if title and project:
+            from reports.models import Report
+            qs = Report.objects.filter(project=project, title__iexact=title)
+            if self.instance and self.instance.pk:
+                qs = qs.exclude(pk=self.instance.pk)
+            if qs.exists():
+                raise forms.ValidationError("A report with this title already exists for this project.")
         
         return cleaned_data
     

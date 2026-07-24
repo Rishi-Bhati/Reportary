@@ -10,6 +10,7 @@ from projects.views import (
     add_project_task,
     toggle_project_task,
     delete_project_task,
+    configure_report_form,
 )
 from public_portal import views as portal_views
 
@@ -28,6 +29,9 @@ urlpatterns = [
     path('<uuid:project_uuid>/tasks/add/', add_project_task, name='add_project_task'),
     path('<uuid:project_uuid>/tasks/<int:task_id>/toggle/', toggle_project_task, name='toggle_project_task'),
     path('<uuid:project_uuid>/tasks/<int:task_id>/delete/', delete_project_task, name='delete_project_task'),
+
+    # Form configuration (Beta feature)
+    path('<uuid:project_uuid>/form-config/', configure_report_form, name='configure_report_form'),
 
     # Public portal management (owner-only HTMX endpoints)
     path('<uuid:project_uuid>/public-link/toggle/', portal_views.htmx_toggle_link, name='portal_toggle_link'),

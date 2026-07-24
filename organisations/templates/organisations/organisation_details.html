@@ -163,6 +163,11 @@ Settings
         </div>
     </form>
 
+    <!-- ── Beta Program ────────────────────────────────────────────── -->
+    <div id="org-beta-panel">
+        {% include "beta/partials/org_enrollment_status.html" with org=organisation enrolled=is_org_enrolled %}
+    </div>
+
     <!-- ── Danger Zone ─────────────────────────────────────────────── -->
     <div class="bg-white rounded-2xl border border-red-100 shadow-sm overflow-hidden">
         <div class="px-6 py-5 border-b border-red-100 flex items-center gap-2">

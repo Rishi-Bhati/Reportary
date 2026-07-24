@@ -81,6 +81,18 @@ class Report(models.Model):
     def __str__(self):
         return self.title
 
+    def save(self, *args, **kwargs):
+        # Auto-assignment logic on creation:
+        # If the project has exactly 1 member, auto-assign to that member.
+        # Otherwise, keep it unassigned (None).
+        if not self.pk and not self.assigned_to:
+            members = self.project.get_project_members()
+            if len(members) == 1:
+                self.assigned_to = list(members)[0]
+            else:
+                self.assigned_to = None
+        super().save(*args, **kwargs)
+
     @property
     def safe_attatchment_size(self):
         if self.attatchment:

@@ -90,6 +90,7 @@ class AnonReportForm(forms.Form):
     def __init__(self, *args, project=None, expected_captcha=None, allow_attachments=False, **kwargs):
         super().__init__(*args, **kwargs)
         self._expected_captcha = expected_captcha
+        self.project = project
 
         # Filter components to this project's components
         if project:
@@ -98,6 +99,40 @@ class AnonReportForm(forms.Form):
         # Hide attachment field if project doesn't allow it for anon reports
         if not allow_attachments:
             del self.fields['attachment']
+
+        # ─── Custom Report Forms Beta Feature ───
+        if project:
+            from beta.utils import project_has_feature
+            from projects.models import ReportFormConfig
+            
+            if project_has_feature(project, 'custom_report_forms'):
+                form_config = ReportFormConfig.objects.filter(project=project).first()
+                if form_config:
+                    enabled_fields = form_config.get_enabled_fields()
+                    
+                    # Remove disabled fields (keeping anti-spam / contact / attachment)
+                    all_fields = list(self.fields.keys())
+                    for field_name in all_fields:
+                        if field_name in ['captcha_answer', 'website', 'reporter_name', 'reporter_email', 'attachment']:
+                            continue
+                        if field_name not in enabled_fields:
+                            del self.fields[field_name]
+                    
+                    # Custom frequencies choice overrides
+                    if 'frequency' in self.fields:
+                        selected_component = None
+                        selected_comp_id = None
+                        if self.is_bound:
+                            selected_comp_id = self.data.get('component')
+
+                        if selected_comp_id:
+                            try:
+                                selected_component = Component.objects.get(id=selected_comp_id, project=project)
+                            except Exception:
+                                pass
+
+                        choices = form_config.get_frequency_choices(component=selected_component)
+                        self.fields['frequency'].choices = [(c['value'], c['label']) for c in choices]
 
     def clean_website(self):
         """Honeypot: if this field has any value, silently mark as spam."""
@@ -120,3 +155,12 @@ class AnonReportForm(forms.Form):
             if attachment.size > max_size:
                 raise forms.ValidationError("File too large. Maximum size is 10 MB.")
         return attachment
+
+    def clean(self):
+        cleaned_data = super().clean()
+        title = cleaned_data.get('title')
+        if title and self.project:
+            from reports.models import Report
+            if Report.objects.filter(project=self.project, title__iexact=title).exists():
+                raise forms.ValidationError("A report with this title already exists for this project.")
+        return cleaned_data

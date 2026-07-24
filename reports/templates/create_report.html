@@ -232,14 +232,62 @@
                                 componentSelect.disabled = true;
                             }
                         });
+                    // Load default frequencies of new project
+                    updateFrequencies("");
                 } else {
                     componentSelect.disabled = true;
+                    if (frequencySelect) {
+                        frequencySelect.innerHTML = '<option value="">---------</option>';
+                    }
                 }
             });
 
             // Trigger change on load if a project is already selected
             if (projectSelect.value) {
                 projectSelect.dispatchEvent(new Event('change'));
+            }
+        }
+
+        const frequenciesUrl = "{% url 'reports:ajax_get_frequencies' %}";
+        const frequencySelect = document.getElementById('{{ form.frequency.id_for_label }}');
+
+        function updateFrequencies(componentId) {
+            if (!frequencySelect) return;
+            
+            let urlParams = `component_id=${componentId}`;
+            if (projectSelect && projectSelect.value) {
+                urlParams += `&project_id=${projectSelect.value}`;
+            } else {
+                {% if project %}
+                urlParams += `&project_uuid={{ project.uuid }}`;
+                {% endif %}
+            }
+            
+            fetch(`${frequenciesUrl}?${urlParams}`)
+                .then(response => response.json())
+                .then(data => {
+                    frequencySelect.innerHTML = '';
+                    if (data.length > 0) {
+                        data.forEach(function (choice) {
+                            const option = new Option(choice.label, choice.value);
+                            frequencySelect.add(option);
+                        });
+                        frequencySelect.disabled = false;
+                    } else {
+                        const option = new Option('Once', 'once');
+                        frequencySelect.add(option);
+                        frequencySelect.disabled = true;
+                    }
+                });
+        }
+
+        if (componentSelect) {
+            componentSelect.addEventListener('change', function() {
+                updateFrequencies(this.value);
+            });
+            // Trigger on load if component is preselected
+            if (componentSelect.value) {
+                updateFrequencies(componentSelect.value);
             }
         }
     });

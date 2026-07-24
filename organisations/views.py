@@ -127,7 +127,12 @@ def organisation_details(request, uuid):
         
         if not name:
             messages.error(request, "Organisation name cannot be empty.")
-            return render(request, 'organisations/organisation_details.html', {'organisation': org})
+            from beta.models import OrgBetaEnrollment
+            is_org_enrolled = OrgBetaEnrollment.objects.filter(org=org).exists()
+            return render(request, 'organisations/organisation_details.html', {
+                'organisation': org,
+                'is_org_enrolled': is_org_enrolled
+            })
         
         try:
             org = services.update_organisation_details(
@@ -143,9 +148,12 @@ def organisation_details(request, uuid):
         except PermissionError as e:
             messages.error(request, str(e))
     
+    from beta.models import OrgBetaEnrollment
+    is_org_enrolled = OrgBetaEnrollment.objects.filter(org=org).exists()
     return render(request, 'organisations/organisation_details.html', {
         'organisation': org,
         'is_owner': rules.is_organisation_owner(request.user, org),
+        'is_org_enrolled': is_org_enrolled,
     })
 
 

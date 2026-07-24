@@ -1,5 +1,6 @@
 import logging
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
 from .forms import ProjectForm, ComponentFormSet, ComponentForm, ComponentFormSet
 from django.contrib.auth.decorators import login_required
 from projects.models import Project
@@ -518,3 +519,80 @@ def delete_project_task(request, project_uuid, task_id):
         'active_tasks': active_tasks,
         'completed_tasks': completed_tasks
     })
+
+
+@login_required
+def configure_report_form(request, project_uuid):
+    """View to configure custom form fields and customized frequency options for a project."""
+    from beta.utils import user_has_feature
+    from projects.models import Project, ReportFormConfig, DEFAULT_FORM_CONFIG
+
+    project = get_object_or_404(Project, uuid=project_uuid)
+    
+    if not (project.owner == request.user or request.user.is_superuser):
+        return HttpResponseForbidden("You don't have permission to manage this project.")
+        
+    if not user_has_feature(request.user, 'custom_report_forms', project=project):
+        messages.warning(request, "Custom Report Forms feature requires Beta Program enrollment.")
+        return redirect('projects:project_details', pk=project.pk)
+        
+    form_config, created = ReportFormConfig.objects.get_or_create(
+        project=project,
+        defaults={'config': DEFAULT_FORM_CONFIG.copy()}
+    )
+    
+    if request.method == "POST":
+        fields = request.POST.getlist('enabled_fields')
+        if not fields:
+            fields = DEFAULT_FORM_CONFIG['enabled_fields']
+            
+        current_config = form_config.config or DEFAULT_FORM_CONFIG.copy()
+        current_config['enabled_fields'] = fields
+        
+        # Parse component overrides
+        component_frequencies = {}
+        for comp in project.components:
+            comp_key = f"comp_freq_{comp.uuid}"
+            if comp_key in request.POST:
+                choices_str = request.POST.get(comp_key, '').strip()
+                if choices_str:
+                    choices_list = []
+                    for pair in choices_str.split(','):
+                        if ':' in pair:
+                            val, lbl = pair.split(':', 1)
+                            choices_list.append({"value": val.strip(), "label": lbl.strip()})
+                        else:
+                            choices_list.append({"value": pair.strip(), "label": pair.strip().capitalize()})
+                    if choices_list:
+                        component_frequencies[str(comp.uuid)] = choices_list
+                        
+        current_config['component_frequencies'] = component_frequencies
+        form_config.config = current_config
+        form_config.save()
+        
+        messages.success(request, "Report form configuration updated successfully.")
+        return redirect('projects:configure_report_form', project_uuid=project.uuid)
+        
+    missing_important = form_config.get_missing_important_fields()
+    
+    # Pre-populate helper for the template
+    component_freq_strings = {}
+    for comp in project.components:
+        comp_uuid_str = str(comp.uuid)
+        freq_list = form_config.config.get('component_frequencies', {}).get(comp_uuid_str, [])
+        if freq_list:
+            component_freq_strings[comp_uuid_str] = ",".join([f"{item['value']}:{item['label']}" for item in freq_list])
+        else:
+            component_freq_strings[comp_uuid_str] = ""
+            
+    context = {
+        'project': project,
+        'form_config': form_config,
+        'config': form_config.config,
+        'missing_important': missing_important,
+        'components': project.components,
+        'component_freq_strings': component_freq_strings,
+        'default_fields': DEFAULT_FORM_CONFIG['enabled_fields'],
+    }
+    return render(request, 'projects/configure_report_form.html', context)
+

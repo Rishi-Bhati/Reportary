@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+{% load static %}{% load i18n %}
+
+{% block title %}Org API Dashboard | {{ org.name }} | Reportary{% endblock %}
+
+{% block content %}
+<div class="space-y-6 max-w-6xl mx-auto animate-fade-in-up">
+    <!-- Breadcrumbs -->
+    <div class="text-sm breadcrumbs text-[#534b62] font-medium">
+        <ul>
+            <li><a href="{% url 'organisations:list' %}" class="hover:text-[#226ce0]">{% trans "Organisations" %}</a></li>
+            <li><a href="{% url 'organisations:dashboard' uuid=org.uuid %}" class="hover:text-[#226ce0]">{{ org.name }}</a></li>
+            <li>{% trans "API Dashboard" %}</li>
+        </ul>
+    </div>
+
+    <!-- Header Section -->
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900 tracking-tight">{% trans "Organisation API Dashboard" %}</h1>
+            <p class="text-gray-500 text-sm mt-0.5">{{ org.name }} — {% trans "Monitor API usage across all projects in this organisation." %}</p>
+        </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
+            <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">{% trans "Total Org API Keys" %}</span>
+            <span class="text-3xl font-black text-gray-900 mt-2">{{ api_keys.count }}</span>
+        </div>
+        <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
+            <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">{% trans "Active Org Keys" %}</span>
+            <span class="text-3xl font-black text-green-600 mt-2">{{ active_key_count }}</span>
+        </div>
+        <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
+            <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">{% trans "Requests (Last 30 Days)" %}</span>
+            <span class="text-3xl font-black text-[#226ce0] mt-2">{{ total_requests_30d }}</span>
+        </div>
+    </div>
+
+    <!-- Chart & Project breakdown -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Daily requests chart -->
+        <div class="lg:col-span-2 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+            <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">Organisation Request Volume (Last 14 Days)</h3>
+            <div class="h-64">
+                <canvas id="orgVolumeChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Project breakdown -->
+        <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+            <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">Keys per Project</h3>
+            <div class="space-y-4 max-h-64 overflow-y-auto pr-1">
+                {% for item in project_key_counts %}
+                    <div class="flex items-center justify-between gap-4 p-2 rounded-xl bg-gray-50 border border-gray-100">
+                        <div class="min-w-0">
+                            <span class="font-bold text-sm text-gray-900 block truncate">{{ item.project__title }}</span>
+                        </div>
+                        <span class="bg-[#226ce0]/10 text-[#226ce0] text-xs font-black px-2.5 py-1 rounded-full">{{ item.key_count }} keys</span>
+                    </div>
+                {% empty %}
+                    <p class="text-xs text-gray-400">No keys generated for any project in this organisation.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- API Keys list -->
+    <div class="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
+        <div class="px-6 py-5 border-b border-gray-50">
+            <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wider">{% trans "All Organisation API Keys" %}</h3>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="table w-full border-collapse">
+                <thead>
+                    <tr class="bg-gray-50 border-b border-gray-100 text-[#534b62] text-xs font-bold">
+                        <th class="px-6 py-3.5 text-left">{% trans "Key Owner / Label" %}</th>
+                        <th class="px-6 py-3.5 text-left">{% trans "Project" %}</th>
+                        <th class="px-6 py-3.5 text-left">{% trans "Public Key" %}</th>
+                        <th class="px-6 py-3.5 text-left">{% trans "Last Used" %}</th>
+                        <th class="px-6 py-3.5 text-left">{% trans "Status" %}</th>
+                        <th class="px-6 py-3.5 text-right">{% trans "Actions" %}</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-50 text-sm">
+                    {% for key in api_keys %}
+                        <tr class="hover:bg-gray-50/50 transition-colors">
+                            <td class="px-6 py-4.5">
+                                <div class="font-bold text-gray-900">{{ key.name }}</div>
+                                <div class="text-xs text-gray-400 font-semibold mt-0.5">Created by: @{{ key.user.username }}</div>
+                            </td>
+                            <td class="px-6 py-4.5">
+                                <div class="font-bold text-gray-700">{{ key.project.title }}</div>
+                            </td>
+                            <td class="px-6 py-4.5 font-mono text-xs text-gray-500">
+                                {{ key.public_key }}
+                            </td>
+                            <td class="px-6 py-4.5">
+                                {% if key.last_used_at %}
+                                    <span class="text-gray-900 font-semibold">{{ key.last_used_at|date:"M d, H:i" }}</span>
+                                    <span class="text-xs text-gray-400 mt-0.5 block font-mono">IP: {{ key.last_used_ip|default:"—" }}</span>
+                                {% else %}
+                                    <span class="text-xs text-gray-400">Never</span>
+                                {% endif %}
+                            </td>
+                            <td class="px-6 py-4.5">
+                                {% if key.status == 'active' %}
+                                    <span class="badge badge-success text-white text-[10px] font-bold px-2 py-1 h-auto">Active</span>
+                                {% elif key.status == 'expired' %}
+                                    <span class="badge badge-warning text-white text-[10px] font-bold px-2 py-1 h-auto">Expired</span>
+                                {% else %}
+                                    <span class="badge badge-error text-white text-[10px] font-bold px-2 py-1 h-auto">Revoked</span>
+                                {% endif %}
+                            </td>
+                            <td class="px-6 py-4.5 text-right whitespace-nowrap">
+                                <a href="{% url 'restapi:key_detail' key_uuid=key.uuid %}" class="btn btn-ghost btn-xs text-[#226ce0] font-bold hover:bg-[#226ce0]/10 rounded-lg">View Metrics</a>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="6" class="px-6 py-12 text-center text-gray-400 text-sm">
+                                No API keys found for any project under this organisation.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Load Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const ctx = document.getElementById('orgVolumeChart').getContext('2d');
+        const chartData = {
+            labels: [{% for day in org_daily_counts %}'{{ day.date }}',{% endfor %}],
+            datasets: [{
+                label: 'Requests',
+                data: [{% for day in org_daily_counts %}{{ day.count }},{% endfor %}],
+                borderColor: '#226ce0',
+                backgroundColor: 'rgba(34, 108, 224, 0.05)',
+                borderWidth: 2,
+                fill: true,
+                tension: 0.3
+            }]
+        };
+        
+        new Chart(ctx, {
+            type: 'line',
+            data: chartData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0
+                        },
+                        grid: {
+                            color: '#f1f1f1'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

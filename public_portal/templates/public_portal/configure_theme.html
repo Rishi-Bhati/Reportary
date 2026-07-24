@@ -1,0 +1,293 @@
+{% extends "base.html" %}
+{% load static %}{% load i18n %}
+
+{% block title %}{% trans "Configure Portal Theme" %} | {{ project.title }} | Reportary{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto space-y-6 animate-fade-in-up">
+    <!-- Breadcrumbs -->
+    <div class="text-sm breadcrumbs text-[#534b62] font-medium">
+        <ul>
+            <li><a href="{% url 'projects:projects_view' %}" class="hover:text-[#226ce0]">{% trans "Projects" %}</a></li>
+            <li><a href="{% url 'projects:project_detail' project_uuid=project.uuid %}" class="hover:text-[#226ce0]">{{ project.title }}</a></li>
+            <li>{% trans "Custom Portal Styling" %}</li>
+        </ul>
+    </div>
+
+    <!-- Header -->
+    <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900 tracking-tight">{% trans "Custom Portal Styling" %}</h1>
+            <p class="text-gray-500 text-sm mt-0.5">{% trans "Customise the styling, branding, and CSS of your public reporting portal." %}</p>
+        </div>
+        <a href="{% url 'projects:project_detail' project_uuid=project.uuid %}" class="btn btn-ghost btn-sm text-gray-500 hover:text-gray-900 border border-gray-200 rounded-xl">
+            {% trans "Back to Project" %}
+        </a>
+    </div>
+
+    <!-- Main Workspace -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Editor (Left) -->
+        <form method="post" class="lg:col-span-7 bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex flex-col justify-between">
+            {% csrf_token %}
+            <div class="p-6 space-y-6">
+                <!-- Branding Overrides -->
+                <div class="space-y-4">
+                    <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wider border-b border-gray-50 pb-2">{% trans "Branding Overrides" %}</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label for="custom_heading" class="block text-xs font-bold text-gray-700 mb-1.5">Custom Form Title</label>
+                            <input type="text" name="custom_heading" id="custom_heading" 
+                                   value="{{ theme.custom_heading|default:'' }}" 
+                                   placeholder="e.g. Report a Bug"
+                                   class="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#226ce0]/30 focus:border-[#226ce0] outline-none transition">
+                        </div>
+                        <div>
+                            <label for="custom_logo_url" class="block text-xs font-bold text-gray-700 mb-1.5">Custom Logo URL</label>
+                            <input type="url" name="custom_logo_url" id="custom_logo_url" 
+                                   value="{{ theme.custom_logo_url|default:'' }}" 
+                                   placeholder="https://example.com/logo.png"
+                                   class="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#226ce0]/30 focus:border-[#226ce0] outline-none transition">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Colors & Variables -->
+                <div class="space-y-4">
+                    <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wider border-b border-gray-50 pb-2">{% trans "Theme Colors" %}</h3>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                        <div>
+                            <label for="primary_color" class="block text-xs font-bold text-gray-700 mb-1.5">Primary Accent</label>
+                            <div class="flex gap-2">
+                                <input type="color" id="primary_color" name="primary_color" value="{{ theme.primary_color }}" class="w-10 h-10 p-0 rounded-lg border-0 cursor-pointer">
+                                <input type="text" id="primary_color_text" value="{{ theme.primary_color }}" class="w-full px-3 py-1.5 text-xs border border-gray-300 rounded-lg text-center font-mono">
+                            </div>
+                        </div>
+                        <div>
+                            <label for="background_color" class="block text-xs font-bold text-gray-700 mb-1.5">Background</label>
+                            <div class="flex gap-2">
+                                <input type="color" id="background_color" name="background_color" value="{{ theme.background_color }}" class="w-10 h-10 p-0 rounded-lg border-0 cursor-pointer">
+                                <input type="text" id="background_color_text" value="{{ theme.background_color }}" class="w-full px-3 py-1.5 text-xs border border-gray-300 rounded-lg text-center font-mono">
+                            </div>
+                        </div>
+                        <div>
+                            <label for="card_background" class="block text-xs font-bold text-gray-700 mb-1.5">Form Card</label>
+                            <div class="flex gap-2">
+                                <input type="color" id="card_background" name="card_background" value="{{ theme.card_background }}" class="w-10 h-10 p-0 rounded-lg border-0 cursor-pointer">
+                                <input type="text" id="card_background_text" value="{{ theme.card_background }}" class="w-full px-3 py-1.5 text-xs border border-gray-300 rounded-lg text-center font-mono">
+                            </div>
+                        </div>
+                        <div>
+                            <label for="text_color" class="block text-xs font-bold text-gray-700 mb-1.5">Text Color</label>
+                            <div class="flex gap-2">
+                                <input type="color" id="text_color" name="text_color" value="{{ theme.text_color }}" class="w-10 h-10 p-0 rounded-lg border-0 cursor-pointer">
+                                <input type="text" id="text_color_text" value="{{ theme.text_color }}" class="w-full px-3 py-1.5 text-xs border border-gray-300 rounded-lg text-center font-mono">
+                            </div>
+                        </div>
+                        <div>
+                            <label for="accent_color" class="block text-xs font-bold text-gray-700 mb-1.5">Hover Accent</label>
+                            <div class="flex gap-2">
+                                <input type="color" id="accent_color" name="accent_color" value="{{ theme.accent_color }}" class="w-10 h-10 p-0 rounded-lg border-0 cursor-pointer">
+                                <input type="text" id="accent_color_text" value="{{ theme.accent_color }}" class="w-full px-3 py-1.5 text-xs border border-gray-300 rounded-lg text-center font-mono">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Font & Border Radius -->
+                <div class="space-y-4">
+                    <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wider border-b border-gray-50 pb-2">{% trans "Typography & Borders" %}</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label for="font_family" class="block text-xs font-bold text-gray-700 mb-1.5">Font Family</label>
+                            <select name="font_family" id="font_family" class="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#226ce0]/30 focus:border-[#226ce0] outline-none transition bg-white">
+                                <option value="Inter" {% if theme.font_family == 'Inter' %}selected{% endif %}>Inter</option>
+                                <option value="Roboto" {% if theme.font_family == 'Roboto' %}selected{% endif %}>Roboto</option>
+                                <option value="Montserrat" {% if theme.font_family == 'Montserrat' %}selected{% endif %}>Montserrat</option>
+                                <option value="Open Sans" {% if theme.font_family == 'Open Sans' %}selected{% endif %}>Open Sans</option>
+                                <option value="Playfair Display" {% if theme.font_family == 'Playfair Display' %}selected{% endif %}>Playfair Display</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="border_radius" class="block text-xs font-bold text-gray-700 mb-1.5">Corner Rounding (Border Radius)</label>
+                            <select name="border_radius" id="border_radius" class="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#226ce0]/30 focus:border-[#226ce0] outline-none transition bg-white">
+                                <option value="0px" {% if theme.border_radius == '0px' %}selected{% endif %}>0px (Sharp)</option>
+                                <option value="4px" {% if theme.border_radius == '4px' %}selected{% endif %}>4px (Subtle)</option>
+                                <option value="8px" {% if theme.border_radius == '8px' %}selected{% endif %}>8px (Normal)</option>
+                                <option value="12px" {% if theme.border_radius == '12px' %}selected{% endif %}>12px (Rounded)</option>
+                                <option value="20px" {% if theme.border_radius == '20px' %}selected{% endif %}>20px (Extra rounded)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Custom Scoped CSS -->
+                <div class="space-y-2">
+                    <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wider border-b border-gray-50 pb-2">{% trans "Custom Arbitrary CSS" %}</h3>
+                    <p class="text-xs text-gray-400">Scoped automatically to the form container. Avoid using top/body styles directly.</p>
+                    <textarea name="custom_css" id="custom_css" rows="6" 
+                              placeholder="/* Custom CSS here */&#10;.portal-btn-primary { border: 2px solid white; }&#10;.portal-input { font-weight: 500; }"
+                              class="w-full px-4 py-3 text-xs font-mono border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#226ce0]/30 focus:border-[#226ce0] outline-none transition resize-none">{{ theme.custom_css }}</textarea>
+                </div>
+            </div>
+
+            <!-- Save Changes -->
+            <div class="px-6 py-4 bg-gray-50 border-t border-gray-100 flex items-center justify-end rounded-b-2xl">
+                <button type="submit" class="btn bg-[#226ce0] hover:bg-[#1b56b3] text-white border-none rounded-xl px-6 py-2.5 shadow-md shadow-[#226ce0]/10 hover:shadow-lg transition-all text-sm font-semibold">
+                    {% trans "Save Portal Theme" %}
+                </button>
+            </div>
+        </form>
+
+        <!-- Preview Panel (Right) -->
+        <div class="lg:col-span-5 space-y-4">
+            <h3 class="text-xs font-bold text-[#534b62] uppercase tracking-wider">{% trans "Live Interactive Preview" %}</h3>
+            
+            <!-- Live Preview Wrapper simulating the portal page -->
+            <div id="preview-wrapper" class="w-full border border-gray-150 rounded-2xl overflow-hidden shadow-md flex flex-col items-center justify-center p-6 min-h-[500px]" style="background: {{ theme.background_color }};">
+                <div class="w-full max-w-sm space-y-4">
+                    <!-- branding header -->
+                    <div class="flex items-center gap-2" id="preview-branding">
+                        <div id="preview-logo-placeholder" class="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm text-white transition-all shadow-md" style="background: {{ theme.primary_color }}; border-radius: {{ theme.border_radius }};">R</div>
+                        <div>
+                            <span class="text-[10px] text-gray-400 font-medium block">Powered by</span>
+                            <span class="text-xs font-bold" id="preview-brand-text" style="color: {{ theme.text_color }};">Reportary</span>
+                        </div>
+                    </div>
+
+                    <!-- card simulator -->
+                    <div class="border border-gray-200/20 overflow-hidden shadow-lg p-5 space-y-4 transition-all" id="preview-card" style="background: {{ theme.card_background }}; border-radius: {{ theme.border_radius }}; color: {{ theme.text_color }};">
+                        <div class="space-y-1">
+                            <h2 class="text-sm font-bold" id="preview-heading">{{ theme.custom_heading|default:"Report an Issue" }}</h2>
+                            <p class="text-[10px] opacity-75">Submitting to {{ project.title }}</p>
+                        </div>
+
+                        <!-- form body -->
+                        <div class="space-y-3 text-left">
+                            <div>
+                                <span class="text-[10px] font-bold block mb-1 opacity-90">Issue Title</span>
+                                <div class="w-full h-8 border border-gray-300/30 bg-white/5 rounded-lg transition-all" id="preview-input-1" style="border-radius: {{ theme.border_radius }};"></div>
+                            </div>
+                            <div>
+                                <span class="text-[10px] font-bold block mb-1 opacity-90">Description</span>
+                                <div class="w-full h-16 border border-gray-300/30 bg-white/5 rounded-lg transition-all" id="preview-input-2" style="border-radius: {{ theme.border_radius }};"></div>
+                            </div>
+                            <button type="button" class="w-full py-2 text-xs font-bold text-white text-center transition-all" id="preview-submit-btn" style="background: {{ theme.primary_color }}; border-radius: {{ theme.border_radius }};">
+                                Submit Report
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Live update preview elements on input changes
+    document.addEventListener("DOMContentLoaded", function() {
+        const primaryColorInput = document.getElementById("primary_color");
+        const primaryColorText = document.getElementById("primary_color_text");
+        
+        const bgColorInput = document.getElementById("background_color");
+        const bgColorText = document.getElementById("background_color_text");
+        
+        const cardBgInput = document.getElementById("card_background");
+        const cardBgText = document.getElementById("card_background_text");
+        
+        const textColorInput = document.getElementById("text_color");
+        const textColorText = document.getElementById("text_color_text");
+        
+        const headingInput = document.getElementById("custom_heading");
+        const fontSelect = document.getElementById("font_family");
+        const radiusSelect = document.getElementById("border_radius");
+        const logoInput = document.getElementById("custom_logo_url");
+
+        // Bind text outputs to color inputs
+        function setupColorSync(colorPicker, textInput, updateCallback) {
+            colorPicker.addEventListener("input", function() {
+                textInput.value = colorPicker.value;
+                updateCallback();
+            });
+            textInput.addEventListener("input", function() {
+                if (textInput.value.match(/^#[0-9A-F]{6}$/i)) {
+                    colorPicker.value = textInput.value;
+                    updateCallback();
+                }
+            });
+        }
+
+        setupColorSync(primaryColorInput, primaryColorText, updatePreview);
+        setupColorSync(bgColorInput, bgColorText, updatePreview);
+        setupColorSync(cardBgInput, cardBgText, updatePreview);
+        setupColorSync(textColorInput, textColorText, updatePreview);
+
+        headingInput.addEventListener("input", updatePreview);
+        fontSelect.addEventListener("change", updatePreview);
+        radiusSelect.addEventListener("change", updatePreview);
+        logoInput.addEventListener("input", updatePreview);
+
+        function updatePreview() {
+            const primary = primaryColorInput.value;
+            const bg = bgColorInput.value;
+            const cardBg = cardBgInput.value;
+            const text = textColorInput.value;
+            const heading = headingInput.value.trim() || "Report an Issue";
+            const font = fontSelect.value;
+            const radius = radiusSelect.value;
+            const logoUrl = logoInput.value.trim();
+
+            const previewWrapper = document.getElementById("preview-wrapper");
+            const previewCard = document.getElementById("preview-card");
+            const previewLogo = document.getElementById("preview-logo-placeholder");
+            const previewBrandText = document.getElementById("preview-brand-text");
+            const previewHeading = document.getElementById("preview-heading");
+            const previewSubmitBtn = document.getElementById("preview-submit-btn");
+            const previewInput1 = document.getElementById("preview-input-1");
+            const previewInput2 = document.getElementById("preview-input-2");
+
+            previewWrapper.style.backgroundColor = bg;
+            previewWrapper.style.fontFamily = `'${font}', sans-serif`;
+
+            previewCard.style.backgroundColor = cardBg;
+            previewCard.style.borderRadius = radius;
+            previewCard.style.color = text;
+
+            previewLogo.style.backgroundColor = primary;
+            previewLogo.style.borderRadius = radius;
+
+            previewBrandText.style.color = text;
+            previewHeading.innerText = heading;
+
+            previewSubmitBtn.style.backgroundColor = primary;
+            previewSubmitBtn.style.borderRadius = radius;
+
+            previewInput1.style.borderRadius = radius;
+            previewInput2.style.borderRadius = radius;
+
+            // Handle custom logo override in preview
+            const existingLogoImg = document.getElementById("preview-custom-logo-img");
+            if (logoUrl) {
+                previewLogo.style.display = "none";
+                if (!existingLogoImg) {
+                    const img = document.createElement("img");
+                    img.id = "preview-custom-logo-img";
+                    img.src = logoUrl;
+                    img.style.height = "2rem";
+                    img.style.borderRadius = radius;
+                    img.style.objectFit = "contain";
+                    document.getElementById("preview-branding").insertBefore(img, previewBrandText.parentElement);
+                } else {
+                    existingLogoImg.src = logoUrl;
+                    existingLogoImg.style.borderRadius = radius;
+                }
+            } else {
+                previewLogo.style.display = "flex";
+                if (existingLogoImg) {
+                    existingLogoImg.remove();
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}
