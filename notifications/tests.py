@@ -145,3 +145,64 @@ class NotificationSystemTests(TestCase):
         
         # Auto-mark read should have run on loading the center
         self.assertEqual(get_unread_count(self.developer), 0)
+
+
+class AnnouncementNotificationTests(TestCase):
+    def setUp(self):
+        from core.models import Announcement
+        self.user = User.objects.create_user(
+            username='dev_user',
+            email='dev@example.com',
+            password='Password123!'
+        )
+        self.announcement = Announcement.objects.create(
+            title="System Maintenance",
+            body="Planned downtime tonight.",
+            level="info",
+            is_active=True
+        )
+
+    def test_announcement_visibility_and_dismissal(self):
+        """Active announcements show in context, but not after user dismisses them."""
+        self.client.login(email='dev@example.com', password='Password123!')
+        
+        # 1. Shows initially
+        response1 = self.client.get(reverse('dashboard:dashboard'))
+        self.assertEqual(response1.status_code, 200)
+        self.assertIn(self.announcement, response1.context['site_announcements'])
+
+        # 2. Dismiss via POST
+        url = reverse('dismiss_announcement', kwargs={'announcement_id': self.announcement.id})
+        response_dismiss = self.client.post(url)
+        self.assertEqual(response_dismiss.status_code, 200)
+
+        # 3. Excluded from next visits
+        response2 = self.client.get(reverse('dashboard:dashboard'))
+        self.assertEqual(response2.status_code, 200)
+        self.assertNotIn(self.announcement, response2.context['site_announcements'])
+
+    def test_announcements_in_notification_center(self):
+        """Notification center displays announcements and dismissal state."""
+        self.client.login(email='dev@example.com', password='Password123!')
+
+        # 1. Tab displays the announcement as undismissed
+        url = reverse('notifications:center') + "?tab=announcements"
+        resp = self.client.get(url)
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.context['announcements_count'], 1)
+        ann_list = resp.context['announcements_list']
+        self.assertEqual(len(ann_list), 1)
+        self.assertFalse(ann_list[0].is_dismissed)
+
+        # 2. Dismiss the announcement
+        dismiss_url = reverse('dismiss_announcement', kwargs={'announcement_id': self.announcement.id})
+        self.client.post(dismiss_url)
+
+        # 3. Tab displays the announcement as dismissed and count is 0
+        resp = self.client.get(url)
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.context['announcements_count'], 0)
+        ann_list = resp.context['announcements_list']
+        self.assertEqual(len(ann_list), 1)
+        self.assertTrue(ann_list[0].is_dismissed)
+

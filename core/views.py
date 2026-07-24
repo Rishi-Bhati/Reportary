@@ -1,5 +1,6 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
 from django.db.models import Q
 from projects.models import Project
 from reports.models import Report
@@ -266,3 +267,15 @@ def global_search_glimpse(request):
         'recent_searches': recent_searches,
     }
     return render(request, 'search_glimpse_partial.html', context)
+
+
+@login_required
+@require_POST
+def dismiss_announcement(request, announcement_id):
+    """Marks an announcement as dismissed for the current user."""
+    from django.http import HttpResponse
+    from core.models import Announcement, AnnouncementDismissal
+    
+    announcement = get_object_or_404(Announcement, pk=announcement_id)
+    AnnouncementDismissal.objects.get_or_create(user=request.user, announcement=announcement)
+    return HttpResponse("")

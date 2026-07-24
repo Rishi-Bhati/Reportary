@@ -21,6 +21,11 @@ def announcements(request):
             is_active=True,
             expires_at__gt=now
         )
-        return {'site_announcements': active_announcements.distinct()}
+        active_announcements = active_announcements.distinct()
+        if request.user.is_authenticated:
+            active_announcements = active_announcements.exclude(
+                dismissals__user=request.user
+            )
+        return {'site_announcements': active_announcements}
     except Exception:
         return {'site_announcements': []}

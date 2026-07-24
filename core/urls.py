@@ -39,6 +39,7 @@ urlpatterns = [
     # Global search
     path('search/', core_views.global_search, name='global_search'),
     path('search/glimpse/', core_views.global_search_glimpse, name='global_search_glimpse'),
+    path('announcements/<int:announcement_id>/dismiss/', core_views.dismiss_announcement, name='dismiss_announcement'),
 
     
     # URLs for the landing page, login, and signup
