@@ -197,3 +197,41 @@ class ProjectDashboardTests(TestCase):
         add_url = reverse('projects:add_project_task', kwargs={'project_uuid': self.project.uuid})
         resp = self.client.post(add_url, {'title': 'Unauthorized task'})
         self.assertEqual(resp.status_code, 403)
+
+
+class VisibilitySyncTests(TestCase):
+    """BUG-03 — `public` and `visibility` must not be able to disagree."""
+
+    def setUp(self):
+        self.owner = User.objects.create_user(
+            username='syncowner', email='sync@example.com', password='password')
+
+    def test_public_flag_follows_visibility_on_save(self):
+        project = Project.objects.create(
+            owner=self.owner, title='S', link='http://x.com', description='d',
+            visibility='private', public=True)
+        self.assertFalse(project.public)
+
+        project.visibility = 'public'
+        project.save()
+        self.assertTrue(project.public)
+
+        project.visibility = 'org'
+        project.save()
+        self.assertFalse(project.public)
+
+    def test_sync_survives_update_fields(self):
+        project = Project.objects.create(
+            owner=self.owner, title='S2', link='http://x.com', description='d',
+            visibility='public')
+        project.visibility = 'private'
+        project.save(update_fields=['visibility'])
+
+        project.refresh_from_db()
+        self.assertFalse(project.public)
+
+    def test_a_private_project_never_appears_in_the_public_list(self):
+        Project.objects.create(
+            owner=self.owner, title='Hidden', link='http://x.com', description='d',
+            visibility='private', public=True)
+        self.assertFalse(Project.objects.filter(public=True, title='Hidden').exists())

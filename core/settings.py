@@ -29,7 +29,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+# Read from the environment so a local checkout can actually run — this was
+# hardcoded False, which combined with the secure-cookie flags below made it
+# impossible to log in over plain HTTP on localhost.
+DEBUG = os.getenv('DEBUG', 'False').strip().lower() in ('true', '1', 'yes', 'on')
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'reportary.onrender.com']
 
@@ -39,9 +42,10 @@ CSRF_TRUSTED_ORIGINS = [
     'https://reportary.onrender.com',
 ]
 
-SECURE_PROXY_SSL_HEADER = None
-SESSION_COOKIE_SECURE = True      # Set to True in production (when DEBUG=False)
-CSRF_COOKIE_SECURE = True         # Set to True in production (when DEBUG=False)
+# Render (and most PaaS proxies) terminate TLS and forward this header.
+SECURE_PROXY_SSL_HEADER = None if DEBUG else ('HTTP_X_FORWARDED_PROTO', 'https')
+SESSION_COOKIE_SECURE = not DEBUG  # HTTPS-only cookies outside local development
+CSRF_COOKIE_SECURE = not DEBUG
 SESSION_COOKIE_HTTPONLY = True     # Prevent JS access to session cookie
 CSRF_COOKIE_HTTPONLY = False       # Must stay False so HTMX/JS can read CSRF token
 SESSION_COOKIE_SAMESITE = 'Lax'   # Mitigate CSRF on cross-site navigation
@@ -105,8 +109,13 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'core.middleware.HtmxMessageMiddleware',
+    'core.middleware.ContentSecurityPolicyMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+# Start in report-only. Watch the browser console for a release, then flip to
+# True. See core.middleware.ContentSecurityPolicyMiddleware.
+CSP_ENFORCE = os.getenv('CSP_ENFORCE', 'False').strip().lower() in ('true', '1', 'yes', 'on')
 
 ROOT_URLCONF = 'core.urls'
 
@@ -118,6 +127,7 @@ TEMPLATES = [
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.request',
+                'django.template.context_processors.i18n',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'notifications.context_processors.notification_context',
@@ -165,8 +175,12 @@ else:
         'PORT': 5432,
         'CONN_MAX_AGE': 600,  # Persistent connections for 10 minutes
         'CONN_HEALTH_CHECKS': True,  # Re-establish connection if dropped by remote host
-        "OPTIONS": dict(parse_qsl(tmpPostgres.query)),
+        # Connection options from DATABASE_URL's query string, with our own
+        # defaults layered on top. These were two separate "OPTIONS" keys in one
+        # dict literal, so the first — and every DATABASE_URL parameter — was
+        # silently discarded.
         "OPTIONS": {
+            **dict(parse_qsl(tmpPostgres.query)),
             "sslmode": "require",
             "keepalives": 1,
             "keepalives_idle": 30,
@@ -188,7 +202,8 @@ CACHES = {
 }
 
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': os.getenv('CLOUD_NAME'),
+    # CLOUD_NAMME is a long-standing typo in deployed .env files — accept both.
+    'CLOUD_NAME': os.getenv('CLOUD_NAME') or os.getenv('CLOUD_NAMME'),
     'API_KEY': os.getenv('CLOUDINARY_API_KEY'),
     'API_SECRET': os.getenv('CLOUDINARY_API_SECRET'),
 }

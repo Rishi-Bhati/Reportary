@@ -1,7 +1,9 @@
 from django import forms
-from reports.models import Report
+from django.db.models import Q
+from reports.models import Report, generate_fallback_title
 from components.models import Component
 from projects.models import Project
+from projects.models import MAX_CUSTOM_FIELD_LENGTH, MAX_CUSTOM_TEXTAREA_LENGTH
 from django.utils.translation import gettext as _
 
 class ReportForm(forms.ModelForm):
@@ -44,6 +46,8 @@ class ReportForm(forms.ModelForm):
         # Store the project as an instance variable so we can access it in clean() and save() methods
         # This is crucial because we need to know later if a project was pre-set from the URL
         self.project = project
+        # Kept for clean(): the duplicate-title check is scoped to what this user can see.
+        self.user = user
 
         # Set translated labels and placeholders
         self.fields['title'].label = _("Title")
@@ -142,12 +146,22 @@ class ReportForm(forms.ModelForm):
         if not resolved_project and self.instance and self.instance.pk and getattr(self.instance, 'project', None):
             resolved_project = self.instance.project
 
-        # Determine report type slug
-        self.report_type_slug = report_type_slug
-        if self.is_bound and 'report_type' in self.data and self.data['report_type']:
-            self.report_type_slug = self.data['report_type']
-        elif self.instance and self.instance.pk and self.instance.report_type:
+        # Determine report type slug. The submitted value is untrusted — it is
+        # resolved against the project's configured types so that it can neither
+        # bypass the configured choice list nor overflow Report.report_type.
+        from projects.models import resolve_report_type_slug
+        submitted_slug = self.data.get('report_type') if self.is_bound else None
+        editing_existing = bool(self.instance and self.instance.pk and self.instance.report_type)
+
+        if editing_existing and not submitted_slug:
+            # Preserve the stored type verbatim, even if the owner has since
+            # removed it from the project config — re-typing a report is not
+            # something an unrelated edit should do silently.
             self.report_type_slug = self.instance.report_type
+        else:
+            self.report_type_slug = resolve_report_type_slug(
+                resolved_project, submitted_slug or report_type_slug
+            )
 
         if resolved_project:
             from beta.utils import user_has_feature
@@ -207,17 +221,27 @@ class ReportForm(forms.ModelForm):
                     # Inject dynamic custom fields
                     self.custom_field_names = []
                     for cf in custom_fields_schema:
-                        cf_name = f"custom_field_{cf['name']}"
-                        cf_label = cf['label']
-                        cf_type = cf['type']
+                        # .get() throughout: a config written by an older version
+                        # (or by hand) may be missing keys, and a KeyError here
+                        # would 500 the whole report form.
+                        raw_cf_name = cf.get('name')
+                        if not raw_cf_name:
+                            continue
+                        cf_name = f"custom_field_{raw_cf_name}"
+                        cf_label = cf.get('label') or raw_cf_name.replace('_', ' ').title()
+                        cf_type = cf.get('type') or 'text'
                         cf_required = cf.get('required', False)
                         
                         if cf_type == 'text':
-                            field = forms.CharField(label=cf_label, required=cf_required, widget=forms.TextInput(attrs={
+                            field = forms.CharField(label=cf_label, required=cf_required,
+                                                    max_length=MAX_CUSTOM_FIELD_LENGTH,
+                                                    widget=forms.TextInput(attrs={
                                 'class': 'input input-bordered w-full focus:border-[#226ce0] bg-gray-50 focus:bg-white transition-colors'
                             }))
                         elif cf_type == 'textarea':
-                            field = forms.CharField(label=cf_label, required=cf_required, widget=forms.Textarea(attrs={
+                            field = forms.CharField(label=cf_label, required=cf_required,
+                                                    max_length=MAX_CUSTOM_TEXTAREA_LENGTH,
+                                                    widget=forms.Textarea(attrs={
                                 'rows': 4,
                                 'class': 'textarea textarea-bordered w-full focus:border-[#226ce0] bg-gray-50 focus:bg-white transition-colors'
                             }))
@@ -231,16 +255,17 @@ class ReportForm(forms.ModelForm):
                                 'class': 'select select-bordered w-full focus:border-[#226ce0] bg-gray-50 focus:bg-white transition-colors'
                             }))
                         else:
-                            field = forms.CharField(label=cf_label, required=cf_required)
+                            field = forms.CharField(label=cf_label, required=cf_required,
+                                                    max_length=MAX_CUSTOM_FIELD_LENGTH)
                         
                         # Populate initial value if editing
                         if self.instance and self.instance.pk and self.instance.custom_fields_data:
-                            initial_val = self.instance.custom_fields_data.get(cf['name'])
+                            initial_val = self.instance.custom_fields_data.get(raw_cf_name)
                             if initial_val is not None:
                                 field.initial = initial_val
                         
                         self.fields[cf_name] = field
-                        self.custom_field_names.append(cf['name'])
+                        self.custom_field_names.append(raw_cf_name)
     
     def clean(self):
         """
@@ -261,27 +286,43 @@ class ReportForm(forms.ModelForm):
                     custom_fields_data[name] = cleaned_data[field_key]
         self.cleaned_custom_fields = custom_fields_data
 
-        # Fallbacks for db-required fields if disabled
-        title = cleaned_data.get('title')
-        if not title:
-            cleaned_data['title'] = f"[{self.report_type_slug.upper()}] Report"
+        # Fallbacks for db-required fields the project has hidden in its form
+        # config. These only apply when the field is genuinely absent from the
+        # form — a field that was rendered and left blank must still raise, so
+        # the fallback is not allowed to swallow ordinary required-field errors.
+        if 'title' not in self.fields and not cleaned_data.get('title'):
+            cleaned_data['title'] = generate_fallback_title(self.report_type_slug)
             self.errors.pop('title', None)
-        
-        description = cleaned_data.get('description')
-        if not description:
+            self._title_autogenerated = True
+
+        if 'description' not in self.fields and not cleaned_data.get('description'):
             cleaned_data['description'] = f"Submitted as {self.report_type_slug} report."
             self.errors.pop('description', None)
 
+        # Duplicate-title guard. Skipped for auto-generated titles (which are
+        # unique by construction), and scoped to reports the submitter can
+        # already see so it cannot be used to probe for hidden reports.
         title = cleaned_data.get('title')
         project = self.project or cleaned_data.get('project')
-        if title and project:
+        if title and project and not getattr(self, '_title_autogenerated', False):
             from reports.models import Report
+            import rules.views as rules
+
             qs = Report.objects.filter(project=project, title__iexact=title)
             if self.instance and self.instance.pk:
                 qs = qs.exclude(pk=self.instance.pk)
+            if not (self.user and rules.is_project_member(self.user, project)):
+                visible = Q(visibility=True)
+                if self.user and self.user.is_authenticated:
+                    visible |= Q(reported_by=self.user)
+                qs = qs.filter(visible)
             if qs.exists():
-                raise forms.ValidationError("A report with this title already exists for this project.")
-        
+                raise forms.ValidationError(
+                    "A report with this title already exists for this project. "
+                    "Give this report a different title, or add your details as a "
+                    "comment on the existing one."
+                )
+
         return cleaned_data
     
     def save(self, commit=True):

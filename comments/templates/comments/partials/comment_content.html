@@ -1,5 +1,5 @@
-<div id="comment-{{ comment.uuid }}" class="w-full text-sm text-gray-600 leading-relaxed bg-gray-50/50 border border-gray-100/50 p-4 rounded-xl">
-    <div class="markdown-content">{{ comment.text }}</div>
+{% load markdown_tags %}<div id="comment-{{ comment.uuid }}" class="w-full text-sm text-gray-600 leading-relaxed bg-gray-50/50 border border-gray-100/50 p-4 rounded-xl">
+    <div class="markdown-content prose max-w-none">{{ comment.text|markdown }}</div>
     
     {% if request.user == comment.commented_by %}
     <div class="mt-3 pt-2.5 border-t border-gray-100 flex justify-end">

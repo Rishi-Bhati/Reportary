@@ -125,6 +125,12 @@
         </div>
     </div>
 
+    <!-- Chart data, JSON-escaped by Django so component names cannot break out of the script block -->
+    {{ component_labels|json_script:"chart-component-labels" }}
+    {{ component_data|json_script:"chart-component-data" }}
+    {{ time_labels|json_script:"chart-time-labels" }}
+    {{ time_data|json_script:"chart-time-data" }}
+
     <!-- Charts initialization script -->
     <script>
         (function() {
@@ -179,9 +185,9 @@
             new Chart(ctxComponent, {
                 type: 'doughnut',
                 data: {
-                    labels: {{ component_labels|safe }},
+                    labels: JSON.parse(document.getElementById('chart-component-labels').textContent),
                     datasets: [{
-                        data: {{ component_data|safe }},
+                        data: JSON.parse(document.getElementById('chart-component-data').textContent),
                         backgroundColor: ['#226ce0', '#4f46e5', '#9333ea', '#db2777', '#f59e0b'],
                         borderWidth: 0
                     }]
@@ -198,10 +204,10 @@
             new Chart(ctxTimeline, {
                 type: 'line',
                 data: {
-                    labels: {{ time_labels|safe }},
+                    labels: JSON.parse(document.getElementById('chart-time-labels').textContent),
                     datasets: [{
                         label: '{% trans "New Reports" %}',
-                        data: {{ time_data|safe }},
+                        data: JSON.parse(document.getElementById('chart-time-data').textContent),
                         borderColor: '#226ce0',
                         backgroundColor: 'rgba(34, 108, 224, 0.05)',
                         fill: true,

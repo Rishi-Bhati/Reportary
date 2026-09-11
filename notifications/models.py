@@ -14,6 +14,7 @@ class Notification(models.Model):
         ('report_commented', 'New Comment'),
         ('collaborator_added', 'Added as Collaborator'),
         ('report_impact_changed', 'Report Impact Changed'),
+        ('beta_enrollment', 'Beta Program Enrollment'),
         # Actionable (requires accept/decline, NOT auto-read)
         ('invite_collaborator', 'Collaboration Invite'),
         ('invite_organisation', 'Organisation Invite'),
@@ -42,8 +43,11 @@ class Notification(models.Model):
     message = models.TextField()
     
     # Link to related object (polymorphic style using target_content_type + target_uuid)
-    target_content_type = models.CharField(max_length=100)  # 'report', 'project', 'organisation'
-    target_uuid = models.UUIDField()
+    # Nullable: some notifications (programme announcements, for example) have no
+    # single object to link to. These were non-nullable, so passing None raised
+    # IntegrityError inside a broad `except` and the notification vanished.
+    target_content_type = models.CharField(max_length=100, null=True, blank=True)  # 'report', 'project', 'organisation'
+    target_uuid = models.UUIDField(null=True, blank=True)
     
     is_read = models.BooleanField(default=False)
     requires_action = models.BooleanField(default=False)  # True for invites

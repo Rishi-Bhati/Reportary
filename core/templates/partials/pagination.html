@@ -1,0 +1,37 @@
+{% load i18n %}
+{% if is_paginated %}
+<nav class="flex flex-wrap items-center justify-between gap-3 pt-5 mt-5 border-t border-gray-100"
+     aria-label="{% trans 'Pagination' %}">
+    <p class="text-xs text-gray-500 font-medium">
+        {% blocktrans with start=page_obj.start_index end=page_obj.end_index total=paginator.count %}Showing {{ start }}–{{ end }} of {{ total }}{% endblocktrans %}
+    </p>
+
+    <div class="flex items-center gap-1.5">
+        {% if page_obj.has_previous %}
+            <a href="?{{ pagination_querystring }}page={{ page_obj.previous_page_number }}"
+               class="px-3 py-1.5 text-xs font-bold text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                {% trans "Previous" %}
+            </a>
+        {% else %}
+            <span class="px-3 py-1.5 text-xs font-bold text-gray-300 bg-white border border-gray-100 rounded-lg cursor-not-allowed">
+                {% trans "Previous" %}
+            </span>
+        {% endif %}
+
+        <span class="px-3 py-1.5 text-xs font-bold text-gray-500 tabular-nums">
+            {% blocktrans with current=page_obj.number total=paginator.num_pages %}Page {{ current }} of {{ total }}{% endblocktrans %}
+        </span>
+
+        {% if page_obj.has_next %}
+            <a href="?{{ pagination_querystring }}page={{ page_obj.next_page_number }}"
+               class="px-3 py-1.5 text-xs font-bold text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                {% trans "Next" %}
+            </a>
+        {% else %}
+            <span class="px-3 py-1.5 text-xs font-bold text-gray-300 bg-white border border-gray-100 rounded-lg cursor-not-allowed">
+                {% trans "Next" %}
+            </span>
+        {% endif %}
+    </div>
+</nav>
+{% endif %}

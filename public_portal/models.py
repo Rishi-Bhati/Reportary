@@ -106,18 +106,40 @@ class PortalTheme(models.Model):
         related_name='portal_theme'
     )
 
+    # Offered by the theme editor; enforced by PortalThemeForm. These were free
+    # text fields, and the values are interpolated into the portal's <style>
+    # block, so anything unvalidated here is a CSS injection.
+    FONT_CHOICES = [
+        ('Inter', 'Inter'),
+        ('Roboto', 'Roboto'),
+        ('Montserrat', 'Montserrat'),
+        ('Open Sans', 'Open Sans'),
+        ('Playfair Display', 'Playfair Display'),
+    ]
+    RADIUS_CHOICES = [
+        ('0px', '0px (Sharp)'),
+        ('4px', '4px (Subtle)'),
+        ('8px', '8px (Normal)'),
+        ('12px', '12px (Rounded)'),
+        ('20px', '20px (Extra rounded)'),
+    ]
+
     # ── Structured convenience fields (always safe, no injection risk) ────────
-    primary_color = models.CharField(max_length=20, default='#6366f1')
-    background_color = models.CharField(max_length=20, default='#0f0f1a')
-    card_background = models.CharField(max_length=20, default='#1a1a2e')
-    text_color = models.CharField(max_length=20, default='#e2e8f0')
+    # Defaults match the "no theme configured" fallback in portal.html. They used
+    # to be a dark palette while the template fell back to light, so a theme row
+    # created by merely opening the editor silently restyled the live portal.
+    primary_color = models.CharField(max_length=20, default='#226ce0')
+    background_color = models.CharField(max_length=20, default='#f8f6fa')
+    card_background = models.CharField(max_length=20, default='#ffffff')
+    text_color = models.CharField(max_length=20, default='#111827')
     accent_color = models.CharField(max_length=20, default='#818cf8')
     font_family = models.CharField(
         max_length=100,
         default='Inter',
-        help_text="Google Font name or CSS font stack."
+        choices=FONT_CHOICES,
+        help_text="Google Font name."
     )
-    border_radius = models.CharField(max_length=10, default='12px')
+    border_radius = models.CharField(max_length=10, default='12px', choices=RADIUS_CHOICES)
 
     # ── Arbitrary custom CSS (sanitized server-side before rendering) ─────────
     custom_css = models.TextField(
@@ -126,7 +148,8 @@ class PortalTheme(models.Model):
         help_text=(
             "Arbitrary CSS injected into the portal page. "
             "Server-sanitized and scoped to #portal-wrapper. "
-            "Dangerous directives (script, javascript:, expression(), external @import) are stripped."
+            "Parsed and filtered against a property allowlist; external url(), "
+            "at-rules other than @media, and unknown value functions are dropped."
         )
     )
 

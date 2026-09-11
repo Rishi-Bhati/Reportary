@@ -1,16 +1,16 @@
-{% load static %}
+{% load static %}{% load i18n %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ LANGUAGE_CODE|default:'en' }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% if project_name %}Submit a Report — {{ project_name }}{% else %}Submit a Report{% endif %} | Reportary</title>
     <meta name="robots" content="noindex, nofollow">
     <link rel="stylesheet" href="{% static 'css/dist/styles.css' %}">
-    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.10/dist/htmx.min.js" integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js" integrity="sha384-/TQbtLCAerC3jgaim+N78RZSDYV7ryeoBCVqTuzRrFec2akfBkHS7ACQ3PQhvMVi" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     {% if theme and theme.font_family %}
-    <link href="https://fonts.googleapis.com/css2?family={{ theme.font_family }}&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family={{ theme.font_family|urlencode }}&display=swap" rel="stylesheet">
     {% endif %}
     <style>
         /* Hard-reset DaisyUI dark theme so portal pages are always light */
@@ -141,7 +141,7 @@
             <div style="width:2.25rem;height:2.25rem;border-radius:0.625rem;background:var(--portal-primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1rem;flex-shrink:0;box-shadow:0 2px 6px rgba(34,108,224,0.3);">R</div>
         {% endif %}
         <div>
-            <p style="font-size:0.65rem;color:#9ca3af;font-weight:500;margin:0;">Powered by</p>
+            <p style="font-size:0.65rem;color:#9ca3af;font-weight:500;margin:0;">{% trans "Powered by" %}</p>
             <p style="font-size:0.8125rem;font-weight:700;color:#1f2937;margin:0;line-height:1.2;">Reportary</p>
         </div>
     </div>
@@ -167,7 +167,7 @@
                     <svg style="width:0.875rem;height:0.875rem;color:#10b981;flex-shrink:0;" fill="none" stroke="#10b981" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
                     </svg>
-                    Your identity is protected. Contact info below is entirely optional.
+                    {% trans "Your identity is protected. Contact info below is entirely optional." %}
                 </p>
             </div>
 
@@ -178,7 +178,7 @@
                 </svg>
                 <span>
                     Want to report as a registered user? 
-                    <a href="{{ login_url }}" style="color:#226ce0;font-weight:700;text-decoration:underline;">Log in here</a> 
+                    <a href="{{ login_url }}" style="color:#226ce0;font-weight:700;text-decoration:underline;">{% trans "Log in here" %}</a> 
                     to submit this report under your username and track its status.
                 </span>
             </div>
@@ -210,7 +210,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                             </svg>
                             <span style="font-size:0.75rem;font-weight:600;color:#374151;display:block;">
-                                Drag &amp; drop, or <span style="color:#226ce0;text-decoration:underline;">browse</span>
+                                {% blocktrans %}Drag &amp; drop, or <span style="color:#226ce0;text-decoration:underline;">browse</span>{% endblocktrans %}
                             </span>
                             <span id="portal-file-help" style="font-size:0.65rem;color:#9ca3af;display:block;margin-top:0.125rem;">
                                 {{ form.attachment.help_text }}
@@ -240,25 +240,25 @@
 
                 <!-- Optional Contact info at bottom -->
                 <div>
-                    <p style="font-size:0.7rem;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.07em;margin:0 0 0.75rem;">Your info (optional)</p>
+                    <p style="font-size:0.7rem;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.07em;margin:0 0 0.75rem;">{% trans "Your info (optional)" %}</p>
                     <div class="portal-grid-2">
                         <div>
                             <label class="portal-label">{{ form.reporter_name.label }}</label>
                             <input type="text" name="reporter_name" value="{{ form.reporter_name.value|default_if_none:'' }}"
-                                   placeholder="Anonymous" autocomplete="name" class="portal-input">
+                                   placeholder="{% trans 'Anonymous' %}" autocomplete="name" class="portal-input">
                             {% if form.reporter_name.errors %}<p class="portal-error">{{ form.reporter_name.errors.0 }}</p>{% endif %}
                         </div>
                         <div>
                             <label class="portal-label">{{ form.reporter_email.label }}</label>
                             <input type="email" name="reporter_email" value="{{ form.reporter_email.value|default_if_none:'' }}"
-                                   placeholder="Leave blank to stay anonymous" autocomplete="email" class="portal-input">
+                                   placeholder="{% trans 'Leave blank to stay anonymous' %}" autocomplete="email" class="portal-input">
                             {% if form.reporter_email.errors %}<p class="portal-error">{{ form.reporter_email.errors.0 }}</p>{% endif %}
                         </div>
                     </div>
                 </div>
 
                 <!-- Submit -->
-                <button type="submit" class="portal-btn-primary" style="margin-top:0.5rem;">Submit Report</button>
+                <button type="submit" class="portal-btn-primary" style="margin-top:0.5rem;">{% trans "Submit Report" %}</button>
             </form>
         </div>
     </div>
@@ -408,7 +408,7 @@
             if (rawVal) {
                 previewContainer.innerHTML = marked.parse(rawVal);
             } else {
-                previewContainer.innerHTML = '<em class="text-gray-400">Nothing to preview</em>';
+                previewContainer.innerHTML = '<em class="text-gray-400">{% trans "Nothing to preview" %}</em>';
             }
         } else {
             writeContainer.classList.remove('hidden');

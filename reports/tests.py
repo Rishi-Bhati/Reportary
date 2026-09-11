@@ -651,7 +651,11 @@ class ReportAutoAssignmentAndDuplicatesTests(TestCase):
             project=self.project_1_person
         )
         self.assertFalse(form.is_valid())
-        self.assertIn('A report with this title already exists for this project.', form.non_field_errors())
+        self.assertTrue(
+            any(e.startswith('A report with this title already exists for this project.')
+                for e in form.non_field_errors()),
+            form.non_field_errors(),
+        )
 
 
 class CustomReportTypesTests(TestCase):

@@ -1,6 +1,7 @@
+{% load i18n %}
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ LANGUAGE_CODE|default:'en' }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -40,7 +41,7 @@
         </div>
 
         <div style="display:flex;flex-direction:column;gap:0.5rem;">
-            <h1 style="font-size:1.5rem;font-weight:800;color:#111827;margin:0;letter-spacing:-0.02em;">Report Submitted!</h1>
+            <h1 style="font-size:1.5rem;font-weight:800;color:#111827;margin:0;letter-spacing:-0.02em;">{% trans "Report Submitted!" %}</h1>
             <p style="font-size:0.875rem;color:#6b7280;margin:0;line-height:1.5;">
                 Thank you for helping improve {% if project_name %}<strong style="color:#374151;">{{ project_name }}</strong>{% else %}the project{% endif %}.
                 The management team has been notified and will review your submission shortly.
@@ -108,7 +109,7 @@
             Submit another report
         </a>
 
-        <p style="font-size:0.6875rem;color:#9ca3af;margin-top:0.5rem;">Powered by <span style="font-weight:600;color:#4b5563;">Reportary</span></p>
+        <p style="font-size:0.6875rem;color:#9ca3af;margin-top:0.5rem;">{% trans "Powered by" %} <span style="font-weight:600;color:#4b5563;">Reportary</span></p>
     </div>
 </body>
 </html>

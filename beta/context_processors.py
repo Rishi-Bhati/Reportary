@@ -8,28 +8,27 @@ Usage in templates:
         <a href="...">Configure Custom Form</a>
     {% endif %}
 
-    {% if beta_features.portal_custom_styling %}
-        ...
-    {% endif %}
+This runs on every render, so it must stay cheap — see beta.utils for the
+query-count constraints it works under.
 """
-from beta.utils import get_user_beta_features
+from beta.utils import get_feature_registry, get_user_beta_features
+from core.version import BETA_VERSION, STABLE_VERSION
 
 
 def beta_features(request):
-    """
-    Adds `beta_features` dict and `app_version` to every template context.
-    """
-    if not request.user.is_authenticated:
-        return {
-            'beta_features': {},
-            'app_version': 'v1.0.0 - stable'
-        }
+    """Adds `beta_features` dict and `app_version` to every template context."""
+    user = getattr(request, 'user', None)
+    if not user or not user.is_authenticated:
+        return {'beta_features': {}, 'app_version': STABLE_VERSION}
 
     from beta.models import UserBetaEnrollment
-    is_enrolled = UserBetaEnrollment.objects.filter(user=request.user).exists()
-    version = 'v1.1.0-beta.1' if is_enrolled else 'v1.0.0 - stable'
+
+    features = get_user_beta_features(user)
+    # "Enrolled" means the user personally opted in — a project-level grant does
+    # not change which build of the app they consider themselves to be on.
+    is_enrolled = UserBetaEnrollment.objects.filter(user=user).exists()
 
     return {
-        'beta_features': get_user_beta_features(request.user),
-        'app_version': version
+        'beta_features': features,
+        'app_version': BETA_VERSION if is_enrolled else STABLE_VERSION,
     }

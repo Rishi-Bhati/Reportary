@@ -1,6 +1,7 @@
+{% load i18n %}
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ LANGUAGE_CODE|default:'en' }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -29,13 +30,13 @@
             </svg>
         </div>
         <div>
-            <h1 style="font-size:1.1rem;font-weight:700;color:#1f2937;margin:0 0 0.5rem;">Reporting Link Unavailable</h1>
+            <h1 style="font-size:1.1rem;font-weight:700;color:#1f2937;margin:0 0 0.5rem;">{% trans "Reporting Link Unavailable" %}</h1>
             <p style="font-size:0.875rem;color:#6b7280;margin:0;">
                 {% if message %}{{ message }}{% else %}This reporting link has been disabled by the project owner.{% endif %}
             </p>
         </div>
-        <p style="font-size:0.75rem;color:#9ca3af;margin:0;">If you believe this is an error, please contact the project team directly.</p>
-        <p style="font-size:0.6875rem;color:#9ca3af;margin-top:0.5rem;">Powered by <span style="font-weight:600;color:#4b5563;">Reportary</span></p>
+        <p style="font-size:0.75rem;color:#9ca3af;margin:0;">{% trans "If you believe this is an error, please contact the project team directly." %}</p>
+        <p style="font-size:0.6875rem;color:#9ca3af;margin-top:0.5rem;">{% trans "Powered by" %} <span style="font-weight:600;color:#4b5563;">Reportary</span></p>
     </div>
 </body>
 </html>

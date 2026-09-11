@@ -4,8 +4,25 @@ from .models import Notification, Invitation
 from .constants import AUTO_READ_TYPES
 from .email_service import send_notification_email
 
-def create_notification(*, recipient, actor, notification_type, title, message, target_content_type, target_uuid, requires_action=False, extra_context=None):
-    """Creates an in-app notification and sends an email notification."""
+def create_notification(*, recipient, actor, notification_type, title, message,
+                        target_content_type=None, target_uuid=None,
+                        requires_action=False, extra_context=None, send_email=True):
+    """
+    Creates an in-app notification and (unless send_email=False) emails it.
+
+    `notification_type` is validated against Notification.NOTIFICATION_TYPES.
+    Django does not enforce `choices` at the database level, so unknown values
+    used to save happily and then degrade silently — the email layer derives its
+    template from this value, and the notification centre derives read-behaviour
+    from it. Two call sites were passing 'new_report', which is not a real type.
+    """
+    valid_types = {choice for choice, _ in Notification.NOTIFICATION_TYPES}
+    if notification_type not in valid_types:
+        raise ValueError(
+            f"Unknown notification_type {notification_type!r}. "
+            f"Add it to Notification.NOTIFICATION_TYPES first."
+        )
+
     report = None
     if target_content_type == 'report':
         try:
@@ -117,6 +134,9 @@ def create_notification(*, recipient, actor, notification_type, title, message, 
             context['organisation_name'] = org.name
         except Exception:
             pass
+
+    if not send_email:
+        return notification
 
     try:
         send_notification_email(

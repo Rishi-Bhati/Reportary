@@ -33,7 +33,7 @@ def enroll_user(request):
             'beta_features': _get_enrollable_features(),
         })
     messages.success(request, "You've joined the Beta Program!")
-    return redirect('accounts:settings')
+    return redirect('home:settings')
 
 
 @login_required
@@ -49,7 +49,7 @@ def unenroll_user(request):
             'beta_features': _get_enrollable_features(),
         })
     messages.info(request, "You've left the Beta Program.")
-    return redirect('accounts:settings')
+    return redirect('home:settings')
 
 
 # ─── Org Enrollment ───────────────────────────────────────────────────────────
@@ -79,7 +79,7 @@ def enroll_org(request, org_uuid):
             'enrolled': True,
         })
     messages.success(request, f"{org.name} has joined the Beta Program!")
-    return redirect('organisations:detail', uuid=org.uuid)
+    return redirect('organisations:details', uuid=org.uuid)
 
 
 @login_required
@@ -101,7 +101,7 @@ def unenroll_org(request, org_uuid):
             'enrolled': False,
         })
     messages.info(request, f"{org.name} has left the Beta Program.")
-    return redirect('organisations:detail', uuid=org.uuid)
+    return redirect('organisations:details', uuid=org.uuid)
 
 
 # ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -111,23 +111,31 @@ def _get_enrollable_features():
 
 
 def _notify_org_members_beta_enrolled(org, actor):
-    """Send in-app (not email) notifications to all org members."""
-    try:
-        from notifications.services import create_notification
-        members = org.members.exclude(id=actor.id)
-        for member in members:
+    """
+    Send in-app (not email) notifications to all org members.
+
+    Targets the organisation so the notification centre can link to it, and
+    catches per member — a single failure previously aborted the whole loop.
+    """
+    from notifications.services import create_notification
+
+    for member in org.members.exclude(id=actor.id):
+        try:
             create_notification(
                 recipient=member,
                 actor=actor,
-                notification_type='announcement',
+                notification_type='beta_enrollment',
                 title=f"{org.name} joined the Beta Program",
                 message=(
                     f"{org.name} has enabled beta features for all org projects. "
                     f"Want early access for your personal projects too? "
                     f"Head to Settings → Beta Program to enroll."
                 ),
-                target_content_type=None,
-                target_uuid=None,
+                target_content_type='organisation',
+                target_uuid=org.uuid,
+                send_email=False,
             )
-    except Exception:
-        logger.exception("Failed to notify org members about beta enrollment for org %s", org.pk)
+        except Exception:
+            logger.exception(
+                "Failed to notify %s about beta enrollment for org %s", member.pk, org.pk
+            )

@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load static %}{% load i18n %}
+{% load static %}{% load i18n %}{% load markdown_tags %}
 
 {% block title %}{{ report.title }} | Reports{% endblock %}
 
@@ -138,7 +138,7 @@
                     <div class="space-y-3">
                         <h3 class="text-xs font-bold text-gray-900 uppercase tracking-wider">Description</h3>
                         <div class="prose max-w-none text-gray-600 leading-relaxed markdown-render text-sm" id="report-description-content">
-                            {{ report.description }}
+                            {{ report.description|markdown }}
                         </div>
                     </div>
 
@@ -147,7 +147,7 @@
                     <div class="pt-6 border-t border-gray-100 space-y-3">
                         <h3 class="text-xs font-bold text-gray-900 uppercase tracking-wider">Steps to Reproduce</h3>
                         <div class="prose max-w-none text-gray-600 leading-relaxed markdown-render font-mono text-xs bg-gray-50/50 p-4 rounded-xl border border-gray-100/50" id="report-steps-content">
-                            {{ report.steps }}
+                            {{ report.steps|markdown }}
                         </div>
                     </div>
                     {% endif %}
@@ -421,8 +421,6 @@
 {% endblock %}
 
 {% block scripts %}
-<!-- Load Marked.js for Client-Side Markdown Parsing -->
-<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script>
 function toggleHistory(button) {
     const content = document.getElementById('history-content');
@@ -438,37 +436,6 @@ function toggleHistory(button) {
     }
 }
 
-// Render Markdown Elements
-document.addEventListener("DOMContentLoaded", function() {
-    // Parse description
-    const descEl = document.getElementById("report-description-content");
-    if (descEl) {
-        descEl.innerHTML = marked.parse(descEl.textContent.trim());
-    }
-    
-    // Parse steps
-    const stepsEl = document.getElementById("report-steps-content");
-    if (stepsEl) {
-        stepsEl.innerHTML = marked.parse(stepsEl.textContent.trim());
-    }
-    
-    // Parse comment texts
-    const parseComments = () => {
-        const commentEls = document.querySelectorAll(".markdown-content");
-        commentEls.forEach(el => {
-            if (!el.dataset.parsed) {
-                el.innerHTML = marked.parse(el.textContent.trim());
-                el.dataset.parsed = "true";
-            }
-        });
-    };
-    
-    parseComments();
-    
-    // Support dynamic HTMX comment loads
-    document.body.addEventListener('htmx:afterOnLoad', function() {
-        parseComments();
-    });
-});
+// Markdown is rendered server-side (core.templatetags.markdown_tags).
 </script>
 {% endblock %}

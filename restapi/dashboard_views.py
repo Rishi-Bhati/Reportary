@@ -17,16 +17,78 @@ from django.utils import timezone
 from django.db.models import Count, Avg, Q
 from datetime import timedelta
 
+from projects.models import Project
 from restapi.models import ApiKey, ApiKeyScope, ApiRequestLog
 
 logger = logging.getLogger(__name__)
 
-# Available scope combinations for the UI
+# A person managing keys by hand does not need more than this, and an unbounded
+# count is an easy way to inflate the key and log tables.
+MAX_ACTIVE_KEYS_PER_USER = 25
+
+
+def _projects_for_key_creation(user):
+    """
+    Projects a user may mint an API key for.
+
+    Single source of truth for both the dashboard dropdown and create_key's
+    validation, so the two cannot disagree about who has access.
+    """
+    from organisations.services import get_user_organisations
+    from projects.models import Project
+
+    return Project.objects.filter(
+        Q(owner=user) |
+        Q(project_head=user) |
+        Q(collaborators=user) |
+        Q(org__in=get_user_organisations(user))
+    ).distinct().order_by('title')
+
+# Scopes offered when creating a key. This must list only permissions that an
+# endpoint actually honours: the UI previously advertised nine scopes across
+# reports, comments and projects while /api/v1/ implemented two, so a user could
+# mint a key granting `comments.create` and find nothing that accepted it.
+# API scopes become a compatibility contract the moment the feature leaves beta,
+# so extend this list as endpoints land, not before.
 SCOPE_MATRIX = [
-    ('reports', 'Reports', ['read', 'create', 'delete']),
-    ('comments', 'Comments', ['read', 'create', 'delete']),
-    ('projects', 'Projects', ['read', 'create', 'delete']),
+    ('reports', 'Reports', ['read', 'create']),
 ]
+
+# Scopes that exist on old keys but are no longer offered. Shown as inactive in
+# the UI rather than silently disappearing.
+RETIRED_SCOPES = {
+    ('reports', 'delete'),
+    ('comments', 'read'), ('comments', 'create'), ('comments', 'delete'),
+    ('projects', 'read'), ('projects', 'create'), ('projects', 'delete'),
+}
+
+
+def _daily_request_counts(logs_qs, days=14):
+    """
+    Requests per day for the last `days` days, as [{'date', 'count'}, …].
+
+    One grouped query. Both dashboards previously issued one COUNT per day in a
+    Python loop — and the org version re-evaluated an `api_key__in` subquery on
+    every iteration.
+    """
+    from django.db.models.functions import TruncDate
+
+    now = timezone.now()
+    start = (now - timedelta(days=days - 1)).replace(hour=0, minute=0, second=0, microsecond=0)
+
+    counts = {
+        row['day']: row['n']
+        for row in logs_qs.filter(requested_at__gte=start)
+                          .annotate(day=TruncDate('requested_at'))
+                          .values('day')
+                          .annotate(n=Count('id'))
+    }
+
+    out = []
+    for offset in range(days - 1, -1, -1):
+        day = (now - timedelta(days=offset)).date()
+        out.append({'date': day.strftime('%b %d'), 'count': counts.get(day, 0)})
+    return out
 
 
 # ─── User API Dashboard ───────────────────────────────────────────────────────
@@ -37,7 +99,7 @@ def user_dashboard(request):
     from beta.utils import user_has_feature
     if not user_has_feature(request.user, 'rest_api'):
         messages.warning(request, "REST API access requires Beta Program enrollment.")
-        return redirect('accounts:settings')
+        return redirect('home:settings')
 
     api_keys = ApiKey.objects.filter(
         user=request.user
@@ -54,15 +116,7 @@ def user_dashboard(request):
         requested_at__gte=since
     ).count()
 
-    # Get only projects the user is actually a member of (owner, collaborator, or org member)
-    from projects.models import Project
-    from organisations.services import get_user_organisations
-    user_orgs = get_user_organisations(request.user)
-    projects = Project.objects.filter(
-        Q(owner=request.user) |
-        Q(collaborators=request.user) |
-        Q(org__in=user_orgs)
-    ).distinct().order_by('title')
+    projects = _projects_for_key_creation(request.user)
 
     return render(request, 'restapi/dashboard.html', {
         'api_keys': api_keys,
@@ -93,16 +147,7 @@ def key_detail(request, key_uuid):
     avg_response_ms = logs_30d.aggregate(avg=Avg('response_ms'))['avg']
 
     # Requests by day (last 14 days)
-    daily_counts = []
-    for i in range(13, -1, -1):
-        day = now - timedelta(days=i)
-        day_start = day.replace(hour=0, minute=0, second=0, microsecond=0)
-        day_end = day_start + timedelta(days=1)
-        count = logs_30d.filter(requested_at__gte=day_start, requested_at__lt=day_end).count()
-        daily_counts.append({
-            'date': day_start.strftime('%b %d'),
-            'count': count,
-        })
+    daily_counts = _daily_request_counts(ApiRequestLog.objects.filter(api_key=api_key))
 
     # Status code breakdown
     status_breakdown = {}
@@ -153,16 +198,17 @@ def create_key(request):
         messages.error(request, "Please select a project.")
         return redirect('restapi:dashboard')
 
-    # Verify user has access to this project
+    # Verify user has access to this project. This used the owner/collaborator
+    # pair while the dropdown above offered org projects too, so an org member
+    # was shown a project and then told they had no access to it.
+    from django.core.exceptions import ValidationError
+
     try:
-        project = Project.objects.get(uuid=project_uuid)
-        from django.db.models import Q
-        if not (project.owner == request.user or
-                project.collaborators.filter(pk=request.user.pk).exists()):
-            messages.error(request, "You don't have access to this project.")
-            return redirect('restapi:dashboard')
-    except Project.DoesNotExist:
-        messages.error(request, "Project not found.")
+        project = _projects_for_key_creation(request.user).get(uuid=project_uuid)
+    except (Project.DoesNotExist, ValidationError, ValueError):
+        # ValidationError covers a malformed uuid, which used to escape the
+        # except clause and 500 the view.
+        messages.error(request, "Project not found, or you don't have access to it.")
         return redirect('restapi:dashboard')
 
     # Parse expiry
@@ -186,6 +232,14 @@ def create_key(request):
 
     if not scope_pairs:
         messages.error(request, "Please select at least one permission scope.")
+        return redirect('restapi:dashboard')
+
+    if ApiKey.objects.filter(user=request.user, is_active=True).count() >= MAX_ACTIVE_KEYS_PER_USER:
+        messages.error(
+            request,
+            f"You already have {MAX_ACTIVE_KEYS_PER_USER} active API keys. "
+            f"Revoke one before creating another."
+        )
         return redirect('restapi:dashboard')
 
     # Generate the raw secret (shown once, never stored)
@@ -227,7 +281,8 @@ def revoke_key(request, key_uuid):
     messages.success(request, f"API key '{api_key.name}' has been revoked.")
 
     if request.headers.get('HX-Request'):
-        return render(request, 'restapi/partials/key_row.html', {'api_key': api_key})
+        # The partial iterates as `key`, matching how dashboard.html includes it.
+        return render(request, 'restapi/partials/key_row.html', {'key': api_key})
     return redirect('restapi:dashboard')
 
 
@@ -240,6 +295,11 @@ def delete_key(request, key_uuid):
     api_key.delete()
     logger.info("API key deleted: %s by user %s", key_uuid, request.user.username)
     messages.success(request, f"API key '{name}' has been permanently deleted.")
+
+    if request.headers.get('HX-Request'):
+        # Empty body swaps the row out; the toast still arrives via HX-Trigger.
+        from django.http import HttpResponse
+        return HttpResponse('')
     return redirect('restapi:dashboard')
 
 
@@ -253,13 +313,13 @@ def org_dashboard(request, org_uuid):
     org = get_object_or_404(Organisation, uuid=org_uuid)
     if org.owner != request.user:
         messages.error(request, "Only the org owner can view the org API dashboard.")
-        return redirect('organisations:detail', uuid=org.uuid)
+        return redirect('organisations:details', uuid=org.uuid)
 
     from beta.utils import user_has_feature
     # Org dashboard requires org-level OR user-level beta enrollment
     if not user_has_feature(request.user, 'rest_api'):
         messages.warning(request, "REST API access requires Beta Program enrollment.")
-        return redirect('accounts:settings')
+        return redirect('home:settings')
 
     # Get all keys across org's projects
     from projects.models import Project
@@ -283,18 +343,8 @@ def org_dashboard(request, org_uuid):
     )
 
     # Requests per day for the org (last 14 days)
-    now = timezone.now()
-    org_daily_counts = []
-    for i in range(13, -1, -1):
-        day = now - timedelta(days=i)
-        day_start = day.replace(hour=0, minute=0, second=0, microsecond=0)
-        day_end = day_start + timedelta(days=1)
-        count = ApiRequestLog.objects.filter(
-            api_key__in=api_keys,
-            requested_at__gte=day_start,
-            requested_at__lt=day_end
-        ).count()
-        org_daily_counts.append({'date': day_start.strftime('%b %d'), 'count': count})
+    org_daily_counts = _daily_request_counts(
+        ApiRequestLog.objects.filter(api_key__project__in=org_projects))
 
     return render(request, 'restapi/org_dashboard.html', {
         'org': org,

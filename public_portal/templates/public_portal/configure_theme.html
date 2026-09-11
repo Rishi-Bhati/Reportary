@@ -29,6 +29,19 @@
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <!-- Editor (Left) -->
         <form method="post" class="lg:col-span-7 bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex flex-col justify-between">
+            {% if form.errors %}
+                <div class="m-6 mb-0 p-4 rounded-xl border border-red-200 bg-red-50 space-y-1.5">
+                    <p class="text-xs font-bold text-red-700 uppercase tracking-wider">{% trans "Fix these before saving" %}</p>
+                    <ul class="text-xs text-red-700 space-y-1 list-disc list-inside">
+                        {% for field in form %}
+                            {% for error in field.errors %}
+                                <li><span class="font-semibold">{{ field.label }}:</span> {{ error }}</li>
+                            {% endfor %}
+                        {% endfor %}
+                        {% for error in form.non_field_errors %}<li>{{ error }}</li>{% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
             {% csrf_token %}
             <div class="p-6 space-y-6">
                 <!-- Branding Overrides -->

@@ -61,11 +61,42 @@ def _parse_auth_header(request) -> tuple[str, str]:
 
 
 def _get_client_ip(request) -> str | None:
-    """Extract client IP, respecting proxy headers."""
-    x_forwarded = request.META.get('HTTP_X_FORWARDED_FOR')
-    if x_forwarded:
-        return x_forwarded.split(',')[0].strip()
-    return request.META.get('REMOTE_ADDR')
+    """Extract client IP. See core.http.get_client_ip for why it is the rightmost hop."""
+    from core.http import get_client_ip
+
+    return get_client_ip(request) or None
+
+
+# ── Throttling ───────────────────────────────────────────────────────────────
+# Fixed-window counters in the cache. Two separate limits:
+#   * failed authentication attempts, keyed by public key + IP, to bound
+#     brute-forcing of a secret;
+#   * successful requests, keyed by public key, as a basic fair-use ceiling.
+AUTH_FAILURE_LIMIT = 10
+AUTH_FAILURE_WINDOW = 300      # seconds
+REQUEST_LIMIT = 120
+REQUEST_WINDOW = 60            # seconds
+
+
+def _throttle(cache_key: str, limit: int, window: int) -> bool:
+    """Increment a fixed-window counter. Returns True when over the limit."""
+    from django.core.cache import cache
+
+    try:
+        # add() only succeeds on the first call in a window, which is what
+        # starts the clock; incr() raises ValueError if the key expired between
+        # the two calls, so fall back to re-seeding it.
+        if cache.add(cache_key, 1, window):
+            return False
+        try:
+            count = cache.incr(cache_key)
+        except ValueError:
+            cache.set(cache_key, 1, window)
+            return False
+        return count > limit
+    except Exception:
+        logger.exception("Throttle check failed for %s; allowing the request.", cache_key)
+        return False
 
 
 def authenticate_api_request(request, resource: str, action: str):
@@ -87,14 +118,19 @@ def authenticate_api_request(request, resource: str, action: str):
     client_ip = _get_client_ip(request)
 
     def _log_and_error(message: str, status: int, api_key=None):
+        """
+        `api_key` is passed only once the caller has proven possession of the
+        secret. Failures before that point are logged to the application log
+        only — writing them to ApiRequestLog let anyone holding a (non-secret)
+        public key grow the owner's table without limit.
+        """
         logger.warning(
             "API auth failure: %s | ip=%s | resource=%s | action=%s",
             message, client_ip, resource, action
         )
         response = JsonResponse({'error': message}, status=status)
-        # Log the failed attempt if we have a key
         if api_key:
-            _record_request_log(api_key, request, status, start_time)
+            record_request_log(api_key, request, status, start_time)
         return None, response
 
     # ── Step 1: Parse header ──────────────────────────────────────────────────
@@ -112,15 +148,32 @@ def authenticate_api_request(request, resource: str, action: str):
         # Do not reveal whether the key exists
         return _log_and_error("Invalid credentials.", 401)
 
-    # ── Step 3: Check if key is usable ────────────────────────────────────────
+    # ── Step 3: Throttle brute-force attempts ─────────────────────────────────
+    failure_key = f'restapi:authfail:{public_key}:{client_ip}'
+    from django.core.cache import cache
+    if (cache.get(failure_key) or 0) > AUTH_FAILURE_LIMIT:
+        return _log_and_error("Too many failed authentication attempts. Try again later.", 429)
+
+    # ── Step 4: Check if key is usable ────────────────────────────────────────
     if not api_key.is_usable:
-        return _log_and_error("This API key is revoked or expired.", 401, api_key)
+        return _log_and_error("This API key is revoked or expired.", 401)
 
-    # ── Step 4: Verify secret (constant-time) ─────────────────────────────────
+    # ── Step 5: Verify secret (constant-time) ─────────────────────────────────
     if not api_key.verify_secret(raw_secret):
-        return _log_and_error("Invalid credentials.", 401, api_key)
+        _throttle(failure_key, AUTH_FAILURE_LIMIT, AUTH_FAILURE_WINDOW)
+        return _log_and_error("Invalid credentials.", 401)
 
-    # ── Step 5: Check scope ───────────────────────────────────────────────────
+    # From here on the caller holds the secret, so failures are theirs to see
+    # in the usage dashboard.
+
+    # ── Step 6: Fair-use ceiling ──────────────────────────────────────────────
+    if _throttle(f'restapi:rate:{public_key}', REQUEST_LIMIT, REQUEST_WINDOW):
+        return _log_and_error(
+            f"Rate limit exceeded ({REQUEST_LIMIT} requests per "
+            f"{REQUEST_WINDOW} seconds).", 429, api_key
+        )
+
+    # ── Step 7: Check scope ───────────────────────────────────────────────────
     has_scope = api_key.scopes.filter(resource=resource, action=action).exists()
     if not has_scope:
         return _log_and_error(
@@ -128,7 +181,7 @@ def authenticate_api_request(request, resource: str, action: str):
             403, api_key
         )
 
-    # ── Step 6: Check beta enrollment (rest_api feature gate) ─────────────────
+    # ── Step 8: Check beta enrollment (rest_api feature gate) ─────────────────
     from beta.utils import user_has_feature
     if not user_has_feature(api_key.user, 'rest_api', project=api_key.project):
         return _log_and_error(
@@ -136,14 +189,16 @@ def authenticate_api_request(request, resource: str, action: str):
             403, api_key
         )
 
-    # ── Step 7: Update usage tracking ─────────────────────────────────────────
+    # ── Step 9: Update usage tracking ─────────────────────────────────────────
     ApiKey.objects.filter(pk=api_key.pk).update(
         last_used_at=timezone.now(),
         last_used_ip=client_ip,
     )
 
-    # ── Step 8: Log the successful request ────────────────────────────────────
-    _record_request_log(api_key, request, 200, start_time)  # placeholder — view updates status
+    # NOTE: the request log is written by the api_endpoint decorator once the
+    # view has produced a response, so it records the real status code. This
+    # used to write a hardcoded 200 here with a "view updates status" comment;
+    # no view ever did, so every metric on the usage dashboard was wrong.
 
     logger.info(
         "API auth success: key=%s user=%s project=%s resource=%s action=%s ip=%s",
@@ -153,8 +208,8 @@ def authenticate_api_request(request, resource: str, action: str):
     return api_key, None
 
 
-def _record_request_log(api_key, request, status_code: int, start_time: float):
-    """Async-safe: fire-and-forget request log entry."""
+def record_request_log(api_key, request, status_code: int, start_time: float):
+    """Write one usage-log row. Never raises."""
     from restapi.models import ApiRequestLog
     try:
         elapsed_ms = int((time.monotonic() - start_time) * 1000)
@@ -168,3 +223,36 @@ def _record_request_log(api_key, request, status_code: int, start_time: float):
         )
     except Exception:
         logger.exception("Failed to write ApiRequestLog")
+
+
+def api_endpoint(resource: str, action: str):
+    """
+    Authenticate, run the view, then log the request with its REAL status code.
+
+    Wrapping the view is what makes the usage metrics truthful: authentication
+    cannot know how the request ends, so logging there could only ever record a
+    guess. `request.api_key` is set for the view's benefit.
+    """
+    from functools import wraps
+
+    def decorator(view):
+        @wraps(view)
+        def wrapper(request, *args, **kwargs):
+            start_time = time.monotonic()
+            api_key, error = authenticate_api_request(request, resource=resource, action=action)
+            if error:
+                return error
+
+            request.api_key = api_key
+            try:
+                response = view(request, *args, **kwargs)
+            except Exception:
+                logger.exception("Unhandled error in API endpoint %s", request.path)
+                response = JsonResponse({'error': 'An internal error occurred.'}, status=500)
+
+            record_request_log(api_key, request, response.status_code, start_time)
+            return response
+
+        return wrapper
+
+    return decorator

@@ -2,6 +2,7 @@
 AUTO_READ_TYPES = {
     'report_created', 'report_assigned', 'report_reassigned', 'report_status_changed',
     'report_commented', 'collaborator_added', 'report_impact_changed',
+    'beta_enrollment',
 }
 
 # Types that require user action (accept/decline) — NOT auto-read
