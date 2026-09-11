@@ -166,3 +166,90 @@ def toggle_report_follower(*, user, report):
         follower.delete()
         return False
     return True
+
+
+def users_in_reports(reports_qs):
+    """
+    Users appearing as reporter or assignee on the given reports.
+
+    The report-list filter dropdowns previously used ``User.objects.all()``,
+    which rendered the entire user table into every list — including the
+    unauthenticated public-project view, making every registered username
+    enumerable by anyone. Scoping to participants fixes that and removes the
+    page's worst weight problem at the same time.
+    """
+    from django.db.models import Q
+    from accounts.models import User
+
+    ids = reports_qs.order_by().values('reported_by')
+    assignee_ids = reports_qs.order_by().values('assigned_to')
+    return User.objects.filter(
+        Q(pk__in=ids) | Q(pk__in=assignee_ids)
+    ).distinct().order_by('username')
+
+
+# ─── Attachment validation ────────────────────────────────────────────────────
+
+MAX_ATTACHMENT_BYTES = 10 * 1024 * 1024  # 10 MB
+
+
+def attachment_extension(filename: str) -> str:
+    """Lowercased extension including the dot, or '' if there isn't one."""
+    if not filename or '.' not in filename:
+        return ''
+    return '.' + filename.rsplit('.', 1)[-1].lower()
+
+
+def allowed_attachment_extensions(project) -> list:
+    return [ext.strip().lower()
+            for ext in (project.allowed_attachment_types or '').split(',')
+            if ext.strip()]
+
+
+def validate_attachment(uploaded_file, project):
+    """
+    Validate one upload against the project's rules.
+
+    Shared by the authenticated and anonymous submission paths. They had
+    different rules: the authenticated path checked the extension allowlist but
+    had no size limit at all, while the anonymous path — the one that accepts
+    files from strangers — checked size but ignored the allowlist entirely.
+
+    Raises django.forms.ValidationError.
+    """
+    from django import forms
+
+    if uploaded_file is None:
+        return uploaded_file
+
+    if uploaded_file.size > MAX_ATTACHMENT_BYTES:
+        raise forms.ValidationError(
+            f"'{uploaded_file.name}' is too large. Maximum size is "
+            f"{MAX_ATTACHMENT_BYTES // (1024 * 1024)} MB."
+        )
+
+    allowed = allowed_attachment_extensions(project) if project else []
+    if allowed:
+        extension = attachment_extension(uploaded_file.name)
+        if extension not in allowed:
+            raise forms.ValidationError(
+                f"File type '{extension or 'unknown'}' is not allowed for "
+                f"'{uploaded_file.name}'. Allowed types: {', '.join(allowed)}."
+            )
+
+    return uploaded_file
+
+
+def components_in_reports(reports_qs):
+    """
+    Components referenced by the given reports.
+
+    Same reasoning as users_in_reports: the personal list views built this
+    dropdown from Component.objects.all(), exposing the component names of every
+    project in the system — including private ones.
+    """
+    from components.models import Component
+
+    return Component.objects.filter(
+        pk__in=reports_qs.order_by().values('component')
+    ).distinct().order_by('name')

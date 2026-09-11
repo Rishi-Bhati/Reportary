@@ -13,9 +13,14 @@ User {% trans "Profile" %} - {{ user.username|default:'Guest' }}
                 <div class="flex flex-col md:flex-row items-start md:items-center justify-between">
                     <div class="flex items-center space-x-6 mb-6 md:mb-0">
                         <div class="flex-shrink-0">
-                            <img class="h-24 w-24 rounded-full object-cover shadow-md"
-                                src="https://ui-avatars.com/api/?name={{ user.name|default:user.username|first|upper }}&background=226ce0&color=fff&size=128&font-size=0.5"
-                                alt="{{ user.username }}'s profile picture">
+                            {# Rendered locally. This used to be an ui-avatars.com image, which
+                               sent the user's real name to a third party on every page view. #}
+                            <div class="h-24 w-24 rounded-full shadow-md bg-[#226ce0] text-white
+                                        flex items-center justify-center text-4xl font-bold select-none"
+                                 role="img"
+                                 aria-label="{% blocktrans with name=user.name|default:user.username %}{{ name }}'s avatar{% endblocktrans %}">
+                                {{ user.name|default:user.username|first|upper }}
+                            </div>
                         </div>
                         <div class="flex-1">
                             <h1 class="text-3xl font-bold text-gray-900 tracking-tight">{{ user.name|default:user.username }}</h1>

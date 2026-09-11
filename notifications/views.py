@@ -54,8 +54,12 @@ def notification_center(request):
     # 4. Auto-mark informational/non-actionable notifications as read on opening this page
     mark_informational_as_read(user)
 
+    from core.pagination import paginate, pagination_context
+
+    notifications_page = paginate(request, notifications, per_page=30)
+
     context = {
-        'notifications': notifications,
+        'notifications': notifications_page,
         'active_tab': active_tab,
         'unread_count': all_notifications.filter(is_read=False).count(),
         'invites_count': all_notifications.filter(requires_action=True, is_read=False).count(),
@@ -63,6 +67,8 @@ def notification_center(request):
         'announcements_count': announcements_count,
         'announcements_list': announcements_list,
     }
+    context.update(pagination_context(request, notifications_page))
+
     return render(request, "notifications/notification_center.html", context)
 
 

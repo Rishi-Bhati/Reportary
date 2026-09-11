@@ -33,7 +33,7 @@ Reportary is an open-source project management and issue tracking platform. It p
 | Interactivity | HTMX + Alpine.js |
 | Database | PostgreSQL |
 | File Storage | Cloudinary |
-| Auth | Django built-in + `django-rules` |
+| Auth | Django built-in + hand-written predicates in `rules/` |
 
 ---
 
@@ -81,11 +81,24 @@ The app will be available at `http://127.0.0.1:8000`.
 |---|---|
 | `SECRET_KEY` | Django secret key |
 | `DATABASE_URL` | PostgreSQL connection string |
-| `CLOUDINARY_URL` | Cloudinary connection string (for file uploads) |
-| `EMAIL_HOST` | SMTP host for transactional email |
-| `EMAIL_HOST_USER` | SMTP username |
-| `EMAIL_HOST_PASSWORD` | SMTP password |
-| `DEBUG` | Set to `False` in production |
+| `CLOUD_NAME` | Cloudinary cloud name (for file uploads) |
+| `CLOUDINARY_API_KEY` | Cloudinary API key |
+| `CLOUDINARY_API_SECRET` | Cloudinary API secret |
+| `MAIL_API` | API key for the Unsent mail service (sent as `X-API-Key`) |
+| `MAIL_API_SECRET` | HMAC signing secret for the mail service |
+| `MAIL_API_ENDPOINT` | Mail service URL (default: `https://unsent.rishibhati.in/api/send`) |
+| `MAIL_FROM_NAME` | Display name outbound email is sent as (default: `Reportary`) |
+| `MAIL_ID` | Address transactional email is sent from |
+| `SITE_URL` | Absolute base URL used in emails (default: the Render deployment) |
+| `DEBUG` | `True` only for local development; defaults to `False` |
+| `CSP_ENFORCE` | `True` to enforce the Content-Security-Policy instead of report-only |
+
+SMTP settings (`EMAIL_HOST`, `EMAIL_HOST_USER`, `EMAIL_HOST_PASSWORD`) are no longer
+used — email is dispatched over HTTP to the Unsent mail service. Requests are
+authenticated with an HMAC-SHA256 signature over `<timestamp>\n<nonce>\n<sha256(body)>`,
+sent as `X-API-Key`, `X-Timestamp`, `X-Nonce` and `X-Signature` (see
+`notifications/email_service.py`). The legacy SMTP block is kept commented out in
+`core/settings.py` for reference.
 
 ---
 
@@ -136,6 +149,10 @@ python manage.py purge_deleted_accounts
 
 # Dry run — lists accounts that would be deleted without deleting them
 python manage.py purge_deleted_accounts --dry-run
+
+# Prune API request logs beyond the retention window (run as a cron job)
+python manage.py purge_api_logs --days 90
+python manage.py purge_api_logs --days 90 --dry-run
 ```
 
 ---
@@ -146,6 +163,10 @@ python manage.py purge_deleted_accounts --dry-run
 - UUIDv7 primary keys prevent enumeration of users, projects, and reports.
 - Strong password policy enforced at signup and on profile updates.
 - HTMX mutations are CSRF-protected via a centralised `htmx:configRequest` handler in `base.html`.
+- User-supplied Markdown (report bodies, steps, comments) is rendered **server-side** with raw HTML disabled — never with a client-side parser into `innerHTML`.
+- Login is rate-limited per IP and per account; the REST API is rate-limited per key.
+- Owner-supplied portal CSS is parsed and filtered against a property allowlist (`public_portal/css_sanitizer.py`), not regex-blocklisted.
+- All third-party scripts are version-pinned with Subresource Integrity hashes, and a Content-Security-Policy ships in report-only mode.
 - Account deletion is a soft-delete with a 30-day reactivation window before permanent removal.
 
 If you discover a security vulnerability, please report it through the [issue tracker on the live site](https://reportary.onrender.com/projects/019f2e92-7f0d-78e9-92b3-9431a1014882/reports/new/) or contact the team directly.
@@ -156,7 +177,7 @@ If you discover a security vulnerability, please report it through the [issue tr
 
 See [RELEASE_NOTES.md](RELEASE_NOTES.md) for the full version history.
 
-**Current version:** `v1.0.0 Stable` — July 2026
+**Current version:** `v1.1.0-beta.1`
 
 ---
 
@@ -167,7 +188,8 @@ Planned for future releases:
 - Enhanced RBAC (role-based access control)
 - Slack / Discord integrations
 - AI-powered report summaries and duplicate detection
-- REST API and webhook support
+- Webhook support
+- REST API coverage for comments and projects (only `reports` read/create ships today)
 
 ---
 

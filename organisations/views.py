@@ -295,5 +295,5 @@ def leave_organisation(request, uuid):
     else:
         messages.error(request, "You are not a member of this organisation.")
         
-    return redirect('dashboard:home')
+    return redirect('dashboard:dashboard')
 

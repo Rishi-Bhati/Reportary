@@ -67,7 +67,7 @@
                 <!-- Tabs navigation -->
                 <div class="flex border-b border-gray-250 bg-gray-50 overflow-x-auto" id="report-type-tabs">
                     {% for slug, type_cfg in report_types.items %}
-                        <button type="button" onclick="switchReportTypeTab('{{ slug }}')" id="tab-btn-{{ slug }}"
+                        <button type="button" onclick="switchReportTypeTab('{{ slug|escapejs }}')" id="tab-btn-{{ slug }}"
                                 class="report-type-tab-btn px-6 py-4 font-bold text-xs uppercase tracking-wider border-b-2 transition-all shrink-0
                                 {% if forloop.first %}border-[#226ce0] text-[#226ce0] bg-white{% else %}border-transparent text-gray-500 hover:text-gray-800{% endif %}">
                             {{ type_cfg.name }}
@@ -91,12 +91,23 @@
                             <div class="form-control w-full max-w-md">
                                 <label class="label text-xs font-bold text-gray-400 uppercase tracking-wider p-0 mb-1.5">Category Name</label>
                                 <input type="text" name="report_type_name_{{ slug }}" value="{{ type_cfg.name }}" required
-                                       oninput="updateTabLabel('{{ slug }}', this.value)"
+                                       oninput="updateTabLabel('{{ slug|escapejs }}', this.value)"
                                        class="input input-bordered w-full focus:border-[#226ce0] bg-gray-50 focus:bg-white transition-colors">
                             </div>
-                            <button type="button" onclick="deleteReportType('{{ slug }}')" class="btn btn-outline btn-error btn-sm rounded-xl mt-4">
-                                {% trans "Delete Category" %}
-                            </button>
+                            <div class="text-right mt-4">
+                                <button type="button"
+                                        onclick="deleteReportType('{{ slug|escapejs }}', {{ report_type_usage|get_item:slug|default:0 }})"
+                                        class="btn btn-outline btn-error btn-sm rounded-xl">
+                                    {% trans "Delete Category" %}
+                                </button>
+                                {% with used=report_type_usage|get_item:slug %}
+                                    {% if used %}
+                                        <p class="text-[10px] text-amber-600 font-semibold mt-1.5">
+                                            {% blocktrans count counter=used %}{{ counter }} report uses this type{% plural %}{{ counter }} reports use this type{% endblocktrans %}
+                                        </p>
+                                    {% endif %}
+                                {% endwith %}
+                            </div>
                         </div>
 
                         <!-- Standard fields layout selection -->
@@ -104,17 +115,29 @@
                             <h4 class="text-xs font-bold text-gray-700 uppercase tracking-wider">Standard Fields to Display</h4>
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 {% for field_slug in default_fields %}
-                                    <label class="flex items-center gap-3 p-3 rounded-xl border border-gray-100 hover:bg-gray-50/50 cursor-pointer transition-all">
-                                        <input type="checkbox" name="enabled_fields_{{ slug }}" value="{{ field_slug }}"
-                                               {% if field_slug in type_cfg.enabled_fields %}checked{% endif %}
-                                               class="w-4 h-4 rounded text-[#226ce0] border-gray-300 focus:ring-[#226ce0] cursor-pointer">
-                                        <div>
-                                            <span class="text-xs font-bold text-gray-800 capitalize">{{ field_slug }}</span>
-                                            {% if field_slug == 'title' or field_slug == 'description' %}
-                                                <span class="ml-1 text-[8px] font-bold uppercase text-red-500">{% trans "Required" %}</span>
-                                            {% endif %}
-                                        </div>
-                                    </label>
+                                    {% if field_slug == 'title' or field_slug == 'description' %}
+                                        {# Backs a non-nullable column: always on. A disabled checkbox is not
+                                           submitted, so a hidden input carries the value. #}
+                                        <label class="flex items-center gap-3 p-3 rounded-xl border border-gray-100 bg-gray-50/60 cursor-not-allowed transition-all"
+                                               title="{% trans 'Every report needs this field, so it cannot be turned off.' %}">
+                                            <input type="hidden" name="enabled_fields_{{ slug }}" value="{{ field_slug }}">
+                                            <input type="checkbox" checked disabled
+                                                   class="w-4 h-4 rounded text-[#226ce0] border-gray-300 cursor-not-allowed">
+                                            <div>
+                                                <span class="text-xs font-bold text-gray-800 capitalize">{{ field_slug }}</span>
+                                                <span class="ml-1 text-[8px] font-bold uppercase text-red-500">{% trans "Always on" %}</span>
+                                            </div>
+                                        </label>
+                                    {% else %}
+                                        <label class="flex items-center gap-3 p-3 rounded-xl border border-gray-100 hover:bg-gray-50/50 cursor-pointer transition-all">
+                                            <input type="checkbox" name="enabled_fields_{{ slug }}" value="{{ field_slug }}"
+                                                   {% if field_slug in type_cfg.enabled_fields %}checked{% endif %}
+                                                   class="w-4 h-4 rounded text-[#226ce0] border-gray-300 focus:ring-[#226ce0] cursor-pointer">
+                                            <div>
+                                                <span class="text-xs font-bold text-gray-800 capitalize">{{ field_slug }}</span>
+                                            </div>
+                                        </label>
+                                    {% endif %}
                                 {% endfor %}
                             </div>
                         </div>
@@ -126,7 +149,7 @@
                                     <h4 class="text-xs font-bold text-gray-700 uppercase tracking-wider">Custom Form Fields</h4>
                                     <p class="text-xs text-gray-400 mt-0.5">Add custom textboxes, checkboxes, or selectors specific to this category.</p>
                                 </div>
-                                <button type="button" onclick="addCustomFieldRow('{{ slug }}')" class="btn btn-xs btn-outline btn-primary rounded-lg">
+                                <button type="button" onclick="addCustomFieldRow('{{ slug|escapejs }}')" class="btn btn-xs btn-outline btn-primary rounded-lg">
                                     + Add Custom Field
                                 </button>
                             </div>
@@ -166,7 +189,7 @@
                                                    class="cf-required-checkbox w-4 h-4 rounded text-[#226ce0] border-gray-300 focus:ring-[#226ce0] cursor-pointer">
                                             <input type="hidden" class="cf-required-hidden" name="cf_required_{{ slug }}_{{ forloop.counter0 }}" value="{% if cf.required %}true{% else %}false{% endif %}">
                                         </div>
-                                        <button type="button" onclick="removeCustomFieldRow(this, '{{ slug }}')"
+                                        <button type="button" onclick="removeCustomFieldRow(this, '{{ slug|escapejs }}')"
                                                 class="absolute top-2 right-2 text-gray-400 hover:text-red-500 transition-colors">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -472,14 +495,19 @@
         input.value = '';
     }
 
-    function deleteReportType(slug) {
+    function deleteReportType(slug, usageCount) {
         const tabBtn = document.getElementById(`tab-btn-${slug}`);
         const panel = document.getElementById(`config-panel-${slug}`);
         const hiddenSlug = document.getElementById(`slug-input-${slug}`);
         
         if (!tabBtn) return;
         
-        if (confirm(`Are you sure you want to delete the category "${tabBtn.textContent.trim()}"?`)) {
+        let message = `Are you sure you want to delete the category "${tabBtn.textContent.trim()}"?`;
+        if (usageCount > 0) {
+            message += `\n\n${usageCount} existing report(s) use this type. They will keep their `
+                     + `saved values but fall back to the default field set.`;
+        }
+        if (confirm(message)) {
             // Remove option from default selector dropdown
             const opt = document.querySelector(`#default-report-type-selector option[value="${slug}"]`);
             if (opt) opt.remove();

@@ -4,7 +4,8 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from django.http import JsonResponse, HttpResponseForbidden, HttpResponse
 from django.contrib import messages
-from projects.models import Project
+from django.core.exceptions import ValidationError as DjangoValidationError
+from projects.models import Project, resolve_report_type_slug
 from components.models import Component
 from reports.models import Report
 from comments.models import Comment
@@ -13,6 +14,7 @@ from django.db.models import Q
 import rules.views as rules
 from accounts.models import User
 from reports.services import *
+from core.pagination import paginate, pagination_context
 import logging
 
 logger = logging.getLogger(__name__)
@@ -114,11 +116,13 @@ def report_list(request, project_uuid=None):
     reports = apply_report_filters_and_sorting(reports, request)
 
     # Context choices
-    filter_users = User.objects.all().order_by('username')
+    filter_users = users_in_reports(base_qs)
     filter_components = Component.objects.filter(project=project).order_by('name')
 
+    reports_page = paginate(request, reports)
+
     context = {
-        'reports': reports,
+        'reports': reports_page,
         'project': project,
         'filter_users': filter_users,
         'filter_components': filter_components,
@@ -132,6 +136,7 @@ def report_list(request, project_uuid=None):
         'selected_sort_by': request.GET.get('sort_by', ''),
         'q': request.GET.get('q', '').strip(),
     }
+    context.update(pagination_context(request, reports_page))
 
     if request.headers.get('HX-Request') or request.GET.get('hx_request') == 'true':
         return render(request, 'reports/partials/reports_list_partial.html', context)
@@ -269,8 +274,28 @@ def report_detail(request, report_uuid, project_uuid=None):
         'custom_fields': custom_fields_list,
         })
 
+def check_reporting_access(user, project):
+    """
+    Returns (allowed, is_public_reporter) for `user` filing a report on `project`.
+
+    A user may report either because they can access the project normally, or
+    because the project exposes an active public reporting link. Both the
+    URL-scoped route and the project-picker route must run this — see
+    create_report, where skipping it on the picker route allowed reports to be
+    written into projects the user could not see.
+    """
+    if project is None:
+        return False, False
+    if rules.can_access_project(user, project):
+        return True, False
+    public_link = getattr(project, 'public_link', None)
+    if public_link and public_link.is_active and project.public_reporting_enabled:
+        return True, True
+    return False, False
+
+
 @login_required
-def create_report(request, project_uuid=None):    
+def create_report(request, project_uuid=None):
     """
     View for creating a new report.
     """
@@ -279,16 +304,14 @@ def create_report(request, project_uuid=None):
         return render_verification_required(request, "Verify your email to create reports.")
 
     project = None
-    
+
     if project_uuid is not None:
         project = get_object_or_404(Project, uuid=project_uuid)
 
     is_public_reporter = False
-    if project and not rules.can_access_project(request.user, project):
-        public_link = getattr(project, 'public_link', None)
-        if public_link and public_link.is_active and project.public_reporting_enabled:
-            is_public_reporter = True
-        else:
+    if project:
+        allowed, is_public_reporter = check_reporting_access(request.user, project)
+        if not allowed:
             return HttpResponseForbidden("You do not have permission to access this project.")
 
     anon_allowed = False
@@ -297,37 +320,40 @@ def create_report(request, project_uuid=None):
         anon_allowed, _ = anon_reporting_allowed(project)
 
     if request.method == 'POST':
-        # Resolve project if scenario 2 (selected from select dropdown)
+        # Resolve project if scenario 2 (selected from select dropdown).
+        # The form deletes its `project` field once a project is supplied, so this
+        # value is never validated by the form — it MUST be authorised here.
         if not project:
             project_id = request.POST.get('project')
             if project_id:
                 try:
                     project = Project.objects.get(id=project_id)
-                except Project.DoesNotExist:
-                    pass
+                except (Project.DoesNotExist, ValueError, TypeError, DjangoValidationError):
+                    project = None
+            if project:
+                allowed, is_public_reporter = check_reporting_access(request.user, project)
+                if not allowed:
+                    return HttpResponseForbidden("You do not have permission to access this project.")
 
         # Determine report type slug
-        report_type_slug = 'bug'
-        if project:
-            from projects.models import ReportFormConfig
-            form_config = ReportFormConfig.objects.filter(project=project).first()
-            if form_config:
-                report_type_slug = form_config.config.get('default_report_type', 'bug')
-        report_type_slug = request.POST.get('report_type', report_type_slug)
+        report_type_slug = resolve_report_type_slug(project, request.POST.get('report_type'))
 
         form = ReportForm(request.POST, request.FILES, project=project, user=request.user, report_type_slug=report_type_slug)
         files = request.FILES.getlist('attachments')
 
-        # Backend validations for multiple attachments
+        # Backend validations for multiple attachments. Shared with the public
+        # portal so the two paths cannot disagree about what is acceptable —
+        # this one had no size limit, the portal ignored the type allowlist.
         if project:
             if len(files) > project.max_attachments:
                 form.add_error(None, f"A maximum of {project.max_attachments} attachments are allowed for reports in this project.")
-            
-            allowed_types = [ext.strip().lower() for ext in project.allowed_attachment_types.split(',') if ext.strip()]
+
+            from django.forms import ValidationError as FormValidationError
             for f in files:
-                ext = '.' + f.name.split('.')[-1].lower() if '.' in f.name else ''
-                if ext not in allowed_types:
-                    form.add_error(None, f"File type '{ext}' of file '{f.name}' is not allowed. Allowed types: {project.allowed_attachment_types}")
+                try:
+                    validate_attachment(f, project)
+                except FormValidationError as exc:
+                    form.add_error(None, exc.messages[0])
                     break
         
         if form.is_valid():
@@ -375,16 +401,8 @@ def create_report(request, project_uuid=None):
             return redirect('projects:reports:report_detail', project_uuid=report.project.uuid, report_uuid=report.uuid)
     else:
         # Determine default report type slug
-        report_type_slug = 'bug'
-        if project:
-            from projects.models import ReportFormConfig
-            form_config = ReportFormConfig.objects.filter(project=project).first()
-            if form_config:
-                report_type_slug = form_config.config.get('default_report_type', 'bug')
-        if 'type' in request.GET:
-            report_type_slug = request.GET.get('type')
-        elif 'report_type' in request.GET:
-            report_type_slug = request.GET.get('report_type')
+        requested = request.GET.get('type') or request.GET.get('report_type')
+        report_type_slug = resolve_report_type_slug(project, requested)
 
         form = ReportForm(project=project, user=request.user, report_type_slug=report_type_slug)
         
@@ -456,11 +474,13 @@ def my_report_list(request):
     reports = apply_report_filters_and_sorting(reports, request)
 
     # Context choices
-    filter_users = User.objects.all().order_by('username')
-    filter_components = Component.objects.all().order_by('name')
+    filter_users = users_in_reports(reports)
+    filter_components = components_in_reports(reports)
+
+    reports_page = paginate(request, reports)
 
     context = {
-        'reports': reports,
+        'reports': reports_page,
         'title': 'My Reports',
         'subtitle': 'Manage issues and reports created by you.',
         'filter_users': filter_users,
@@ -475,6 +495,8 @@ def my_report_list(request):
         'selected_sort_by': request.GET.get('sort_by', ''),
         'q': request.GET.get('q', '').strip(),
     }
+
+    context.update(pagination_context(request, reports_page))
 
     if request.headers.get('HX-Request') or request.GET.get('hx_request') == 'true':
         return render(request, 'reports/partials/reports_list_partial.html', context)
@@ -492,11 +514,13 @@ def assigned_to_me(request):
     reports = apply_report_filters_and_sorting(reports, request)
 
     # Context choices
-    filter_users = User.objects.all().order_by('username')
-    filter_components = Component.objects.all().order_by('name')
+    filter_users = users_in_reports(reports)
+    filter_components = components_in_reports(reports)
+
+    reports_page = paginate(request, reports)
 
     context = {
-        'reports': reports,
+        'reports': reports_page,
         'title': 'Assigned to Me',
         'subtitle': 'Manage issues assigned directly to you.',
         'filter_users': filter_users,
@@ -511,6 +535,8 @@ def assigned_to_me(request):
         'selected_sort_by': request.GET.get('sort_by', ''),
         'q': request.GET.get('q', '').strip(),
     }
+
+    context.update(pagination_context(request, reports_page))
 
     if request.headers.get('HX-Request') or request.GET.get('hx_request') == 'true':
         return render(request, 'reports/partials/reports_list_partial.html', context)
@@ -538,11 +564,13 @@ def needs_attention_view(request):
     reports = apply_report_filters_and_sorting(reports, request)
 
     # Context choices
-    filter_users = User.objects.all().order_by('username')
-    filter_components = Component.objects.all().order_by('name')
+    filter_users = users_in_reports(reports)
+    filter_components = components_in_reports(reports)
+
+    reports_page = paginate(request, reports)
 
     context = {
-        'reports': reports,
+        'reports': reports_page,
         'title': 'Needs Attention',
         'subtitle': 'Critical reports assigned to you or reported on your projects.',
         'filter_users': filter_users,
@@ -557,6 +585,8 @@ def needs_attention_view(request):
         'selected_sort_by': request.GET.get('sort_by', ''),
         'q': request.GET.get('q', '').strip(),
     }
+
+    context.update(pagination_context(request, reports_page))
 
     if request.headers.get('HX-Request') or request.GET.get('hx_request') == 'true':
         return render(request, 'reports/partials/reports_list_partial.html', context)

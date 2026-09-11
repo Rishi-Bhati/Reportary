@@ -71,11 +71,10 @@ class GeoLanguageMiddleware(MiddlewareMixin):
         return self._lookup_ip_country(self._get_client_ip(request))
 
     def _get_client_ip(self, request):
-        """Returns the real client IP, honouring X-Forwarded-For."""
-        xff = request.META.get('HTTP_X_FORWARDED_FOR')
-        if xff:
-            return xff.split(',')[0].strip()
-        return request.META.get('REMOTE_ADDR', '')
+        """Returns the real client IP. See core.http.get_client_ip for the rules."""
+        from core.http import get_client_ip
+
+        return get_client_ip(request)
 
     def _lookup_ip_country(self, ip):
         """
@@ -138,4 +137,48 @@ class HtmxMessageMiddleware(MiddlewareMixin):
                 trigger_data['htmxMessages'] = django_messages
                 response['HX-Trigger'] = json.dumps(trigger_data)
         
+        return response
+
+
+class ContentSecurityPolicyMiddleware(MiddlewareMixin):
+    """
+    Emits a Content-Security-Policy header.
+
+    Defence in depth behind the XSS fixes: every third-party script the app
+    loads is now pinned with an SRI hash, so the policy can name those hosts
+    explicitly and refuse everything else.
+
+    Report-only by default. Set CSP_ENFORCE=True once you have watched the
+    browser console for a release and confirmed nothing legitimate is blocked —
+    switching straight to enforcement risks breaking pages that still carry an
+    inline handler the policy does not allow.
+    """
+
+    SCRIPT_HOSTS = "https://unpkg.com https://cdn.jsdelivr.net https://code.jquery.com"
+    STYLE_HOSTS = "https://fonts.googleapis.com https://cdn.jsdelivr.net"
+    FONT_HOSTS = "https://fonts.gstatic.com"
+    IMG_HOSTS = "https://res.cloudinary.com"
+
+    def _policy(self):
+        return "; ".join([
+            "default-src 'self'",
+            # 'unsafe-inline' is still required: the templates carry inline
+            # <script> blocks and onclick handlers. Removing those is the
+            # prerequisite for tightening this directive.
+            f"script-src 'self' 'unsafe-inline' {self.SCRIPT_HOSTS}",
+            f"style-src 'self' 'unsafe-inline' {self.STYLE_HOSTS}",
+            f"font-src 'self' data: {self.FONT_HOSTS}",
+            f"img-src 'self' data: blob: {self.IMG_HOSTS}",
+            "connect-src 'self'",
+            "frame-ancestors 'none'",
+            "base-uri 'self'",
+            "form-action 'self'",
+            "object-src 'none'",
+        ])
+
+    def process_response(self, request, response):
+        enforce = getattr(django_settings, 'CSP_ENFORCE', False)
+        header = ('Content-Security-Policy' if enforce
+                  else 'Content-Security-Policy-Report-Only')
+        response.setdefault(header, self._policy())
         return response

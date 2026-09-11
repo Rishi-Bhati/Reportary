@@ -120,3 +120,74 @@ def validate_create_report(data: dict) -> dict:
 def validation_error_response(exc: ValidationError) -> JsonResponse:
     """Convert a ValidationError into a 400 JSON response."""
     return JsonResponse({'error': 'Validation failed.', 'details': exc.errors}, status=400)
+
+
+# ─── Custom fields ────────────────────────────────────────────────────────────
+
+MAX_CUSTOM_FIELD_VALUE_LENGTH = 2000
+MAX_CUSTOM_TEXTAREA_VALUE_LENGTH = 10000
+
+
+def validate_custom_fields(payload: dict, schema: list, report_type_slug: str) -> dict:
+    """
+    Validate a custom_fields payload against a project's schema.
+
+    Returns a dict containing only schema-defined keys, with values coerced to
+    the declared type. Unknown keys are dropped rather than stored: the payload
+    used to pass through on nothing more than an isinstance(dict) check, so any
+    JSON of any size was persisted and later rendered on the report page.
+    """
+    errors = {}
+    cleaned = {}
+
+    for field in schema:
+        name = field.get('name')
+        if not name:
+            continue
+
+        field_type = field.get('type') or 'text'
+        required = bool(field.get('required', False))
+        present = name in payload
+        value = payload.get(name)
+
+        if not present or value is None or value == '':
+            if required:
+                errors[name] = (
+                    f"'{name}' is required for report type '{report_type_slug}'."
+                )
+            continue
+
+        if field_type == 'checkbox':
+            if not isinstance(value, bool):
+                errors[name] = f"'{name}' must be true or false."
+                continue
+            cleaned[name] = value
+
+        elif field_type == 'select':
+            options = [c.strip() for c in (field.get('choices') or '').split(',') if c.strip()]
+            if not isinstance(value, str) or value not in options:
+                errors[name] = f"'{name}' must be one of: {options}"
+                continue
+            cleaned[name] = value
+
+        else:  # text / textarea / anything unrecognised
+            if not isinstance(value, str):
+                errors[name] = f"'{name}' must be a string."
+                continue
+            limit = (MAX_CUSTOM_TEXTAREA_VALUE_LENGTH if field_type == 'textarea'
+                     else MAX_CUSTOM_FIELD_VALUE_LENGTH)
+            if len(value) > limit:
+                errors[name] = f"'{name}' must be at most {limit} characters."
+                continue
+            cleaned[name] = value
+
+    unknown = set(payload) - {f.get('name') for f in schema}
+    if unknown:
+        errors['custom_fields'] = (
+            f"Unknown custom field(s) for report type '{report_type_slug}': "
+            f"{sorted(unknown)}"
+        )
+
+    if errors:
+        raise ValidationError(errors)
+    return cleaned

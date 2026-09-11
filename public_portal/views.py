@@ -270,7 +270,7 @@ def _create_anonymous_report(form, project, link, ip_hash):
             create_notification(
                 recipient=project.owner,
                 actor=anon_user,
-                notification_type='new_report',
+                notification_type='report_created',
                 title="New Anonymous Report",
                 message=f"An anonymous report '{report.title}' was submitted to {project.title}.",
                 target_content_type='report',
@@ -423,11 +423,13 @@ def htmx_toggle_anon_attachments(request, project_uuid):
 @login_required
 def configure_portal_theme(request, project_uuid):
     """View to configure custom portal styling (colors, font, custom CSS)."""
-    from beta.utils import user_has_feature
-    from projects.models import Project
-    from public_portal.models import PortalTheme
     import rules.views as rules
     from django.http import HttpResponseForbidden
+
+    from beta.utils import user_has_feature
+    from projects.models import Project
+    from public_portal.forms import PortalThemeForm
+    from public_portal.models import PortalTheme
 
     project = get_object_or_404(Project, uuid=project_uuid)
     if not rules.can_manage_public_links(request.user, project):
@@ -437,25 +439,26 @@ def configure_portal_theme(request, project_uuid):
         messages.warning(request, "Portal Custom Styling feature requires Beta Program enrollment.")
         return redirect('projects:project_detail', project_uuid=project.uuid)
 
-    theme, created = PortalTheme.objects.get_or_create(project=project)
+    # Look up only — do NOT create on GET. get_or_create() here meant that
+    # merely opening the editor wrote a theme row and restyled the live portal.
+    theme = PortalTheme.objects.filter(project=project).first()
 
     if request.method == "POST":
-        theme.primary_color = request.POST.get('primary_color', '#6366f1').strip()
-        theme.background_color = request.POST.get('background_color', '#0f0f1a').strip()
-        theme.card_background = request.POST.get('card_background', '#1a1a2e').strip()
-        theme.text_color = request.POST.get('text_color', '#e2e8f0').strip()
-        theme.accent_color = request.POST.get('accent_color', '#818cf8').strip()
-        theme.font_family = request.POST.get('font_family', 'Inter').strip()
-        theme.border_radius = request.POST.get('border_radius', '12px').strip()
-        theme.custom_css = request.POST.get('custom_css', '').strip()
-        theme.custom_logo_url = request.POST.get('custom_logo_url', '').strip() or None
-        theme.custom_heading = request.POST.get('custom_heading', '').strip() or None
-        
-        theme.save()
-        messages.success(request, "Portal theme saved successfully.")
-        return redirect('public_portal:configure_theme', project_uuid=project.uuid)
+        form = PortalThemeForm(request.POST, instance=theme or PortalTheme(project=project))
+        if form.is_valid():
+            saved = form.save(commit=False)
+            saved.project = project
+            saved.save()
+            messages.success(request, "Portal theme saved successfully.")
+            return redirect('public_portal:configure_theme', project_uuid=project.uuid)
+        messages.error(request, "Please correct the highlighted fields.")
+    else:
+        form = PortalThemeForm(instance=theme)
 
     return render(request, 'public_portal/configure_theme.html', {
         'project': project,
-        'theme': theme,
+        # An unsaved instance so the template can render current-or-default
+        # values without persisting anything.
+        'theme': theme or PortalTheme(project=project),
+        'form': form,
     })

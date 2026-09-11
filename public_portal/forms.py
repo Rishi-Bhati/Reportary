@@ -7,8 +7,12 @@ Anonymous report submission form with:
 - Optional reporter contact info
 - Attachment support gated by project settings
 """
+import re
+
 from django import forms
 from components.models import Component
+from reports.services import validate_attachment
+from projects.models import MAX_CUSTOM_FIELD_LENGTH, MAX_CUSTOM_TEXTAREA_LENGTH
 
 
 class AnonReportForm(forms.Form):
@@ -160,17 +164,27 @@ class AnonReportForm(forms.Form):
                     # Inject dynamic custom fields
                     self.custom_field_names = []
                     for cf in custom_fields_schema:
-                        cf_name = f"custom_field_{cf['name']}"
-                        cf_label = cf['label']
-                        cf_type = cf['type']
+                        # .get() throughout: a config written by an older version
+                        # (or by hand) may be missing keys, and a KeyError here
+                        # would 500 the whole report form.
+                        raw_cf_name = cf.get('name')
+                        if not raw_cf_name:
+                            continue
+                        cf_name = f"custom_field_{raw_cf_name}"
+                        cf_label = cf.get('label') or raw_cf_name.replace('_', ' ').title()
+                        cf_type = cf.get('type') or 'text'
                         cf_required = cf.get('required', False)
                         
                         if cf_type == 'text':
-                            field = forms.CharField(label=cf_label, required=cf_required, widget=forms.TextInput(attrs={
+                            field = forms.CharField(label=cf_label, required=cf_required,
+                                                    max_length=MAX_CUSTOM_FIELD_LENGTH,
+                                                    widget=forms.TextInput(attrs={
                                 'class': 'input input-bordered w-full focus:border-[#226ce0] bg-gray-50 focus:bg-white transition-colors'
                             }))
                         elif cf_type == 'textarea':
-                            field = forms.CharField(label=cf_label, required=cf_required, widget=forms.Textarea(attrs={
+                            field = forms.CharField(label=cf_label, required=cf_required,
+                                                    max_length=MAX_CUSTOM_TEXTAREA_LENGTH,
+                                                    widget=forms.Textarea(attrs={
                                 'rows': 4,
                                 'class': 'textarea textarea-bordered w-full focus:border-[#226ce0] bg-gray-50 focus:bg-white transition-colors'
                             }))
@@ -184,10 +198,11 @@ class AnonReportForm(forms.Form):
                                 'class': 'select select-bordered w-full focus:border-[#226ce0] bg-gray-50 focus:bg-white transition-colors'
                             }))
                         else:
-                            field = forms.CharField(label=cf_label, required=cf_required)
+                            field = forms.CharField(label=cf_label, required=cf_required,
+                                                    max_length=MAX_CUSTOM_FIELD_LENGTH)
                         
                         self.fields[cf_name] = field
-                        self.custom_field_names.append(cf['name'])
+                        self.custom_field_names.append(raw_cf_name)
 
     def clean_website(self):
         """Honeypot: if this field has any value, silently mark as spam."""
@@ -206,20 +221,20 @@ class AnonReportForm(forms.Form):
     def clean_attachment(self):
         attachment = self.cleaned_data.get('attachment')
         if attachment:
-            max_size = 10 * 1024 * 1024  # 10 MB hard cap for anon reports
-            if attachment.size > max_size:
-                raise forms.ValidationError("File too large. Maximum size is 10 MB.")
+            validate_attachment(attachment, self.project)
         return attachment
 
     def clean(self):
         cleaned_data = super().clean()
 
-        # Fallback report_type value if not submitted
-        report_type = cleaned_data.get('report_type')
-        if not report_type:
-            cleaned_data['report_type'] = self.report_type_slug
-        else:
-            self.report_type_slug = report_type
+        # Resolve the report type against the project's configured types. The
+        # raw submitted value used to be stored directly whenever the custom
+        # forms feature was off, which is the default for most projects.
+        from projects.models import resolve_report_type_slug
+
+        self.report_type_slug = resolve_report_type_slug(
+            self.project, cleaned_data.get('report_type') or self.report_type_slug)
+        cleaned_data['report_type'] = self.report_type_slug
 
         # Collect and validate dynamic custom fields
         custom_fields_data = {}
@@ -230,20 +245,112 @@ class AnonReportForm(forms.Form):
                     custom_fields_data[name] = cleaned_data[field_key]
         self.cleaned_custom_fields = custom_fields_data
 
-        # Fallbacks for db-required fields if disabled
-        title = cleaned_data.get('title')
-        if not title:
-            cleaned_data['title'] = f"[{self.report_type_slug.upper()}] Report"
+        # Fallbacks for db-required fields the project has hidden in its form
+        # config. Only applied when the field is genuinely absent — a rendered
+        # field left blank must still raise — and the generated title must be
+        # unique, or only the first such report could ever be filed.
+        from reports.models import generate_fallback_title
+
+        if 'title' not in self.fields and not cleaned_data.get('title'):
+            cleaned_data['title'] = generate_fallback_title(self.report_type_slug)
             self.errors.pop('title', None)
-        
-        description = cleaned_data.get('description')
-        if not description:
-            cleaned_data['description'] = f"Submitted as {self.report_type_slug} report via public portal."
+
+        if 'description' not in self.fields and not cleaned_data.get('description'):
+            cleaned_data['description'] = (
+                f"Submitted as {self.report_type_slug} report via public portal.")
             self.errors.pop('description', None)
 
-        title = cleaned_data.get('title')
-        if title and self.project:
-            from reports.models import Report
-            if Report.objects.filter(project=self.project, title__iexact=title).exists():
-                raise forms.ValidationError("A report with this title already exists for this project.")
+        # NOTE: deliberately no duplicate-title check here. It was unscoped by
+        # visibility, so an anonymous visitor holding a portal link could use
+        # the error message to confirm the existence of internal, hidden reports
+        # by title. De-duplication is a triage concern, not a submitter's.
         return cleaned_data
+
+
+# ─── Portal Theme (beta: portal_custom_styling) ───────────────────────────────
+
+HEX_COLOR = re.compile(r'^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$')
+
+
+class PortalThemeForm(forms.ModelForm):
+    """
+    Validates portal theme customisation.
+
+    Every one of these values is interpolated into the portal's <style> block or
+    its markup. They were previously assigned straight from request.POST and
+    saved without full_clean(), so the model's own URLField validation never ran
+    and the colour fields were an unvalidated CSS injection that bypassed the
+    custom-CSS sanitiser entirely.
+    """
+
+    COLOR_FIELDS = (
+        'primary_color', 'background_color', 'card_background',
+        'text_color', 'accent_color',
+    )
+
+    class Meta:
+        from public_portal.models import PortalTheme
+
+        model = PortalTheme
+        fields = (
+            'primary_color', 'background_color', 'card_background', 'text_color',
+            'accent_color', 'font_family', 'border_radius', 'custom_css',
+            'custom_logo_url', 'custom_heading',
+        )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for name in self.COLOR_FIELDS:
+            self.fields[name].required = False
+        self.fields['custom_css'].required = False
+        self.fields['custom_logo_url'].required = False
+        self.fields['custom_heading'].required = False
+
+    def _clean_color(self, name):
+        value = (self.cleaned_data.get(name) or '').strip()
+        if not value:
+            return self.fields[name].initial or self._meta.model._meta.get_field(name).default
+        if not HEX_COLOR.match(value):
+            raise forms.ValidationError(
+                "Enter a hex colour such as #226ce0."
+            )
+        return value.lower()
+
+    def clean_primary_color(self):
+        return self._clean_color('primary_color')
+
+    def clean_background_color(self):
+        return self._clean_color('background_color')
+
+    def clean_card_background(self):
+        return self._clean_color('card_background')
+
+    def clean_text_color(self):
+        return self._clean_color('text_color')
+
+    def clean_accent_color(self):
+        return self._clean_color('accent_color')
+
+    def clean_custom_css(self):
+        from public_portal.css_sanitizer import MAX_CSS_LENGTH
+
+        css = self.cleaned_data.get('custom_css') or ''
+        if len(css) > MAX_CSS_LENGTH:
+            raise forms.ValidationError(
+                f"Custom CSS is limited to {MAX_CSS_LENGTH:,} characters "
+                f"(this is {len(css):,})."
+            )
+        return css
+
+    def clean_custom_logo_url(self):
+        url = (self.cleaned_data.get('custom_logo_url') or '').strip()
+        if not url:
+            return None
+        if not url.lower().startswith('https://'):
+            raise forms.ValidationError(
+                "Logo URLs must start with https:// so the portal stays secure."
+            )
+        return url
+
+    def clean_custom_heading(self):
+        return (self.cleaned_data.get('custom_heading') or '').strip() or None

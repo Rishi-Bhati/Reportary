@@ -8,8 +8,11 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
 from django.contrib import messages
+import logging
 import random
 import re
+
+logger = logging.getLogger(__name__)
 
 User = get_user_model()
 
@@ -93,24 +96,108 @@ def signup_card(request):
     next_url = request.GET.get('next')
     return render(request, "home/partials/signup_card.html", {'next': next_url})
 
+# ── Login throttling ─────────────────────────────────────────────────────────
+# Fixed-window counters in the cache. There was no limit of any kind on the
+# login form, so credential stuffing against a known email list was unbounded —
+# while the public portal, next door, rate-limits anonymous submissions per IP.
+LOGIN_ATTEMPT_LIMIT_PER_IP = 20
+LOGIN_ATTEMPT_LIMIT_PER_ACCOUNT = 8
+LOGIN_ATTEMPT_WINDOW = 900  # 15 minutes
+
+
+def _login_attempts_exceeded(email, ip):
+    """True when either the IP or the account is over its failure budget."""
+    from django.core.cache import cache
+
+    for key, limit in (
+        (f'login:fail:ip:{ip}', LOGIN_ATTEMPT_LIMIT_PER_IP),
+        (f'login:fail:account:{(email or "").lower()}', LOGIN_ATTEMPT_LIMIT_PER_ACCOUNT),
+    ):
+        try:
+            if (cache.get(key) or 0) >= limit:
+                return True
+        except Exception:
+            logger.exception('Login throttle lookup failed for %s', key)
+    return False
+
+
+def _record_login_failure(email, ip):
+    from django.core.cache import cache
+
+    for key in (f'login:fail:ip:{ip}', f'login:fail:account:{(email or "").lower()}'):
+        try:
+            if not cache.add(key, 1, LOGIN_ATTEMPT_WINDOW):
+                try:
+                    cache.incr(key)
+                except ValueError:
+                    cache.set(key, 1, LOGIN_ATTEMPT_WINDOW)
+        except Exception:
+            logger.exception('Login throttle increment failed for %s', key)
+
+
+def _clear_login_failures(email, ip):
+    from django.core.cache import cache
+
+    for key in (f'login:fail:ip:{ip}', f'login:fail:account:{(email or "").lower()}'):
+        try:
+            cache.delete(key)
+        except Exception:
+            pass
+
+
+def _notify_account_reactivated(user, client_ip):
+    """Tell the account owner their scheduled deletion was cancelled."""
+    from notifications.email_service import send_notification_email
+
+    try:
+        send_notification_email(
+            notification_type='account_reactivated',
+            subject='Your Reportary account was reactivated',
+            context={
+                'title': 'Account reactivated',
+                'message': (
+                    'Your Reportary account was signed into and reactivated, so the '
+                    'scheduled deletion has been cancelled. If this was not you, '
+                    'change your password immediately.'
+                ),
+                'recipient_username': user.username,
+            },
+            to_emails=[user.email],
+        )
+    except Exception:
+        logger.exception('Failed to send reactivation notice to user %s', user.pk)
+
+
 def handle_login(request):
     """
     Handles the user login form submission.
     """
     from django.utils.http import url_has_allowed_host_and_scheme
+
+    from core.http import get_client_ip
+
     if request.method == "POST":
         email = request.POST.get('email')
         password = request.POST.get('password')
         next_url = request.GET.get('next')
+        client_ip = get_client_ip(request)
 
         # Validate next_url to prevent open redirect attacks
         if next_url and not url_has_allowed_host_and_scheme(next_url, allowed_hosts={request.get_host()}):
             next_url = None
 
+        if _login_attempts_exceeded(email, client_ip):
+            logger.warning('Login throttled for %s from %s', email, client_ip)
+            return render(request, "home/partials/login_card.html", {
+                'error': _('Too many failed sign-in attempts. Please wait a few minutes and try again.'),
+                'next': next_url,
+            })
+
         # Authenticate using the email address.
         user = authenticate(request, username=email, password=password)
-        
+
         if user is not None:
+            _clear_login_failures(email, client_ip)
             login(request, user)
             response = HttpResponse(status=204)
             if next_url:
@@ -119,13 +206,27 @@ def handle_login(request):
                 response["HX-Redirect"] = reverse("dashboard:dashboard")
             return response
         else:
-            # Check if user exists but is deactivated (soft-deleted)
+            # Check if user exists but is deactivated (soft-deleted).
             from accounts.models import User
             inactive_user = User.objects.filter(email__iexact=email, is_active=False).first()
             if inactive_user and inactive_user.check_password(password):
+                _clear_login_failures(email, client_ip)
+
+                # Reactivation cancels a deliberate deletion request, so it is
+                # confirmed explicitly rather than happening as a side effect of
+                # someone typing the right password.
+                if request.POST.get('confirm_reactivate') != 'yes':
+                    return render(request, "home/partials/login_card.html", {
+                        'reactivation_prompt': True,
+                        'reactivation_email': inactive_user.email,
+                        'scheduled_deletion_date': inactive_user.scheduled_deletion_date,
+                        'next': next_url,
+                    })
+
                 inactive_user.is_active = True
                 inactive_user.scheduled_deletion_date = None
                 inactive_user.save(update_fields=['is_active', 'scheduled_deletion_date'])
+                _notify_account_reactivated(inactive_user, client_ip)
 
                 login(request, inactive_user)
                 messages.success(request, _('Welcome back! Your account has been reactivated.'))
@@ -136,6 +237,7 @@ def handle_login(request):
                     response["HX-Redirect"] = reverse("dashboard:dashboard")
                 return response
 
+            _record_login_failure(email, client_ip)
             context = {
                 'error': _('Invalid credentials. Please try again.'),
                 'next': next_url,

@@ -1,6 +1,7 @@
+{% load i18n %}
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ LANGUAGE_CODE|default:'en' }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,15 +17,15 @@
             </svg>
         </div>
         <div class="space-y-2">
-            <h1 class="text-lg font-bold text-gray-800">Slow down — too many submissions</h1>
+            <h1 class="text-lg font-bold text-gray-800">{% trans "Slow down — too many submissions" %}</h1>
             <p class="text-sm text-gray-500">
-                You've submitted too many reports recently.
+                {% trans "You've submitted too many reports recently." %}
                 {% if retry_after_minutes %}
-                Please wait approximately <strong>{{ retry_after_minutes }} minute{{ retry_after_minutes|pluralize }}</strong> before trying again.
+                    {% blocktrans count minutes=retry_after_minutes %}Please wait approximately <strong>{{ minutes }} minute</strong> before trying again.{% plural %}Please wait approximately <strong>{{ minutes }} minutes</strong> before trying again.{% endblocktrans %}
                 {% endif %}
             </p>
         </div>
-        <p class="text-xs text-gray-400">Rate limiting protects this project from spam.</p>
+        <p class="text-xs text-gray-400">{% trans "Rate limiting protects this project from spam." %}</p>
     </div>
 </body>
 </html>

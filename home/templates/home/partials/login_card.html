@@ -6,6 +6,30 @@
             <p class="text-sm text-gray-500 mt-1">{% trans "Welcome back to Reportary" %}</p>
         </div>
 
+        {% if reactivation_prompt %}
+        <div role="alert" class="alert bg-amber-50 border-l-4 border-amber-500 text-amber-800 p-4 rounded-lg mb-4 space-y-2">
+            <p class="font-bold text-sm">{% trans "This account is scheduled for deletion" %}</p>
+            <p class="text-xs leading-relaxed">
+                {% if scheduled_deletion_date %}
+                    {% blocktrans with date=scheduled_deletion_date|date:"F j, Y" %}It is due to be permanently deleted on {{ date }}. Signing in now cancels that and restores your account.{% endblocktrans %}
+                {% else %}
+                    {% trans "Signing in now cancels the deletion and restores your account." %}
+                {% endif %}
+            </p>
+            <form method="POST" hx-post="{% url 'home:handle_login' %}{% if next %}?next={{ next }}{% endif %}"
+                  hx-target="#auth-card-container" hx-swap="innerHTML" class="pt-1">
+                <input type="hidden" name="email" value="{{ reactivation_email }}">
+                <input type="hidden" name="confirm_reactivate" value="yes">
+                <label class="block text-xs font-semibold mb-1" for="reactivate-password">{% trans "Confirm your password" %}</label>
+                <input type="password" name="password" id="reactivate-password" required autocomplete="current-password"
+                       class="w-full px-3 py-2 text-sm border border-amber-300 rounded-lg mb-2 bg-white text-gray-800">
+                <button type="submit" class="btn btn-sm btn-warning rounded-lg w-full">
+                    {% trans "Reactivate my account" %}
+                </button>
+            </form>
+        </div>
+        {% endif %}
+
         {% if error %}
         <div role="alert" class="alert alert-error bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-lg mb-4 flex justify-between items-center" id="error-alert">
             <div class="flex items-center">

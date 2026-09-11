@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-24 18:37+0000\n"
+"POT-Creation-Date: 2026-08-22 08:25+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -129,11 +129,11 @@ msgstr ""
 msgid "Org API Keys Dashboard"
 msgstr "組織APIキーダッシュボード"
 
-#: core/settings.py:229
+#: core/settings.py:239
 msgid "English"
 msgstr "English"
 
-#: core/settings.py:230
+#: core/settings.py:240
 msgid "日本語"
 msgstr "日本語"
 
@@ -160,6 +160,34 @@ msgstr "確認メールを再送"
 #: core/templates/base.html:105
 msgid "Search this page"
 msgstr "このページを検索"
+
+#: core/templates/partials/pagination.html:4
+#, fuzzy
+#| msgid "Navigation"
+msgid "Pagination"
+msgstr "ナビゲーション"
+
+#: core/templates/partials/pagination.html:6
+#, python-format
+msgid "Showing %(start)s–%(end)s of %(total)s"
+msgstr ""
+
+#: core/templates/partials/pagination.html:13
+#: core/templates/partials/pagination.html:17
+#, fuzzy
+#| msgid "Preview"
+msgid "Previous"
+msgstr "プレビュー"
+
+#: core/templates/partials/pagination.html:22
+#, python-format
+msgid "Page %(current)s of %(total)s"
+msgstr ""
+
+#: core/templates/partials/pagination.html:28
+#: core/templates/partials/pagination.html:32
+msgid "Next"
+msgstr ""
 
 #: core/templates/partials/sidebar.html:13
 msgid "New Report"
@@ -334,7 +362,7 @@ msgstr "すべてのステータス"
 #: core/templates/search_results.html:69
 #: core/templates/search_results_partial.html:158
 #: core/templates/search_results_partial.html:188
-#: dashboard/templates/dashboard/partials/analytics_partial.html:135
+#: dashboard/templates/dashboard/partials/analytics_partial.html:141
 #: projects/templates/project_details.html:236
 #: reports/templates/report_detail.html:33
 #: reports/templates/reports/partials/reports_list_partial.html:51
@@ -360,7 +388,7 @@ msgid "Resolved"
 msgstr "解決済み"
 
 #: core/templates/search_results.html:72
-#: dashboard/templates/dashboard/partials/analytics_partial.html:135
+#: dashboard/templates/dashboard/partials/analytics_partial.html:141
 #: projects/templates/project_details.html:242
 #: reports/templates/reports/partials/reports_list_partial.html:60
 msgid "Closed"
@@ -377,27 +405,27 @@ msgid "All Severities"
 msgstr "すべての重大度"
 
 #: core/templates/search_results.html:81
-#: dashboard/templates/dashboard/partials/analytics_partial.html:154
-#: projects/templates/project_details.html:231 reports/forms.py:68
+#: dashboard/templates/dashboard/partials/analytics_partial.html:160
+#: projects/templates/project_details.html:231 reports/forms.py:72
 msgid "Low"
 msgstr "低"
 
 #: core/templates/search_results.html:82
-#: dashboard/templates/dashboard/partials/analytics_partial.html:154
-#: projects/templates/project_details.html:229 reports/forms.py:69
+#: dashboard/templates/dashboard/partials/analytics_partial.html:160
+#: projects/templates/project_details.html:229 reports/forms.py:73
 msgid "Medium"
 msgstr "中"
 
 #: core/templates/search_results.html:83
-#: dashboard/templates/dashboard/partials/analytics_partial.html:154
-#: projects/templates/project_details.html:227 reports/forms.py:70
+#: dashboard/templates/dashboard/partials/analytics_partial.html:160
+#: projects/templates/project_details.html:227 reports/forms.py:74
 msgid "High"
 msgstr "高"
 
 #: core/templates/search_results.html:84
-#: dashboard/templates/dashboard/partials/analytics_partial.html:154
+#: dashboard/templates/dashboard/partials/analytics_partial.html:160
 #: projects/templates/project_details.html:85
-#: projects/templates/project_details.html:225 reports/forms.py:71
+#: projects/templates/project_details.html:225 reports/forms.py:75
 msgid "Critical"
 msgstr "致命的"
 
@@ -429,7 +457,7 @@ msgstr "組織"
 msgid "All Organizations"
 msgstr "すべての組織"
 
-#: core/templates/search_results.html:123 reports/forms.py:74
+#: core/templates/search_results.html:123 reports/forms.py:78
 #: reports/templates/report_detail.html:329
 msgid "Component"
 msgstr "コンポーネント"
@@ -621,11 +649,11 @@ msgstr "%(count)s件のアクティブ"
 msgid "No active assignees."
 msgstr "アクティブな担当者はいません。"
 
-#: dashboard/templates/dashboard/partials/analytics_partial.html:156
+#: dashboard/templates/dashboard/partials/analytics_partial.html:162
 msgid "Issues Count"
 msgstr "イシュー数"
 
-#: dashboard/templates/dashboard/partials/analytics_partial.html:203
+#: dashboard/templates/dashboard/partials/analytics_partial.html:209
 msgid "New Reports"
 msgstr "新規レポート"
 
@@ -955,7 +983,7 @@ msgstr ""
 "構成され、コメント内容が最初に強調表示されるようになりました。"
 
 #: home/templates/home/changelog.html:118
-#: restapi/templates/restapi/dashboard.html:136
+#: restapi/templates/restapi/dashboard.html:89
 msgid "Authentication"
 msgstr "認証"
 
@@ -1455,7 +1483,7 @@ msgid ""
 msgstr "ご質問、バグの報告、またはご意見など、お気軽にお問い合わせください。"
 
 #: home/templates/home/contact.html:29
-#: home/templates/home/partials/login_card.html:25
+#: home/templates/home/partials/login_card.html:49
 msgid "Email"
 msgstr "メールアドレス"
 
@@ -1580,7 +1608,7 @@ msgstr "料金"
 
 #: home/templates/home/landing_page.html:148
 #: home/templates/home/partials/login_card.html:5
-#: home/templates/home/partials/login_card.html:56
+#: home/templates/home/partials/login_card.html:80
 msgid "Sign In"
 msgstr "ログイン"
 
@@ -1641,23 +1669,50 @@ msgstr "法的情報"
 msgid "Welcome back to Reportary"
 msgstr "Reportaryへようこそ"
 
-#: home/templates/home/partials/login_card.html:34
+#: home/templates/home/partials/login_card.html:11
+msgid "This account is scheduled for deletion"
+msgstr ""
+
+#: home/templates/home/partials/login_card.html:14
+#, python-format
+msgid ""
+"It is due to be permanently deleted on %(date)s. Signing in now cancels that "
+"and restores your account."
+msgstr ""
+
+#: home/templates/home/partials/login_card.html:16
+msgid "Signing in now cancels the deletion and restores your account."
+msgstr ""
+
+#: home/templates/home/partials/login_card.html:23
+#, fuzzy
+#| msgid "Confirm Password"
+msgid "Confirm your password"
+msgstr "パスワード確認"
+
+#: home/templates/home/partials/login_card.html:27
+#, fuzzy
+#| msgid "Create account"
+msgid "Reactivate my account"
+msgstr "アカウント作成"
+
+#: home/templates/home/partials/login_card.html:58
 msgid "Password"
 msgstr "パスワード"
 
-#: home/templates/home/partials/login_card.html:51
+#: home/templates/home/partials/login_card.html:75
 msgid "Forgot password?"
 msgstr "パスワードをお忘れですか？"
 
-#: home/templates/home/partials/login_card.html:75
+#: home/templates/home/partials/login_card.html:99
 msgid "Coming Soon"
 msgstr "近日公開"
 
-#: home/templates/home/partials/login_card.html:81
+#: home/templates/home/partials/login_card.html:105
 msgid "New to Reportary?"
 msgstr "Reportaryは初めてですか？"
 
-#: home/templates/home/partials/login_card.html:85
+#: home/templates/home/partials/login_card.html:109
 msgid "Create account"
 msgstr "アカウント作成"
 
@@ -1869,7 +1924,12 @@ msgstr "お問い合わせください"
 msgid "We will respond within 5 business days."
 msgstr "5営業日以内に返答いたします。"
 
-#: home/templates/home/profile.html:41 home/templates/home/settings.html:21
+#: home/templates/home/profile.html:21
+#, python-format
+msgid "%(name)s's avatar"
+msgstr ""
+
+#: home/templates/home/profile.html:46 home/templates/home/settings.html:21
 msgid "Edit Profile"
 msgstr "プロフィール編集"
 
@@ -1944,7 +2004,7 @@ msgid "Enter your password"
 msgstr "パスワードを入力してください"
 
 #: home/templates/home/settings.html:97 reports/templates/edit_report.html:141
-#: restapi/templates/restapi/dashboard.html:308
+#: restapi/templates/restapi/dashboard.html:261
 msgid "Cancel"
 msgstr "キャンセル"
 
@@ -2138,23 +2198,28 @@ msgstr "11. お問い合わせ"
 msgid "For questions about these Terms, please"
 msgstr "規約に関するご質問は、"
 
-#: home/views.py:131
+#: home/views.py:192
+msgid ""
+"Too many failed sign-in attempts. Please wait a few minutes and try again."
+msgstr ""
+
+#: home/views.py:232
 msgid "Welcome back! Your account has been reactivated."
 msgstr "おかえりなさい！アカウントが正常に再有効化されました。"
 
-#: home/views.py:140
+#: home/views.py:242
 msgid "Invalid credentials. Please try again."
 msgstr "ログイン情報が無効です。もう一度お試しください。"
 
-#: home/views.py:168
+#: home/views.py:270
 msgid "You must accept the Terms & Conditions and Privacy Policy to register."
 msgstr "登録するには利用規約とプライバシーポリシーに同意する必要があります。"
 
-#: home/views.py:265
+#: home/views.py:367
 msgid "What is Reportary?"
 msgstr "Reportaryとは何ですか？"
 
-#: home/views.py:266
+#: home/views.py:368
 msgid ""
 "Reportary is a modern, collaborative bug and issue tracking platform "
 "designed for development teams. It helps you capture, organize, and resolve "
@@ -2164,12 +2229,12 @@ msgstr ""
 "シュートラッキングプラットフォームです。ソフトウェアの問題を効率的にキャプ"
 "チャ、整理、解決するのに役立ちます。"
 
-#: home/views.py:269
+#: home/views.py:371
 msgid ""
 "What is the difference between Watching (Following) and Bookmarking a report?"
 msgstr "レポートの「監視（フォロー）」と「ブックマーク」の違いは何ですか？"
 
-#: home/views.py:270
+#: home/views.py:372
 msgid ""
 "<strong>Watching (Following)</strong> subscribes you to real-time updates. "
 "You will receive in-app notifications and email alerts whenever the status "
@@ -2184,11 +2249,11 @@ msgstr ""
 "ブラリ内のクイック参照用の個人用ショートカットとして機能します。ブックマーク"
 "しても通知メールはトリガーされません。"
 
-#: home/views.py:273
+#: home/views.py:375
 msgid "How do I collect issues from external users?"
 msgstr "外部ユーザーからイシューを収集するにはどうすればよいですか？"
 
-#: home/views.py:274
+#: home/views.py:376
 msgid ""
 "You can activate a <strong>Public Reporting Portal</strong> link for your "
 "project. This generates a unique URL that you can share with clients or "
@@ -2198,12 +2263,12 @@ msgstr ""
 "れにより、クライアントや関係者と共有できる一意のURLが生成され、トラッカーに直"
 "接レポートを送信できるようになります。"
 
-#: home/views.py:277
+#: home/views.py:379
 msgid "How do Organisation Policies override project portal settings?"
 msgstr ""
 "組織ポリシーはプロジェクトポータル設定をどのようにオーバーライドしますか？"
 
-#: home/views.py:278
+#: home/views.py:380
 msgid ""
 "If an Organisation disables anonymous reporting, it acts as a global policy. "
 "All projects belonging to that organisation will automatically require users "
@@ -2214,11 +2279,11 @@ msgstr ""
 "個々のプロジェクトの設定で匿名報告が許可されていても、その組織に属するすべて"
 "のプロジェクトは、レポートを提出する前にユーザーにログインを要求します。"
 
-#: home/views.py:281
+#: home/views.py:383
 msgid "Who can create a project?"
 msgstr "誰がプロジェクトを作成できますか？"
 
-#: home/views.py:282
+#: home/views.py:384
 msgid ""
 "Any registered and email-verified user can create a project. Projects can be "
 "public (visible to anyone) or private (restricted to team members only)."
@@ -2227,11 +2292,11 @@ msgstr ""
 "ジェクトは、公開（誰でも表示可能）または非公開（チームメンバーのみに制限）に"
 "設定できます。"
 
-#: home/views.py:285
+#: home/views.py:387
 msgid "How do I invite team members to my project?"
 msgstr "チームメンバーをプロジェクトに招待するにはどうすればよいですか？"
 
-#: home/views.py:286
+#: home/views.py:388
 msgid ""
 "Open your project's dashboard and use the 'Invite Collaborator' option. "
 "Invited users will receive an in-app notification and can accept or decline "
@@ -2241,11 +2306,11 @@ msgstr ""
 "します。招待されたユーザーはアプリ内通知を受け取り、招待を承諾または辞退でき"
 "ます。"
 
-#: home/views.py:289
+#: home/views.py:391
 msgid "What is the difference between Severity and Impact?"
 msgstr "「重大度」と「影響度」の違いは何ですか？"
 
-#: home/views.py:290
+#: home/views.py:392
 msgid ""
 "Severity describes how technically bad the bug is (e.g., Critical, High, "
 "Medium, Low). Impact describes how many users or systems are affected. Both "
@@ -2255,11 +2320,11 @@ msgstr ""
 "す。「影響度」は影響を受けるユーザーやシステムの数を示します。両方を使用して"
 "イシューの優先順位を効果的に決定できます。"
 
-#: home/views.py:293
+#: home/views.py:395
 msgid "Can I make a report private?"
 msgstr "レポートを非公開にできますか？"
 
-#: home/views.py:294
+#: home/views.py:396
 msgid ""
 "Yes. When creating or editing a report, you can toggle its visibility to "
 "private. Private reports are only visible to project members and the "
@@ -2268,11 +2333,11 @@ msgstr ""
 "はい。レポートの作成または編集時に、表示範囲を非公開に切り替えることができま"
 "す。非公開レポートは、プロジェクトメンバーと報告者にのみ表示されます。"
 
-#: home/views.py:297
+#: home/views.py:399
 msgid "What happens when I delete my account?"
 msgstr "アカウントを削除するとどうなりますか？"
 
-#: home/views.py:298
+#: home/views.py:400
 msgid ""
 "Your account is deactivated immediately and permanently deleted after 30 "
 "days. During this window, you can reactivate it by logging back in. Your "
@@ -2282,11 +2347,11 @@ msgstr ""
 "ば、再度ログインすることでアカウントを再有効化できます。レポートとプロジェク"
 "トの履歴は保持されます。"
 
-#: home/views.py:301
+#: home/views.py:403
 msgid "Is my data secure?"
 msgstr "データは安全ですか？"
 
-#: home/views.py:302
+#: home/views.py:404
 msgid ""
 "Yes. We use industry-standard encryption for all data in transit and at "
 "rest. Access to projects is strictly enforced via our permissions system — "
@@ -2296,11 +2361,11 @@ msgstr ""
 "す。プロジェクトへのアクセスはパーミッションシステムによって厳密に制御されて"
 "おり、明示的に権限を与えられたユーザーのみがアクセスできます。"
 
-#: home/views.py:305
+#: home/views.py:407
 msgid "How do I report a bug in Reportary itself?"
 msgstr "Reportary自体のバグを報告するにはどうすればよいですか？"
 
-#: home/views.py:306
+#: home/views.py:408
 msgid ""
 "You can report bugs or request features directly on our tracking project. "
 "Just click <a href='/projects/019f2e92-7f0d-78e9-92b3-9431a1014882/reports/"
@@ -2312,11 +2377,11 @@ msgstr ""
 "019f2e92-7f0d-78e9-92b3-9431a1014882/reports/new/' class='text-[#226ce0] "
 "underline underline-offset-2'>こちら</a>をクリックしてください。"
 
-#: home/views.py:309
+#: home/views.py:411
 msgid "Is Reportary free?"
 msgstr "Reportaryは無料ですか？"
 
-#: home/views.py:310
+#: home/views.py:412
 msgid ""
 "Yes, Reportary is free during its current beta phase. We plan to introduce "
 "subscription tiers in the future, but the core functionality will always "
@@ -2325,11 +2390,11 @@ msgstr ""
 "はい、Reportaryは現在のベータフェーズ中は無料です。将来的には有料プランの導入"
 "を予定していますが、コア機能は常に無料でご利用いただけます。"
 
-#: home/views.py:313
+#: home/views.py:415
 msgid "How do I reset my password?"
 msgstr "パスワードをリセットするにはどうすればよいですか？"
 
-#: home/views.py:314
+#: home/views.py:416
 msgid ""
 "Click 'Forgot Password' on the login page. You will receive an email with a "
 "secure link to set a new password."
@@ -2389,7 +2454,7 @@ msgstr "プロジェクトが見つかりません"
 msgid "It looks like there are no projects in this organisation yet."
 msgstr "この組織にはまだプロジェクトが登録されていないようです。"
 
-#: projects/forms.py:7 reports/forms.py:49
+#: projects/forms.py:7 reports/forms.py:53
 msgid "Title"
 msgstr "タイトル"
 
@@ -2403,8 +2468,8 @@ msgstr "説明..."
 
 #: projects/forms.py:9 projects/forms.py:169
 #: projects/templates/register_project.html:223
-#: projects/templates/register_project.html:225 reports/forms.py:52
-#: restapi/templates/restapi/dashboard.html:177
+#: projects/templates/register_project.html:225 reports/forms.py:56
+#: restapi/templates/restapi/dashboard.html:130
 msgid "Description"
 msgstr "説明"
 
@@ -2531,12 +2596,15 @@ msgid "Issue"
 msgstr "イシュー"
 
 #: projects/templates/project_details.html:217
+#: public_portal/templates/public_portal/portal.html:248
 #: reports/templates/reports/partials/reports_list_partial.html:38
 msgid "Anonymous"
 msgstr "匿名"
 
 #: projects/templates/project_details.html:246
 #: projects/templates/project_details.html:336
+#, fuzzy, python-format
+#| msgid "%(timesince)s ago"
 msgid "%(timesince)s ago"
 msgstr "%(time)s前"
 
@@ -2714,26 +2782,35 @@ msgstr "デフォルト設定で重要な報告フィールドが無効化され
 msgid "Global Default Category"
 msgstr "グローバルデフォルトカテゴリ"
 
-#: projects/templates/projects/configure_report_form.html:98
-#: projects/templates/projects/configure_report_form.html:283
+#: projects/templates/projects/configure_report_form.html:101
+#: projects/templates/projects/configure_report_form.html:306
 msgid "Delete Category"
 msgstr "カテゴリを削除"
 
-#: projects/templates/projects/configure_report_form.html:114
-#: projects/templates/projects/configure_report_form.html:297
-#: restapi/templates/restapi/dashboard.html:176
-msgid "Required"
-msgstr "必須"
+#: projects/templates/projects/configure_report_form.html:106
+#, fuzzy, python-format
+#| msgid "%(count)s reports"
+msgid "%(counter)s report uses this type"
+msgid_plural "%(counter)s reports use this type"
+msgstr[0] "%(count)s件のレポート"
 
-#: projects/templates/projects/configure_report_form.html:195
+#: projects/templates/projects/configure_report_form.html:122
+msgid "Every report needs this field, so it cannot be turned off."
+msgstr ""
+
+#: projects/templates/projects/configure_report_form.html:128
+msgid "Always on"
+msgstr ""
+
+#: projects/templates/projects/configure_report_form.html:218
 msgid "Save Form Layout"
 msgstr "フォームレイアウトを保存"
 
-#: projects/templates/projects/configure_report_form.html:204
+#: projects/templates/projects/configure_report_form.html:227
 msgid "Frequency Per Component"
 msgstr "コンポーネントごとの頻度"
 
-#: projects/templates/projects/configure_report_form.html:206
+#: projects/templates/projects/configure_report_form.html:229
 msgid ""
 "Customise frequency options for each component. Type comma-separated options "
 "as 'value:Label' (e.g. 'once:Just once, daily:Daily')."
@@ -2741,7 +2818,7 @@ msgstr ""
 "コンポーネントごとの頻度オプションをカスタマイズします。コンマ区切りで「値:ラ"
 "ベル」の形式で入力してください（例:「once:1回のみ, daily:毎日」）。"
 
-#: projects/templates/projects/configure_report_form.html:224
+#: projects/templates/projects/configure_report_form.html:247
 msgid ""
 "No components registered for this project yet. Please create some in Project "
 "Settings first."
@@ -2749,12 +2826,17 @@ msgstr ""
 "このプロジェクトにはまだコンポーネントが登録されていません。最初にプロジェク"
 "ト設定で作成してください。"
 
+#: projects/templates/projects/configure_report_form.html:320
+#: restapi/templates/restapi/dashboard.html:129
+msgid "Required"
+msgstr "必須"
+
 #: projects/templates/projects/partials/public_link_panel.html:9
 msgid "Public Reporting Link"
 msgstr "公開報告用リンク"
 
 #: projects/templates/projects/partials/public_link_panel.html:13
-#: restapi/templates/restapi/dashboard.html:89
+#: restapi/templates/restapi/partials/key_row.html:36
 msgid "Active"
 msgstr "有効"
 
@@ -2783,7 +2865,9 @@ msgstr "有効"
 msgid ""
 "Controls if this public link is active. If disabled, visitors will see a "
 "'Link Unavailable' screen."
-msgstr "この公開リンクが有効かどうかを制御します。無効に設定されている場合、訪問者には「リンク利用不可」画面が表示されます。"
+msgstr ""
+"この公開リンクが有効かどうかを制御します。無効に設定されている場合、訪問者に"
+"は「リンク利用不可」画面が表示されます。"
 
 #: projects/templates/projects/partials/public_link_panel.html:72
 msgid "Enable or disable this link"
@@ -2798,7 +2882,9 @@ msgstr "匿名"
 msgid ""
 "Allows unauthenticated users to report anonymously via this link. If "
 "disabled, they will be redirected to log in."
-msgstr "未認証のユーザーがこのリンクから匿名で報告できるようにします。無効にした場合、ログイン画面にリダイレクトされます。"
+msgstr ""
+"未認証のユーザーがこのリンクから匿名で報告できるようにします。無効にした場"
+"合、ログイン画面にリダイレクトされます。"
 
 #: projects/templates/projects/partials/public_link_panel.html:104
 msgid "Unauthenticated reporters"
@@ -2813,7 +2899,9 @@ msgstr "なし (個人プロジェクト)"
 msgid ""
 "Global toggle to allow anonymous submissions across the entire project "
 "(including logged-in users on their report forms)."
-msgstr "プロジェクト全体（ログイン中のユーザーの報告フォームを含む）で匿名での送信を許可するグローバル設定です。"
+msgstr ""
+"プロジェクト全体（ログイン中のユーザーの報告フォームを含む）で匿名での送信を"
+"許可するグローバル設定です。"
 
 #: projects/templates/projects/partials/public_link_panel.html:136
 msgid "Project-level override"
@@ -2828,7 +2916,9 @@ msgstr "添付ファイル"
 msgid ""
 "Controls whether anonymous submitters can attach files. Keep disabled if you "
 "want to prevent unsolicited file uploads."
-msgstr "匿名の提出者がファイルを添付できるかどうかを制御します。不要なファイルのアップロードを防ぎたい場合は、無効のままにしてください。"
+msgstr ""
+"匿名の提出者がファイルを添付できるかどうかを制御します。不要なファイルのアッ"
+"プロードを防ぎたい場合は、無効のままにしてください。"
 
 #: projects/templates/projects/partials/public_link_panel.html:168
 msgid "Allow files from anonymous reporters"
@@ -2843,7 +2933,9 @@ msgid ""
 "Anonymous reporting is turned off at the project level. Logged-in users "
 "cannot report anonymously, and all public link visitors will be prompted to "
 "log in."
-msgstr "匿名報告はプロジェクトレベルでオフになっています。ログインしたユーザーは匿名で報告できず、公開リンクのすべての訪問者はログインを求められます。"
+msgstr ""
+"匿名報告はプロジェクトレベルでオフになっています。ログインしたユーザーは匿名"
+"で報告できず、公開リンクのすべての訪問者はログインを求められます。"
 
 #: projects/templates/projects/partials/public_link_panel.html:201
 msgid "Org policy:"
@@ -2853,7 +2945,8 @@ msgstr "組織のポリシー："
 msgid ""
 "Anonymous reporting is disabled at the organisation level and cannot be "
 "overridden here."
-msgstr "匿名報告は組織レベルで無効化されており、ここではオーバーライドできません。"
+msgstr ""
+"匿名報告は組織レベルで無効化されており、ここではオーバーライドできません。"
 
 #: projects/templates/projects/partials/public_link_panel.html:208
 msgid "Beta Portal Customization"
@@ -2953,46 +3046,130 @@ msgstr ""
 "公開報告ポータルのスタイリング、ブランディング、およびCSSをカスタマイズしま"
 "す。"
 
-#: public_portal/templates/public_portal/configure_theme.html:36
+#: public_portal/templates/public_portal/configure_theme.html:34
+msgid "Fix these before saving"
+msgstr ""
+
+#: public_portal/templates/public_portal/configure_theme.html:49
 msgid "Branding Overrides"
 msgstr "ブランディングのオーバーライド"
 
-#: public_portal/templates/public_portal/configure_theme.html:57
+#: public_portal/templates/public_portal/configure_theme.html:70
 msgid "Theme Colors"
 msgstr "テーマカラー"
 
-#: public_portal/templates/public_portal/configure_theme.html:99
+#: public_portal/templates/public_portal/configure_theme.html:112
 msgid "Typography & Borders"
 msgstr "タイポグラフィ＆境界線"
 
-#: public_portal/templates/public_portal/configure_theme.html:126
+#: public_portal/templates/public_portal/configure_theme.html:139
 msgid "Custom Arbitrary CSS"
 msgstr "カスタム任意CSS"
 
-#: public_portal/templates/public_portal/configure_theme.html:137
+#: public_portal/templates/public_portal/configure_theme.html:150
 msgid "Save Portal Theme"
 msgstr "ポータルテーマを保存"
 
-#: public_portal/templates/public_portal/configure_theme.html:144
+#: public_portal/templates/public_portal/configure_theme.html:157
 msgid "Live Interactive Preview"
 msgstr "リアルタイム・インタラクティブプレビュー"
 
-#: reports/forms.py:50 reports/templates/edit_report.html:43
+#: public_portal/templates/public_portal/portal.html:144
+#: public_portal/templates/public_portal/portal_disabled.html:39
+#: public_portal/templates/public_portal/submitted.html:112
+msgid "Powered by"
+msgstr ""
+
+#: public_portal/templates/public_portal/portal.html:170
+msgid "Your identity is protected. Contact info below is entirely optional."
+msgstr ""
+
+#: public_portal/templates/public_portal/portal.html:181
+msgid "Log in here"
+msgstr ""
+
+#: public_portal/templates/public_portal/portal.html:213
+msgid ""
+"Drag &amp; drop, or <span style=\"color:#226ce0;text-decoration:underline;"
+"\">browse</span>"
+msgstr ""
+
+#: public_portal/templates/public_portal/portal.html:243
+msgid "Your info (optional)"
+msgstr ""
+
+#: public_portal/templates/public_portal/portal.html:254
+msgid "Leave blank to stay anonymous"
+msgstr ""
+
+#: public_portal/templates/public_portal/portal.html:261
+#, fuzzy
+#| msgid "Bug Report"
+msgid "Submit Report"
+msgstr "バグ報告"
+
+#: public_portal/templates/public_portal/portal.html:411
+#: reports/templates/create_report.html:130
+#: reports/templates/edit_report.html:87 reports/templates/edit_report.html:108
+#: reports/templates/edit_report.html:185
+#: reports/templates/reports/partials/report_fields_partial.html:113
+#: reports/templates/reports/partials/report_fields_partial.html:136
+msgid "Nothing to preview"
+msgstr "プレビューする内容がありません"
+
+#: public_portal/templates/public_portal/portal_disabled.html:33
+msgid "Reporting Link Unavailable"
+msgstr ""
+
+#: public_portal/templates/public_portal/portal_disabled.html:38
+msgid ""
+"If you believe this is an error, please contact the project team directly."
+msgstr ""
+
+#: public_portal/templates/public_portal/portal_rate_limited.html:20
+msgid "Slow down — too many submissions"
+msgstr ""
+
+#: public_portal/templates/public_portal/portal_rate_limited.html:22
+msgid "You've submitted too many reports recently."
+msgstr ""
+
+#: public_portal/templates/public_portal/portal_rate_limited.html:24
+#, python-format
+msgid ""
+"Please wait approximately <strong>%(minutes)s minute</strong> before trying "
+"again."
+msgid_plural ""
+"Please wait approximately <strong>%(minutes)s minutes</strong> before trying "
+"again."
+msgstr[0] ""
+
+#: public_portal/templates/public_portal/portal_rate_limited.html:28
+msgid "Rate limiting protects this project from spam."
+msgstr ""
+
+#: public_portal/templates/public_portal/submitted.html:44
+#, fuzzy
+#| msgid "Report Issue"
+msgid "Report Submitted!"
+msgstr "イシューを報告"
+
+#: reports/forms.py:54 reports/templates/edit_report.html:43
 #: reports/templates/reports/partials/report_fields_partial.html:49
-#: restapi/templates/restapi/dashboard.html:181
+#: restapi/templates/restapi/dashboard.html:134
 msgid "Brief summary of the issue"
 msgstr "イシューの簡単な概要"
 
-#: reports/forms.py:53 reports/templates/edit_report.html:84
+#: reports/forms.py:57 reports/templates/edit_report.html:84
 #: reports/templates/reports/partials/report_fields_partial.html:110
 msgid "Detailed explanation..."
 msgstr "詳細な説明..."
 
-#: reports/forms.py:55
+#: reports/forms.py:59
 msgid "Steps"
 msgstr "手順"
 
-#: reports/forms.py:56
+#: reports/forms.py:60
 msgid ""
 "1. Go to...\n"
 "2. Click on..."
@@ -3000,42 +3177,42 @@ msgstr ""
 "1. ...に移動する\n"
 "2. ...をクリックする"
 
-#: reports/forms.py:58 reports/templates/report_detail.html:346
+#: reports/forms.py:62 reports/templates/report_detail.html:346
 msgid "Frequency"
 msgstr "頻度"
 
-#: reports/forms.py:60
+#: reports/forms.py:64
 msgid "Once"
 msgstr "1回"
 
-#: reports/forms.py:61
+#: reports/forms.py:65
 msgid "Daily"
 msgstr "毎日"
 
-#: reports/forms.py:62
+#: reports/forms.py:66
 msgid "Weekly"
 msgstr "毎週"
 
-#: reports/forms.py:63
+#: reports/forms.py:67
 msgid "Monthly"
 msgstr "毎月"
 
-#: reports/forms.py:66
+#: reports/forms.py:70
 msgid "Impact"
 msgstr "影響度"
 
-#: reports/forms.py:77 reports/templates/report_detail.html:367
+#: reports/forms.py:81 reports/templates/report_detail.html:367
 #: reports/templates/reports/partials/report_fields_partial.html:65
 #: reports/templates/reports/partials/reports_list_partial.html:9
 #: restapi/templates/restapi/org_dashboard.html:79
 msgid "Project"
 msgstr "プロジェクト"
 
-#: reports/forms.py:80
+#: reports/forms.py:84
 msgid "Public Visibility"
 msgstr "公開設定"
 
-#: reports/forms.py:171
+#: reports/forms.py:185
 #: reports/templates/reports/partials/report_fields_partial.html:22
 msgid "Report Type"
 msgstr "レポートタイプ"
@@ -3056,14 +3233,6 @@ msgstr "新しいイシューを送信してトラッキングを開始します
 #: reports/templates/create_report.html:45
 msgid "Submit Issue"
 msgstr "イシューを送信"
-
-#: reports/templates/create_report.html:130
-#: reports/templates/edit_report.html:87 reports/templates/edit_report.html:108
-#: reports/templates/edit_report.html:185
-#: reports/templates/reports/partials/report_fields_partial.html:113
-#: reports/templates/reports/partials/report_fields_partial.html:136
-msgid "Nothing to preview"
-msgstr "プレビューする内容がありません"
 
 #: reports/templates/create_report.html:153
 msgid "Submitting..."
@@ -3289,51 +3458,15 @@ msgstr "最終使用"
 msgid "Actions"
 msgstr "操作"
 
-#: restapi/templates/restapi/dashboard.html:75
-msgid "None"
-msgstr "なし"
-
-#: restapi/templates/restapi/dashboard.html:84
-msgid "Never"
-msgstr "無期限"
-
-#: restapi/templates/restapi/dashboard.html:91
-msgid "Expired"
-msgstr "期限切れ"
-
-#: restapi/templates/restapi/dashboard.html:93
-msgid "Revoked"
-msgstr "無効化済み"
-
-#: restapi/templates/restapi/dashboard.html:97
-msgid "Metrics"
-msgstr "メトリクス"
-
-#: restapi/templates/restapi/dashboard.html:99
-msgid "Are you sure you want to revoke this API key? This cannot be undone."
-msgstr "このAPIキーを無効化してもよろしいですか？この操作は取り消せません。"
-
-#: restapi/templates/restapi/dashboard.html:99
-msgid "Revoke"
-msgstr "無効化"
-
-#: restapi/templates/restapi/dashboard.html:101
-msgid "Are you sure you want to permanently delete this API key?"
-msgstr "このAPIキーを完全に削除してもよろしいですか？"
-
-#: restapi/templates/restapi/dashboard.html:101
-msgid "Delete"
-msgstr "削除"
-
-#: restapi/templates/restapi/dashboard.html:111
+#: restapi/templates/restapi/dashboard.html:64
 msgid "You haven't created any API keys yet."
 msgstr "まだAPIキーが作成されていません。"
 
-#: restapi/templates/restapi/dashboard.html:126
+#: restapi/templates/restapi/dashboard.html:79
 msgid "API Documentation & Integration Guide"
 msgstr "APIドキュメント＆統合ガイド"
 
-#: restapi/templates/restapi/dashboard.html:131
+#: restapi/templates/restapi/dashboard.html:84
 msgid ""
 "Reportary provides a secure developer API to submit issues, pull logs, and "
 "interface with project components programmatically."
@@ -3341,7 +3474,7 @@ msgstr ""
 "Reportaryは、プログラムから課題の送信、ログの取得、プロジェクトコンポーネント"
 "との連携を行うための、安全な開発者向けAPIを提供します。"
 
-#: restapi/templates/restapi/dashboard.html:138
+#: restapi/templates/restapi/dashboard.html:91
 msgid ""
 "All requests must authenticate using a HTTP standard Authorization header "
 "containing your public key and plaintext secret key separated by a colon:"
@@ -3349,127 +3482,127 @@ msgstr ""
 "すべてのリクエストは、公開キーと平文のシークレットキーをコロンで区切った値を"
 "含む、HTTP標準のAuthorizationヘッダーを使用して認証する必要があります："
 
-#: restapi/templates/restapi/dashboard.html:152
+#: restapi/templates/restapi/dashboard.html:105
 msgid "Create a new issue inside the project scoped to the API key."
 msgstr "APIキーのスコープ対象となるプロジェクト内に新しい課題を作成します。"
 
-#: restapi/templates/restapi/dashboard.html:155
+#: restapi/templates/restapi/dashboard.html:108
 msgid "Request Body (JSON)"
 msgstr "リクエストボディ (JSON)"
 
-#: restapi/templates/restapi/dashboard.html:170
+#: restapi/templates/restapi/dashboard.html:123
 msgid "Fields Reference"
 msgstr "フィールドリファレンス"
 
-#: restapi/templates/restapi/dashboard.html:174
+#: restapi/templates/restapi/dashboard.html:127
 msgid "Field"
 msgstr "フィールド"
 
-#: restapi/templates/restapi/dashboard.html:175
+#: restapi/templates/restapi/dashboard.html:128
 msgid "Type"
 msgstr "データ型"
 
-#: restapi/templates/restapi/dashboard.html:181
-#: restapi/templates/restapi/dashboard.html:182
+#: restapi/templates/restapi/dashboard.html:134
+#: restapi/templates/restapi/dashboard.html:135
 msgid "yes"
 msgstr "必須"
 
-#: restapi/templates/restapi/dashboard.html:182
+#: restapi/templates/restapi/dashboard.html:135
 msgid "Detailed description"
 msgstr "詳細な説明"
 
-#: restapi/templates/restapi/dashboard.html:183
-#: restapi/templates/restapi/dashboard.html:184
-#: restapi/templates/restapi/dashboard.html:185
-#: restapi/templates/restapi/dashboard.html:186
-#: restapi/templates/restapi/dashboard.html:187
-#: restapi/templates/restapi/dashboard.html:188
+#: restapi/templates/restapi/dashboard.html:136
+#: restapi/templates/restapi/dashboard.html:137
+#: restapi/templates/restapi/dashboard.html:138
+#: restapi/templates/restapi/dashboard.html:139
+#: restapi/templates/restapi/dashboard.html:140
+#: restapi/templates/restapi/dashboard.html:141
 msgid "no"
 msgstr "任意"
 
-#: restapi/templates/restapi/dashboard.html:183
+#: restapi/templates/restapi/dashboard.html:136
 msgid "Category slug:"
 msgstr "カテゴリのスラッグ："
 
-#: restapi/templates/restapi/dashboard.html:186
+#: restapi/templates/restapi/dashboard.html:139
 msgid "Steps to reproduce"
 msgstr "再現手順"
 
-#: restapi/templates/restapi/dashboard.html:187
+#: restapi/templates/restapi/dashboard.html:140
 msgid "Component UUID string"
 msgstr "コンポーネントのUUID文字列"
 
-#: restapi/templates/restapi/dashboard.html:188
+#: restapi/templates/restapi/dashboard.html:141
 msgid "Key/value pairs for custom form fields"
 msgstr "カスタムフォームフィールドのキー/値ペア"
 
-#: restapi/templates/restapi/dashboard.html:194
+#: restapi/templates/restapi/dashboard.html:147
 msgid "cURL Example"
 msgstr "cURLの例"
 
-#: restapi/templates/restapi/dashboard.html:209
+#: restapi/templates/restapi/dashboard.html:162
 msgid "List the 50 most recent reports created for the scoped project."
 msgstr "対象プロジェクトで作成された直近50件のレポートを一覧表示します。"
 
-#: restapi/templates/restapi/dashboard.html:212
+#: restapi/templates/restapi/dashboard.html:165
 msgid "Response Body (JSON Array)"
 msgstr "レスポンスボディ (JSON配列)"
 
-#: restapi/templates/restapi/dashboard.html:250
+#: restapi/templates/restapi/dashboard.html:203
 msgid "Generate API Key"
 msgstr "APIキーの生成"
 
-#: restapi/templates/restapi/dashboard.html:251
+#: restapi/templates/restapi/dashboard.html:204
 msgid "Create a public-secret key pair for programmatic requests."
 msgstr ""
 "プログラムによるリクエストのためのパブリック・シークレットキーのペアを作成し"
 "ます。"
 
-#: restapi/templates/restapi/dashboard.html:257
+#: restapi/templates/restapi/dashboard.html:210
 msgid "Key Label/Alias"
 msgstr "キーのラベル/エイリアス"
 
-#: restapi/templates/restapi/dashboard.html:258
+#: restapi/templates/restapi/dashboard.html:211
 msgid "e.g. Jenkins Production Server"
 msgstr "例：Jenkins本番サーバー"
 
-#: restapi/templates/restapi/dashboard.html:264
+#: restapi/templates/restapi/dashboard.html:217
 msgid "Project Scope"
 msgstr "プロジェクトのスコープ"
 
-#: restapi/templates/restapi/dashboard.html:266
+#: restapi/templates/restapi/dashboard.html:219
 msgid "-- Choose Project --"
 msgstr "-- プロジェクトを選択 --"
 
-#: restapi/templates/restapi/dashboard.html:273
+#: restapi/templates/restapi/dashboard.html:226
 msgid "Expiration"
 msgstr "有効期限"
 
-#: restapi/templates/restapi/dashboard.html:275
+#: restapi/templates/restapi/dashboard.html:228
 msgid "Never expire"
 msgstr "無期限"
 
-#: restapi/templates/restapi/dashboard.html:276
+#: restapi/templates/restapi/dashboard.html:229
 msgid "7 Days"
 msgstr "7日間"
 
-#: restapi/templates/restapi/dashboard.html:277
+#: restapi/templates/restapi/dashboard.html:230
 msgid "30 Days"
 msgstr "30日間"
 
-#: restapi/templates/restapi/dashboard.html:278
+#: restapi/templates/restapi/dashboard.html:231
 msgid "90 Days"
 msgstr "90日間"
 
-#: restapi/templates/restapi/dashboard.html:279
+#: restapi/templates/restapi/dashboard.html:232
 msgid "1 Year"
 msgstr "1年間"
 
-#: restapi/templates/restapi/dashboard.html:286
+#: restapi/templates/restapi/dashboard.html:239
 msgid "Scopes / Permissions"
 msgstr "スコープ / 権限"
 
-#: restapi/templates/restapi/dashboard.html:312
+#: restapi/templates/restapi/dashboard.html:265
 msgid "Generate Key"
 msgstr "キーを生成"
 
@@ -3545,3 +3678,38 @@ msgstr "すべての組織APIキー"
 msgid "Key Owner / Label"
 msgstr "キー所有者 / ラベル"
 
+#: restapi/templates/restapi/partials/key_row.html:22
+msgid "None"
+msgstr "なし"
+
+#: restapi/templates/restapi/partials/key_row.html:31
+msgid "Never"
+msgstr "無期限"
+
+#: restapi/templates/restapi/partials/key_row.html:38
+msgid "Expired"
+msgstr "期限切れ"
+
+#: restapi/templates/restapi/partials/key_row.html:40
+msgid "Revoked"
+msgstr "無効化済み"
+
+#: restapi/templates/restapi/partials/key_row.html:44
+msgid "Metrics"
+msgstr "メトリクス"
+
+#: restapi/templates/restapi/partials/key_row.html:48
+msgid "Are you sure you want to revoke this API key? This cannot be undone."
+msgstr "このAPIキーを無効化してもよろしいですか？この操作は取り消せません。"
+
+#: restapi/templates/restapi/partials/key_row.html:48
+msgid "Revoke"
+msgstr "無効化"
+
+#: restapi/templates/restapi/partials/key_row.html:52
+msgid "Are you sure you want to permanently delete this API key?"
+msgstr "このAPIキーを完全に削除してもよろしいですか？"
+
+#: restapi/templates/restapi/partials/key_row.html:52
+msgid "Delete"
+msgstr "削除"

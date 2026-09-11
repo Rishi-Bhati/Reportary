@@ -28,17 +28,10 @@ def hash_ip(request) -> str:
 
 
 def _get_client_ip(request) -> str:
-    """Extract the real client IP.
+    """Extract the real client IP. See core.http.get_client_ip for the rules."""
+    from core.http import get_client_ip
 
-    C-07: Use the RIGHTMOST IP from X-Forwarded-For — that's the one added
-    by the trusted reverse proxy (e.g. Nginx/Render). The leftmost entry is
-    client-controlled and can be trivially spoofed to bypass rate limiting.
-    """
-    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-    if x_forwarded_for:
-        # Rightmost entry = trusted proxy hop; leftmost = client-supplied (untrusted)
-        return x_forwarded_for.split(',')[-1].strip()
-    return request.META.get('REMOTE_ADDR', '0.0.0.0')
+    return get_client_ip(request, default='0.0.0.0')
 
 
 # ─── Rate Limiting ────────────────────────────────────────────────────────────

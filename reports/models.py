@@ -158,3 +158,18 @@ class SavedSearch(models.Model):
 
     def __str__(self):
         return f"{self.user.username}'s search: {self.name}"
+
+def generate_fallback_title(report_type_slug: str) -> str:
+    """
+    Placeholder title for projects that hide the title field in their form config.
+
+    Must be unique: the previous implementation returned a constant, so the
+    project-wide duplicate-title check rejected every submission after the first
+    and silently disabled the project's report form.
+    """
+    import secrets
+    from django.utils import timezone
+
+    stamp = timezone.now().strftime('%Y-%m-%d %H:%M')
+    slug = (report_type_slug or 'report').upper()[:30]
+    return f"[{slug}] Report {stamp} · {secrets.token_hex(3)}"

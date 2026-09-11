@@ -77,6 +77,12 @@ def global_search(request):
         organisations = Organisation.objects.none()
         comments = comments.filter(report__project__public=True, report__visibility=True)
 
+    # Snapshot the permission-scoped querysets before search/filter narrowing —
+    # the filter dropdowns are built from these so they stay stable as the user
+    # filters, while still never exposing anything outside the user's scope.
+    scoped_reports = reports
+    scoped_projects = projects
+
     # 4. Apply Text Search Query (only if q is provided)
     if q:
         projects = projects.filter(Q(title__icontains=q) | Q(description__icontains=q))
@@ -158,11 +164,17 @@ def global_search(request):
     organisations = list(organisations.distinct()[:25])
     comments = list(comments.select_related('report', 'report__project', 'commented_by').distinct()[:50])
 
-    # Fetch lookup data for select filter dropdowns
-    filter_users = User.objects.all().order_by('username')
+    # Fetch lookup data for select filter dropdowns, scoped to what this user
+    # may see. These were previously User.objects.all() / Component.objects.all(),
+    # which leaked every username and every component name — including those of
+    # private projects — to anonymous visitors.
+    from reports.services import users_in_reports
+    filter_users = users_in_reports(scoped_reports)
     filter_orgs = get_user_organisations(request.user) if request.user.is_authenticated else Organisation.objects.none()
     from components.models import Component
-    filter_components = Component.objects.all().order_by('name')
+    filter_components = Component.objects.filter(
+        project__in=scoped_projects.order_by().values('pk')
+    ).distinct().order_by('name')
     saved_searches = SavedSearch.objects.filter(user=request.user) if request.user.is_authenticated else SavedSearch.objects.none()
 
     context = {

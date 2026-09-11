@@ -51,6 +51,27 @@ class Project(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def save(self, *args, **kwargs):
+        """
+        Keep the legacy `public` flag in step with `visibility`.
+
+        The two are a dual source of truth: `rules.can_access_project` switches
+        on `visibility` while several list queries still filter on `public`.
+        They were synced in exactly one place — ProjectForm.save() — so a
+        project created or updated anywhere else (a shell script, a data
+        migration, a future API endpoint) would desync and appear in public
+        listings while `rules` still considered it private.
+
+        Syncing here makes that impossible regardless of the write path.
+        """
+        self.public = (self.visibility == 'public')
+        if 'update_fields' in kwargs and kwargs['update_fields'] is not None:
+            fields = set(kwargs['update_fields'])
+            if 'visibility' in fields:
+                fields.add('public')
+            kwargs['update_fields'] = fields
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return self.title
     
@@ -203,3 +224,44 @@ class ReportFormConfig(models.Model):
         """Returns any important fields that have been removed from the config."""
         enabled = set(self.get_enabled_fields())
         return list(IMPORTANT_FORM_FIELDS - enabled)
+
+# ─── Report type resolution ───────────────────────────────────────────────────
+
+# Standard form fields a project may choose to show or hide. Anything outside
+# this set is rejected when a form configuration is saved.
+ALLOWED_FORM_FIELDS = frozenset(DEFAULT_FORM_CONFIG["enabled_fields"])
+
+# Custom field widget types the report form knows how to build.
+ALLOWED_CUSTOM_FIELD_TYPES = ("text", "textarea", "checkbox", "select")
+
+
+def resolve_report_type_slug(project, requested_slug=None) -> str:
+    """
+    Return a report type slug that is valid for `project`.
+
+    Untrusted input (form POST, portal POST, API JSON) must pass through here.
+    Report.report_type is a CharField(max_length=50); writing the raw request
+    value into it both bypassed the configured choice list and overflowed the
+    column on PostgreSQL.
+    """
+    configured = DEFAULT_FORM_CONFIG["report_types"]
+    default_slug = DEFAULT_FORM_CONFIG["default_report_type"]
+
+    if project is not None:
+        config = ReportFormConfig.objects.filter(project=project).first()
+        if config:
+            configured = config.get_report_types_config() or configured
+            default_slug = config.config.get("default_report_type", default_slug)
+
+    if default_slug not in configured:
+        default_slug = next(iter(configured), "bug")
+
+    if requested_slug and requested_slug in configured:
+        return requested_slug
+    return default_slug
+
+
+# Bounds on a single custom field *value*. The injected form fields carried no
+# max_length, so an unbounded string could be stored in custom_fields_data.
+MAX_CUSTOM_FIELD_LENGTH = 2000
+MAX_CUSTOM_TEXTAREA_LENGTH = 10000
