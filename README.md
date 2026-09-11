@@ -84,16 +84,21 @@ The app will be available at `http://127.0.0.1:8000`.
 | `CLOUD_NAME` | Cloudinary cloud name (for file uploads) |
 | `CLOUDINARY_API_KEY` | Cloudinary API key |
 | `CLOUDINARY_API_SECRET` | Cloudinary API secret |
-| `MAIL_API` | Bearer token for the Cloudflare Worker mail service |
-| `MAIL_API_SECRET` | Shared secret for the mail service |
+| `MAIL_API` | API key for the Unsent mail service (sent as `X-API-Key`) |
+| `MAIL_API_SECRET` | HMAC signing secret for the mail service |
+| `MAIL_API_ENDPOINT` | Mail service URL (default: `https://unsent.rishibhati.in/api/send`) |
+| `MAIL_FROM_NAME` | Display name outbound email is sent as (default: `Reportary`) |
 | `MAIL_ID` | Address transactional email is sent from |
 | `SITE_URL` | Absolute base URL used in emails (default: the Render deployment) |
 | `DEBUG` | `True` only for local development; defaults to `False` |
 | `CSP_ENFORCE` | `True` to enforce the Content-Security-Policy instead of report-only |
 
 SMTP settings (`EMAIL_HOST`, `EMAIL_HOST_USER`, `EMAIL_HOST_PASSWORD`) are no longer
-used — email is dispatched over HTTP to the queue service in `Reportary_email_serivce/`.
-The legacy SMTP block is kept commented out in `core/settings.py` for reference.
+used — email is dispatched over HTTP to the Unsent mail service. Requests are
+authenticated with an HMAC-SHA256 signature over `<timestamp>\n<nonce>\n<sha256(body)>`,
+sent as `X-API-Key`, `X-Timestamp`, `X-Nonce` and `X-Signature` (see
+`notifications/email_service.py`). The legacy SMTP block is kept commented out in
+`core/settings.py` for reference.
 
 ---
 

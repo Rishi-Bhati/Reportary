@@ -304,7 +304,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # ── Email API (HTTP-based, replaces SMTP) ────────────────────────────────────
 MAIL_API_KEY = os.getenv('MAIL_API', '')
 MAIL_API_SECRET = os.getenv('MAIL_API_SECRET', '')
-MAIL_API_ENDPOINT = 'https://reportary-email-service.nagger.workers.dev/api/send'
+MAIL_API_ENDPOINT = os.getenv('MAIL_API_ENDPOINT', 'https://unsent.rishibhati.in/api/send')
+# Display name the mail service sends as.
+MAIL_FROM_NAME = os.getenv('MAIL_FROM_NAME', 'Reportary')
 SITE_URL = os.getenv('SITE_URL', 'https://reportary.onrender.com')
 
 # Contact form submissions recipient
